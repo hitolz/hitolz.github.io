@@ -1,37 +1,34 @@
-<header class='c-header'>
-
-  <div class='o-grid'>
-    <div class='o-grid__col o-grid__col--full'>
-      <div class='c-header__inner'>
-
-        <div class='o-grid'>
-          <div class='o-grid__col o-grid__col--3-4-s'>
-            <div class='c-logo u-text-left'>
-              <a class='c-logo__link' href='{{ site.baseurl }}/'>{{ site.title }}</a>
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{ site.baseurl | prepend: site.url }}/">{{ site.title }}</a>
+                    <p class="navbar-text">{{ site.description }}</p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if page.url == "/index.html" %}
+                        <li class="active">{% else %}
+                        <li>{% endif %}
+                        <a href="{{ site.baseurl | prepend: site.url }}/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        {% for p in site.pages %}{% if p.isNavItem %}
+                        {% if p.url == page.url %}
+                        <li class="active">{% else %}
+                        <li>{% endif %}
+                            <a href="{{ p.url | prepend: site.baseurl | prepend: site.url }}" class="word-keep"><span class="octicon {{ p.icon }}"></span>&nbsp;&nbsp;{{ p.title }}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                        <li><a href="#stq=" class="search-button"><span class="octicon octicon-search"></span></a></li>
+                    </ul>
+                </div>
             </div>
-          </div>
+        </nav>
+    </header>
 
-          <div class='o-grid__col o-grid__col--1-4-s'>
-            <label class='js-off-canvas-toggle c-off-canvas-toggle' aria-label='Toggle navigation'>
-              <span class='c-off-canvas-toggle__icon'></span>
-            </label>
-          </div>
-
-          <div class='o-grid__col o-grid__col--1-4-s'>
-            <div class='c-off-canvas-content'>
-              <label class='js-off-canvas-toggle c-off-canvas-toggle c-off-canvas-toggle--close'>
-                <span class='c-off-canvas-toggle__icon'></span>
-              </label>
-
-              <ul class='c-nav o-plain-list '>
-                {% include navigation.html %}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-</header>

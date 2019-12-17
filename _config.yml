@@ -1,48 +1,48 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely need to edit after that.
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'jekyll serve'. If you change this file, please restart the server process.
+plugins: [jekyll-paginate]
 
-# Site settings
-title:       hitol
-email:       'i@hitol.me'
-description: ''
-baseurl:     '' # The subpath of your site, e.g. /blog
-url:         'https://hitolz.github.io/' # The base hostname & protocol for your site
-twitter:     ''
-github:      ''
-instagram:   ''
-facebook:    ''
+permalink: /:categories/:title/
 
-markdown:  kramdown
-permalink: pretty
-paginate:  60
+highlighter: rouge
+markdown: kramdown
+kramdown:
+  input:  GFM
+  syntax_highlighter: rouge
 
-sass:
-  style: compressed
 
-gems:
-  - jekyll-paginate
-  - jekyll/tagging
+paginate: 10
+paginate_path: "page/:num"
+baseurl: ""
 
-include:
-  - _pages
 
-exclude:
-  - vendor
-  - Gemfile
-  - Gemfile.lock
 
-# Tags
-tag_page_dir:         tag
-tag_page_layout:      tag_page
-tag_permalink_style:  pretty
-
-# Pages path
 defaults:
-  - scope:
-      path: '_pages'
+  -
+    scope:
+      path: ""
+      type: posts
     values:
-      permalink: /:basename:output_ext
+      layout: post
+      styles : [highlight.css,gitment.css,post.css]
+      scripts : [gitment.js, post.js]
+
+
+
+title: "hitol"
+email: i@hitol.me
+description: ""
+github:
+  username: hitolz
+swiftype:
+  searchId: xxx
+gitment:
+    repo: blog
+    client_id: xx
+    client_secret: xx
+
+url: "https://hitolz.github.io/"
+imgrepo: "https://hitolz.github.io/images"
+
+
+#url: "http://127.0.0.1:4000"
+#imgrepo: "http://127.0.0.1:4000/static/img"
+

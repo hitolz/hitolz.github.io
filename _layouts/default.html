@@ -1,24 +1,25 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html>
 
 {% include head.html %}
 
 <body>
 
-  {% include analytics.html %}
+{% include header.html %}
 
-  <div class='js-off-canvas-container c-off-canvas-container'>
-    {% include header.html %}
+<div class="main">
+    <div class="container">
+        {{ content }}
+    </div>
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
 
-    {{ content }}
+{% include footer.html %}
 
-    {% include footer.html %}
-  </div>
-
-  <script src="{{ '/js/jquery-3.1.1.min.js' | prepend: site.baseurl }}"> </script>
-  <script src="{{ '/js/evil-icons.min.js' | prepend: site.baseurl }}">   </script>
-  <script src="{{ '/js/jquery.fitvids.js' | prepend: site.baseurl }}">   </script>
-  <script src="{{ '/js/app.js' | prepend: site.baseurl }}">              </script>
 </body>
-
 </html>
