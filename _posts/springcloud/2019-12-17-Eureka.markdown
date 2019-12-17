@@ -13,7 +13,9 @@ tags: [Eureka, blog]
 
 代表注册的实例
 
-[InstanceInfo.java](InstanceInfo.java "InstanceInfo")
+
+
+[InstanceInfo.java](../../images/posts/code/springcloud/InstanceInfo.java "InstanceInfo")
 
 
 ### LeaseInfo
@@ -22,7 +24,7 @@ tags: [Eureka, blog]
 
 主要用于标识应用实例的心跳情况，
 
-[LeaseInfo.java](LeaseInfo.java "LeaseInfo")
+[LeaseInfo.java](../../images/posts/code/springcloud/LeaseInfo.java "LeaseInfo")
 
 
 ### ServiceInstance
@@ -162,7 +164,7 @@ instance的接口，除了更新meta以及cancelLease操作外，都会带上该
 
 https://segmentfault.com/a/1190000014875208
 
-[InstanceResource.java](InstanceResource.java "InstanceResource")
+[InstanceResource.java](../../images/posts/code/springcloud/InstanceResource.java "InstanceResource")
 
 2. heartbeat
 
