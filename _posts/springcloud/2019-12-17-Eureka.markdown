@@ -1,0 +1,216 @@
+---
+layout: post
+title: Eureka
+tags: [Eureka, blog]
+---
+
+# Eureka
+[TOC]
+
+
+## Eureka核心类
+### InstanceInfo
+
+代表注册的实例
+
+[InstanceInfo.java](InstanceInfo.java "InstanceInfo")
+
+
+### LeaseInfo
+
+应用实例的租约信息
+
+主要用于标识应用实例的心跳情况，
+
+[LeaseInfo.java](LeaseInfo.java "LeaseInfo")
+
+
+### ServiceInstance
+
+```java
+public interface ServiceInstance {
+    String getServiceId();
+
+    String getHost();
+
+    int getPort();
+
+    boolean isSecure();
+
+    URI getUri();
+
+    Map<String, String> getMetadata();
+
+    default String getScheme() {
+        return null;
+    }
+}
+
+```
+
+### InstanceStatus
+
+```java
+
+public static enum InstanceStatus {
+        UP,
+        DOWN,
+        STARTING,
+        OUT_OF_SERVICE,
+        UNKNOWN;
+
+        private InstanceStatus() {
+        }
+
+        public static InstanceInfo.InstanceStatus toEnum(String s) {
+            if (s != null) {
+                try {
+                    return valueOf(s.toUpperCase());
+                } catch (IllegalArgumentException var2) {
+                    InstanceInfo.logger.debug("illegal argument supplied to InstanceStatus.valueOf: {}, defaulting to {}", s, UNKNOWN);
+                }
+            }
+
+            return UNKNOWN;
+        }
+    }
+    
+```
+
+## 服务的核心操作
+### 服务注册 register
+### 服务下线 cancel
+### 服务租约 renew
+### 服务剔除 evict
+
+### LeaseManager
+定义了应用服务实例在服务中心的几个操作
+
+```java
+public interface LeaseManager<T> {
+
+    void register(T var1, int leaseDuration, boolean isReplication);
+    
+    boolean cancel(String appName, String id, boolean isReplication);
+
+    boolean renew(String appName, String id, boolean isReplication);
+
+    void evict();
+}
+
+```
+
+### LookupService
+定义了client从服务中心获取服务实例的查询方法
+```java
+public interface LookupService<T> {
+    Application getApplication(String appName);
+
+    Applications getApplications();
+
+    List<InstanceInfo> getInstancesById(String id);
+
+    InstanceInfo getNextServerFromEureka(String virtualHostName, boolean secure);
+}
+
+```
+
+
+## Eureka的设计理念
+
+### 主要解决几个问题
+
+#### 1.服务实例如何注册到服务中心
+调用Eureka Server的REST API的register方法
+#### 2.服务实例如何从服务中心剔除
+调用Eureka Server的REST API的de-register方法，如果租约超过一定时间没有进行续约操作，server端会主动剔除。
+#### 3.服务实例信息的一致性问题
+针对Eureka集群。
+##### CAP理论
+C:Consistency,数据一致性。
+
+A:Availability，可用性。
+
+P:Partition，分区容忍性。
+
+对于分布式系统来说，网络条件相对不可控，出现网络分区是不可避免的，因此系统必须要具备P属性，分区容忍性。
+C、A、P三选二。Eureka倾向于AP，优先保证可用性。
+
+##### 对等复制 Peer To Peer
+1.客户端
+
+
+副本之间不分主从，任何副本都可以接受写操作，然后每个副本之间相互进行数据更新。
+
+preferSameZoneEureka，即有多个分区的话，优先选择与应用实例所在分区一样的其他服务的实例，如果没有找到则默认是会用defaultZone。
+
+客户端使用quarantineSet维护了 一个 不可用的Eureka Server列表，进行请求的时候，优先从可用的列表中进行选择，若果请求失败则切换到下一个Eureka Server进行重试，
+重试次数默认为3。
+
+client有个定时任务，默认5分钟执行一次，来刷新并随机化Eureka Server的列表。
+
+
+2.服务端
+
+服务端主要解决的是数据复制的冲突问题。
+1. `lastDirtyTimestamp`
+数据的不一致，一般都是通过版本号机制来解决。Eureka没有直接使用版本号，而是使用了`lastDirtyTimestamp`这个字段来对比。表示该instance在客户端最后一次被修改的时间戳。
+
+通过`SyncWhenTimestampDiffers`、默认开启。
+
+instance的接口，除了更新meta以及cancelLease操作外，都会带上该字段。
+
+https://segmentfault.com/a/1190000014875208
+
+[InstanceResource.java](InstanceResource.java "InstanceResource")
+
+2. heartbeat
+
+   peer节点之间的相互复制不能保证每次都成功。因此Eureka还通过应用实例与server之间的heartbeat，也就是renewLease操作来进行数据的修复。
+
+   如果应用实例数据与server端数据不一致，则server返回404，应用实例重新注册。
+
+
+
+## eureka集群
+
+1. 在host文件中配置`127.0.0.1 peer1 peer2`
+2. yml文件中支持使用三个短横线分割文档块的方式
+    ```yaml
+    
+    ---
+    spring:
+      profiles: peer1                                 # 指定profile=peer1
+    server:
+      port: 8761
+    eureka:
+      instance:
+        hostname: peer1                               # 指定当profile=peer1时，主机名是peer1
+      client:
+        serviceUrl:
+          defaultZone: http://peer2:8762/eureka/      # 将自己注册到peer2这个Eureka上面去
+    ---
+    spring:
+      profiles: peer2
+    server:
+      port: 8762
+    eureka:
+      instance:
+        hostname: peer2
+      client:
+        serviceUrl:
+          defaultZone: http://peer1:8761/eureka/
+          
+    ```
+3. 使用`java -jar xxx.jar --spring.profiles.active=peer1` 指定profile启动两个eureka服务，使之构成一个两个节点的集群
+    ```java
+    java -jar T.jar --spring.profiles.active=peer1
+    java -jar T.jar --spring.profiles.active=peer2
+    ```
+4. 客户端注册到集群上,只需要eureka客户端 修改`eureka.client.serviceUrl.defaultZone`
+    ```yaml
+     eureka:
+       client:
+         serviceUrl:
+           defaultZone: http://peer1:8761/eureka/,http://peer2:8762/eureka/
+    ```
