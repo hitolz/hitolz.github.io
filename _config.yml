@@ -35,11 +35,11 @@ github:
 swiftype:
   searchId: xxx
 gitment:
-    repo: blog
-    client_id: xx
-    client_secret: xx
+    repo: hitolz-github
+    client_id: 76094167e17e90abd85e
+    client_secret: ede1f3c10c56ec9755ad51246dbdf8fcce65ef25
 
-url: "https://hitolz.github.io/"
+url: "https://hitolz.github.io"
 imgrepo: "https://hitolz.github.io/images"
 
 
