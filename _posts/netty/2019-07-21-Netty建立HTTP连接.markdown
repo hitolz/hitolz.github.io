@@ -3,6 +3,7 @@ layout: post
 title: Netty建立HTTP连接
 tags: [netty, blog]
 image: '/images/posts/8.jpg'
+categories: netty
 ---
 
 

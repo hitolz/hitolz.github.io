@@ -3,6 +3,7 @@ layout: post
 title: Netty 第一部分 Netty的概念及体系结构
 tags: [netty, jekyll, blog]
 image: '/images/posts/1.jpg'
+categories: netty
 ---
 
 

@@ -1,8 +1,9 @@
 ---
 layout: post
-title: KotlinLearn part 1
-tags: [xpath, blog]
+title: Kotlin Learn part 1
+tags: [Kotlin, blog]
 image: '/images/posts/20.jpg'
+categories: Kotlin
 ---
 
 # Kotlin

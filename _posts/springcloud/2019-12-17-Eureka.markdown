@@ -2,6 +2,7 @@
 layout: post
 title: Eureka
 tags: [Eureka, blog]
+categories: Eureka
 ---
 
 # Eureka

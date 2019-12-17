@@ -3,6 +3,7 @@ layout: post
 title: ARTS-8月第四周
 tags: [arts, blog]
 image: '/images/posts/16.jpg'
+categories: arts
 ---
 
 ARTS

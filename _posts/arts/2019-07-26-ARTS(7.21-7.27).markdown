@@ -3,6 +3,7 @@ layout: post
 title: ARTS 7.21-7.27
 tags: [arts, blog]
 image: '/images/posts/10.jpg'
+categories: arts
 ---
 
 ARTS

@@ -3,6 +3,7 @@ layout: post
 title: xpath语法
 tags: [xpath, blog]
 image: '/images/posts/18.jpg'
+categories: xpath
 ---
 
 # xpath语法
