@@ -1,0 +1,118 @@
+---
+layout: post
+title: ARTS-8月第四周
+tags: [arts, blog]
+image: '/images/posts/16.jpg'
+---
+
+ARTS
+
+1. Algorithm：每周至少做一个 leetcode 的算法题，或者参加codeforces比赛
+
+2. Review：阅读并点评至少一篇英文技术文章
+
+3. Tip：学习至少一个技术技巧
+
+4. Share：分享一篇有观点和思考的技术文章，每月一篇博客，每周一次分享
+
+
+
+A
+
+cf 581 A
+https://codeforces.com/contest/1204/problem/A
+A题目内容：
+说一个城市，一天有2的100次方分钟，有一列火车每隔1分钟、4分钟、16分钟。。发车，也就是每隔4的k次方发车，k>=0。一队人在s时间到达火车站，问这队人错过了多少列火车。时间s是二进制数。
+思路：
+s转10进制数，for循环算4的多少次方是小于这个数的，每次加1
+
+```
+import java.math.BigInteger;
+import java.util.Scanner;
+
+public class Cf581A {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		String s = scanner.nextLine();
+		BigInteger bigInteger = new BigInteger(s, 2);
+		BigInteger four = new BigInteger("4", 10);
+		int num = 0;
+		for (int i = 0; i <= 100; i++) {
+			BigInteger pow = four.pow(i);
+			if (pow.compareTo(bigInteger) < 0) {
+				num++;
+			} else {
+				break;
+			}
+		}
+
+		System.out.println(num);
+	}
+
+}
+
+```
+B题
+https://codeforces.com/contest/1204/problem/B
+B题目内容：
+说一个人有个未知的数组a，有n个正整数，a数组有两个条件：1、数组中不同数字的个数大于等于l小于等于r，2、数组中每个元素要么是1，要么是2的倍数。数组有多种组合方式，求这些组合方式中所有元素和的最小值和最大值。
+思路：
+最小值就是最多个1 + l个不同数字，最大值就是最多个最大值 + r个不同数字
+
+```
+import java.util.Scanner;
+
+public class Cf581B {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		int n, l, r;
+		n = scanner.nextInt();
+		l = scanner.nextInt();
+		r = scanner.nextInt();
+		int[] eles = new int[22];
+		for (int i = 0; i <= 20; i++) {
+			eles[i] = (int) Math.pow(2, i);
+		}
+
+		int min = 0;
+		int max = 0;
+
+		for (int i = 0; i < l; i++) {
+			min += eles[i];
+		}
+		min += (n - l);
+
+
+		for (int i = 0; i < r; i++) {
+			max += eles[i];
+		}
+		max += (n - r) * eles[r - 1];
+
+		System.out.println(min + " " + max);
+	}
+}
+```
+
+
+
+R
+
+
+
+T
+
+https://www.liangzl.com/get-article-detail-122225.html
+
+在类Unix系统中，/dev/null，或称空设备，是一个特殊的设备文件，它丢弃一切写入其中的数据（但报告写入操作成功），读取它则会立即得到一个EOF。
+
+和/dev/null类似，/dev/zero也是一个特殊的字符设备文件，当我们使用或读取它的时候，它会提供无限连续不断的空的数据流（特殊的数据格式流）。
+
+/dev/zero文件的常见应用场景有二：
+
+- /dev/zero文件覆盖其他文件信息。
+
+- 产生指定大小的空文件，例如：交换文件、模拟虚拟文件系统等。
+
+
+S
+

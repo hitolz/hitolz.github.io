@@ -1,0 +1,142 @@
+---
+layout: post
+title: ARTS-8月第五周
+tags: [arts, blog]
+image: '/images/posts/17.jpg'
+---
+
+ARTS
+
+1. Algorithm：每周至少做一个 leetcode 的算法题，或者参加codeforces比赛
+
+2. Review：阅读并点评至少一篇英文技术文章
+
+3. Tip：学习至少一个技术技巧
+
+4. Share：分享一篇有观点和思考的技术文章，每月一篇博客，每周一次分享
+
+
+
+A
+
+https://codeforces.com/contest/1213/problem/A
+A题
+题目内容：
+说一条直线上，有n个碎片，你有两种方式移动碎片
+1、往左或者往右移动2个单位，免费
+2、往左或者往右移动1个单位，需要一个硬币
+问，把这些碎片移动到相同的位置最少需要多少硬币。
+
+思路：
+移动偶数个单位不需要硬币，移动单数个碎片需要硬币，
+就碎片的位置而言，偶数到偶数不花钱，奇数到奇数不花钱，奇数到偶数花钱 * 1。
+那就是看看数组中有多少个奇数、多少个偶数，取最小的。
+
+```
+
+import java.util.Scanner;
+
+public class Cf582A {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		int n = scanner.nextInt();
+		int[] x = new int[n];
+
+		int countOdd = 0;
+		int countEven = 0;
+
+		int min = 0;
+		for (int i = 0; i < n; i++) {
+			x[i] = scanner.nextInt();
+			if (x[i] % 2 == 0) {
+				countEven++;
+			} else {
+				countOdd++;
+			}
+		}
+
+		System.out.println(countOdd < countEven ? countOdd : countEven);
+
+
+	}
+}
+```
+
+https://codeforces.com/contest/1213/problem/B
+题目内容：
+说一部手机的价格随天数是不断变化的，当后面的价格有比今天的价格低的时候，认为今天的价格是bad。
+问，n天中，价格是bad的天数。
+思路：
+1、TLE的思路：数组中后面的元素有比当前的元素小的情况，天数加1，双重for判断
+2、从后往前，找最小的数，如果当前元素比最小数大，加1
+```
+
+import java.util.Scanner;
+
+public class Cf582B {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		int t = scanner.nextInt();
+		for (int i = 0; i < t; i++) {
+			int n = scanner.nextInt();
+			int[] a = new int[n];
+			int count = 0;
+			for (int j = 0; j < n; j++) {
+				a[j] = scanner.nextInt();
+			}
+// TLE
+//			for (int j = 0; j < n - 1; j++) {
+//				for (int k = j + 1; k < n; k++) {
+//					if (a[k] < a[j]) {
+//						count++;
+//						break;
+//					}
+//				}
+
+//			int max = a[0];
+//			for (int j = 0; j < n; j++) {
+//				max = Math.max(max, a[j]);
+//				if (a[j] < max) {
+//					count++;
+//				}
+//			}
+
+			int min = a[n - 1];
+			for (int j = n - 1; j >= 0; j--) {
+				min = Math.min(min, a[j]);
+				if (a[j] > min) {
+					count++;
+				}
+			}
+
+
+			System.out.println(count);
+		}
+	}
+}
+```
+
+
+
+R
+
+Introducing Kotlin support in Spring Framework 5.0（Spring Framework 5.0引入Kotlin支持）
+
+https://spring.io/blog/2017/01/04/introducing-kotlin-support-in-spring-framework-5-0
+
+
+
+T
+
+自定义注解默认值
+
+https://www.cnblogs.com/peida/archive/2013/04/24/3036689.html
+
+注解元素必须有确定的值，要么在定义注解的默认值中指定，要么在使用注解时指定，非基本类型的注解元素的值不可为null。因此, 使用空字符串或0作为默认值是一种常用的做法。这个约束使得处理器很难表现一个元素的存在或缺失的状态，因为每个注解的声明中，所有元素都存在，并且都具有相应的值，为了绕开这个约束，我们只能定义一些特殊的值，例如空字符串或者负数，以此表示某个元素不存在，在定义注解时，这已经成为一个习惯用法
+
+
+S
+
+分布式事务中间件 Seata 的设计原理
+
+https://mp.weixin.qq.com/s/YaeMq1tvZZ55SNEhB4iaGQ

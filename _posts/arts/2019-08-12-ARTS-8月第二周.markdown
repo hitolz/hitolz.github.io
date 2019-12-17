@@ -1,0 +1,142 @@
+---
+layout: post
+title: ARTS-8月第二周
+tags: [arts, blog]
+image: '/images/posts/14.jpg'
+---
+
+ARTS
+
+1. Algorithm：每周至少做一个 leetcode 的算法题，或者参加codeforces比赛
+
+2. Review：阅读并点评至少一篇英文技术文章
+
+3. Tip：学习至少一个技术技巧
+
+4. Share：分享一篇有观点和思考的技术文章，每月一篇博客，每周一次分享
+
+
+
+A
+
+CF 578 A
+https://codeforces.com/contest/1200/problem/A
+题目内容：
+说一个宾馆10个房间，从左到右标记为0-9，宾馆有两个入口，可以从左边进(L)，也可以从右边进(R)，数字表示对应的房间的人离开，输出这10个房间的状态，0表示没人，1表示有人。
+```
+import java.util.Scanner;
+
+public class Cf578A {
+	static int n;
+
+	public static void main(String[] args) {
+
+		Scanner scanner = new Scanner(System.in);
+		n = scanner.nextInt();
+		scanner.nextLine();
+		String input = scanner.nextLine();
+		int[] room = new int[10];
+		for (int i = 0; i < n; i++) {
+			char c = input.charAt(i);
+			if ('L' == c) {
+				inFromLeft(room);
+			} else if ('R' == c) {
+				inFromRight(room);
+			} else {
+				leave(room, c);
+			}
+		}
+		print(room);
+	}
+
+	private static void print(int[] room) {
+		for (int i = 0; i <= 9; i++) {
+			System.out.print(room[i]);
+		}
+	}
+
+	private static void leave(int[] room, char c) {
+		int num = Integer.parseInt(String.valueOf(c));
+		room[num] = 0;
+	}
+
+	private static void inFromRight(int[] room) {
+		for (int i = 9; i >= 0; i--) {
+			if (room[i] == 0) {
+				room[i] = 1;
+				break;
+			}
+		}
+	}
+
+	private static void inFromLeft(int[] room) {
+		for (int i = 0; i <= 9; i++) {
+			if (room[i] == 0) {
+				room[i] = 1;
+				break;
+			}
+		}
+	}
+}
+```
+
+leetcode 807.Max Increase to Keep City Skyline 
+https://leetcode.com/problems/max-increase-to-keep-city-skyline/
+题目内容：
+有一个二维数组，其中的元素表示在其坐标位置的建筑的高度。现在允许为每一个建筑增加高度，但是必须保证四个方向上的水平线不变，也就是不能超过每个方向上的最大值。求最大可以增加的高度和。
+思路：
+最大可以增加的高度和，即为每一个元素所能增加的最大值的和。
+数组[x][y]处所能增加的最大值：
+计算该位置所在的行的最大值X，列的最大值Y，找X、Y较小的值减去数组[x][y]本身的值。
+```
+class Solution {
+	public int maxIncreaseKeepingSkyline(int[][] grid) {
+		int length = grid.length;
+		int sum = 0;
+		int[] maxInColumn = new int[length];
+		int[] maxInLine = new int[length];
+		for (int i = 0; i < length; i++) {
+			int maxL = grid[i][0];
+			int maxC = grid[0][i];
+			for (int j = 0; j < length; j++) {
+				if (maxL < grid[i][j]) {
+					maxL = grid[i][j];
+				}
+			}
+			for (int j = 0; j < length; j++) {
+				if (maxC < grid[j][i]) {
+					maxC = grid[j][i];
+				}
+			}
+			maxInColumn[i] = maxC;
+			maxInLine[i] = maxL;
+		}
+		for (int i = 0; i < length; i++) {
+			for (int j = 0; j < length; j++) {
+				sum += Math.min(maxInLine[i], maxInColumn[j]) - grid[i][j];
+			}
+		}
+		return sum;
+	}
+}
+```
+
+R
+
+Using EXPLAIN to Write Better MySQL Queries
+https://www.sitepoint.com/using-explain-to-write-better-mysql-queries/
+
+
+
+T
+
+Java Utility Classes
+文章收集了一些工具类，好些都没用过
+https://www.programcreek.com/2015/12/top-10-java-utility-classes/
+
+S
+
+分布式事务处理方式总结
+https://mp.weixin.qq.com/s/tQ1nXjrPgHmXOUzfA2rGAg
+
+

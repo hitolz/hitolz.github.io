@@ -1,0 +1,422 @@
+---
+layout: post
+title: Netty 第一部分 Netty的概念及体系结构
+tags: [netty, jekyll, blog]
+image: '/images/posts/1.jpg'
+---
+
+
+# Netty
+Netty是什么?
+Netty是基于Java NIO技术封装的一套框架。是一款用于创建高性能网络应用程序的高级架构
+异步的事件驱动的网络应用程序架构 
+
+![-w994](/images/posts/media/15513695177304/15516232962664.jpg)
+
+
+
+NIO Non-blocking IO
+
+![-w1010](/images/posts/media/15513695177304/15516233217222.jpg)
+
+java.nio.channels.Selector是非阻塞IO实现的关键。它使用了事件通知API以确定在一组非阻塞套接字中有哪些已经就绪能够执行IO相关的操作。
+
+使用较少的线程就能处理许多连接。减少了内存管理和上下文切换所带来的开销。
+
+
+主要构件：
+- Channel
+- 回调
+- Future
+- 事件和ChannelHandler
+
+
+
+
+# 主要内容
+- 1、Java网络编程
+- 2、Netty简介
+- 3、Netty的核心组件
+ 
+ 
+Netty是一款异步的事件驱动的网络应用程序框架，支持快速地开发可维护的高性能的面向协议的服务器和客户端。
+它的架构方法和设计原则是：每个小点都和它的技术性内容一样重要，穷奇精妙。
+关注点分离--业务和网络逻辑解耦
+模块化和可复用性
+可测试性作为首要的要求。
+ 
+Java网络编程
+`Socket API`的  基本样例。
+
+```
+// 创建一个新的ServerSocket，用以监听指定端口上的连接请求
+ServerSocket serverSocket = new ServerSocket(portNumber);
+// 对accept方法的调用将被阻塞，直到一个连接建立
+Socket clientSocket = serverSocket.accept();
+BufferedReader in =
+    new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),true);
+ 
+String request,response;
+while((request = in.readLine()) != null){
+    if ("Done".equals(request)){
+        break;
+    }
+    response = processRequest(request);
+    out.println(response);
+}
+```
+ 
+`ServerSocket`上的accept方法将会一直阻塞到一个连接建立，随后返回一个新的`Socket`用于客户端和服务器之间的通信。该`ServerSocket`将继续监听传入的连接。
+ `BufferReader`和`PrinterWriter`都衍生自`Socket`的输入输出流，前者从一个字符输入流中读取文本，后者打印对象的格式化的表示到文本输出流。
+`readLine`方法将会阻塞，直到 换行符或者回车符 被读取
+上面这段代码只能同时处理一个连接，要管理多个并发客户端，需要为每个新的客户端`Socket`创建一个新的线程。
+
+Server端：
+```
+public class Server extends Thread {
+    private ServerSocket serverSocket;
+
+    public Server(int port) throws IOException {
+        serverSocket = new ServerSocket(port);
+        serverSocket.setSoTimeout(10000);
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                System.out.println("等待远程连接，端口号为：" + serverSocket.getLocalPort() + "...");
+                Socket server = serverSocket.accept();
+                System.out.println("远程主机地址：" + server.getRemoteSocketAddress());
+                DataInputStream in = new DataInputStream(server.getInputStream());
+                System.out.println(in.readUTF());
+                DataOutputStream out = new DataOutputStream(server.getOutputStream());
+                out.writeUTF("谢谢连接我：" + server.getLocalSocketAddress() + "\nGoodbye!");
+                server.close();
+            } catch (SocketTimeoutException s) {
+                System.out.println("Socket timed out!");
+                break;
+            } catch (IOException e) {
+                e.printStackTrace();
+                break;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        int port = 1000;
+        try {
+            Thread t = new Server(port);
+            t.run();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+Client端：
+```
+public class Client {
+    public static void main(String[] args) {
+        String serverName = "localhost";
+        int port = 1000;
+        try {
+            System.out.println("连接到主机：" + serverName + " ，端口号：" + port);
+            Socket client = new Socket(serverName, port);
+            System.out.println("远程主机地址：" + client.getRemoteSocketAddress());
+            OutputStream outToServer = client.getOutputStream();
+            DataOutputStream out = new DataOutputStream(outToServer);
+
+            out.writeUTF("Hello from " + client.getLocalSocketAddress());
+            InputStream inFromServer = client.getInputStream();
+            DataInputStream in = new DataInputStream(inFromServer);
+            System.out.println("服务器响应： " + in.readUTF());
+            client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+`Java NIO`
+NIO最开始是新的输入输出的英文缩写，现在 NIO表示 `非阻塞I/O(Non-blocking I/O)`
+
+
+一个非阻塞设计
+
+`Selector`是Java NIO实现的关键，它是用了事件通知API以确定在一组非阻塞套接字中有哪些已经就绪能够执行IO相关的操作。因此可以实现，一个单一的线程便可以处理多个并发的连接。
+这种模型提供了更好的资源管理：
+使用较少的线程便可以处理许多连接，因此也减少了内存管理和上下文切换带来的开销，
+当没有IO操作的时候，线程也可以被用于其他任务，
+
+
+### Netty简介
+- 网络编程框架，封装了Java高级API，并提供一个易于使用的API。
+#### 特性：
+
+- 异步和事件驱动
+
+非阻塞网络调用使得我们可以不必等待一个操作的完成。完全异步的IO正式基于这个特性构建的，异步方法会立即返回，并且在它完成时，会直接或者在稍后的某个事件点通知用户。
+
+
+#### Netty的核心组件
+- 1、Channel
+- 2、回调
+- 3、Future
+- 4、事件和ChannelHandler
+
+这些模块代表了不同类型的构造：资源、逻辑以及通知。
+### Channel
+`channel`是Java NIO的一个基本构造。
+它代表一个到实体(一个硬件设备、一个文件、一个网络套接字或者一个组件)的开放连接，如读操作和写操作
+### 回调
+
+一个回调就是一个方法。
+Netty内部使用了回调来处理事件，当一个回调被触发时，相关的事件可以被一个`ChannelHandler`的实现处理。
+
+### Future
+`Future`提供了另一种在操作完成时通知应用程序的方式
+`ChannelFuture`，用于在异步操作的时候使用。
+`ChannelFuture`提供了额外的几种方法，可以注册一个或多个`ChannelFutureListener`实例。监听器的回调方法`operationComplete`
+
+
+### NettyServerDemo
+
+- 创建一个`ServerBootStrap`的实例以引导和绑定服务器
+- 创建并分配一个`NioEventLoopGroup`实例以进行事件的处理
+- 指定服务器绑定的本地`InetSocketAddress`
+- 使用一个`EchoServerHandler`的实例初始化每一个新的`channel`
+- 调用`ServerBootStrap的bind`方法绑定服务器。
+
+```
+@Component
+public class NettyServerDemo {
+
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    ServerBootstrap serverBootstrap;
+
+    /**
+     * BOSS
+     */
+    EventLoopGroup bossGroup;
+    /**
+     * Worker
+     */
+    EventLoopGroup workerGroup;
+
+    private int port = 12345;
+
+    @Autowired
+    private EchoServerHandler echoServerHandler;
+
+    protected ChannelInitializer<SocketChannel> getChannel() {
+        return new ChannelInitializer<SocketChannel>() {
+            @Override
+            public void initChannel(SocketChannel ch) throws Exception {
+//                ch.pipeline().addLast("decoder", new StringDecoder(CharsetUtil.UTF_8));
+//                ch.pipeline().addLast("encoder", new StringEncoder(CharsetUtil.UTF_8));
+//                ch.pipeline().addLast(new ChannelHandler[]{new ReadTimeoutHandler(30L, TimeUnit.SECONDS)});
+//                ch.pipeline().addLast(new ChannelHandler[]{new WriteTimeoutHandler(30L, TimeUnit.SECONDS)});
+//                ch.pipeline().addLast(new ChannelHandler[]{new HttpResponseEncoder()});
+//                ch.pipeline().addLast(new ChannelHandler[]{new HttpRequestDecoder()});
+//                ch.pipeline().addLast(new ChannelHandler[]{new HttpObjectAggregator(10485760)});
+//                ch.pipeline().addLast(new ChannelHandler[]{new ChunkedWriteHandler()});
+                ch.pipeline().addLast(echoServerHandler);
+            }
+        };
+    }
+
+    public void start() {
+        int processorsNum = Runtime.getRuntime().availableProcessors();
+        int processors = processorsNum * 2;
+        this.bossGroup = new NioEventLoopGroup(processors);
+        this.workerGroup = new NioEventLoopGroup(processors);
+        serverBootstrap = new ServerBootstrap();
+        serverBootstrap.group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class)
+                .childHandler(this.getChannel())
+                .option(ChannelOption.SO_BACKLOG, 2048)
+                .childOption(ChannelOption.SO_KEEPALIVE, true);
+        try {
+            ChannelFuture future = serverBootstrap.bind(port).sync();
+            logger.info(NettyServerDemo.class.getName() + " started and listen on " + future.channel().localAddress());
+            future.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            logger.error("出现异常");
+            close();
+        }
+    }
+
+
+    /**
+     * 关闭服务器方法
+     */
+    @PreDestroy
+    public void close() {
+        logger.info("关闭服务器....");
+        this.bossGroup.shutdownGracefully();
+        this.workerGroup.shutdownGracefully();
+    }
+}
+```
+
+`EchoServerHandler`   通道适配器，`Shareanle`可以用于多线程共享。
+
+```
+@Component
+@Sharable
+public class EchoServerHandler extends ChannelInboundHandlerAdapter {
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * 处理所有接收到的数据
+     */
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        System.out.println("EchoServerHandler.channelRead");
+        ByteBuf in = (ByteBuf) msg;
+        logger.info("收到请求消息:" + in.toString(CharsetUtil.UTF_8));
+        // 将接收到的消息发送给发送者,而不冲刷出站消息
+        ctx.writeAndFlush(msg);
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("EchoServerHandler.channelReadComplete");
+        //将未决消息冲刷到远程节点，并且关闭该channel
+        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        System.out.println("EchoServerHandler.exceptionCaught");
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+```
+EchoClient
+Netty客户端
+- 1、连接到服务器
+- 2、发送一个或多个消息
+- 3、对于每个消息，等待从服务器返回的消息
+- 4、关闭连接
+
+
+
+> - 为初始化客户端，创建一个`BootStrap`实例
+> - 为进行事件处理分配了一个`NioEventLoopGroup`实例，其中事件处理包括创建新的连接以及入站出站数据
+> - 当连接建立时，一个`EchoClientHandler`实例将会被安装到`ChannelPipline`中
+> - `BootStrap.connect()`连接到远程服务器。
+
+```
+@Component
+public class EchoClient {
+    private String host = "127.0.0.1";
+    private int port = 12345;
+
+    public static void main(String[] args) throws Exception {
+        for (int i = 0; i < 10; i++) {
+            new EchoClient().start();
+        }
+    }
+
+    public void start() throws Exception {
+        EventLoopGroup group = new NioEventLoopGroup();
+        Bootstrap bootstrap = new Bootstrap();
+        try {
+            bootstrap.group(group)
+                    .channel(NioSocketChannel.class)
+                    .handler(new ChannelInitializer() {
+                        @Override
+                        protected void initChannel(Channel ch) throws Exception {
+                            ch.pipeline().addLast(new EchoClientHandler());
+                        }
+                    });
+            ChannelFuture future = bootstrap.connect(host,port).sync();
+            future.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            group.shutdownGracefully().sync();
+        }
+    }
+}
+EchoClientHandler
+@Component
+@Sharable
+public class EchoClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+   Logger logger = LoggerFactory.getLogger(this.getClass());
+
+   /**
+    * 在到服务器的连接已经建立之后将被调用
+    * 当被通知channel是活跃的时候，发送一条消息
+    */
+   @Override
+   public void channelActive(ChannelHandlerContext ctx) throws Exception {
+      System.out.println("EchoClientHandler.channelActive");
+      ctx.writeAndFlush(Unpooled.copiedBuffer("Hello Netty", CharsetUtil.UTF_8));
+   }
+
+   /**
+    * 收到服务器响应
+    */
+   @Override
+   protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
+      System.out.println("EchoClientHandler.channelRead0");
+      System.out.println("收到响应消息 :" + msg.toString(CharsetUtil.UTF_8));
+   }
+
+// @Override
+// public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+//    System.out.println("EchoClientHandler.channelRead");
+//    ByteBuf in = (ByteBuf) msg;
+//    System.out.println("收到响应消息 :" + in.toString(CharsetUtil.UTF_8));
+// }
+
+   /**
+    * 发生异常
+    *
+    */
+   @Override
+   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+      cause.printStackTrace();
+      ctx.close();
+   }
+}
+```
+
+
+
+## Channel、EventLoop、ChannelFuture
+- channel--Socket
+- EventLoop-- 控制流、多线程处理、并发
+- ChannelFuture--异步通知。
+
+
+#### channel
+Channel是对java网络编程的接口进行的封装。
+一个连接或者请求都可以看做是一个channel
+
+
+#### EventLoop
+用于处理连接的生命周期中所发生的事件。
+
+特性:
+- 一个EventLoopGroup包含一个或多个EventLoop
+- 一个EventLoop在它的生命周期内只能和一个Thread绑定
+- 所有由EventLoop处理的IO事件，都将在它专有的Thread进行
+- 一个Channel在它的声明周期中只注册于一个EventLoop
+- 一个EventLoop可能被分配给多个channel
+
+#### ChannelFuture
+异步回调、接收通知。
+
+Netty中所有的IO操作都是异步的，ChannelFuture就是为了接收操作完成后的通知的。
+
+## ChannelHandler、ChannelPipeline
+
+- ChannelHandler， 处理业务逻辑
+> In order to allow multiple protocols and various ways of processing data, Netty has what are called handlers.
+- ChannelHandlerContext，用于传输业务数据
+- ChannelPipeline，用于保存处理过程中需要的ChannelHandler和ChannelHandlerContext

@@ -1,0 +1,131 @@
+---
+layout: post
+title: ARTS-8月第一周
+tags: [arts, blog]
+image: '/images/posts/13.jpg'
+---
+
+ARTS
+
+1. Algorithm：每周至少做一个 leetcode 的算法题，或者参加codeforces比赛
+
+2. Review：阅读并点评至少一篇英文技术文章
+
+3. Tip：学习至少一个技术技巧
+
+4. Share：分享一篇有观点和思考的技术文章，每月一篇博客，每周一次分享
+
+
+
+A
+
+cf 576 A
+https://codeforces.com/contest/1199/problem/A
+前x天，后y天，中间这天降雨量最少，求这天的数组下标。
+一开始的思路是分割数组找两边最小的值与中间值进行比较，比较麻烦，也没AC。后面看了两位大佬的。。。
+```
+
+import java.util.Scanner;
+ 
+public class Cf576A {
+ 
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n, x, y;
+        n = scanner.nextInt();
+        x = scanner.nextInt();
+        y = scanner.nextInt();
+        int[] a = new int[n + 1];
+ 
+        for (int i = 1; i < n + 1; i++) {
+            a[i] = scanner.nextInt();
+        }
+ 
+        boolean exist = false;
+        for (int i = x; i <= n; i++) {
+            int minBefore = findMin(a, i - x, x);
+            if (a[i] > minBefore) {
+                continue;
+            }
+            if (i + y <= n) {
+                int minAfter = findMin(a, i + 1, y);
+                if (a[i] > minAfter) {
+                    continue;
+                }
+            }
+            System.out.println(i);
+            exist = true;
+            break;
+        }
+        if (!exist) {
+            System.out.println(n);
+        }
+ 
+    }
+ 
+    private static int findMin(int[] a, int startIndex, int num) {
+        int min = 999999999;
+        for (int i = startIndex; i < startIndex + num; i++) {
+            if (min > a[i]) {
+                min = a[i];
+            }
+        }
+        return min;
+    }
+}
+```
+
+
+
+R
+
+使用lombok简化java代码
+https://www.javafolder.com/lombok-in-java/
+https://projectlombok.org/features/all
+```
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class TestLombok {
+    private int id;
+    private String name;
+
+    public static void main(String[] args) {
+        TestLombok test = new TestLombok(1, "sad");
+        System.out.println(test);
+        System.out.println(test.getName());
+        System.out.println(test.toString());
+    }
+
+}
+
+```
+
+
+T
+
+String.replaceAll("*")
+https://stackoverflow.com/questions/16908806/dangling-meta-character
+
+- 异常:Dangling meta character '*' near index 0
+- 出现场景:String.replaceAll("*")
+- 原因:*在正则表达式中有特殊含义
+    String.replaceAll
+```
+  public String replaceAll(String regex, String replacement) {
+        return Pattern.compile(regex).matcher(this).replaceAll(replacement);
+    }
+   ```
+    
+需转义
+
+S
+
+不懂数据库索引的底层原理？那是因为你心里没点b树
+https://mp.weixin.qq.com/s/HSp1gZr55DX3ErRw0du1aw
+

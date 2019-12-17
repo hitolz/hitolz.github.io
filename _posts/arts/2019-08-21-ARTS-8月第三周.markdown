@@ -1,0 +1,168 @@
+---
+layout: post
+title: ARTS-8月第三周
+tags: [arts, blog]
+image: '/images/posts/15.jpg'
+---
+
+ARTS
+
+1. Algorithm：每周至少做一个 leetcode 的算法题，或者参加codeforces比赛
+
+2. Review：阅读并点评至少一篇英文技术文章
+
+3. Tip：学习至少一个技术技巧
+
+4. Share：分享一篇有观点和思考的技术文章，每月一篇博客，每周一次分享
+
+
+
+A
+
+cf 579 A
+https://codeforces.com/contest/1203/problem/A
+
+思路：
+先找到最小的位置，记录下来，判断这个位置顺序逆序是否成立。
+
+```
+import java.util.Scanner;
+
+public class CF579A {
+
+	static class Node {
+		int value;
+		int idx;
+		int nextIdx;
+		int preIdx;
+
+		public int getValue() {
+			return value;
+		}
+
+		public void setValue(int value) {
+			this.value = value;
+		}
+
+		public int getIdx() {
+			return idx;
+		}
+
+		public void setIdx(int idx) {
+			this.idx = idx;
+		}
+
+		public int getNextIdx() {
+			return nextIdx;
+		}
+
+		public void setNextIdx(int nextIdx) {
+			this.nextIdx = nextIdx;
+		}
+
+		public int getPreIdx() {
+			return preIdx;
+		}
+
+		public void setPreIdx(int preIdx) {
+			this.preIdx = preIdx;
+		}
+	}
+
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		int q = scanner.nextInt();
+		for (int i = 0; i < q; i++) {
+			int n = scanner.nextInt();
+			int[] stu = new int[n];
+			int minIdx = 0;
+			Node[] nodes = new Node[n];
+			for (int j = 0; j < n; j++) {
+				int value = scanner.nextInt();
+				stu[j] = value;
+				if (value < stu[minIdx]) {
+					minIdx = j;
+				}
+				Node node = new Node();
+				node.value = value;
+				node.idx = j;
+				node.nextIdx = j + 1;
+				node.preIdx = j - 1;
+				if (j == 0) {
+					node.preIdx = n - 1;
+				}
+				if (j == n - 1) {
+					node.nextIdx = 0;
+				}
+				nodes[j] = node;
+			}
+			Node keyNode = nodes[minIdx];
+			Node minNode = keyNode;
+			Node nextNode = nodes[keyNode.nextIdx];
+			Node preNode = nodes[keyNode.preIdx];
+			Node tmp = nextNode;
+			boolean sortClockwise = false;
+			boolean sortCounterclockwise = false;
+
+//				sortClockwise
+			while (tmp.value < keyNode.value) {
+				keyNode = tmp;
+				tmp = nodes[keyNode.nextIdx];
+			}
+			if (minNode.value == tmp.value) {
+				sortClockwise = true;
+			}
+			while (tmp.value > keyNode.value) {
+				keyNode = tmp;
+				tmp = nodes[keyNode.nextIdx];
+			}
+			if (minNode.value == tmp.value) {
+				sortClockwise = true;
+			}
+
+			keyNode = nodes[minIdx];
+			minNode = keyNode;
+			tmp = preNode;
+//				sortCounterclockwise
+			while (tmp.value < keyNode.value) {
+				keyNode = tmp;
+				tmp = nodes[keyNode.preIdx];
+			}
+			if (minNode.value == tmp.value) {
+				sortCounterclockwise = true;
+			}
+			while (tmp.value > keyNode.value) {
+				keyNode = tmp;
+				tmp = nodes[keyNode.preIdx];
+			}
+			if (minNode.value == tmp.value) {
+				sortCounterclockwise = true;
+			}
+			if (sortClockwise || sortCounterclockwise) {
+				System.out.println("YES");
+			} else {
+				System.out.println("NO");
+			}
+		}
+	}
+}
+
+```
+
+
+R
+
+HashMap vs. TreeMap vs. Hashtable vs. LinkedHashMap
+https://www.programcreek.com/2013/03/hashmap-vs-treemap-vs-hashtable-vs-linkedhashmap/
+
+
+T
+
+为什么项目中用了JOOQ后大家都不愿再用Mybatis
+https://www.itcodemonkey.com/article/15474.html
+
+S
+
+Mybatis框架和插件将动态代理玩出了新境界
+https://www.itcodemonkey.com/article/15643.html
+

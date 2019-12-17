@@ -1,0 +1,70 @@
+---
+layout: post
+title: ARTS 7.21-7.27
+tags: [arts, blog]
+image: '/images/posts/11.jpg'
+---
+
+ARTS
+
+1. Algorithm：每周至少做一个 leetcode 的算法题，或者参加codeforces比赛
+
+2. Review：阅读并点评至少一篇英文技术文章
+
+3. Tip：学习至少一个技术技巧
+
+4. Share：分享一篇有观点和思考的技术文章，每月一篇博客，每周一次分享
+
+
+
+A
+
+R
+
+https://www.javafolder.com/lombok-in-java/
+https://projectlombok.org/features/all
+
+```
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class TestLombok {
+    private int id;
+    private String name;
+
+    public static void main(String[] args) {
+        TestLombok test = new TestLombok(1, "sad");
+        System.out.println(test);
+        System.out.println(test.getName());
+        System.out.println(test.toString());
+    }
+
+}
+
+```
+
+
+T
+
+https://stackoverflow.com/questions/16908806/dangling-meta-character
+
+- 异常:`Dangling meta character '*' near index 0`
+- 出现场景:`String.replaceAll("*")`
+- 原因:`*`在正则表达式中有特殊含义
+String.replaceAll
+```
+    public String replaceAll(String regex, String replacement) {
+        return Pattern.compile(regex).matcher(this).replaceAll(replacement);
+    }
+    ```
+
+
+
+S
+不懂数据库索引的底层原理？那是因为你心里没点b树
+https://mp.weixin.qq.com/s/HSp1gZr55DX3ErRw0du1aw
