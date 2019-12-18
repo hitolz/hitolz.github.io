@@ -1,0 +1,239 @@
+---
+layout: post
+title: 强人锁男系列之--InnoDB存储引擎中的锁
+tags: [InnoDB, blog]
+categories: [InnoDB, MySQL]
+---
+
+
+# 强人锁男系列之InnoDB存储引擎中的锁
+
+[toc]
+
+
+
+* 共享锁 S 
+* 独占锁 X
+* 意向锁
+
+* 间隙锁
+
+* Next-Key锁
+
+* 插入意向锁
+
+* AUTO-INC锁
+
+* 空间锁
+
+* 页锁
+
+* 表锁
+
+* 行锁
+
+* 乐观锁
+
+* 悲观锁
+
+http://treenpool.com/html/index.html?branchId=488
+
+
+这都是些啥？？？
+
+## 表锁、行锁
+表锁是对一张表加锁，一般是DDL处理时使用，
+
+行锁指的是锁定某一行或者几行，或者行与行之间的间隙。
+
+行锁只锁住有限的数据，所以并发能力强，一般都是采用行锁。
+
+
+
+### 对数据库加表锁
+`LOCK TABLES` 显示获取当前客户端对话的表锁 ，在获取新锁之前，隐式释放当前会话持有的所有表锁。
+
+`UNLOCK TABLES` 显示释放当前会话所持有的所有的表锁。
+
+
+
+### 表锁可以分为 读锁、写锁。
+
+```mysql
+-- 读锁
+LOCK TABLES t_logs READ;
+-- 写锁
+LOCK TABLES t_logs WRITE; 
+```
+
+
+
+#####  读锁：
+
+持有读锁的会话只可以读取数据，多个会话可以同时获取该表的READ锁其他会话就算没有加读锁，也是可以读取数据的其他会话申请该表的写锁的时候，会阻塞，直到该会话读锁释放
+
+##### 写锁：
+
+持有锁的会话可以读取和插入数据，只有持有锁的会话才能访问该表,在释放锁之前，没有其他会话可以访问它，其他会话申请该表的读锁或者写锁都会被阻塞，直到该会话表写锁释放
+
+WRITE锁比READ锁优先级高，以确保尽快处理更新。这意味着，如果一个会话获取了一个READ锁，然后另一个会话请求了一个WRITE锁，则随后的READ锁请求将一直等待，直到请求该WRITE锁的会话已经释放该锁。
+如果一张表已经加了写锁，在另一个会话中在对这张表加任何锁，都会阻塞。两个会话都加读锁不会造成阻塞。
+会话只能访问锁定的表。
+
+### 锁的释放：
+
+1、显示释放  `UNLOCK TABLES;`
+
+2、隐式释放   
+
+1、会话再次申请LOCK TABLES，上次的锁会隐式释放掉  
+
+2、会话开始事务（START  TRANSACTION），锁会隐式释放
+
+`LOCK TABLES`不是事务安全的，而是在尝试锁定表之前隐式提交任何活动事务.
+
+`UNLOCK TABLES` 隐式提交任何活动事务，前提是`LOCK TABLES`已用于获取表锁。
+可以使用KILL 来终止正在等待表锁的会话。
+
+## 行锁
+行锁与表锁一样，也分成读锁和写锁。
+常见的增删改（`INSERT`、`DELETE`、`UPDATE`）语句会自动对操作的数据行加写锁，
+查询的时候也可以指定锁的类型，
+* `SELECT… LOCK IN SHARE MODE`语句加的是读锁
+* `SELECT… FOR UPDATE`加的是写锁
+
+行锁是加在索引上的。
+
+### 行锁种类：
+```
+#define LOCK_TABLE 16 /* table lock */
+#define LOCK_REC 32 /* record lock */
+
+/* ... ordinary next-key lock in contrast to LOCK_GAP or LOCK_REC_NOT_GAP*/
+#define LOCK_ORDINARY 0
+
+/* ... the lock holds only on the gap before the record; for instance, an x-lock on the gap does not give permission to modify the record on which the bit is set ... */
+#define LOCK_GAP 512
+
+/* ... the lock is only on the index record and does NOT block inserts to the gap before the index record; this is used in the case when we retrieve a record with a unique key, and is also used in locking plain SELECTs (not part of UPDATE or DELETE) when the user has set the READ COMMITTED isolation level */
+#define LOCK_REC_NOT_GAP 1024
+
+/* this bit is set when we place a waiting gap type record lock request in order to let an insert of an index record to wait until there are no conflicting locks by other transactions on the gap; note that this flag remains set when the waiting lock is granted, or if the lock is inherited to a neighboring record */
+#define LOCK_INSERT_INTENTION 2048
+```
+
+
+1. LOCK_ORDINARY：也称为Next-Key Lock，
+锁一条记录机器之前的间隙，这是RR隔离级别用的最多的锁
+2. LOCK_GAP：间隙锁，锁两个记录之间的GAP，防止记录插入
+3. LOCK_REC_NOT_GAP：只锁记录
+4. LOCK_INSERT_INTENSION：插入意向GAP锁，插入记录时使用，是LOCK_GAP的一种特例
+
+
+行级锁：
+* 共享锁 S Lock，允许事务读取一行数据
+* 排它锁 X Lock，允许事务删除或更新一行数据
+
+兼容性矩阵 
+![img](file:///C:/Users/User/Evernote/TEMP/enhtmlclip/Image(1).png)
+X锁与其他锁都不兼容。
+
+
+
+#### 行锁与表锁对比：
+* 表锁：开销小，加锁块，不会出现死锁；锁定粒度大，发生锁冲突的概率高，并发度最低
+
+* 行锁：开销大，加锁慢，会出现死锁；锁定粒度小，发生锁冲突概率低，并发度最高
+
+
+
+还有两种意向锁：
+* 意向共享锁 IS 
+* 意向排他锁 IX
+
+这两种意向锁都是表锁。 方便表锁与行锁之间的冲突检测。正是由于意向锁的存在，MySQL的InnoDB存储引擎支持多粒度锁定，允许事务在行级上的锁和表级上的锁同时存在。意向锁的存在就是事务希望在更细粒度上加锁
+
+![img](file:///C:/Users/User/Evernote/TEMP/enhtmlclip/Image(2).png)
+
+对最下层的记录上锁，也就是对最细粒度上锁，需要先对粗粒度上锁。如果想对记录上X锁，分别需要对数据库A、表、页上意向锁IX，若其中任何一部分导致等待，那么该操作需要等待粗粒度上的锁处理完成。
+
+
+
+
+
+![img](file:///C:/Users/User/Evernote/TEMP/enhtmlclip/Image.jpg)
+如果一个事务请求的锁模式与当前的锁兼容，InnoDB就将请求的锁授予该事务，反之，不兼容的情况下，该事务就要等待锁的释放
+
+
+## InnoDB加锁方法：
+### 隐式锁定：
+* 事务提交或者rollback的时候提交意向锁是InnoDB自动加的，不需要用户干预
+* 对于`INSERT`、`UPDATE`、`DELETE`，InnoDB会自动加X锁，
+* 普通查询，不会加锁
+
+### 显示锁定：一致性锁定读
+
+* `SELECT ... LOCK IN SHARE MODE`会加S锁
+* `SELECT ... FOR UPDATE` 会加X锁。
+
+
+##  自增长与`AUTO_INC`锁
+InnoDB存储引擎的内存结构中，对每个含有自增长值的表都有一个自增长计数器（auto-increment counter）。
+当对含有自增长计数器的表进行插入的时候，计数器会被初始化，
+执行`SELECT MAX( auto_ inc_ col) FROM t FOR UPDATE;`来得到计数器的值，插入操作会一句这个自增长的计数器值加1赋予自增长列。
+这个实现方式称作`AUTO-INC Locking`。
+
+这种锁其实是采用一种特殊的表锁机制，为了提高插入的性能，锁不是在一个事务完成后才释放，而是还在完成对自增长值插入的SQL语句后立即释放。
+
+
+### AUTO-INC锁特点：
+*  AUTO_INC锁互不兼容，同一张表同时只允许有一个自增锁
+*  AUTO_INC不遵循二阶段锁协议，它并不是事务结束时释放，而是insert执行结束后释放，这样可以提高并发性能
+*  自增值一旦分配就会加1，事务回滚，自增值也不会减回去，所以自增值可能会出现中断的情况
+
+
+
+虽然`AUTO-INC Lock`从一定程度上提高了并发插入的效率，但还是存在一些性能上的问题。
+首先，对于有自增长值的列的并发插入性能较差，事务必须等待上一个插入操作的完成。
+期次，对于`INSERT ... SELECT` 的大数据量的插入会影响插入的性能，因为另一个事务中的插入胡被阻塞。
+
+
+
+
+
+
+
+
+TODO:
+* 添加索引的时候可以对表进行操作吗
+* 修改表结构对表加的是什么锁？表锁与行锁冲突吗？
+* MySQL中的索引结构
+    * 平衡二叉树，任意两个子树高度差最大差1，查找时间复杂度O(log n)
+    * B+树索引的类型
+    * 索引的实现
+    * 最左前缀
+
+* MySQL加锁过程
+* 二级索引？聚簇索引？2PL - 二阶段锁
+
+* 事务及其ACID特性
+* 并发事务带来的问题：脏读、幻读、更新丢失、不可重复读
+* MySQL事务隔离级别：Isolation Level
+    * 4种隔离级别：
+    * 1、Read Uncommited    RU
+    * 2、Read Committed      RC
+    * 3、Repeatable Read     RR
+    * 4、Serializable           
+* MVCC：快照读？当前读
+
+-----
+
+
+参考资料：
+* https://www.aneasystone.com/archives/2017/11/solving-dead-locks-two.html
+* mysql 官方文档 https://dev.mysql.com/doc/refman/5.7/en/lock-tables.html
+* http://hedengcheng.com/?p=771
+* https://www.cnblogs.com/chenqionghe/p/4845693.html
+* https://zhuanlan.zhihu.com/p/29150809
+* http://novoland.github.io/
+* InnoDB存储引擎
