@@ -135,7 +135,7 @@ WRITE锁比READ锁优先级高，以确保尽快处理更新。这意味着，�
 * 排它锁 X Lock，允许事务删除或更新一行数据
 
 兼容性矩阵 
-![img](../../images/posts/media/mysql/s-x兼容性.png)
+![img](/images/posts/media/mysql/s-x兼容性.png)
 X锁与其他锁都不兼容。
 
 
@@ -153,7 +153,7 @@ X锁与其他锁都不兼容。
 
 这两种意向锁都是表锁。 方便表锁与行锁之间的冲突检测。正是由于意向锁的存在，MySQL的InnoDB存储引擎支持多粒度锁定，允许事务在行级上的锁和表级上的锁同时存在。意向锁的存在就是事务希望在更细粒度上加锁
 
-![img](../../images/posts/media/mysql/多粒度锁.png)
+![img](/images/posts/media/mysql/多粒度锁.png)
 
 对最下层的记录上锁，也就是对最细粒度上锁，需要先对粗粒度上锁。如果想对记录上X锁，分别需要对数据库A、表、页上意向锁IX，若其中任何一部分导致等待，那么该操作需要等待粗粒度上的锁处理完成。
 
@@ -161,7 +161,7 @@ X锁与其他锁都不兼容。
 
 
 
-![img](../../images/posts/media/mysql/s-x-is-ix兼容性.jpg)
+![img](/images/posts/media/mysql/s-x-is-ix兼容性.jpg)
 如果一个事务请求的锁模式与当前的锁兼容，InnoDB就将请求的锁授予该事务，反之，不兼容的情况下，该事务就要等待锁的释放
 
 
@@ -201,7 +201,7 @@ InnoDB存储引擎的内存结构中，对每个含有自增长值的表都有�
 
 自增长的插入类型：
 
-![image](../../images/posts/media/mysql/自增长插入分类.png)
+![image](/images/posts/media/mysql/自增长插入分类.png)
 
 1. `insert-like`：指所有的插入语句
 2. `simple inserts`：指能在插入前就确定插入行数的语句
@@ -268,7 +268,7 @@ Next-key 锁是记录所和间隙锁的组合，指的是在这条记录及这�
 
 ## 兼容性矩阵
 
-![image-20191218174111727](C:\Users\User\AppData\Roaming\Typora\typora-user-images\image-20191218174111727.png)
+![image](/images/posts/media/mysql/锁的兼容性.png)
 
 
 
