@@ -195,7 +195,118 @@ InnoDB存储引擎的内存结构中，对每个含有自增长值的表都有�
 
 虽然`AUTO-INC Lock`从一定程度上提高了并发插入的效率，但还是存在一些性能上的问题。
 首先，对于有自增长值的列的并发插入性能较差，事务必须等待上一个插入操作的完成。
-期次，对于`INSERT ... SELECT` 的大数据量的插入会影响插入的性能，因为另一个事务中的插入胡被阻塞。
+其次，对于`INSERT ... SELECT` 的大数据量的插入会影响插入的性能，因为另一个事务中的插入胡被阻塞。
+
+### 自增长的模式
+
+自增长的插入类型：
+
+![image](../../images/posts/media/mysql/自增长插入分类.png)
+
+1. `insert-like`：指所有的插入语句
+2. `simple inserts`：指能在插入前就确定插入行数的语句
+3. `bulk inserts`：指在插入前不能确定行数的语句
+4. `mixed-mode inserts`：指插入中有一部分的值是自增长的，有一部分是确定的
+
+
+
+从5.1.22版本开始，InnoDB存储引擎提供了一种轻量级互斥量`mutex`的自增长实现机制，这种机制大大提高了自增长值的插入性能。
+
+InnoDB存储引擎提供了参数 `innodb_autoinc_lock_mode` 来控制自增长的模式，默认值为1。
+
+可以取3个值，0、1、2
+* 0，是5.1.22版本之前的自增长实现方式，AUTO-INC实现方式。
+* 1，默认值 
+    * 对于`simple insert`，会使用mutex锁
+    * 对于`bulk inserts`，还是使用传统表锁`AUTO-INC Lock`
+    * 对于`mixed-mode inserts`，会直接分析语句，获得最坏情况下需要插入的数量，一次性分配足够的自增长值，都是连续的，“多余的”会被丢弃
+    
+* 2，全部都用轻量级锁mutex
+    * 并发性能最高，按顺序依次分配自增值  
+    * 不安全的，这种模式下sql没有存在二进制日志中
+
+
+## 间隙锁 GAP
+
+间隙锁是一种加在两个索引之间的锁，或者加在第一个索引之前，或者最后一个索引的间隙。
+例如：`SELECT c1 FROM t WHERE c1 BETWEEN 10 and 20 FOR UPDATE`，将阻止其他事务将 15 插入t.c1 列，无论有没有值为15的记录。
+使用间隙锁可以防止其他事务在这个范围内修改或插入数据，保证两次读取这个范围内的记录不会改变，从而不会出现幻读现象。
+
+间隙锁和间隙锁之间是互不冲突的，间隙锁的唯一作用就是防止其他事务的修改。
+
+只有RR隔离级别下才有GAP锁。
+
+
+## Next-Key Locks
+Next-key 锁是记录所和间隙锁的组合，指的是在这条记录及这条记录前的间隙上的锁。
+假设一个索引包含10、11、13、20  这几个值，可能的 Next-key 锁如下：
+* (-∞, 10]
+* (10, 11]
+* (11, 13]
+* (13, 20]
+* (20, +∞)
+
+左开右闭的区间来表示Next-Key锁，上面最后一种不是Next-Key锁，是间隙锁。
+
+只有RR隔离级别下才有Next-Key锁。
+
+
+
+## 插入意向锁（II GAP）
+
+插入意向锁是一种特殊的间隙锁，这个锁表示插入的意向，只有在`INSERT`的时候才有这个锁。
+
+插入意向锁之间不会冲突，对其他事务不会有影响。
+
+插入意向锁只会和间隙锁或Next-Key锁冲突。
+
+正是由于在执行INSERT的时候会加一个插入意向锁，而插入意向锁和间隙锁冲突，从而阻止插入操作，才防止了幻读。
+
+
+
+
+
+## 兼容性矩阵
+
+![image-20191218174111727](C:\Users\User\AppData\Roaming\Typora\typora-user-images\image-20191218174111727.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -230,10 +341,12 @@ TODO:
 
 
 参考资料：
+* https://dev.mysql.com/doc/refman/5.7/en/innodb-locking.html
 * https://www.aneasystone.com/archives/2017/11/solving-dead-locks-two.html
-* mysql 官方文档 https://dev.mysql.com/doc/refman/5.7/en/lock-tables.html
+* https://dev.mysql.com/doc/refman/5.7/en/lock-tables.html
 * http://hedengcheng.com/?p=771
 * https://www.cnblogs.com/chenqionghe/p/4845693.html
 * https://zhuanlan.zhihu.com/p/29150809
 * http://novoland.github.io/
-* InnoDB存储引擎
+* 姜承尧. MySQL技术内幕：InnoDB存储引擎(第2版)
+* https://dev.mysql.com/doc/refman/5.7/en/innodb-auto-increment-handling.html#innodb-auto-increment-lock-modes
