@@ -14,3 +14,10 @@
     <script type="text/javascript" src="/static/js/toc.js"></script>
     {% for script in page.scripts %}<script type="text/javascript" src="{{'/static/js/' | append:script | prepend:site.baseurl | prepend: site.url  }}"></script>
     {%endfor%}
+    <div id="toc">
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#toc').toc();
+            });
+        </script>
+    </div>
