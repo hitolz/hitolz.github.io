@@ -15,10 +15,6 @@
     <link rel="stylesheet" type="text/css" href="{{ '/static/css/style.css' | prepend: site.baseurl | prepend: site.url}}" />
     {% for style in page.styles %}<link rel="stylesheet" type="text/css" href="{{ '/static/css/' | append: style | prepend: site.baseurl | prepend: site.url}}" />
     {%endfor%}
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#toc').toc();
-        });
-    </script>
+
 
 </head>
