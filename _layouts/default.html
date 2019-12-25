@@ -7,8 +7,15 @@
 
 {% include header.html %}
 
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#toc').toc();
+    });
+</script>
+
 <div class="main">
     <div class="container">
+        <div id="toc"></div>
         {{ content }}
     </div>
     <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
