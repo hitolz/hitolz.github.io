@@ -8,8 +8,6 @@ categories: [InnoDB, MySQL]
 
 # 强人锁男系列之InnoDB存储引擎中的锁
 
-[toc]
-
 
 
 * 共享锁 S 
