@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: post-no
 title: Kotlin Learn part 1
 tags: [Kotlin, blog]
 image: '/images/posts/20.jpg'
