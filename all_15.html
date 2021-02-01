@@ -81,6 +81,8 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a></li>
+        
             <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a></li>
         
             <li><a href="JVM.html">JVM</a></li>
@@ -114,241 +116,64 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032820352897.html">
+                <a class="clearlink" href="16032821146100.html">
                 
-                  <h1>JVM初探</h1>
+                  <h1>MySQL聚集索引和二级索引</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h2 id="toc_0">JVM运行时数据区</h2>
+                        	<p>数据库中B+树索引分为聚集索引(clustered index)和辅助索引(secondary index，也被称作二级索引、非聚集索引)，其内部都是B+树，即高度平衡的，叶子节点存放所有数据，不同的是叶子节点存放的是否是一整行的数据。</p>
 
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15904079187289.jpg" alt=""/></p>
+<hr/>
 
-<ul>
-<li><p>程序计数器</p>
-<ul>
-<li>是一块很小的内存空间，可以看做是当前线程执行的行号指示器。字节码解释器工作时就是通过改变这个计数器的数值来选取下一条需要执行的字节码指令</li>
-<li>线程私有</li>
-<li>不会发生OOM</li>
-</ul></li>
-<li><p>Java虚拟机栈</p>
-<ul>
-<li>线程私有</li>
-<li>为执行Java方法服务</li>
-<li>其工作原理类似于数据结构中的栈--FIFO。每个方法在执行的过程中会在虚拟机栈中创建一个栈帧，用于存储局部变量表、操作数栈、动态链接、方法出口等信息。</li>
-<li>会发生OOM、StackOverflowError</li>
-</ul></li>
-<li><p>本地方法栈</p>
-<ul>
-<li>线程私有</li>
-<li>与虚拟机栈功能类似</li>
-<li>为Native方法服务</li>
-<li>会发生OOM、StackOverflowError</li>
-</ul></li>
-<li><p>Java堆</p>
-<ul>
-<li>线程共享</li>
-<li>几乎所有的对象实例都在堆中分配。</li>
-<li>逃逸分析、标量替换--&gt;栈上分配</li>
-<li><p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15904091934707.jpg" alt=""/></p></li>
-<li><p>新生代:老年代 = 1:2</p></li>
-<li><p>Eden:S0:S1 = 8:1:1</p></li>
-</ul></li>
-<li><p>方法区</p>
-<ul>
-<li> 线程共享</li>
-<li> 存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码</li>
-<li> 运行时常量池：用于存放编译期生成的各种字面量和符号引用</li>
-<li> 会出现OOM</li>
-</ul></li>
-</ul>
+<p>聚集索引：InnoDB存储引擎中，按照每张表的主键构建的一棵B+树，叶子节点存放的即为行记录数据。<br/>
+InnoDB存储引擎中是必须要有一个聚集索引的，如果没有显示指定哪一字段是主键，则选择表中第一个不允许为NULL的唯一索引当作是聚集索引，如果还是没有，就采用InnoDB为每行数据内置的6字节的rowid作为聚集索引。<br/>
+一般聚集索引是自增主键。</p>
 
-<h2 id="toc_1">辣鸡回收算法与辣鸡回收器</h2>
+<hr/>
 
-<p>辣鸡回收需要做的3件事情</p>
+<p>辅助索引：叶子节点并不包含行记录的全部数据，叶子节点除了包含键值以外，每个叶子节点中的索引行中还包含了一个书签(bookmark)，该书签用来告诉InnoDB存储引擎哪里可以找多与索引相对应的行数据。由于InnoDB存储引擎表是索引组织表，因此 辅助索引的书签就是相应行数据的聚集索引键。</p>
 
-<ul>
-<li>哪些内存需要回收</li>
-<li>什么时候回收</li>
-<li>如何回收</li>
-</ul>
+<p>当通过辅助索引来寻找数据时，先查到主键，然后通过主键索引来找到一个完整的行记录。</p>
 
-<p>上面JVM运行时数据区中线程私有变量（本地方法栈、JVM虚拟机栈、程序计数器）会随着方法执行的完成而自动释放内存，所以这部分的内存不需要考虑回收。需要考虑回收的内存主要就是堆内存与方法区，只有在程序运行的时候才知道会创建哪些对象，哪些需要回收。</p>
+<hr/>
 
-<h2 id="toc_2"></h2>
+<p>回表问题：<br/>
+当通过二级索引去查询数据，先查询辅助索引树，得到主键值，再通过聚集索引树查询，得到最终结果。</p>
 
-<p>判断对象是否存活</p>
+<p>回到主键索引树搜索的过程，称为回表。</p>
 
-<ol>
-<li><p>程序计数器</p>
-<p>给对象添加一个引用计数器，每当有一个地方引用它时，计数器的值就+1，当引用失效时，计数器的值-1.</p>
-<p>但是主流的Java虚拟机里面并没有使用这种方式，最主要的原因是它很难解决对象之间相互循环引用的问题。</p></li>
-<li><p>可达性分析(GC Roots)</p>
-<p>使用最多的是这种方式。<br/>
-这种算法的思路就是，选择一个根节点，从这个节点往下搜索，搜索过程中走过的路径称为引用链，当一个对象到根节点没有引用链存在时，也就是不可达，这种对象就是辣鸡对象。<br/>
-哪些对象可以作为GC Roots</p>
-<ul>
-<li>虚拟机栈中引用的对象</li>
-<li>方法区中静态属性引用的对象</li>
-<li>方法区中常量引用的对象</li>
-<li>本地方法栈中引用的对象</li>
-</ul></li>
-<li><p>引用的类型</p>
-<ul>
-<li><p>强引用：</p>
-<ul>
-<li>new出来的对象都是强引用对象，在没有指定该对象=null，不会被回收。</li>
-</ul>
-<pre><code class="language-text">Object obj =new Object();  // 强引用
-obj = null;//这时候为垃圾回收器回收这个对象，至于什么时候回收，取决于垃圾回收器的算法
-</code></pre></li>
-<li><p>软引用：</p>
-<ul>
-<li>SoftReference</li>
-<li>当内存不够用的时候会回收。</li>
-<li>适合做缓存。</li>
-</ul>
-<pre><code class="language-text">String value = new String(“sy”);
-SoftReference sfRefer = new SoftReference (value );<br/>
-sfRefer .get();//可以获得引用对象值
-</code></pre></li>
-<li><p>弱引用</p>
-<ul>
-<li>WeakReference</li>
-<li>只要发生GC就会回收。</li>
-<li>适合加载的时候初始化用。</li>
-<li>ThreadLocal中有使用。</li>
-</ul>
-<pre><code class="language-text">String value = new String(“sy”);
-WeakReference weakRefer = new WeakReference(value );<br/>
-System.gc();<br/>
-weakRefer.get();//null
-</code></pre></li>
-<li><p>虚引用</p>
-<ul>
-<li>作用：管理堆外内存。</li>
-<li>NIO中 DirectByreBuffer</li>
-</ul></li>
-</ul></li>
-</ol>
+<p>如果在一棵高度为3的辅助索引树中查找数据，那需要对这棵辅助索引遍历3次找到指定主键，如果聚集索引树的高度同样为3，那么还需要对聚集索引树进行3次查找，最终得到一个完整的行数据所在的页，一共需要6次逻辑IO访问得到最终的数据页。</p>
 
-<ol>
-<li><p>对象的自我拯救-二次标记</p>
-<ul>
-<li>当一个对象被标记为辣鸡后并不会立马被回收掉。</li>
-<li>第一次经过可达性分析后发现该对象是辣鸡对象，会被第一次标记并且进行一次筛选，筛选的条件是此对象时候有必要执行<code>finalize</code>方法，</li>
-<li>如果该对象需要执行finallize方法，那么这个对象会被放置在一个F-Queue的队列中，稍后GC将会对队列中的对象信心小规模的二次标记。</li>
-<li>如果对象在执行finalize过程中，与GC Roots建立联系了，那么这个对象就不会被回收，反之就会被回收了。</li>
-</ul></li>
-<li><p>回收方法区<br/>
-永久代主要回收两类对象：废弃常量和无用的类。<br/>
-废弃常量好理解，没有任何对象引用常量池中的某个变量，这个变量就是废弃常量。<br/>
-如何判断一个类是无用的类</p>
-<ul>
-<li>该类的所有实例都已经被回收掉</li>
-<li>加载该类的ClassLoader已经被回收</li>
-<li>该类对应的java.lang.Class对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法</li>
-</ul></li>
-</ol>
-
-<h3 id="toc_3">辣鸡回收算法</h3>
-
-<ol>
-<li><p>标记-清除算法<br/>
-当对象被标记为辣鸡后，直接清理掉。<br/>
-效率不高、容易产生内存碎片</p></li>
-<li><p>标记-整理算法<br/>
-被标记为辣鸡的对象回收之后，整理内存空间。</p></li>
-<li><p>复制算法<br/>
-将内存分为大小相等的两块，每次内存分配的时候只使用其中的一块，当这块内存满了只有，将存活对象复制到另一块内存空间中，然后整块清理。<br/>
-实现简单、运行高效<br/>
-但是浪费一半的内存。</p></li>
-<li><p>分代收集算法<br/>
-目前使用这种算法。</p></li>
-</ol>
-
-<p>新生代中发生GC -- minor gc</p>
-
-<p>minor GC test</p>
-
-<pre><code class="language-text">public class HeapTest {
-
-    private byte[] bytes = new byte[1024*100];
-
-    public static void main(String[] args) throws InterruptedException {
-        List&lt;HeapTest&gt; list = new ArrayList&lt;&gt;();
-        while (true) {
-            System.out.println(111);
-            list.add(new HeapTest());
-            Thread.sleep(10);
-        }
-    }
-}
+<pre><code class="language-text">CREATE TABLE `user` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) COLLATE utf8_bin NOT NULL,
+  `age` int(11) NOT NULL,
+  `sex` varchar(2) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_name` (`name`)
+) ENGINE=InnoDB  
 </code></pre>
 
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-minor-gc.gif" alt="minor-g"/></p>
+<p>例如，这么一个表结构，两个查询语句</p>
 
-<p>这图是上面的代码运行时的gc情况。</p>
+<pre><code class="language-text">select id,name from user where name = &#39;zhangsan1&#39;;
+select id,name,age from user where name = &#39;zhangsan1&#39;;
+</code></pre>
 
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15904106385761.jpg" alt=""/></p>
+<p>用EXPLAIN看一下执行计划，</p>
 
-<p>从图中可以得出结论，新生成的对象都是在Eden区，当Eden区满了后，会执行gc回收，将Eden区与S0区中的存活对象拷贝到S1，并清空Eden、S0，存活对象年龄+1；<br/>
-当新生对象又一次将Eden区填满后，会将Eden区、S1中的存活对象拷贝到S0，并清空S1，存活对象年龄+1；<br/>
-当存活对象的年龄达到15后，会被认为是老不死对象，挪到老年代内存中。<br/>
-新生代中的GC 叫做minor GC。<br/>
-老年代内存占满后进行的GC就是FULL GC。<br/>
-minor GC正常情况下可以回收70--95%的空间。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-09-17-16000042425726.jpg" alt="" style="width:1110px;"/><br/>
+可以看到，第一个查询语句用到了索引，而第二个查询语句只是多了1个字段，</p>
 
-<h2 id="toc_4"></h2>
+<p>Extra参数中Using index，表示相应的select操作中使用了覆盖索引（Covering Index），避免访问了表的数据行，效率不错。如果同时出现using where，表明索引被用来执行索引键值的查找；如果没有同时出现using where，表明索引用来读取数据而非执行查找动作。 </p>
 
-<p>对象进入老年代的情况：</p>
+<p>覆盖索引含义是所查询的列是和建立的索引字段和个数是一一对应的。那么回表问题的解决方案就是 将所用到的字段建立联合索引，覆盖索引。</p>
 
-<ul>
-<li>长期存活的对象进入老年代
-<ul>
-<li>对象年龄达到15后</li>
-<li>markword中2字节表示</li>
-</ul></li>
-<li>内存担保机制
-<ul>
-<li>当Eden区的内存不足以容纳新生成的对象的时候，新生成的对象会直接进入老年代</li>
-</ul></li>
-<li>动态年龄判断(大对象直接进入老年代)
-<ul>
-<li>新生成的对象的内存大于Eden区内存的50%会直接进入老年代</li>
-</ul></li>
-</ul>
+<hr/>
 
-<p>JVM调优的目的：减少FULL GC</p>
-
-<h2 id="toc_5"></h2>
-
-<h3 id="toc_6">辣鸡收集器</h3>
-
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15904221132976.jpg" alt="" style="width:501px;"/></p>
-
-<ul>
-<li>Serial</li>
-<li>ParNew</li>
-<li>Parallel Scavenge</li>
-<li>Serial Old</li>
-<li>Parallel Old</li>
-<li>CMS</li>
-<li>G1</li>
-</ul>
-
-<p>-XX:+UseParallelGC</p>
-
-<h2 id="toc_7"></h2>
-
-<p>TODO<br/>
-JVM调优参数<br/>
-JDK工具<br/>
-安全点与安全区域<br/>
-STW<br/>
-各种垃圾收集器<br/>
-逃逸分析与标量替换</p>
+<p>B+树 与 B树的区别？</p>
 
                         
                       </div>
@@ -360,7 +185,7 @@ STW<br/>
                     <span class="date">2020/10/21</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='JVM.html'>JVM</a></span>
+          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -425,6 +250,8 @@ STW<br/>
 
       	<p class="cat-list">
         
+            <a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html"><strong>Java并发编程的艺术</strong></a>
+        
             <a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html"><strong>网络协议</strong></a>
         
             <a href="JVM.html"><strong>JVM</strong></a>
@@ -452,6 +279,24 @@ STW<br/>
 	      
 		      
 			      <li class="post">
+			        <a href="16066274541815.html">Java内存模型</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16063170848836.html">Java并发机制的底层实现原理</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16061834685059.html">Java写一个死锁</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16038518175830.html">计算机网络--运输层</a>
 			      </li>
 		     
@@ -463,22 +308,10 @@ STW<br/>
 		     
 		  
 		      
-			      <li class="post">
-			        <a href="16032826647218.html">Spring Boot 增加缓存功能</a>
-			      </li>
-		     
 		  
 		      
-			      <li class="post">
-			        <a href="16032826244926.html">synchronized & volatile</a>
-			      </li>
-		     
 		  
 		      
-			      <li class="post">
-			        <a href="16032826118476.html">Java 面试基础知识</a>
-			      </li>
-		     
 		  
 		      
 		  

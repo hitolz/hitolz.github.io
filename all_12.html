@@ -81,6 +81,8 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a></li>
+        
             <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a></li>
         
             <li><a href="JVM.html">JVM</a></li>
@@ -114,64 +116,118 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032821146100.html">
+                <a class="clearlink" href="16032822130201.html">
                 
-                  <h1>MySQL聚集索引和二级索引</h1>
+                  <h1>JVM类加载</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>数据库中B+树索引分为聚集索引(clustered index)和辅助索引(secondary index，也被称作二级索引、非聚集索引)，其内部都是B+树，即高度平衡的，叶子节点存放所有数据，不同的是叶子节点存放的是否是一整行的数据。</p>
+                        	<p>虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机的类加载机制。</p>
 
-<hr/>
+<p>Java中，类型的加载、连接和初始化过程都是在程序运行期间完成的。</p>
 
-<p>聚集索引：InnoDB存储引擎中，按照每张表的主键构建的一棵B+树，叶子节点存放的即为行记录数据。<br/>
-InnoDB存储引擎中是必须要有一个聚集索引的，如果没有显示指定哪一字段是主键，则选择表中第一个不允许为NULL的唯一索引当作是聚集索引，如果还是没有，就采用InnoDB为每行数据内置的6字节的rowid作为聚集索引。<br/>
-一般聚集索引是自增主键。</p>
+<h1 id="toc_0">类加载过程</h1>
 
-<hr/>
+<p>class文件中的类从加载到JVM内存中，到卸载出内存的生命周期有7个，加载、验证、准备、解析、初始化、使用、卸载，<br/>
+类加载机制在前5个阶段<br/>
+<img src="http://hitol.blog.cdn.updev.cn/16030972346717.jpg" alt="16030972346717"/></p>
 
-<p>辅助索引：叶子节点并不包含行记录的全部数据，叶子节点除了包含键值以外，每个叶子节点中的索引行中还包含了一个书签(bookmark)，该书签用来告诉InnoDB存储引擎哪里可以找多与索引相对应的行数据。由于InnoDB存储引擎表是索引组织表，因此 辅助索引的书签就是相应行数据的聚集索引键。</p>
+<h2 id="toc_1">加载</h2>
 
-<p>当通过辅助索引来寻找数据时，先查到主键，然后通过主键索引来找到一个完整的行记录。</p>
+<p>简单来说，加载指的是把class字节码文件从各个来源通过类加载器装载入内存中。</p>
 
-<hr/>
+<p>在加载阶段，虚拟机需要完成三件事</p>
 
-<p>回表问题：<br/>
-当通过二级索引去查询数据，先查询辅助索引树，得到主键值，再通过聚集索引树查询，得到最终结果。</p>
+<ol>
+<li>通过一个类的全限定名来获取定义此类的二进制字节流；</li>
+<li>将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构；</li>
+<li>在内存中生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口。</li>
+</ol>
 
-<p>回到主键索引树搜索的过程，称为回表。</p>
+<p>两个重点</p>
 
-<p>如果在一棵高度为3的辅助索引树中查找数据，那需要对这棵辅助索引遍历3次找到指定主键，如果聚集索引树的高度同样为3，那么还需要对聚集索引树进行3次查找，最终得到一个完整的行数据所在的页，一共需要6次逻辑IO访问得到最终的数据页。</p>
+<ol>
+<li>字节码来源</li>
+</ol>
 
-<pre><code class="language-text">CREATE TABLE `user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) COLLATE utf8_bin NOT NULL,
-  `age` int(11) NOT NULL,
-  `sex` varchar(2) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_name` (`name`)
-) ENGINE=InnoDB  
-</code></pre>
+<p>通过一个类的全限定名来获取定义此类的二进制字节流，可以是通过jar包、war包、网络、JSP文件来获取</p>
 
-<p>例如，这么一个表结构，两个查询语句</p>
+<ol>
+<li>类加载器</li>
+</ol>
 
-<pre><code class="language-text">select id,name from user where name = &#39;zhangsan1&#39;;
-select id,name,age from user where name = &#39;zhangsan1&#39;;
-</code></pre>
+<p>一般包括启动类加载器、扩展类加载器、应用类加载器以及自定义类加载器。</p>
 
-<p>用EXPLAIN看一下执行计划，</p>
+<h2 id="toc_2">验证</h2>
 
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-09-17-16000042425726.jpg" alt="" style="width:1110px;"/><br/>
-可以看到，第一个查询语句用到了索引，而第二个查询语句只是多了1个字段，</p>
+<p>主要是为了保证加载进来的字节流符合虚拟机规范，不会造成安全错误。</p>
 
-<p>Extra参数中Using index，表示相应的select操作中使用了覆盖索引（Covering Index），避免访问了表的数据行，效率不错。如果同时出现using where，表明索引被用来执行索引键值的查找；如果没有同时出现using where，表明索引用来读取数据而非执行查找动作。 </p>
+<h3 id="toc_3">文件格式验证</h3>
 
-<p>覆盖索引含义是所查询的列是和建立的索引字段和个数是一一对应的。那么回表问题的解决方案就是 将所用到的字段建立联合索引，覆盖索引。</p>
+<p>第一阶段：验证字节流是否符合Class文件格式的规范，包含</p>
 
-<hr/>
+<ul>
+<li>是否以魔数0xCAFEBABE开头</li>
+<li>主、次版本号是否在当前虚拟机处理范围之内，java8 版本是52</li>
+<li>常量池的常量中是否有不被支持的常量类型（检查常量tag标志）</li>
+<li>指向常量的各种索引值中是否有指向不存在的常量或不符合类型的常量</li>
+<li>CONSTANT_Utf8_info型的常量中是否有不符合UTF8编码的数据</li>
+<li>class文件中各个部分及文件本身是否有被删除的或附加的其他信息</li>
+<li>。。。</li>
+</ul>
 
-<p>B+树 与 B树的区别？</p>
+<h3 id="toc_4">元数据验证</h3>
+
+<p>第二阶段，是对字节码描述的信息进行语义分析，以保证其描述的信息符合Java语言规范的要求，这个阶段可能包含的验证点如下：</p>
+
+<ul>
+<li>这个类是否有父类</li>
+<li>这个类的父类是否继承了不允许被继承的类</li>
+<li>如果这个类不是抽象类，是否实现了其父类或接口之中要求实现的所有方法</li>
+<li>类中的字段、方法是否与父类产生矛盾</li>
+<li>。。。</li>
+</ul>
+
+<h3 id="toc_5">字节码验证</h3>
+
+<p>第三阶段是整个验证阶段最复杂的一个阶段，主要目的是通过数据流和控制流分析，确定程序语义是合法的、符合逻辑的。保证被校验类的方法在运行时不会做出危害虚拟机安全的事件</p>
+
+<ol>
+<li>保证跳转指令不会跳转到方法体以外的字节码指令上</li>
+<li>保证方法体中的类型转换是有效的</li>
+</ol>
+
+<p>方法体的Code属性的属性表中增加了一项名为<code>StackMapTable</code>的属性</p>
+
+<h3 id="toc_6">符号引用验证</h3>
+
+<p>最后一个阶段的校验发生在虚拟机将符号引用转化为直接引用的时候，这个转化动作将在连接的第三阶段--解析阶段中发生。符号引用验证通常需要校验：</p>
+
+<ol>
+<li>符号引用中通过字符串描述的全限定名是否能够找到对应的类</li>
+<li>在指定类中是否存在符合方法的字段描述符以及简单名称所描述的方法和字段</li>
+<li>符号引用中的类、字段、方法的访问属性是否可以被当前类访问</li>
+</ol>
+
+<h2 id="toc_7">准备</h2>
+
+<p>主要是为类变量（注意，不是实例变量）分配内存，并且赋予初值。</p>
+
+<p>初值，不是代码中具体初始化的值，而是变量的类型对应的默认值。</p>
+
+<h2 id="toc_8">解析</h2>
+
+<p>将常量池内的符号引用替换为直接引用的过程。</p>
+
+<ol>
+<li>符号引用</li>
+<li>直接引用</li>
+</ol>
+
+<h2 id="toc_9">初始化</h2>
+
+<p>这个阶段主要是对类变量进行初始化，执行类构造器的过程。</p>
 
                         
                       </div>
@@ -183,7 +239,7 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
                     <span class="date">2020/10/21</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
+          					    <span class="posted-in"><a href='JVM.html'>JVM</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -248,6 +304,8 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
 
       	<p class="cat-list">
         
+            <a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html"><strong>Java并发编程的艺术</strong></a>
+        
             <a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html"><strong>网络协议</strong></a>
         
             <a href="JVM.html"><strong>JVM</strong></a>
@@ -275,6 +333,24 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
 	      
 		      
 			      <li class="post">
+			        <a href="16066274541815.html">Java内存模型</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16063170848836.html">Java并发机制的底层实现原理</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16061834685059.html">Java写一个死锁</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16038518175830.html">计算机网络--运输层</a>
 			      </li>
 		     
@@ -286,22 +362,10 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
 		     
 		  
 		      
-			      <li class="post">
-			        <a href="16032826647218.html">Spring Boot 增加缓存功能</a>
-			      </li>
-		     
 		  
 		      
-			      <li class="post">
-			        <a href="16032826244926.html">synchronized & volatile</a>
-			      </li>
-		     
 		  
 		      
-			      <li class="post">
-			        <a href="16032826118476.html">Java 面试基础知识</a>
-			      </li>
-		     
 		  
 		      
 		  
