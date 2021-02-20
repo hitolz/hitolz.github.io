@@ -116,97 +116,81 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032824371007.html">
+                <a class="clearlink" href="16032826647218.html">
                 
-                  <h1>JVM运行时数据区域、Java内存模型、Java对象结构</h1>
+                  <h1>Spring Boot 增加缓存功能</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>JVM内存模型<br/>
-也是JVM运行时数据区域。<br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.png" alt="JVM内存模型"/></p>
+                        	<pre><code class="language-text">spring.jpa.properties.hibernate.show_sql=true，开启hibernate对sql语句的打印
+</code></pre>
 
-<hr/>
+<p>单元测试中，用userRepository 查询两次相同内容。</p>
 
-<p>Java线程内存模型。<br/>
-是一种内存规范。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729123926.jpg" alt=""/><br/>
+运行一下，会看到在控制台打出了两条sql，说明是查了两次库。</p>
 
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-Java%E7%BA%BF%E7%A8%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8BJMM2.png" alt="Java线程内存模型JM"/></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729221221.jpg" alt=""/></p>
 
-<h4 id="toc_0">主内存与线程私有内存</h4>
+<p>增加缓存：<br/>
+pom中添加依赖：</p>
 
-<h4 id="toc_1">CPU三级缓存</h4>
+<pre><code class="language-text">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-cache&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
 
-<h4 id="toc_2">MESI协议</h4>
+<p>SpringBoot主类中添加注解 <code>@EnableCaching</code><br/>
+UserRepository 类添加注解<code>@CacheConfig(cacheNames = &quot;users&quot;)</code><br/>
+findByName方法添加注解<code>@Cacheable</code></p>
 
-<h4 id="toc_3">Java操作内存的8个方法</h4>
+<p>org.springframework.data.redis.serializer.SerializationException:?</p>
 
-<h4 id="toc_4">synchronized 与 volitale</h4>
+<p>缓存对象需要实现序列化接口.<code>UserDO implements Serializable</code></p>
 
-<hr/>
+<p>在次运行就会出现</p>
 
-<p>Java对象结构</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374555362360.jpg" alt="" style="width:1076px;"/>可以看到，第二次请求的时候就没有打印出sql语句。</p>
 
-<p><img src="media/16032824371007/15969632678246.jpg" alt="15969632678246"/></p>
-
-<p>对象在内存中存储的布局可以分为3块区域：</p>
-
-<ul>
-<li>对象头 Header</li>
-<li>实例数据Instance Data</li>
-<li>对齐填充。</li>
-</ul>
-
-<h4 id="toc_5">对象头</h4>
-
-<p>对象头包括两部分信息，<br/>
-第一部分 <code>Mark Word</code>，用于存储对象自身的运行时数据，主要有</p>
+<p>注解：</p>
 
 <ul>
-<li>哈希码 HashCode</li>
-<li>GC分代年龄</li>
-<li>锁状态标志</li>
-<li>线程持有的锁</li>
-<li>偏向线程ID</li>
-<li>偏向时间戳</li>
+<li><p>@CacheConfig：<br/>
+主要配置该类中会用到的一些公用的缓存配置。<br/>
+cacheNames 配置了数据访问对象中返回的内容将存储于名为users的数组中。<br/>
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374561374912.jpg" alt=""/></p></li>
+<li><p>@Cacheable：<br/>
+配置了findByName的函数返回值将会被加入到缓存。同时在查询时，会先查询缓存，若不存在才会查询数据库。<br/>
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374562984908.jpg" alt=""/></p></li>
+<li><p><code>cacheNames</code>、<code>value</code>：用于指定缓存存储的集合名。两个参数等效。</p></li>
+<li><p><code>key</code>：缓存对象存储在Map集合中的key值，非必需，缺省按照函数的所有参数组合作为key值，若自己配置需使用SpEL表达式，比如：@Cacheable(key = &quot;#p0&quot;)：使用函数第一个参数作为缓存的key值，更多关于SpEL表达式的详细内容可参考<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#cache">官方文档</a></p></li>
+<li><p><code>condition</code>:缓存对象的条件，非必需，也需使用SpEL表达式，只有满足表达式条件的内容才会被缓存，比如：@Cacheable(key = &quot;#p0&quot;, condition = &quot;#p0.length() &lt; 3&quot;)，表示只有当第一个参数的长度小于3的时候才会被缓存，若做此配置上面的AAA用户就不会被缓存，读者可自行实验尝试。</p></li>
+<li><p><code>unless</code>:另外一个缓存条件参数，非必需，需使用SpEL表达式。它不同于condition参数的地方在于它的判断时机，该条件是在函数被调用之后才做判断的，所以它可以通过对result进行判断。</p></li>
+<li><p><code>keyGenerator</code>:用于指定key生成器，非必需。若需要指定一个自定义的key生成器，我们需要去实现org.springframework.cache.interceptor.KeyGenerator接口，并使用该参数来指定。需要注意的是：该参数与key是互斥的</p></li>
+<li><p><code>cacheManager</code>:用于指定使用哪个缓存管理器，非必需。只有当有多个时才需要使用</p></li>
+<li><p><code>cacheResolver</code>:用于指定使用那个缓存解析器，非必需。需通过org.springframework.cache.interceptor.CacheResolver接口来实现自己的缓存解析器，并用该参数指定。</p></li>
 </ul>
 
-<p>这部分数据的长度在32位和64位的虚拟机中分别为32bit、64bit，也就是说<code>Mark Word</code>这部分占用内存8个字节。</p>
+<p>CacheManager</p>
 
-<p>第二部分是类型指针，即这个对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例。<br/>
-类型指针占用内存4个字节。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374571943253.jpg" alt=""/></p>
 
-<hr/>
+<p>在Spring Boot中通过@EnableCaching注解自动化配置合适的缓存管理器（CacheManager），Spring Boot根据下面的顺序去侦测缓存提供者：</p>
 
-<h4 id="toc_6">实例数据</h4>
+<ul>
+<li>Generic</li>
+<li>JCache (JSR-107)</li>
+<li>EhCache 2.x</li>
+<li>Hazelcast</li>
+<li>Infinispan</li>
+<li>Redis</li>
+<li>Guava</li>
+<li>Simple</li>
+</ul>
 
-<p>是对象真真存储的有效信息，也是程序代码中所定义的各种类型的字段内容。<br/>
-包含从父类继承下来的和子类中定义的。<br/>
-存储顺序会受到虚拟机分配策略参数和字段在Java源码中定义顺序的影响。</p>
-
-<p>HotSpot虚拟机默认的分配策略为<br/>
-longs/doubles<br/>
-ints<br/>
-shorts/charts<br/>
-bytes/booleans<br/>
-oops（Ordinary Object Pointers）<br/>
-相同宽度的字段总是被分配到一起。</p>
-
-<h4 id="toc_7">对齐填充</h4>
-
-<p>HotSpot VM的自动内存管理系统要求对象起始地址必须是8字节的整数倍，对象的大小必须是8字节的整数倍。<br/>
-因此，当该对象的占用内存不是8的整数倍的时候需要对齐填充来补全。</p>
-
-<hr/>
-
-<p>Object o = new Object()使用了多少内存?</p>
-
-<p>Mark Word 8<br/>
-Class Pointer 4<br/>
-Instance Data 0<br/>
-对齐 4<br/>
-总共16个字节。</p>
+<p>可以通过配置属性spring.cache.type来强制指定</p>
 
                         
                       </div>
@@ -218,7 +202,9 @@ Instance Data 0<br/>
                     <span class="date">2020/10/21</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='JVM.html'>JVM</a></span>
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				  
+          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -312,13 +298,13 @@ Instance Data 0<br/>
 	      
 		      
 			      <li class="post">
-			        <a href="16066274541815.html">Java内存模型</a>
+			        <a href="16066274677997.html">Java并发编程的基础</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="16063170848836.html">Java并发机制的底层实现原理</a>
+			        <a href="16066274541815.html">Java内存模型</a>
 			      </li>
 		     
 		  
@@ -330,13 +316,13 @@ Instance Data 0<br/>
 		  
 		      
 			      <li class="post">
-			        <a href="16038518175830.html">计算机网络--运输层</a>
+			        <a href="16063170848836.html">Java并发机制的底层实现原理</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="16032826948500.html">Docker 安装 MySQL数据库 实现主从复制</a>
+			        <a href="16032826244926.html">synchronized & volatile</a>
 			      </li>
 		     
 		  
