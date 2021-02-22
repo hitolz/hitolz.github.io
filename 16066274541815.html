@@ -231,7 +231,7 @@
 
 <h3 id="toc_2">Java内存模型抽象结构</h3>
 
-<p><img src="media/16066274541815/16066424225868.jpg" alt="" style="width:791px;"/></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/16066424225868.jpg" alt="" style="width:791px;"/></p>
 
 <h3 id="toc_3">源代码到指令序列的重排序</h3>
 
@@ -254,7 +254,7 @@
 
 <h3 id="toc_5">数据依赖性</h3>
 
-<p><img src="media/16066274541815/16072223811047.jpg" alt=""/></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/16072223811047.jpg" alt=""/></p>
 
 <p>重新排序上面两个操作的执行顺序，程序的执行结果就会被改变。</p>
 
@@ -294,7 +294,7 @@
 
 <h3 id="toc_12">volatile 内存语义的实现</h3>
 
-<p><img src="media/16066274541815/16072242218081.jpg" alt=""/></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/16072242218081.jpg" alt=""/></p>
 
 <p>从表中可以看出</p>
 
@@ -390,7 +390,7 @@
 
 <p>在线程执行到③位置处，可能INSTANCE不等于null，但INSTANCE引用的对象有可能还没完成初始化。</p>
 
-<p><img src="media/16066274541815/16079466385431.jpg" alt=""/></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/16079466385431.jpg" alt=""/></p>
 
 <ul>
 <li><p>基于volatile的解决方案<br/>
@@ -432,7 +432,8 @@
 <li>遇到new、getstatic、putstatic或invokestatic这4条字节码指令时，如果类没有进行过初始化，则需要先出发其初始化。生成这4条指令的最常见的Java代码场景是：使用new关键字实例化对象的时候、读取或设置一个类的静态字段的时候，以及调用一个类的静态方法的时候</li>
 <li>使用java.lang.reflect包的方法对类进行反射调用的时候，如果类没有进行过初始化，则需要先出发其初始化</li>
 <li>当初始化一个类的时候，如果发现其父类还没有进行过初始化，则需要先触发其父类的初始化</li>
-<li>当虚拟机启动时，用户需要指定一个要执行的主类，虚拟机会先初始化这个主类</li>
+<li>当虚拟</li>
+<li>机启动时，用户需要指定一个要执行的主类，虚拟机会先初始化这个主类</li>
 <li>如果一个java.lang.invoke.MethodHandle实例最后的解析结果REG_getStatic、REF_putStatic、REF_invokeStatic的方法句柄，并且这个方法句柄锁对应的类没有进行过初始化，则需要先触发其初始化。</li>
 </ol>
 </blockquote>
@@ -446,16 +447,16 @@
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="16066274677997.html" 
-          title="Previous Post: Java并发编程的基础">&laquo; Java并发编程的基础</a>
+          <a href="16061834685059.html" 
+          title="Previous Post: Java写一个死锁">&laquo; Java写一个死锁</a>
       
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="16061834685059.html" 
-          title="Next Post: Java写一个死锁">Java写一个死锁 &raquo;</a>
+          <a  href="16066274677997.html" 
+          title="Next Post: Java并发编程的基础">Java并发编程的基础 &raquo;</a>
       
       </p>
         </div>
@@ -538,13 +539,7 @@
 	      
 		      
 			      <li class="post">
-			        <a href="16066274677997.html">Java并发编程的基础</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16066274541815.html">Java内存模型</a>
+			        <a href="16063170848836.html">Java并发机制的底层实现原理</a>
 			      </li>
 		     
 		  
@@ -556,7 +551,13 @@
 		  
 		      
 			      <li class="post">
-			        <a href="16063170848836.html">Java并发机制的底层实现原理</a>
+			        <a href="16066274541815.html">Java内存模型</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16066274677997.html">Java并发编程的基础</a>
 			      </li>
 		     
 		  
