@@ -116,64 +116,81 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032821146100.html">
+                <a class="clearlink" href="16032826647218.html">
                 
-                  <h1>MySQL聚集索引和二级索引</h1>
+                  <h1>Spring Boot 增加缓存功能</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>数据库中B+树索引分为聚集索引(clustered index)和辅助索引(secondary index，也被称作二级索引、非聚集索引)，其内部都是B+树，即高度平衡的，叶子节点存放所有数据，不同的是叶子节点存放的是否是一整行的数据。</p>
-
-<hr/>
-
-<p>聚集索引：InnoDB存储引擎中，按照每张表的主键构建的一棵B+树，叶子节点存放的即为行记录数据。<br/>
-InnoDB存储引擎中是必须要有一个聚集索引的，如果没有显示指定哪一字段是主键，则选择表中第一个不允许为NULL的唯一索引当作是聚集索引，如果还是没有，就采用InnoDB为每行数据内置的6字节的rowid作为聚集索引。<br/>
-一般聚集索引是自增主键。</p>
-
-<hr/>
-
-<p>辅助索引：叶子节点并不包含行记录的全部数据，叶子节点除了包含键值以外，每个叶子节点中的索引行中还包含了一个书签(bookmark)，该书签用来告诉InnoDB存储引擎哪里可以找多与索引相对应的行数据。由于InnoDB存储引擎表是索引组织表，因此 辅助索引的书签就是相应行数据的聚集索引键。</p>
-
-<p>当通过辅助索引来寻找数据时，先查到主键，然后通过主键索引来找到一个完整的行记录。</p>
-
-<hr/>
-
-<p>回表问题：<br/>
-当通过二级索引去查询数据，先查询辅助索引树，得到主键值，再通过聚集索引树查询，得到最终结果。</p>
-
-<p>回到主键索引树搜索的过程，称为回表。</p>
-
-<p>如果在一棵高度为3的辅助索引树中查找数据，那需要对这棵辅助索引遍历3次找到指定主键，如果聚集索引树的高度同样为3，那么还需要对聚集索引树进行3次查找，最终得到一个完整的行数据所在的页，一共需要6次逻辑IO访问得到最终的数据页。</p>
-
-<pre><code class="language-text">CREATE TABLE `user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) COLLATE utf8_bin NOT NULL,
-  `age` int(11) NOT NULL,
-  `sex` varchar(2) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_name` (`name`)
-) ENGINE=InnoDB  
+                        	<pre><code class="language-text">spring.jpa.properties.hibernate.show_sql=true，开启hibernate对sql语句的打印
 </code></pre>
 
-<p>例如，这么一个表结构，两个查询语句</p>
+<p>单元测试中，用userRepository 查询两次相同内容。</p>
 
-<pre><code class="language-text">select id,name from user where name = &#39;zhangsan1&#39;;
-select id,name,age from user where name = &#39;zhangsan1&#39;;
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729123926.jpg" alt=""/><br/>
+运行一下，会看到在控制台打出了两条sql，说明是查了两次库。</p>
+
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729221221.jpg" alt=""/></p>
+
+<p>增加缓存：<br/>
+pom中添加依赖：</p>
+
+<pre><code class="language-text">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-cache&lt;/artifactId&gt;
+&lt;/dependency&gt;
 </code></pre>
 
-<p>用EXPLAIN看一下执行计划，</p>
+<p>SpringBoot主类中添加注解 <code>@EnableCaching</code><br/>
+UserRepository 类添加注解<code>@CacheConfig(cacheNames = &quot;users&quot;)</code><br/>
+findByName方法添加注解<code>@Cacheable</code></p>
 
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-09-17-16000042425726.jpg" alt="" style="width:1110px;"/><br/>
-可以看到，第一个查询语句用到了索引，而第二个查询语句只是多了1个字段，</p>
+<p>org.springframework.data.redis.serializer.SerializationException:?</p>
 
-<p>Extra参数中Using index，表示相应的select操作中使用了覆盖索引（Covering Index），避免访问了表的数据行，效率不错。如果同时出现using where，表明索引被用来执行索引键值的查找；如果没有同时出现using where，表明索引用来读取数据而非执行查找动作。 </p>
+<p>缓存对象需要实现序列化接口.<code>UserDO implements Serializable</code></p>
 
-<p>覆盖索引含义是所查询的列是和建立的索引字段和个数是一一对应的。那么回表问题的解决方案就是 将所用到的字段建立联合索引，覆盖索引。</p>
+<p>在次运行就会出现</p>
 
-<hr/>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374555362360.jpg" alt="" style="width:1076px;"/>可以看到，第二次请求的时候就没有打印出sql语句。</p>
 
-<p>B+树 与 B树的区别？</p>
+<p>注解：</p>
+
+<ul>
+<li><p>@CacheConfig：<br/>
+主要配置该类中会用到的一些公用的缓存配置。<br/>
+cacheNames 配置了数据访问对象中返回的内容将存储于名为users的数组中。<br/>
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374561374912.jpg" alt=""/></p></li>
+<li><p>@Cacheable：<br/>
+配置了findByName的函数返回值将会被加入到缓存。同时在查询时，会先查询缓存，若不存在才会查询数据库。<br/>
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374562984908.jpg" alt=""/></p></li>
+<li><p><code>cacheNames</code>、<code>value</code>：用于指定缓存存储的集合名。两个参数等效。</p></li>
+<li><p><code>key</code>：缓存对象存储在Map集合中的key值，非必需，缺省按照函数的所有参数组合作为key值，若自己配置需使用SpEL表达式，比如：@Cacheable(key = &quot;#p0&quot;)：使用函数第一个参数作为缓存的key值，更多关于SpEL表达式的详细内容可参考<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#cache">官方文档</a></p></li>
+<li><p><code>condition</code>:缓存对象的条件，非必需，也需使用SpEL表达式，只有满足表达式条件的内容才会被缓存，比如：@Cacheable(key = &quot;#p0&quot;, condition = &quot;#p0.length() &lt; 3&quot;)，表示只有当第一个参数的长度小于3的时候才会被缓存，若做此配置上面的AAA用户就不会被缓存，读者可自行实验尝试。</p></li>
+<li><p><code>unless</code>:另外一个缓存条件参数，非必需，需使用SpEL表达式。它不同于condition参数的地方在于它的判断时机，该条件是在函数被调用之后才做判断的，所以它可以通过对result进行判断。</p></li>
+<li><p><code>keyGenerator</code>:用于指定key生成器，非必需。若需要指定一个自定义的key生成器，我们需要去实现org.springframework.cache.interceptor.KeyGenerator接口，并使用该参数来指定。需要注意的是：该参数与key是互斥的</p></li>
+<li><p><code>cacheManager</code>:用于指定使用哪个缓存管理器，非必需。只有当有多个时才需要使用</p></li>
+<li><p><code>cacheResolver</code>:用于指定使用那个缓存解析器，非必需。需通过org.springframework.cache.interceptor.CacheResolver接口来实现自己的缓存解析器，并用该参数指定。</p></li>
+</ul>
+
+<p>CacheManager</p>
+
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374571943253.jpg" alt=""/></p>
+
+<p>在Spring Boot中通过@EnableCaching注解自动化配置合适的缓存管理器（CacheManager），Spring Boot根据下面的顺序去侦测缓存提供者：</p>
+
+<ul>
+<li>Generic</li>
+<li>JCache (JSR-107)</li>
+<li>EhCache 2.x</li>
+<li>Hazelcast</li>
+<li>Infinispan</li>
+<li>Redis</li>
+<li>Guava</li>
+<li>Simple</li>
+</ul>
+
+<p>可以通过配置属性spring.cache.type来强制指定</p>
 
                         
                       </div>
@@ -185,7 +202,9 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
                     <span class="date">2020/10/21</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				  
+          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -279,6 +298,12 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
 	      
 		      
 			      <li class="post">
+			        <a href="16054964627964.html">计算机网络--物理层</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16063170848836.html">Java并发机制的底层实现原理</a>
 			      </li>
 		     
@@ -298,12 +323,6 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
 		      
 			      <li class="post">
 			        <a href="16066274677997.html">Java并发编程的基础</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16032826244926.html">synchronized & volatile</a>
 			      </li>
 		     
 		  
