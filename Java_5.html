@@ -81,6 +81,10 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="redis.html">redis</a></li>
+        
+            <li><a href="dubbo.html">dubbo</a></li>
+        
             <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a></li>
         
             <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a></li>
@@ -116,125 +120,90 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032822998588.html">
+                <a class="clearlink" href="16032821893434.html">
                 
-                  <h1>AOP及自定义注解实现Redis缓存</h1>
+                  <h1>Spring事务管理</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h2 id="toc_0">背景</h2>
+                        	<p><code>@Transactional</code> 保证事务一致性。<br/>
+当出现异常时，会回滚</p>
 
-<p>现在程序中是直接查询数据库数据的，Redis只是用来生成一些不重复id用的，现在要把Redis利用起来，缓存一些配置信息，提高程序运行及响应时间。</p>
+<p>隔离级别：<br/>
+隔离级别是指多个并发事务之间的隔离程度。与开发相关的场景主要包括：脏读取、重复读、幻读。</p>
 
-<h2 id="toc_1">设计</h2>
+<pre><code class="language-text">package org.springframework.transaction.annotation;
 
-<ul>
-<li>在Dao层查询数据库之前，先查一下是否在Redis缓存中，如果存在的话直接取Redis中的数据，如果不存在，在去查询数据库，然后将本次查询结果根据查询条件放到缓存中。</li>
-<li>Redis在系统启动的时候先去清空配置信息。</li>
-<li>提供刷新缓存、删除缓存的方法</li>
-</ul>
+public enum Isolation {
+    DEFAULT(-1),
+    READ_UNCOMMITTED(1),
+    READ_COMMITTED(2),
+    REPEATABLE_READ(4),
+    SERIALIZABLE(8);
 
-<h2 id="toc_2">实现之前</h2>
+    private final int value;
 
-<p>在Dao层中每个查询配置信息的方法中，增加查询缓存及设置缓存的方法。<br/>
-但是Dao层中的方法太多了。。。一个个加比较枯燥、主要是显得比较low，然后要想个方案实现。</p>
-
-<h2 id="toc_3">方案</h2>
-
-<p>很自然就想到了AOP，环绕通知，<br/>
-在目标方法执行之前先查询缓存，如果有就返回了，如果没有再去执行目标方法，<br/>
-在执行目标方法之后将查询条件及内容放到Redis中。<br/>
-自定义一个注解，被这个注解修饰的方法需要实现AOP。</p>
-
-<h2 id="toc_4">实现</h2>
-
-<p>定义一个缓存注解，被这个注解修饰的方法，会执行切面中的方法。</p>
-
-<pre><code class="language-text">/**
- * redis缓存注解
- * @author hitol
- * @version $Id: RedisCache.java, v 0.1 2020年3月19日 下午8:26:48 hitol Exp $
- */
-@Documented
-@Target({java.lang.annotation.ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface RedisCache {
-    String redisKey() default &quot;&quot;;
-
-    String cacheInfo() default &quot;&quot;;
-
-    Class&lt;?&gt; className() default String.class;
-}
-
-
-</code></pre>
-
-<p>定义缓存切面，使用环绕通知.</p>
-
-<pre><code class="language-text">/**
- * 缓存切面
- * @author hitol
- * @version $Id: CacheAop.java, v 0.1 2020年3月20日 下午6:49:10 hitol Exp $
- */
-@Aspect
-@Component
-public class CacheAop {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CacheAop.class);
-
-    @Pointcut(&quot;@annotation(com.acc.ac.core.util.redis.RedisCache)&quot;)
-    public void getCacheInfo() {
-        LOGGER.info(&quot;切入点&quot;);
+    private Isolation(int value) {
+        this.value = value;
     }
 
-    @Around(&quot;getCacheInfo()&quot;)
-    public Object doBefore(ProceedingJoinPoint joinPoint) throws Throwable {
-
-        // 接口的参数
-        Object[] args = joinPoint.getArgs();
-        String arg = &quot;&quot;;
-        if (args.length &gt; 0){
-            arg = (String) args[0];
-        }
-
-        // 得到被代理的方法
-        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-
-        // 得到被代理的方法上的注解
-        RedisCache annotation = method.getAnnotation(RedisCache.class);
-
-        Class&lt;?&gt; className = annotation.className();
-        String redisKey = annotation.redisKey() + arg;
-        Class returnType = method.getReturnType();
-
-        LOGGER.info(&quot;key = {},查询Redis缓存&quot;, redisKey);
-        String cacheInfo = RedisUtils.getString(redisKey);
-
-        if (StringUtils.isNotBlank(cacheInfo)) {
-            LOGGER.info(&quot;key = {},在Redis缓存中.&quot;, redisKey);
-
-            if (&quot;java.util.List&quot;.equals(returnType.getName())){
-                return JSONObject.parseArray(cacheInfo,className);
-            }
-
-            return JSONObject.parseObject(cacheInfo, returnType);
-        }
-        LOGGER.info(&quot;key = {},没有在Redis缓存中查询到.&quot;, redisKey);
-        Object result = joinPoint.proceed(args);
-        cacheInfo = JSONObject.toJSONString(result);
-
-        if (StringUtils.isNotBlank(cacheInfo)) {
-            RedisUtils.setString(redisKey, cacheInfo);
-        }
-
-        return JSONObject.parseObject(cacheInfo, returnType);
-
+    public int value() {
+        return this.value;
     }
 }
 </code></pre>
 
-<p>完成。</p>
+<p>Isolation枚举类中定义了5个表示隔离级别的值</p>
+
+<p>DEFAULT 默认值，表示使用底层数据库的默认隔离级别。对大部分数据库而言，就是READ_COMMITED</p>
+
+<p>READ_UNCOMMITED：该隔离级别表示，一个事务可以读取另一个事务修改但是还未提交的数据。不能防止脏读和不可重复读。很少使用。</p>
+
+<p>READ_COMMITED:该隔离级别表示，只能读取另一个事务已经提交的数据。该事务级别可以防止脏读，也是大多数情况下的推荐值。</p>
+
+<p>REPEATABLE_READ:该隔离级别表示一个事务在整个过程中可以多次重复执行某个查询，并返回相同结果。在多次查询之间有新增的值会被忽略。可以防止不可重复读和脏读。</p>
+
+<p>SERIALIZABLE：所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，该级别可以防止脏读、不可重复读以及幻读。但是这将严重影响程序的性能。通常情况下也不会用到该级别</p>
+
+<p>指定方法：</p>
+
+<pre><code class="language-text">@Transactional(isolation = Isolation.DEFAULT)
+</code></pre>
+
+<p>传播行为：</p>
+
+<pre><code class="language-text">package org.springframework.transaction.annotation;
+
+public enum Propagation {
+    REQUIRED(0),
+    SUPPORTS(1),
+    MANDATORY(2),
+    REQUIRES_NEW(3),
+    NOT_SUPPORTED(4),
+    NEVER(5),
+    NESTED(6);
+
+    private final int value;
+
+    private Propagation(int value) {
+        this.value = value;
+    }
+
+    public int value() {
+        return this.value;
+    }
+}
+</code></pre>
+
+<p>Propagation枚举类中定义了6个表示传播行为的枚举值：<br/>
+REQUIRED：如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。<br/>
+SUPPORTS：如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式继续运行。<br/>
+MANDATORY：如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常。<br/>
+REQUIRES_NEW：创建一个新的事务，如果当前存在事务，则把当前事务挂起。<br/>
+NOT_SUPPORTED：以非事务方式运行，如果当前存在事务，则把当前事务挂起。<br/>
+NEVER：以非事务方式运行，如果当前存在事务，则抛出异常。<br/>
+NESTED：如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于REQUIRED</p>
 
                         
                       </div>
@@ -245,6 +214,8 @@ public class CacheAop {
                   
                     <span class="date">2020/10/21</span>
                     <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
           				  
           					    <span class="posted-in"><a href='Java.html'>Java</a></span>
           				   
@@ -270,7 +241,7 @@ public class CacheAop {
 			  </div>
 			  <div class="large-6 columns">
 			<p class="text-right" style="padding-top:25px;">
-			
+			 <a href="Java_6.html">&raquo; Next Page</a> 
 			</p>
 			  </div>
 			</div>
@@ -311,6 +282,10 @@ public class CacheAop {
 
       	<p class="cat-list">
         
+            <a href="redis.html"><strong>redis</strong></a>
+        
+            <a href="dubbo.html"><strong>dubbo</strong></a>
+        
             <a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html"><strong>Java并发编程的艺术</strong></a>
         
             <a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html"><strong>网络协议</strong></a>
@@ -340,6 +315,24 @@ public class CacheAop {
 	      
 		      
 			      <li class="post">
+			        <a href="16121664688743.html">dubbo SPI</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16169197037719.html">Redis 持久化 - RDB、AOF 及 混合持久化机制</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16038518175830.html">计算机网络--运输层</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16054964627964.html">计算机网络--物理层</a>
 			      </li>
 		     
@@ -347,24 +340,6 @@ public class CacheAop {
 		      
 			      <li class="post">
 			        <a href="16063170848836.html">Java并发机制的底层实现原理</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16061834685059.html">Java写一个死锁</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16066274541815.html">Java内存模型</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16066274677997.html">Java并发编程的基础</a>
 			      </li>
 		     
 		  

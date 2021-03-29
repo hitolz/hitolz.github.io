@@ -81,6 +81,10 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="redis.html">redis</a></li>
+        
+            <li><a href="dubbo.html">dubbo</a></li>
+        
             <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a></li>
         
             <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a></li>
@@ -116,236 +120,297 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16066274677997.html">
+                <a class="clearlink" href="16063170848836.html">
                 
-                  <h1>Java并发编程的基础</h1>
+                  <h1>Java并发机制的底层实现原理</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
                         	<ul>
 <li>
-<a href="#toc_0">线程间通信</a>
+<a href="#toc_0">volatile的应用</a>
 <ul>
 <li>
-<a href="#toc_1">volatile</a>
+<a href="#toc_1">volatile的定义与实现</a>
 </li>
 <li>
-<a href="#toc_2">synchronized</a>
+<a href="#toc_2">禁止指令重排序</a>
 </li>
 <li>
-<a href="#toc_3">等待/通知机制</a>
+<a href="#toc_3">volatile的使用优化</a>
+</li>
+</ul>
 </li>
 <li>
-<a href="#toc_4">join</a>
+<a href="#toc_4">synchronized的实现原理与应用</a>
+<ul>
+<li>
+<a href="#toc_5">Java对象头</a>
 </li>
 <li>
-<a href="#toc_5">ThreadLocal</a>
+<a href="#toc_6">锁升级与对比</a>
+<ul>
+<li>
+<a href="#toc_7">偏向锁</a>
+<ul>
+<li>
+<a href="#toc_8">偏向锁的撤销</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#toc_9">轻量级锁</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#toc_10">锁的优点与缺点</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#toc_11">原子操作的实现原理</a>
+<ul>
+<li>
+<a href="#toc_12">总线锁</a>
+</li>
+<li>
+<a href="#toc_13">缓存锁</a>
+</li>
+<li>
+<a href="#toc_14">Java如何实现原子操作</a>
+<ul>
+<li>
+<a href="#toc_15">自旋CAS</a>
+</li>
+<li>
+<a href="#toc_16">锁机制</a>
 </li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
 
 
-<h2 id="toc_0">线程间通信</h2>
+<h2 id="toc_0">volatile的应用</h2>
 
-<h3 id="toc_1">volatile</h3>
+<p>volatile是轻量级的synchronized，在并发编程中2个作用：</p>
 
-<p>多线程访问 volatile 修饰的变量都需要从共享内存中获取，而对它的修改必须同步刷新回共享内存，它能保证所有线程对变量访问的可见性。</p>
+<ol>
+<li>保证了共享变量的可见性</li>
+<li>禁止指令重排序</li>
+</ol>
 
-<h3 id="toc_2">synchronized</h3>
+<p>可见性的意思是当一个线程修改了一个共享变量时，另一个线程能读到修改的这个值。</p>
 
-<p>可以修饰方法或者以同步代码块的形式来使用，确保多个线程在同一时间只能有一个线程处于方法或者代码块中，保证了线程对变量访问的可见性和排他性。</p>
+<h3 id="toc_1">volatile的定义与实现</h3>
 
-<p>同步代码块的底层实现是 monitorenter 和 monitorexit 指令，而同步方法则是一开方法修饰符上的 ACC_SYNCHRONIZED 完成。</p>
+<p>定义如下：<br/>
+Java编程语言允许线程访问共享变量，为了确保共享变量能被准确和一致地更新，线程应该确保通过排它锁单独获得这个变量。Java语言提供了volatile，在某些情况下比锁要更加方便。如果一个字段被声明为volatile，Java线程内存模型确保所有线程看到这个变量的值是一致的。</p>
 
-<h3 id="toc_3">等待/通知机制</h3>
+<p>有volatile变量修饰的共享变量进行写操作的时候会多出汇编代码，lock。</p>
 
-<p>生产者、消费者模型</p>
+<p>lock前缀的指令在多核处理器下引发了两件事情：</p>
 
-<p>wait()/notify()</p>
+<ol>
+<li>将当前处理器缓存行的数据写回到系统内存</li>
+<li>这个写回内存的操作会使在其他CPU里缓存了该内存地址的数据无效。</li>
+</ol>
 
-<p>wait和notify方法都是锁对象来调用。它们必须在被synchronized修饰的方法内。</p>
+<p>原理：<br/>
+缓存一致性协议 MESI<br/>
+总线嗅探</p>
 
-<p>wait方法会使在临界区内的线程进入等待状态，同时释放被同步对象的锁。</p>
-
-<p>notify方法会唤醒一个因调用了wait方法而处于阻塞状态的线程，使其进入就绪状态。<br/>
-被重新唤醒的线程会试图重新获取锁的控制权，并继续执行wait之后的代码。</p>
-
-<pre><code class="language-text">static class Provider implements Runnable {
-
-    @SneakyThrows
-    @Override
-    public void run() {
-        synchronized (lock) {
-            System.out.println(&quot;生产者运行开始，当前时间 = &quot; + System.currentTimeMillis());
-            lock.wait();
-            System.out.println(&quot;生产者运行结束，当前时间 = &quot; + System.currentTimeMillis());
-        }
-    }
-}
-
-static class Consumer implements Runnable {
-
-    @SneakyThrows
-    @Override
-    public void run() {
-
-        synchronized (lock) {
-            System.out.println(&quot;消费者运行开始，当前时间 = &quot; + System.currentTimeMillis());
-            lock.notify();
-            System.out.println(&quot;消费者运行结束，当前时间 = &quot; + System.currentTimeMillis());
-        }
-    }
-}
-</code></pre>
-
-<p>其运行结果如下：</p>
-
-<pre><code class="language-text">生产者运行开始，当前时间 = 1609770771102
-消费者运行开始，当前时间 = 1609770771103
-消费者运行结束，当前时间 = 1609770771103
-生产者运行结束，当前时间 = 1609770771103
-</code></pre>
-
-<p>wait方法执行后，线程会立即释放锁，而notify方法执行后，线程并不释放锁。</p>
-
-<pre><code class="language-text">static class Provider implements Runnable {
-
-    @SneakyThrows
-    @Override
-    public void run() {
-        synchronized (lock) {
-            System.out.println(&quot;生产者运行开始，当前时间 = &quot; + System.currentTimeMillis());
-            lock.wait();
-            TimeUnit.MILLISECONDS.sleep(300);
-            System.out.println(&quot;生产者运行结束，当前时间 = &quot; + System.currentTimeMillis());
-        }
-    }
-}
-
-static class Consumer implements Runnable {
-
-    @SneakyThrows
-    @Override
-    public void run() {
-
-        synchronized (lock) {
-            System.out.println(&quot;消费者运行开始，当前时间 = &quot; + System.currentTimeMillis());
-            lock.notify();
-            TimeUnit.MILLISECONDS.sleep(300);
-            System.out.println(&quot;消费者运行结束，当前时间 = &quot; + System.currentTimeMillis());
-        }
-    }
-}
-</code></pre>
-
-<p>其运行结果：</p>
-
-<pre><code class="language-text">生产者运行开始，当前时间 = 1609771313436
-消费者运行开始，当前时间 = 1609771313437
-消费者运行结束，当前时间 = 1609771313738
-生产者运行结束，当前时间 = 1609771314039
-</code></pre>
-
-<p>从结果上可以证明上述观点。<br/>
-生产者wait之后，消费者立即开始执行，然而消费者notify后，还要等待sleep时间过后，生产者才重新拿到锁对象。</p>
+<h3 id="toc_2">禁止指令重排序</h3>
 
 <hr/>
 
-<p>场景例子：<br/>
-生产者生产数字到List中，当List中的元素个数为10的时候，发送通知给到消费者，消费者消费List中的元素，使其个数为0.</p>
+<p><a href="https://tech.meituan.com/2014/09/23/java-memory-reordering.html">https://tech.meituan.com/2014/09/23/java-memory-reordering.html</a></p>
 
-<pre><code class="language-text">public class ProviderConsumer {
+<h3 id="toc_3">volatile的使用优化</h3>
 
-    static int x = 0;
-    private static List&lt;Integer&gt; list = new ArrayList&lt;&gt;();
-    private static Object lock = new Object();
+<p>缓存行是缓存中可以分配的最小存储单位，缓存行64字节。</p>
 
-    public static void main(String[] args) {
-        Thread a = new Thread(new Provider());
-        Thread b = new Thread(new Consumer());
+<p>采用追加字节的方式，使生成的对象占用64字节。</p>
 
-        a.start();
-        b.start();
-    }
+<p>以下有个优化的例子，</p>
 
-    static class Provider implements Runnable {
+<p>A类通过声明7个没有用的long类型变量，加上一个有用的long类型变量x，总共8个long类型变量，共64字节，或者是14个引用类型，引用类型占4字节，加一个long类型变量x，也是64字节。</p>
 
-        @SneakyThrows
-        @Override
-        public void run() {
-            synchronized (lock) {
-                while (true) {
-                    TimeUnit.MILLISECONDS.sleep(100);
-                    list.add(x++);
-                    if (list.size() == 10) {
-                        lock.wait();
-                    }
-                    lock.notify();
-                }
-            }
+<p>然后启动两个线程，每个线程对x累加10000000次，x被声明为volatile，每次修改都会对其他线程可见，</p>
+
+<p>把追加的字节删除之后在测试，用时差异比较明显。</p>
+
+<p>追加字节后测试时间大概60几毫秒，<br/>
+不追加字节测试时间大概200多毫秒。</p>
+<details>
+<p><summary>展开查看</summary></p>
+
+<pre><code class="language-text">public class CacheLineTest {
+
+    static class A{
+        /**
+         * 采用追加字节的方式，生成对象A占用64字节，正好是缓存行的容量
+         * 一个long类型8字节。
+         * private long a1,a2,a3,a4,a5,a6,a7;
+         * 一个引用类型4字节。
+         * private Object a1,a2,a3,a4,a5,a6,a7,a8,a9,aa,ab,ac,ad,ae;
+         */
+        private long a1,a2,a3,a4,a5,a6,a7;
+        private volatile long x = 0;
+
+        public long getX() {
+            return x;
+        }
+
+        public void setX(long x) {
+            this.x = x;
         }
     }
 
-    static class Consumer implements Runnable {
+    public static long test() throws InterruptedException {
+        A a1 = new A();
+        A a2 = new A();
 
-        @SneakyThrows
-        @Override
-        public void run() {
-
-            synchronized (lock) {
-                while (true) {
-                    if (list.size() == 10) {
-                        System.out.println(list);
-                        list.clear();
-                        lock.notify();
-                    }
-                    lock.wait();
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i &lt; 10000000; i++) {
+                    a1.setX(i);
                 }
             }
-        }
+        });
+
+
+        Thread t2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i &lt; 10000000; i++) {
+                    a2.setX(i);
+                }
+            }
+        });
+
+        long start = System.currentTimeMillis();
+
+        t1.start();
+        t2.start();
+
+        t1.join();
+        t2.join();
+
+        long end = System.currentTimeMillis();
+
+        long diff = end - start;
+        System.out.println(&quot;花费时间: &quot; + diff);
+        return diff;
     }
+
+
+    public static void main(String[] args) throws InterruptedException {
+        test();
+    }
+
 }
 </code></pre>
+</details>
+<h2 id="toc_4">synchronized的实现原理与应用</h2>
 
-<h3 id="toc_4">join</h3>
+<p>Java中的每一个对象都可以被作为锁。具体表现为以下3种形式：</p>
 
-<p>主线程等待子线程执行完成后在接着执行。<br/>
-join的作用就是等待子线程对象销毁。</p>
+<ol>
+<li>对于普通同步方法，锁是当前实例对象</li>
+<li>对于静态同步方法，锁是当前类的Class对象</li>
+<li>对于同步方法块，锁是synchronized括号里配置的对象。</li>
+</ol>
 
-<pre><code class="language-text">static class MyThread implements Runnable{
+<p>代码块同步是使用monitorenter和monitorexit指令实现的。</p>
 
-    @SneakyThrows
-    @Override
-    public void run() {
-        TimeUnit.SECONDS.sleep(3);
-        System.out.println(&quot;子线程运行结束&quot;);
-    }
-}
-@SneakyThrows
-public static void main(String[] args) {
-    MyThread t = new MyThread();
+<p>monitorenter是在编译后插入到同步代码块的开始位置，而monitorexit是插入到方法结束处和异常处。任何对象都有一个monitor与之关联，当一个monitor被持有后，它将处于锁定状态。</p>
 
-    Thread a = new Thread(t);
-    a.start();
-    a.join();
-    System.out.println(&quot;主线程运行结束&quot;);
-}
-</code></pre>
+<h3 id="toc_5">Java对象头</h3>
 
-<p>join使得当前线程等待子线程执行完成之后继续执行当前线程的代码。</p>
+<p>synchronized用的锁是存在Java对象头里的。</p>
 
-<p>join内部使用了wait，所以join方法会释放锁。</p>
+<p>Java对象头里的Mark Word里默认存储对象的 HashCode、分代年龄和锁标记位。</p>
 
-<h3 id="toc_5">ThreadLocal</h3>
+<p>64位虚拟机下，Mark Word是64bit大小，其存储结构为：<br/>
+<img src="http://hitol.blog.cdn.updev.cn/16066385450384.jpg" alt="" style="width:835px;"/></p>
 
-<p>ThreadLocal即线程变量，属于线程私有。多个线程之间是隔离的。<br/>
-是一个以ThreadLocal对象为key，任意对象为value的键值对存储结构，绑定在Thread上。</p>
+<h3 id="toc_6">锁升级与对比</h3>
 
-<hr/>
+<p>Java SE 1.6 为了减少获得锁和释放锁带来的性能消耗，引入了 “偏向锁” 和 “轻量级锁”。</p>
 
-<p><a href="https://zhuanlan.zhihu.com/p/138689342">https://zhuanlan.zhihu.com/p/138689342</a></p>
+<p>锁一共有4中状态，级别从低到高依次是：无锁状态、偏向锁状态、轻量级锁状态和重量级锁状态，这几个状态随着竞争情况逐渐升级。</p>
+
+<p>锁可以升级但不能降级。目的是为了提高获得锁和释放锁的效率。</p>
+
+<h4 id="toc_7">偏向锁</h4>
+
+<p>Java虚拟机的作者经过研究发现，大多数情况下，锁不仅不存在多线程竞争，而且总是由同一个线程多次获得，为了让这种线程获得锁的代价更低而引入了偏向锁。</p>
+
+<p>当一个线程访问同步块并获取锁时，会在对象头和栈帧中的锁记录里存储偏向的线程ID，以后该线程在进入和退出同步块时不需要进行加锁和解锁，只需要简单地测试一下对象头的Mark Word里是否存储着指向当前线程的偏向锁。</p>
+
+<h5 id="toc_8">偏向锁的撤销</h5>
+
+<p>当出现竞争的情况，偏向锁会撤销，并升级为轻量级锁。</p>
+
+<p>偏向锁的撤销需要等待全局安全点(safe point，通常会STW)，会首先暂停拥有  偏向锁的线程，然后检查持有偏向锁的线程是否活着，如果线程不处于活动状态，则将对象头设置成无锁状态；如果线程仍然活着，拥有偏向锁的栈会被执行，遍历偏向对象的锁记录，占中的锁记录和对象头的Mark Word要么重新偏向于其他线程，要么恢复到无锁或者标记对象不适合作为偏向锁，最后唤醒暂停的线程。</p>
+
+<p><strong>偏向锁加锁就是将锁的对象头中的线程ID指向自己，使这个锁偏向于自己。<br/>
+偏向锁的撤销就是将锁对象的对象头中的线程ID设置为空。</strong></p>
+
+<h4 id="toc_9">轻量级锁</h4>
+
+<p>加锁</p>
+
+<p>线程在执行同步块之前，JVM会现在当前线程的栈帧中创建用于存储锁记录的空间，并将对象头中的Mark Word复制到锁记录中，然后线程尝试使用CAS将对象头中的Mark Word替换为指向锁记录的指针，如果成功，当前线程获得锁，如果失败，表示其他线程竞争锁，当前线程便尝试使用自旋来获取锁。</p>
+
+<p>解锁</p>
+
+<p>轻量级解锁时，会使用原子的CAS操作将当前线程的栈帧中的对象头替换回到锁对象的对象头，如果成功，则表示没有竞争发生，如果失败，表示当前锁存在竞争，锁就会膨胀成重量级锁。</p>
+
+<p>自旋会消耗CPU，所以一旦锁升级为重量级锁就不会再恢复到轻量级锁状态。</p>
+
+<h3 id="toc_10">锁的优点与缺点</h3>
+
+<p><img src="http://hitol.blog.cdn.updev.cn/16066410640545.jpg" alt="" style="width:1352px;"/></p>
+
+<h2 id="toc_11">原子操作的实现原理</h2>
+
+<h3 id="toc_12">总线锁</h3>
+
+<p>所谓总线锁就是使用处理器提供的一个 LOCK# 信号，当一个处理器在总线上输出此信号时，其他处理器的请求将被阻塞住，该处理器可以独占共享内存。</p>
+
+<p>总线锁开销比较大。</p>
+
+<h3 id="toc_13">缓存锁</h3>
+
+<p>缓存一致性协议，MESI。</p>
+
+<h3 id="toc_14">Java如何实现原子操作</h3>
+
+<h4 id="toc_15">自旋CAS</h4>
+
+<p>JVM中的CAS操作利用了处理器提供的CMPXCHG指令实现的。</p>
+
+<p>CAS操作带来的问题：</p>
+
+<ol>
+<li><p>ABA问题</p>
+<p>当一个值A，变成B，又变为A，这时候使用CAS进行检查时会发现它的值没有发生变化，但实际上是发生变化的。</p>
+<p>ABA问题的解决思路就是使用版本号或者时间戳。</p></li>
+<li><p>循环时间长开销大</p></li>
+<li><p>只能保证一个共享变量的原子操作</p></li>
+</ol>
+
+<h4 id="toc_16">锁机制</h4>
+
+<p>偏向锁、轻量级锁和互斥锁。</p>
+
+<p>除了偏向锁，JVM实现锁的方式都用了自旋CAS。</p>
 
                         
                       </div>
@@ -354,7 +419,7 @@ public static void main(String[] args) {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/11/29</span>
+                    <span class="date">2020/11/25</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html'>Java并发编程的艺术</a></span>
@@ -422,6 +487,10 @@ public static void main(String[] args) {
 
       	<p class="cat-list">
         
+            <a href="redis.html"><strong>redis</strong></a>
+        
+            <a href="dubbo.html"><strong>dubbo</strong></a>
+        
             <a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html"><strong>Java并发编程的艺术</strong></a>
         
             <a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html"><strong>网络协议</strong></a>
@@ -451,6 +520,24 @@ public static void main(String[] args) {
 	      
 		      
 			      <li class="post">
+			        <a href="16121664688743.html">dubbo SPI</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16169197037719.html">Redis 持久化 - RDB、AOF 及 混合持久化机制</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16038518175830.html">计算机网络--运输层</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16054964627964.html">计算机网络--物理层</a>
 			      </li>
 		     
@@ -458,24 +545,6 @@ public static void main(String[] args) {
 		      
 			      <li class="post">
 			        <a href="16063170848836.html">Java并发机制的底层实现原理</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16061834685059.html">Java写一个死锁</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16066274541815.html">Java内存模型</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16066274677997.html">Java并发编程的基础</a>
 			      </li>
 		     
 		  

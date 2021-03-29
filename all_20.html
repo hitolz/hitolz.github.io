@@ -81,6 +81,10 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="redis.html">redis</a></li>
+        
+            <li><a href="dubbo.html">dubbo</a></li>
+        
             <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a></li>
         
             <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a></li>
@@ -116,125 +120,108 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032822998588.html">
+                <a class="clearlink" href="16032826948500.html">
                 
-                  <h1>AOP及自定义注解实现Redis缓存</h1>
+                  <h1>Docker 安装 MySQL数据库 实现主从复制</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h2 id="toc_0">背景</h2>
+                        	<p>安装mysql镜像，并启动两个容器，分别命名为master\slave1</p>
 
-<p>现在程序中是直接查询数据库数据的，Redis只是用来生成一些不重复id用的，现在要把Redis利用起来，缓存一些配置信息，提高程序运行及响应时间。</p>
+<pre><code class="language-text">docker pull mysql
 
-<h2 id="toc_1">设计</h2>
+docker run --name master -p 3307:3306 -e MYSQL_ROOT_PASSWORD=masterRoot -d mysql
 
-<ul>
-<li>在Dao层查询数据库之前，先查一下是否在Redis缓存中，如果存在的话直接取Redis中的数据，如果不存在，在去查询数据库，然后将本次查询结果根据查询条件放到缓存中。</li>
-<li>Redis在系统启动的时候先去清空配置信息。</li>
-<li>提供刷新缓存、删除缓存的方法</li>
-</ul>
-
-<h2 id="toc_2">实现之前</h2>
-
-<p>在Dao层中每个查询配置信息的方法中，增加查询缓存及设置缓存的方法。<br/>
-但是Dao层中的方法太多了。。。一个个加比较枯燥、主要是显得比较low，然后要想个方案实现。</p>
-
-<h2 id="toc_3">方案</h2>
-
-<p>很自然就想到了AOP，环绕通知，<br/>
-在目标方法执行之前先查询缓存，如果有就返回了，如果没有再去执行目标方法，<br/>
-在执行目标方法之后将查询条件及内容放到Redis中。<br/>
-自定义一个注解，被这个注解修饰的方法需要实现AOP。</p>
-
-<h2 id="toc_4">实现</h2>
-
-<p>定义一个缓存注解，被这个注解修饰的方法，会执行切面中的方法。</p>
-
-<pre><code class="language-text">/**
- * redis缓存注解
- * @author hitol
- * @version $Id: RedisCache.java, v 0.1 2020年3月19日 下午8:26:48 hitol Exp $
- */
-@Documented
-@Target({java.lang.annotation.ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface RedisCache {
-    String redisKey() default &quot;&quot;;
-
-    String cacheInfo() default &quot;&quot;;
-
-    Class&lt;?&gt; className() default String.class;
-}
-
+docker run --name slave1 -p 3308:3306 -e MYSQL_ROOT_PASSWORD=slave1Root -d mysql
 
 </code></pre>
 
-<p>定义缓存切面，使用环绕通知.</p>
+<h2 id="toc_0"></h2>
 
-<pre><code class="language-text">/**
- * 缓存切面
- * @author hitol
- * @version $Id: CacheAop.java, v 0.1 2020年3月20日 下午6:49:10 hitol Exp $
- */
-@Aspect
-@Component
-public class CacheAop {
+<p>查看master的ip</p>
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CacheAop.class);
-
-    @Pointcut(&quot;@annotation(com.acc.ac.core.util.redis.RedisCache)&quot;)
-    public void getCacheInfo() {
-        LOGGER.info(&quot;切入点&quot;);
-    }
-
-    @Around(&quot;getCacheInfo()&quot;)
-    public Object doBefore(ProceedingJoinPoint joinPoint) throws Throwable {
-
-        // 接口的参数
-        Object[] args = joinPoint.getArgs();
-        String arg = &quot;&quot;;
-        if (args.length &gt; 0){
-            arg = (String) args[0];
-        }
-
-        // 得到被代理的方法
-        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-
-        // 得到被代理的方法上的注解
-        RedisCache annotation = method.getAnnotation(RedisCache.class);
-
-        Class&lt;?&gt; className = annotation.className();
-        String redisKey = annotation.redisKey() + arg;
-        Class returnType = method.getReturnType();
-
-        LOGGER.info(&quot;key = {},查询Redis缓存&quot;, redisKey);
-        String cacheInfo = RedisUtils.getString(redisKey);
-
-        if (StringUtils.isNotBlank(cacheInfo)) {
-            LOGGER.info(&quot;key = {},在Redis缓存中.&quot;, redisKey);
-
-            if (&quot;java.util.List&quot;.equals(returnType.getName())){
-                return JSONObject.parseArray(cacheInfo,className);
-            }
-
-            return JSONObject.parseObject(cacheInfo, returnType);
-        }
-        LOGGER.info(&quot;key = {},没有在Redis缓存中查询到.&quot;, redisKey);
-        Object result = joinPoint.proceed(args);
-        cacheInfo = JSONObject.toJSONString(result);
-
-        if (StringUtils.isNotBlank(cacheInfo)) {
-            RedisUtils.setString(redisKey, cacheInfo);
-        }
-
-        return JSONObject.parseObject(cacheInfo, returnType);
-
-    }
-}
+<pre><code class="language-text">docker inspect --format=&#39;{{.NetworkSettings.IPAddress}}&#39;  f7e6499911c8
 </code></pre>
 
-<p>完成。</p>
+<p>172.17.0.3</p>
+
+<h2 id="toc_1"></h2>
+
+<p>修改master配置文件my.cnf<br/>
+在[mysqld]配置中添加两个配置</p>
+
+<pre><code class="language-text">log-bin         = mysql-bin
+server-id       = 1
+</code></pre>
+
+<p>修改slave1配置文件my.cnf<br/>
+在[mysqld]配置中添加两个配置</p>
+
+<pre><code class="language-text">log-bin         = mysql-bin
+server-id       = 2
+</code></pre>
+
+<h2 id="toc_2"></h2>
+
+<p>在master数据库中创建用来同步数据的用户</p>
+
+<pre><code class="language-text">CREATE USER &#39;slave&#39;@&#39;%&#39; IDENTIFIED BY &#39;123456&#39;;
+GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO &#39;slave&#39;@&#39;%&#39;;  
+</code></pre>
+
+<p><code>REPLICATION SLAVE</code> 常用于建立复制时所需要用到的用户权限，也就是slave server必须被master server授权具有该权限的用户，才能通过该用户复制。<br/>
+并且&quot;SHOW SLAVE HOSTS&quot;这条命令和REPLICATION SLAVE权限有关，否则执行时会报错：</p>
+
+<blockquote>
+<p>ERROR 1227 (42000): Access denied; you need (at least one of) the REPLICATION SLAVE privilege(s) for this operation </p>
+</blockquote>
+
+<p><code>REPLICATION CLIEN</code>T 不可用于建立复制，有该权限时，只是多了可以使用如&quot;SHOW SLAVE STATUS&quot;、&quot;SHOW MASTER STATUS&quot;等命令。</p>
+
+<h2 id="toc_3"></h2>
+
+<pre><code class="language-text">mysql&gt; show master status
+    -&gt; ;
++------------------+----------+--------------+------------------+-------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++------------------+----------+--------------+------------------+-------------------+
+| mysql-bin.000001 |      156 |              |                  |                   |
++------------------+----------+--------------+------------------+-------------------+
+1 row in set (0.01 sec)
+ 
+mysql&gt; 
+</code></pre>
+
+<h2 id="toc_4"></h2>
+
+<p>在slave1中执行</p>
+
+<pre><code class="language-text">change master to master_host=&#39;172.17.0.3&#39;, master_user=&#39;slave&#39;, master_password=&#39;123456&#39;, master_port=3306, master_log_file=&#39;mysql-bin.000001&#39;, master_log_pos=156, master_connect_retry=30;  
+</code></pre>
+
+<p>这里需要注意下，<code>master_host</code>用master容器的ip，<code>master_port</code>是3306，<code>master_log_file</code>是上面master的<code>show master status</code>的File，<code>master_log_pos</code>则是Position。</p>
+
+<p>我一开始以为master_port是主机映射到master容器的端口3307，搞了半天也搞不通。</p>
+
+<h2 id="toc_5"></h2>
+
+<p>主从同步完成。</p>
+
+<h2 id="toc_6"></h2>
+
+<p>TODO<br/>
+读写分离</p>
+
+<hr/>
+
+<p>建议用 compose，有几点改进：</p>
+
+<ol>
+<li>配置文件改好挂进去，而不是启动容器之后再改</li>
+<li>把数据通过数据卷挂出来，容器没了数据不丢</li>
+<li>compose 下可以用 link 参数，这个参数将容器名/容器 ip 写到 hosts 里，这样就不用去找 ip 了</li>
+</ol>
 
                         
                       </div>
@@ -246,7 +233,7 @@ public class CacheAop {
                     <span class="date">2020/10/21</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          					    <span class="posted-in"><a href='Docker.html'>Docker</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -311,6 +298,10 @@ public class CacheAop {
 
       	<p class="cat-list">
         
+            <a href="redis.html"><strong>redis</strong></a>
+        
+            <a href="dubbo.html"><strong>dubbo</strong></a>
+        
             <a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html"><strong>Java并发编程的艺术</strong></a>
         
             <a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html"><strong>网络协议</strong></a>
@@ -340,6 +331,24 @@ public class CacheAop {
 	      
 		      
 			      <li class="post">
+			        <a href="16121664688743.html">dubbo SPI</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16169197037719.html">Redis 持久化 - RDB、AOF 及 混合持久化机制</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16038518175830.html">计算机网络--运输层</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16054964627964.html">计算机网络--物理层</a>
 			      </li>
 		     
@@ -347,24 +356,6 @@ public class CacheAop {
 		      
 			      <li class="post">
 			        <a href="16063170848836.html">Java并发机制的底层实现原理</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16061834685059.html">Java写一个死锁</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16066274541815.html">Java内存模型</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16066274677997.html">Java并发编程的基础</a>
 			      </li>
 		     
 		  

@@ -81,6 +81,10 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="redis.html">redis</a></li>
+        
+            <li><a href="dubbo.html">dubbo</a></li>
+        
             <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a></li>
         
             <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a></li>
@@ -116,26 +120,173 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032826118476.html">
+                <a class="clearlink" href="16121664688743.html">
                 
-                  <h1>Java 面试基础知识</h1>
+                  <h1>dubbo SPI</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p><img src="http://hitol.blog.cdn.updev.cn/2020-08-10-%E9%9B%86%E5%90%88.png" alt="集合"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-%E9%9D%A2%E8%AF%95.jpg" alt="面试"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-%E7%BA%BF%E7%A8%8B%E6%B1%A0.png" alt="线程池"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-dubbo.png" alt="dubbo"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-JVM.png" alt="JV"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-Lock.png" alt="Lock"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-MySQL.png" alt="MySQ"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-spring.png" alt="spring"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-synchronized.png" alt="synchronized"/></p>
+                        	<ul>
+<li>
+<a href="#toc_0">Java SPI</a>
+</li>
+<li>
+<a href="#toc_1">dubbo SPI</a>
+</li>
+<li>
+<a href="#toc_2">dubbo SPI 的实现</a>
+<ul>
+<li>
+<a href="#toc_3">ExtensionLoader.getExtensionLoader</a>
+</li>
+<li>
+<a href="#toc_4">getAdaptiveExtension()</a>
+</li>
+<li>
+<a href="#toc_5">extensionLoader.getExtension</a>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<h2 id="toc_0">Java SPI</h2>
+
+<p>SPI 是服务发现机制，为某个接口寻找服务的实现。<br/>
+是 JDK 6 的特性，ServiceLoader。<br/>
+ServiceLoader启动时会到 resource/META-INF/services/ 目录下读取以 实现类的全限定名 命名的文件。</p>
+
+<p>程序通过 ServiceLoader 动态加载实现类模块，通过扫描 META-INF/services 目录下的配置文件找到实现类的全限定名，把类加载到JVM;</p>
+
+<p>demo：</p>
+
+<pre><code class="language-text">// 一个接口，两个实现类
+public interface Fruit {
+
+    void printName();
+
+}
+
+
+public class Apple implements Fruit {
+    @Override
+    public void printName() {
+        System.out.println(&quot;Apple&quot;);
+    }
+}
+
+public class Orange implements Fruit {
+    @Override
+    public void printName() {
+        System.out.println(&quot;Orange&quot;);
+    }
+}
+
+</code></pre>
+
+<p>在 src/main/resources/META-INF/services 下新建文件 xxx.xxx.xx.Fruit，这个文件名就是Fruit接口的全限定名，<br/>
+文件中的内容是 Apple、Orange类的全限定名，可以配置一个也可以配置多个。</p>
+
+<pre><code class="language-text">public static void main(String[] args) {
+    ServiceLoader&lt;Fruit&gt; fruits = ServiceLoader.load(Fruit.class);
+
+    for (Fruit fruit : fruits) {
+        fruit.printName();
+    }
+}
+</code></pre>
+
+<p>会依次调用xxx.xxx.xx.Fruit文件中配置的具体实现类。</p>
 
 <hr/>
 
-<p><a href="https://segmentfault.com/a/1190000023614092">https://segmentfault.com/a/1190000023614092</a></p>
+<p>应用场景：各种数据库连接<br/>
+<img src="media/16121664688743/16146868237742.jpg" alt=""/></p>
+
+<h2 id="toc_1">dubbo SPI</h2>
+
+<p>dubbo SPI 扩展点加载，从 JDK 标准的 SPI 扩展点机制加强而来。<br/>
+加载的路径约定为： resource/META-INF/dubbo/接口全限定名<br/>
+增加了对扩展点 IOC 和 AOP 的支持，一个扩展点可以直接 setter 注入其它扩展点。</p>
+
+<p>将上面例子中的xx.Fruit文件移到 resource/META-INF/dubbo/ 目录下，同时需要在 Fruit 类上加 dubbo 注解 @SPI。</p>
+
+<p>demo：</p>
+
+<pre><code class="language-text">public static void main(String[] args) {
+    ExtensionLoader&lt;Fruit&gt; extensionLoader = ExtensionLoader.getExtensionLoader(Fruit.class);
+    Fruit apple = extensionLoader.getExtension(&quot;apple&quot;);
+    Fruit orange = extensionLoader.getExtension(&quot;orange&quot;);
+
+    apple.printName();
+    orange.printName();
+}
+</code></pre>
+
+<p>dubbo SPI 的实现封装在 ExtensionLoader 中。</p>
+
+<h2 id="toc_2">dubbo SPI 的实现</h2>
+
+<p>ExtensionLoader.getExtensionLoader<br/>
+ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension())<br/>
+extensionLoader.getExtension</p>
+
+<h3 id="toc_3">ExtensionLoader.getExtensionLoader</h3>
+
+<p><img src="media/16121664688743/SPI-1-getExtensionLoader.png" alt="SPI-1-getExtensionLoade"/></p>
+
+<p>这个方法的逻辑比较简单，是否有 SPI 注解，缓存中没有的话就 new 一个 ExtensionLoader 出来，不过在 new 的时候会去获取 objectFactory 属性的值。第一次 new 的话，会加载 ExtensionFactory，并获取它的默认实现。</p>
+
+<pre><code class="language-text">private ExtensionLoader(Class&lt;?&gt; type) {
+    this.type = type;
+    objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
+}
+</code></pre>
+
+<h3 id="toc_4">getAdaptiveExtension()</h3>
+
+<p>SPI 修饰的接口的实现类中，获取带有 @Adaptive 注解的实现。<br/>
+在同一个接口的实现类中，@Adaptive 注解只能修饰其中的一个实现类，表示该接口的默认实现。</p>
+
+<p>getAdaptiveExtension 方法就是获取这个默认的实现类。</p>
+
+<h3 id="toc_5">extensionLoader.getExtension</h3>
+
+<pre><code class="language-text">public T getExtension(String name) {
+    if (StringUtils.isEmpty(name)) {
+        throw new IllegalArgumentException(&quot;Extension name == null&quot;);
+    }
+    if (&quot;true&quot;.equals(name)) {
+        return getDefaultExtension();
+    }
+    // 获取holder，相当于持有对象的锁
+    // 从缓存map cachedInstances 中获取，获取不到就new
+    final Holder&lt;Object&gt; holder = getOrCreateHolder(name);
+    Object instance = holder.get();
+    // 双重检测单例模式
+    // 此处这个锁对象是holder，而不是整个class对象，锁粒度更小，并发更高
+    if (instance == null) {
+        synchronized (holder) {
+            instance = holder.get();
+            if (instance == null) {
+                instance = createExtension(name);
+                holder.set(instance);
+            }
+        }
+    }
+    return (T) instance;
+}
+</code></pre>
+
+<p><img src="media/16121664688743/getExtension.png" alt="getExtension"/></p>
+
+<p>拓展类对象的获取过程，都是先从缓存中查找，没有在新建对象。最重要的实现逻辑是在 createExtension 方法中。</p>
+
+<hr/>
+
+<p><a href="https://dubbo.apache.org/zh/docs/v2.7/dev/spi/">https://dubbo.apache.org/zh/docs/v2.7/dev/spi/</a><br/>
+<a href="https://dubbo.apache.org/zh/docs/v2.7/dev/source/dubbo-spi/">https://dubbo.apache.org/zh/docs/v2.7/dev/source/dubbo-spi/</a></p>
 
                         
                       </div>
@@ -144,10 +295,12 @@
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/10/21</span>
+                    <span class="date">2021/2/1</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				  
+          					    <span class="posted-in"><a href='dubbo.html'>dubbo</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -212,6 +365,10 @@
 
       	<p class="cat-list">
         
+            <a href="redis.html"><strong>redis</strong></a>
+        
+            <a href="dubbo.html"><strong>dubbo</strong></a>
+        
             <a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html"><strong>Java并发编程的艺术</strong></a>
         
             <a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html"><strong>网络协议</strong></a>
@@ -241,6 +398,24 @@
 	      
 		      
 			      <li class="post">
+			        <a href="16121664688743.html">dubbo SPI</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16169197037719.html">Redis 持久化 - RDB、AOF 及 混合持久化机制</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16038518175830.html">计算机网络--运输层</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16054964627964.html">计算机网络--物理层</a>
 			      </li>
 		     
@@ -248,24 +423,6 @@
 		      
 			      <li class="post">
 			        <a href="16063170848836.html">Java并发机制的底层实现原理</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16061834685059.html">Java写一个死锁</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16066274541815.html">Java内存模型</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16066274677997.html">Java并发编程的基础</a>
 			      </li>
 		     
 		  
