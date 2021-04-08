@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  非著名Java程序员
+  搭建 RocketMQ 集群 - 非著名Java程序员
   
   </title>
   
@@ -113,121 +113,223 @@
        
 
  <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="16061834685059.html">
-                
-                  <h1>Java写一个死锁</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<pre><code class="language-text">public class DeadLockDemo {
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>搭建 RocketMQ 集群</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2021/4/6</span>
 
-    private static String A = &quot;A&quot;;
-    private static String B = &quot;B&quot;;
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='RocketMQ.html'>RocketMQ</a></span>
+           
+         
+          <span class="comments">
+            
 
+            
+          </span>
 
-    private void deadLock(){
-        Thread  t1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (A){
-                    try {
-                        Thread.currentThread().sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    synchronized (B){
-                        System.out.println(&quot;t1&quot;);
-                    }
-                }
-            }
-        });
+        </div>
+      </div><!-- article -->
 
-        Thread  t2 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (B){
-                    synchronized (A){
-                        System.out.println(&quot;t2&quot;);
-                    }
-                }
-            }
-        });
+      <div class="article-content">
+      <p>使用两台虚拟机搭建出 双主-双从 集群<br/>
+A 192.168.153.131<br/>
+B 192.168.153.132</p>
 
-        t1.start();
-        t2.start();
-    }
+<p>官网地址 <br/>
+<a href="http://rocketmq.apache.org/docs/quick-start/">http://rocketmq.apache.org/docs/quick-start/</a></p>
 
-    public static void main(String[] args) {
-        new DeadLockDemo().deadLock();
-    }
-}
+<p>先从上面下载下来最新的 RocketMQ 安装包，最新的是 rocketmq-all-4.8.0-bin-release</p>
+
+<p>解压后进入到 conf 文件夹下，官方已经创建好了简单的集群配置文件。</p>
+
+<ul>
+<li>2m-2s-async :2个master，2个slave，async异步复制</li>
+<li>2m-2s-sync :2个master，2个slave，sync同步双写</li>
+<li>2m-noslave :2个master,没有slave</li>
+</ul>
+
+<p>首先在每台机器上启动 nameServer</p>
+
+<pre><code class="language-text">nohub sh bin/mqnamesrv &amp;
 </code></pre>
 
-<p><img src="http://hitol.blog.cdn.updev.cn/16061836722063.jpg" alt=""/></p>
+<p>然后配置 Broker，每台机器上都要分别配置一个 Master 角色的 Broker 和一个 Slave 角色的 Broker，并互为主备。</p>
 
-<p>操作系统中，死锁发生的四个条件：</p>
+<p>A 机器启动 broker-a master, broker-b slave<br/>
+B 机器启动 broker-a slave, broker-b master</p>
 
-<ol>
-<li><p>互斥条件<br/>
-一个资源每次只能被一个进程使用</p></li>
-<li><p>占有且等待<br/>
-一个进程因请求资源而阻塞时，对已获得的资源保持不放</p></li>
-<li><p>不可强行占有<br/>
-进程已获得的资源，在未使用完成之前，不能强行剥夺</p></li>
-<li><p>循环等待<br/>
-进程之间形成一种头尾相接的循环等待资源关系</p></li>
-</ol>
+<p>启动</p>
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2020/11/24</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html'>Java并发编程的艺术</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+<pre><code class="language-text">nohub sh bin/mqbroker -c conf/2m-2s-async/broker-xxx.properties
+</code></pre>
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
+<p>然后在安装 console ，最终效果如图：<br/>
+<img src="media/16176922961413/16177202877632.jpg" alt=""/></p>
+
+<p>配置文件：<br/>
+broker-a-master</p>
+
+<pre><code class="language-text">brokerClusterName=DefaultCluster
+brokerName=broker-a
+brokerId=0
+deleteWhen=04
+fileReservedTime=48
+brokerRole=ASYNC_MASTER
+flushDiskType=ASYNC_FLUSH
+
+namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
+listenPort=10911
+defaultTopicQueueNums=8
+#是否允许 Broker 自动创建Topic，生产建议关闭
+autoCreateTopicEnable=true
+#是否允许 Broker 自动创建订阅组，生产建议关闭
+autoCreateSubscriptionGroup=true
+#存储路径
+storePathRootDir=~/mq/data/store-a
+#commitLog 存储路径 
+storePathCommitLog=~/mq/data/store-a/commitlog
+#消费队列存储路径存储路径
+storePathConsumeQueue=~/mq/data/store-a/consumequeue
+#消息索引存储路径
+storePathIndex=~/mq/data/store-a/index
+#checkpoint 文件存储路径
+storeCheckpoint=~/mq/data/store-a/checkpoint
+</code></pre>
+
+<p>broker-b-slave</p>
+
+<pre><code class="language-text">brokerClusterName=DefaultCluster
+brokerName=broker-b
+brokerId=1
+deleteWhen=04
+fileReservedTime=48
+brokerRole=SLAVE
+flushDiskType=ASYNC_FLUSH
+
+namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
+listenPort=11011
+defaultTopicQueueNums=8
+#是否允许 Broker 自动创建Topic，生产建议关闭
+autoCreateTopicEnable=true
+#是否允许 Broker 自动创建订阅组，生产建议关闭
+autoCreateSubscriptionGroup=true
+#存储路径
+storePathRootDir=~/mq/data/store-b
+#commitLog 存储路径 
+storePathCommitLog=~/mq/data/store-b/commitlog
+#消费队列存储路径存储路径
+storePathConsumeQueue=~/mq/data/store-b/consumequeue
+#消息索引存储路径
+storePathIndex=~/mq/data/store-b/index
+#checkpoint 文件存储路径
+storeCheckpoint=~/mq/data/store-b/checkpoint
+</code></pre>
+
+<p>broker-b-master</p>
+
+<pre><code class="language-text">brokerClusterName=DefaultCluster
+brokerName=broker-b
+brokerId=0
+deleteWhen=04
+fileReservedTime=48
+brokerRole=ASYNC_MASTER
+flushDiskType=ASYNC_FLUSH
+
+namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
+listenPort=10911
+#每个topic对应队列的数量，默认为4，实际应参考consumer实例的数量，值过小不利于consumer负载均衡
+defaultTopicQueueNums=8
+#是否允许 Broker 自动创建Topic，生产建议关闭
+autoCreateTopicEnable=true
+#是否允许 Broker 自动创建订阅组，生产建议关闭
+autoCreateSubscriptionGroup=true
+#存储路径
+storePathRootDir=~/mq/data/store-b
+#commitLog 存储路径 
+storePathCommitLog=~/mq/data/store-b/commitlog
+#消费队列存储路径存储路径
+storePathConsumeQueue=~/mq/data/store-b/consumequeue
+#消息索引存储路径
+storePathIndex=~/mq/data/store-b/index
+#checkpoint 文件存储路径
+storeCheckpoint=~/mq/data/store-b/checkpoint
+
+</code></pre>
+
+<p>broker-a-slave</p>
+
+<pre><code class="language-text">brokerClusterName=DefaultCluster
+brokerName=broker-a
+brokerId=1
+deleteWhen=04
+fileReservedTime=48
+brokerRole=SLAVE
+flushDiskType=ASYNC_FLUSH
+
+namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
+listenPort=11011
+defaultTopicQueueNums=8
+#是否允许 Broker 自动创建Topic，生产建议关闭
+autoCreateTopicEnable=true
+#是否允许 Broker 自动创建订阅组，生产建议关闭
+autoCreateSubscriptionGroup=true
+#存储路径
+storePathRootDir=~/mq/data/store-a
+#commitLog 存储路径 
+storePathCommitLog=~/mq/data/store-a/commitlog
+#消费队列存储路径存储路径
+storePathConsumeQueue=~/mq/data/store-a/consumequeue
+#消息索引存储路径
+storePathIndex=~/mq/data/store-a/index
+#checkpoint 文件存储路径
+storeCheckpoint=~/mq/data/store-a/checkpoint
+</code></pre>
 
 
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   <a href="all_5.html">&laquo; Prev Page</a>  
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			 <a href="all_7.html">&raquo; Next Page</a> 
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="16121664688743.html" 
+          title="Next Post: dubbo SPI">dubbo SPI &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">
