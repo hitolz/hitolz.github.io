@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  Java - 非著名Java程序员
+  Spring - 非著名Java程序员
   
   </title>
   
@@ -122,26 +122,90 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032826118476.html">
+                <a class="clearlink" href="16032821893434.html">
                 
-                  <h1>Java 面试基础知识</h1>
+                  <h1>Spring事务管理</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p><img src="http://hitol.blog.cdn.updev.cn/2020-08-10-%E9%9B%86%E5%90%88.png" alt="集合"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-%E9%9D%A2%E8%AF%95.jpg" alt="面试"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-%E7%BA%BF%E7%A8%8B%E6%B1%A0.png" alt="线程池"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-dubbo.png" alt="dubbo"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-JVM.png" alt="JV"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-Lock.png" alt="Lock"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-MySQL.png" alt="MySQ"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-spring.png" alt="spring"/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/2020-08-10-synchronized.png" alt="synchronized"/></p>
+                        	<p><code>@Transactional</code> 保证事务一致性。<br/>
+当出现异常时，会回滚</p>
 
-<hr/>
+<p>隔离级别：<br/>
+隔离级别是指多个并发事务之间的隔离程度。与开发相关的场景主要包括：脏读取、重复读、幻读。</p>
 
-<p><a href="https://segmentfault.com/a/1190000023614092">https://segmentfault.com/a/1190000023614092</a></p>
+<pre><code class="language-text">package org.springframework.transaction.annotation;
+
+public enum Isolation {
+    DEFAULT(-1),
+    READ_UNCOMMITTED(1),
+    READ_COMMITTED(2),
+    REPEATABLE_READ(4),
+    SERIALIZABLE(8);
+
+    private final int value;
+
+    private Isolation(int value) {
+        this.value = value;
+    }
+
+    public int value() {
+        return this.value;
+    }
+}
+</code></pre>
+
+<p>Isolation枚举类中定义了5个表示隔离级别的值</p>
+
+<p>DEFAULT 默认值，表示使用底层数据库的默认隔离级别。对大部分数据库而言，就是READ_COMMITED</p>
+
+<p>READ_UNCOMMITED：该隔离级别表示，一个事务可以读取另一个事务修改但是还未提交的数据。不能防止脏读和不可重复读。很少使用。</p>
+
+<p>READ_COMMITED:该隔离级别表示，只能读取另一个事务已经提交的数据。该事务级别可以防止脏读，也是大多数情况下的推荐值。</p>
+
+<p>REPEATABLE_READ:该隔离级别表示一个事务在整个过程中可以多次重复执行某个查询，并返回相同结果。在多次查询之间有新增的值会被忽略。可以防止不可重复读和脏读。</p>
+
+<p>SERIALIZABLE：所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，该级别可以防止脏读、不可重复读以及幻读。但是这将严重影响程序的性能。通常情况下也不会用到该级别</p>
+
+<p>指定方法：</p>
+
+<pre><code class="language-text">@Transactional(isolation = Isolation.DEFAULT)
+</code></pre>
+
+<p>传播行为：</p>
+
+<pre><code class="language-text">package org.springframework.transaction.annotation;
+
+public enum Propagation {
+    REQUIRED(0),
+    SUPPORTS(1),
+    MANDATORY(2),
+    REQUIRES_NEW(3),
+    NOT_SUPPORTED(4),
+    NEVER(5),
+    NESTED(6);
+
+    private final int value;
+
+    private Propagation(int value) {
+        this.value = value;
+    }
+
+    public int value() {
+        return this.value;
+    }
+}
+</code></pre>
+
+<p>Propagation枚举类中定义了6个表示传播行为的枚举值：<br/>
+REQUIRED：如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。<br/>
+SUPPORTS：如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式继续运行。<br/>
+MANDATORY：如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常。<br/>
+REQUIRES_NEW：创建一个新的事务，如果当前存在事务，则把当前事务挂起。<br/>
+NOT_SUPPORTED：以非事务方式运行，如果当前存在事务，则把当前事务挂起。<br/>
+NEVER：以非事务方式运行，如果当前存在事务，则抛出异常。<br/>
+NESTED：如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于REQUIRED</p>
 
                         
                       </div>
@@ -152,6 +216,8 @@
                   
                     <span class="date">2020/10/21</span>
                     <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
           				  
           					    <span class="posted-in"><a href='Java.html'>Java</a></span>
           				   
@@ -172,12 +238,12 @@
 			<div class="row">
 			  <div class="large-6 columns">
 			  <p class="text-left" style="padding-top:25px;">
-			   <a href="Java_1.html">&laquo; Prev Page</a>  
+			   <a href="Spring_1.html">&laquo; Prev Page</a>  
 			  </p>
 			  </div>
 			  <div class="large-6 columns">
 			<p class="text-right" style="padding-top:25px;">
-			 <a href="Java_3.html">&raquo; Next Page</a> 
+			
 			</p>
 			  </div>
 			</div>

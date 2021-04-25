@@ -122,108 +122,97 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032826948500.html">
+                <a class="clearlink" href="16032824371007.html">
                 
-                  <h1>Docker 安装 MySQL数据库 实现主从复制</h1>
+                  <h1>JVM运行时数据区域、Java内存模型、Java对象结构</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>安装mysql镜像，并启动两个容器，分别命名为master\slave1</p>
-
-<pre><code class="language-text">docker pull mysql
-
-docker run --name master -p 3307:3306 -e MYSQL_ROOT_PASSWORD=masterRoot -d mysql
-
-docker run --name slave1 -p 3308:3306 -e MYSQL_ROOT_PASSWORD=slave1Root -d mysql
-
-</code></pre>
-
-<h2 id="toc_0"></h2>
-
-<p>查看master的ip</p>
-
-<pre><code class="language-text">docker inspect --format=&#39;{{.NetworkSettings.IPAddress}}&#39;  f7e6499911c8
-</code></pre>
-
-<p>172.17.0.3</p>
-
-<h2 id="toc_1"></h2>
-
-<p>修改master配置文件my.cnf<br/>
-在[mysqld]配置中添加两个配置</p>
-
-<pre><code class="language-text">log-bin         = mysql-bin
-server-id       = 1
-</code></pre>
-
-<p>修改slave1配置文件my.cnf<br/>
-在[mysqld]配置中添加两个配置</p>
-
-<pre><code class="language-text">log-bin         = mysql-bin
-server-id       = 2
-</code></pre>
-
-<h2 id="toc_2"></h2>
-
-<p>在master数据库中创建用来同步数据的用户</p>
-
-<pre><code class="language-text">CREATE USER &#39;slave&#39;@&#39;%&#39; IDENTIFIED BY &#39;123456&#39;;
-GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO &#39;slave&#39;@&#39;%&#39;;  
-</code></pre>
-
-<p><code>REPLICATION SLAVE</code> 常用于建立复制时所需要用到的用户权限，也就是slave server必须被master server授权具有该权限的用户，才能通过该用户复制。<br/>
-并且&quot;SHOW SLAVE HOSTS&quot;这条命令和REPLICATION SLAVE权限有关，否则执行时会报错：</p>
-
-<blockquote>
-<p>ERROR 1227 (42000): Access denied; you need (at least one of) the REPLICATION SLAVE privilege(s) for this operation </p>
-</blockquote>
-
-<p><code>REPLICATION CLIEN</code>T 不可用于建立复制，有该权限时，只是多了可以使用如&quot;SHOW SLAVE STATUS&quot;、&quot;SHOW MASTER STATUS&quot;等命令。</p>
-
-<h2 id="toc_3"></h2>
-
-<pre><code class="language-text">mysql&gt; show master status
-    -&gt; ;
-+------------------+----------+--------------+------------------+-------------------+
-| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
-+------------------+----------+--------------+------------------+-------------------+
-| mysql-bin.000001 |      156 |              |                  |                   |
-+------------------+----------+--------------+------------------+-------------------+
-1 row in set (0.01 sec)
- 
-mysql&gt; 
-</code></pre>
-
-<h2 id="toc_4"></h2>
-
-<p>在slave1中执行</p>
-
-<pre><code class="language-text">change master to master_host=&#39;172.17.0.3&#39;, master_user=&#39;slave&#39;, master_password=&#39;123456&#39;, master_port=3306, master_log_file=&#39;mysql-bin.000001&#39;, master_log_pos=156, master_connect_retry=30;  
-</code></pre>
-
-<p>这里需要注意下，<code>master_host</code>用master容器的ip，<code>master_port</code>是3306，<code>master_log_file</code>是上面master的<code>show master status</code>的File，<code>master_log_pos</code>则是Position。</p>
-
-<p>我一开始以为master_port是主机映射到master容器的端口3307，搞了半天也搞不通。</p>
-
-<h2 id="toc_5"></h2>
-
-<p>主从同步完成。</p>
-
-<h2 id="toc_6"></h2>
-
-<p>TODO<br/>
-读写分离</p>
+                        	<p>JVM内存模型<br/>
+也是JVM运行时数据区域。<br/>
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.png" alt="JVM内存模型"/></p>
 
 <hr/>
 
-<p>建议用 compose，有几点改进：</p>
+<p>Java线程内存模型。<br/>
+是一种内存规范。</p>
 
-<ol>
-<li>配置文件改好挂进去，而不是启动容器之后再改</li>
-<li>把数据通过数据卷挂出来，容器没了数据不丢</li>
-<li>compose 下可以用 link 参数，这个参数将容器名/容器 ip 写到 hosts 里，这样就不用去找 ip 了</li>
-</ol>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-Java%E7%BA%BF%E7%A8%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8BJMM2.png" alt="Java线程内存模型JM"/></p>
+
+<h4 id="toc_0">主内存与线程私有内存</h4>
+
+<h4 id="toc_1">CPU三级缓存</h4>
+
+<h4 id="toc_2">MESI协议</h4>
+
+<h4 id="toc_3">Java操作内存的8个方法</h4>
+
+<h4 id="toc_4">synchronized 与 volitale</h4>
+
+<hr/>
+
+<p>Java对象结构</p>
+
+<p><img src="media/16032824371007/15969632678246.jpg" alt="15969632678246"/></p>
+
+<p>对象在内存中存储的布局可以分为3块区域：</p>
+
+<ul>
+<li>对象头 Header</li>
+<li>实例数据Instance Data</li>
+<li>对齐填充。</li>
+</ul>
+
+<h4 id="toc_5">对象头</h4>
+
+<p>对象头包括两部分信息，<br/>
+第一部分 <code>Mark Word</code>，用于存储对象自身的运行时数据，主要有</p>
+
+<ul>
+<li>哈希码 HashCode</li>
+<li>GC分代年龄</li>
+<li>锁状态标志</li>
+<li>线程持有的锁</li>
+<li>偏向线程ID</li>
+<li>偏向时间戳</li>
+</ul>
+
+<p>这部分数据的长度在32位和64位的虚拟机中分别为32bit、64bit，也就是说<code>Mark Word</code>这部分占用内存8个字节。</p>
+
+<p>第二部分是类型指针，即这个对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例。<br/>
+类型指针占用内存4个字节。</p>
+
+<hr/>
+
+<h4 id="toc_6">实例数据</h4>
+
+<p>是对象真真存储的有效信息，也是程序代码中所定义的各种类型的字段内容。<br/>
+包含从父类继承下来的和子类中定义的。<br/>
+存储顺序会受到虚拟机分配策略参数和字段在Java源码中定义顺序的影响。</p>
+
+<p>HotSpot虚拟机默认的分配策略为<br/>
+longs/doubles<br/>
+ints<br/>
+shorts/charts<br/>
+bytes/booleans<br/>
+oops（Ordinary Object Pointers）<br/>
+相同宽度的字段总是被分配到一起。</p>
+
+<h4 id="toc_7">对齐填充</h4>
+
+<p>HotSpot VM的自动内存管理系统要求对象起始地址必须是8字节的整数倍，对象的大小必须是8字节的整数倍。<br/>
+因此，当该对象的占用内存不是8的整数倍的时候需要对齐填充来补全。</p>
+
+<hr/>
+
+<p>Object o = new Object()使用了多少内存?</p>
+
+<p>Mark Word 8<br/>
+Class Pointer 4<br/>
+Instance Data 0<br/>
+对齐 4<br/>
+总共16个字节。</p>
 
                         
                       </div>
@@ -235,7 +224,7 @@ mysql&gt;
                     <span class="date">2020/10/21</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Docker.html'>Docker</a></span>
+          					    <span class="posted-in"><a href='JVM.html'>JVM</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -335,13 +324,19 @@ mysql&gt;
 	      
 		      
 			      <li class="post">
-			        <a href="16176922961413.html">搭建 RocketMQ 集群</a>
+			        <a href="16191464387463.html">nacos</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="16121664688743.html">dubbo SPI</a>
+			        <a href="16121664688743.html">Dubbo SPI</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16173443661607.html">ibatis 升级到 MyBatis</a>
 			      </li>
 		     
 		  
@@ -353,13 +348,7 @@ mysql&gt;
 		  
 		      
 			      <li class="post">
-			        <a href="16038518175830.html">计算机网络--运输层</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16054964627964.html">计算机网络--物理层</a>
+			        <a href="16176922961413.html">搭建 RocketMQ 集群</a>
 			      </li>
 		     
 		  

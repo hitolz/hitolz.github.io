@@ -122,64 +122,90 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032821146100.html">
+                <a class="clearlink" href="16032824286367.html">
                 
-                  <h1>MySQL聚集索引和二级索引</h1>
+                  <h1>Mysql 根据时间戳、时间按年月日分组统计</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>数据库中B+树索引分为聚集索引(clustered index)和辅助索引(secondary index，也被称作二级索引、非聚集索引)，其内部都是B+树，即高度平衡的，叶子节点存放所有数据，不同的是叶子节点存放的是否是一整行的数据。</p>
-
-<hr/>
-
-<p>聚集索引：InnoDB存储引擎中，按照每张表的主键构建的一棵B+树，叶子节点存放的即为行记录数据。<br/>
-InnoDB存储引擎中是必须要有一个聚集索引的，如果没有显示指定哪一字段是主键，则选择表中第一个不允许为NULL的唯一索引当作是聚集索引，如果还是没有，就采用InnoDB为每行数据内置的6字节的rowid作为聚集索引。<br/>
-一般聚集索引是自增主键。</p>
-
-<hr/>
-
-<p>辅助索引：叶子节点并不包含行记录的全部数据，叶子节点除了包含键值以外，每个叶子节点中的索引行中还包含了一个书签(bookmark)，该书签用来告诉InnoDB存储引擎哪里可以找多与索引相对应的行数据。由于InnoDB存储引擎表是索引组织表，因此 辅助索引的书签就是相应行数据的聚集索引键。</p>
-
-<p>当通过辅助索引来寻找数据时，先查到主键，然后通过主键索引来找到一个完整的行记录。</p>
-
-<hr/>
-
-<p>回表问题：<br/>
-当通过二级索引去查询数据，先查询辅助索引树，得到主键值，再通过聚集索引树查询，得到最终结果。</p>
-
-<p>回到主键索引树搜索的过程，称为回表。</p>
-
-<p>如果在一棵高度为3的辅助索引树中查找数据，那需要对这棵辅助索引遍历3次找到指定主键，如果聚集索引树的高度同样为3，那么还需要对聚集索引树进行3次查找，最终得到一个完整的行数据所在的页，一共需要6次逻辑IO访问得到最终的数据页。</p>
-
-<pre><code class="language-text">CREATE TABLE `user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) COLLATE utf8_bin NOT NULL,
-  `age` int(11) NOT NULL,
-  `sex` varchar(2) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_name` (`name`)
-) ENGINE=InnoDB  
+                        	<pre><code class="language-text">SELECT DATE_FORMAT(create_time,&#39;%Y%u&#39;) weeks,COUNT(id) COUNT FROM table GROUP BY weeks; 
+SELECT DATE_FORMAT(create_time,&#39;%Y%m%d&#39;) days,COUNT(id) COUNT FROM table GROUP BY days; 
+SELECT DATE_FORMAT(create_time,&#39;%Y%m&#39;) months,COUNT(id) COUNT FROM table GROUP BY months;
+SELECT DATE_FORMAT(create_time,&#39;%Y&#39;) years,COUNT(id) COUNT FROM table GROUP BY years;
 </code></pre>
 
-<p>例如，这么一个表结构，两个查询语句</p>
+<p>函数：<code>DATE_FORMAT</code><br/>
+作用：根据format字符串格式化date值。<br/>
+语法：<code>DATE_FORMAT(date,format)</code></p>
 
-<pre><code class="language-text">select id,name from user where name = &#39;zhangsan1&#39;;
-select id,name,age from user where name = &#39;zhangsan1&#39;;
-</code></pre>
+<p>下列修饰符可以被用在format字符串中：<br/>
+%M 月名字(January……December)<br/>
+%W 星期名字(Sunday……Saturday)<br/>
+%D 有英语前缀的月份的日期(1st, 2nd, 3rd, 等等。）<br/>
+%Y 年, 数字, 4 位<br/>
+%y 年, 数字, 2 位<br/>
+%a 缩写的星期名字(Sun……Sat)<br/>
+%d 月份中的天数, 数字(00……31)<br/>
+%e 月份中的天数, 数字(0……31)<br/>
+%m 月, 数字(01……12)<br/>
+%c 月, 数字(1……12)<br/>
+%b 缩写的月份名字(Jan……Dec)<br/>
+%j 一年中的天数(001……366)<br/>
+%H 小时(00……23)<br/>
+%k 小时(0……23)<br/>
+%h 小时(01……12)<br/>
+%I 小时(01……12)<br/>
+%l 小时(1……12)<br/>
+%i 分钟, 数字(00……59)<br/>
+%r 时间,12 小时(hh:mm:ss [AP]M)<br/>
+%T 时间,24 小时(hh:mm:ss)<br/>
+%S 秒(00……59)<br/>
+%s 秒(00……59)<br/>
+%p AM或PM<br/>
+%w 一个星期中的天数(0=Sunday ……6=Saturday ）<br/>
+%U 星期(0……52), 这里星期天是星期的第一天<br/>
+%u 星期(0……52), 这里星期一是星期的第一天<br/>
+%% 一个文字“%”。</p>
 
-<p>用EXPLAIN看一下执行计划，</p>
+<p> </p>
 
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-09-17-16000042425726.jpg" alt="" style="width:1110px;"/><br/>
-可以看到，第一个查询语句用到了索引，而第二个查询语句只是多了1个字段，</p>
+<p>函数：<code>FROM_UNIXTIME</code><br/>
+作用：将MYSQL中以INT(11)存储的时间以&quot;YYYY-MM-DD&quot;格式来显示。<br/>
+语法：<code>FROM_UNIXTIME(unix_timestamp,format)</code></p>
 
-<p>Extra参数中Using index，表示相应的select操作中使用了覆盖索引（Covering Index），避免访问了表的数据行，效率不错。如果同时出现using where，表明索引被用来执行索引键值的查找；如果没有同时出现using where，表明索引用来读取数据而非执行查找动作。 </p>
+<p>返回表示 <code>Unix</code> 时间标记的一个字符串，根据format字符串格式化。format可以包含与<code>DATE_FORMAT()</code>函数列出的条目同样的修饰符。</p>
 
-<p>覆盖索引含义是所查询的列是和建立的索引字段和个数是一一对应的。那么回表问题的解决方案就是 将所用到的字段建立联合索引，覆盖索引。</p>
+<p>根据format字符串格式化date值。<br/>
+下列修饰符可以被用在format字符串中：</p>
 
-<hr/>
-
-<p>B+树 与 B树的区别？</p>
+<p>%M 月名字(January……December)<br/>
+%W 星期名字(Sunday……Saturday)<br/>
+%D 有英语前缀的月份的日期(1st, 2nd, 3rd, 等等。）<br/>
+%Y 年, 数字, 4 位<br/>
+%y 年, 数字, 2 位<br/>
+%a 缩写的星期名字(Sun……Sat)<br/>
+%d 月份中的天数, 数字(00……31)<br/>
+%e 月份中的天数, 数字(0……31)<br/>
+%m 月, 数字(01……12)<br/>
+%c 月, 数字(1……12)<br/>
+%b 缩写的月份名字(Jan……Dec)<br/>
+%j 一年中的天数(001……366)<br/>
+%H 小时(00……23)<br/>
+%k 小时(0……23)<br/>
+%h 小时(01……12)<br/>
+%I 小时(01……12)<br/>
+%l 小时(1……12)<br/>
+%i 分钟, 数字(00……59)<br/>
+%r 时间,12 小时(hh:mm:ss [AP]M)<br/>
+%T 时间,24 小时(hh:mm:ss)<br/>
+%S 秒(00……59)<br/>
+%s 秒(00……59)<br/>
+%p AM或PM<br/>
+%w 一个星期中的天数(0=Sunday ……6=Saturday ）<br/>
+%U 星期(0……52), 这里星期天是星期的第一天<br/>
+%u 星期(0……52), 这里星期一是星期的第一天<br/>
+%% 一个文字“%”。</p>
 
                         
                       </div>
@@ -291,13 +317,19 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
 	      
 		      
 			      <li class="post">
-			        <a href="16176922961413.html">搭建 RocketMQ 集群</a>
+			        <a href="16191464387463.html">nacos</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="16121664688743.html">dubbo SPI</a>
+			        <a href="16121664688743.html">Dubbo SPI</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16173443661607.html">ibatis 升级到 MyBatis</a>
 			      </li>
 		     
 		  
@@ -309,13 +341,7 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
 		  
 		      
 			      <li class="post">
-			        <a href="16038518175830.html">计算机网络--运输层</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16054964627964.html">计算机网络--物理层</a>
+			        <a href="16176922961413.html">搭建 RocketMQ 集群</a>
 			      </li>
 		     
 		  

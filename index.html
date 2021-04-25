@@ -122,166 +122,156 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16176922961413.html">
+                <a class="clearlink" href="16191464387463.html">
                 
-                  <h1>搭建 RocketMQ 集群</h1>
+                  <h1>nacos</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>使用两台虚拟机搭建出 双主-双从 集群<br/>
-A 192.168.153.131<br/>
-B 192.168.153.132</p>
-
-<p>官网地址 <br/>
-<a href="http://rocketmq.apache.org/docs/quick-start/">http://rocketmq.apache.org/docs/quick-start/</a></p>
-
-<p>先从上面下载下来最新的 RocketMQ 安装包，最新的是 rocketmq-all-4.8.0-bin-release</p>
-
-<p>解压后进入到 conf 文件夹下，官方已经创建好了简单的集群配置文件。</p>
-
+                        	<ul>
+<li>
+<a href="#toc_0">Quick Start</a>
+</li>
+<li>
+<a href="#toc_1">nacos 作为 服务注册中心</a>
 <ul>
-<li>2m-2s-async :2个master，2个slave，async异步复制</li>
-<li>2m-2s-sync :2个master，2个slave，sync同步双写</li>
-<li>2m-noslave :2个master,没有slave</li>
+<li>
+<a href="#toc_2">服务提供者</a>
+</li>
+<li>
+<a href="#toc_3">服务消费者</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#toc_4">nacos 作为 配置中心</a>
+<ul>
+<li>
+<a href="#toc_5">使用 properties 配置文件</a>
+</li>
+<li>
+<a href="#toc_6">使用 yml 配置文件</a>
+</li>
+<li>
+<a href="#toc_7">同步刷新</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#toc_8">nacos 与 Dubbo 的结合使用</a>
+</li>
 </ul>
 
-<p>首先在每台机器上启动 nameServer</p>
 
-<pre><code class="language-text">nohub sh bin/mqnamesrv &amp;
+<h2 id="toc_0">Quick Start</h2>
+
+<p><a href="https://nacos.io/zh-cn/docs/quick-start.html">nacosquick start </a></p>
+
+<p>下载 nacos zip，启动 nacos 服务</p>
+
+<p><code>sh startup.sh -m standalone</code></p>
+
+<p>控制台地址，登录名、密码都是 nacos<br/>
+<a href="http://localhost:8848/nacos/index.html#/login">http://localhost:8848/nacos/index.html#/login</a></p>
+
+<h2 id="toc_1">nacos 作为 服务注册中心</h2>
+
+<h3 id="toc_2">服务提供者</h3>
+
+<p>pom 依赖</p>
+
+<pre><code class="language-text">&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
+&lt;/dependency&gt;
 </code></pre>
 
-<p>然后配置 Broker，每台机器上都要分别配置一个 Master 角色的 Broker 和一个 Slave 角色的 Broker，并互为主备。</p>
+<p>启动类上添加 <code>@EnableDiscoveryClient</code></p>
 
-<p>A 机器启动 broker-a master, broker-b slave<br/>
-B 机器启动 broker-a slave, broker-b master</p>
+<p>配置</p>
 
-<p>启动</p>
-
-<pre><code class="language-text">nohub sh bin/mqbroker -c conf/2m-2s-async/broker-xxx.properties
+<pre><code class="language-text">server.port=8070
+spring.application.name=service-provider
+spring.cloud.nacos.discovery.group=test
+spring.cloud.nacos.discovery.namespace=fed092ce-956c-4792-977c-affc5d8f1dc7
+spring.cloud.nacos.discovery.server-addr=127.0.0.1:8848
 </code></pre>
 
-<p>然后在安装 console ，最终效果如图：<br/>
-<img src="http://hitol.blog.cdn.updev.cn/16177202877632.jpg" alt=""/></p>
+<p>namespace 要注意用 命名空间的 id。</p>
 
-<p>配置文件：<br/>
-broker-a-master</p>
+<h3 id="toc_3">服务消费者</h3>
 
-<pre><code class="language-text">brokerClusterName=DefaultCluster
-brokerName=broker-a
-brokerId=0
-deleteWhen=04
-fileReservedTime=48
-brokerRole=ASYNC_MASTER
-flushDiskType=ASYNC_FLUSH
+<p>pom 依赖 与 启动类上添加注解与服务提供者一样。</p>
 
-namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
-listenPort=10911
-defaultTopicQueueNums=8
-#是否允许 Broker 自动创建Topic，生产建议关闭
-autoCreateTopicEnable=true
-#是否允许 Broker 自动创建订阅组，生产建议关闭
-autoCreateSubscriptionGroup=true
-#存储路径
-storePathRootDir=~/mq/data/store-a
-#commitLog 存储路径 
-storePathCommitLog=~/mq/data/store-a/commitlog
-#消费队列存储路径存储路径
-storePathConsumeQueue=~/mq/data/store-a/consumequeue
-#消息索引存储路径
-storePathIndex=~/mq/data/store-a/index
-#checkpoint 文件存储路径
-storeCheckpoint=~/mq/data/store-a/checkpoint
+<p>配置</p>
+
+<pre><code class="language-text">server.port=8080
+spring.application.name=service-consumer
+spring.cloud.nacos.discovery.group=test
+spring.cloud.nacos.discovery.namespace=fed092ce-956c-4792-977c-affc5d8f1dc7
+spring.cloud.nacos.discovery.server-addr=127.0.0.1:8848
 </code></pre>
 
-<p>broker-b-slave</p>
+<p>通过 restTemplate 调用服务提供者的 rest 接口，本例中服务提供者的 url 就是 <code>http://service-provider/xxx/xxx</code></p>
 
-<pre><code class="language-text">brokerClusterName=DefaultCluster
-brokerName=broker-b
-brokerId=1
-deleteWhen=04
-fileReservedTime=48
-brokerRole=SLAVE
-flushDiskType=ASYNC_FLUSH
+<p><img src="http://hitol.blog.cdn.updev.cn/16193418111736.jpg" alt=""/></p>
 
-namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
-listenPort=11011
-defaultTopicQueueNums=8
-#是否允许 Broker 自动创建Topic，生产建议关闭
-autoCreateTopicEnable=true
-#是否允许 Broker 自动创建订阅组，生产建议关闭
-autoCreateSubscriptionGroup=true
-#存储路径
-storePathRootDir=~/mq/data/store-b
-#commitLog 存储路径 
-storePathCommitLog=~/mq/data/store-b/commitlog
-#消费队列存储路径存储路径
-storePathConsumeQueue=~/mq/data/store-b/consumequeue
-#消息索引存储路径
-storePathIndex=~/mq/data/store-b/index
-#checkpoint 文件存储路径
-storeCheckpoint=~/mq/data/store-b/checkpoint
+<h2 id="toc_4">nacos 作为 配置中心</h2>
+
+<p>pom 依赖与作为注册中心的时候不同。</p>
+
+<pre><code class="language-text">&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-config&lt;/artifactId&gt;
+&lt;/dependency&gt;
 </code></pre>
 
-<p>broker-b-master</p>
+<h3 id="toc_5">使用 properties 配置文件</h3>
 
-<pre><code class="language-text">brokerClusterName=DefaultCluster
-brokerName=broker-b
-brokerId=0
-deleteWhen=04
-fileReservedTime=48
-brokerRole=ASYNC_MASTER
-flushDiskType=ASYNC_FLUSH
+<p>在 nacos 控制台上新加配置<br/>
+<img src="http://hitol.blog.cdn.updev.cn/16193432563631.jpg" alt=""/></p>
 
-namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
-listenPort=10911
-#每个topic对应队列的数量，默认为4，实际应参考consumer实例的数量，值过小不利于consumer负载均衡
-defaultTopicQueueNums=8
-#是否允许 Broker 自动创建Topic，生产建议关闭
-autoCreateTopicEnable=true
-#是否允许 Broker 自动创建订阅组，生产建议关闭
-autoCreateSubscriptionGroup=true
-#存储路径
-storePathRootDir=~/mq/data/store-b
-#commitLog 存储路径 
-storePathCommitLog=~/mq/data/store-b/commitlog
-#消费队列存储路径存储路径
-storePathConsumeQueue=~/mq/data/store-b/consumequeue
-#消息索引存储路径
-storePathIndex=~/mq/data/store-b/index
-#checkpoint 文件存储路径
-storeCheckpoint=~/mq/data/store-b/checkpoint
+<p>Data ID 命名好后， 配置中的 应用名，及配置的文件格式 都已经确定了。<br/>
+配置文件格式是 properties <br/>
+应用名是 nacos-config</p>
 
+<p>项目中要新建一个 <code>bootstrap.properties</code> 的配置文件<br/>
+bootstrap.properties 中配置：</p>
+
+<pre><code class="language-text">spring.cloud.nacos.config.server-addr=127.0.0.1:8848
+
+spring.application.name=nacos-config
 </code></pre>
 
-<p>broker-a-slave</p>
+<h3 id="toc_6">使用 yml 配置文件</h3>
 
-<pre><code class="language-text">brokerClusterName=DefaultCluster
-brokerName=broker-a
-brokerId=1
-deleteWhen=04
-fileReservedTime=48
-brokerRole=SLAVE
-flushDiskType=ASYNC_FLUSH
+<p><img src="http://hitol.blog.cdn.updev.cn/16193444078944.jpg" alt=""/></p>
 
-namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
-listenPort=11011
-defaultTopicQueueNums=8
-#是否允许 Broker 自动创建Topic，生产建议关闭
-autoCreateTopicEnable=true
-#是否允许 Broker 自动创建订阅组，生产建议关闭
-autoCreateSubscriptionGroup=true
-#存储路径
-storePathRootDir=~/mq/data/store-a
-#commitLog 存储路径 
-storePathCommitLog=~/mq/data/store-a/commitlog
-#消费队列存储路径存储路径
-storePathConsumeQueue=~/mq/data/store-a/consumequeue
-#消息索引存储路径
-storePathIndex=~/mq/data/store-a/index
-#checkpoint 文件存储路径
-storeCheckpoint=~/mq/data/store-a/checkpoint
+<p>如图新建 yml 类型的配置，<br/>
+项目中新建 bootstrap-dev.yml 配置文件。</p>
+
+<pre><code class="language-text">spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+  application:
+    name: nacos-config2
+  profiles:
+    active: dev
+    
 </code></pre>
+
+<p>在项目启动时会到配置中心读取 nacos-config2-dev.yml 的配置</p>
+
+<h3 id="toc_7">同步刷新</h3>
+
+<p>在获取配置的类上 添加注解  @RefreshScope<br/>
+测试过在启动类上添加不起作用。</p>
+
+<h2 id="toc_8">nacos 与 Dubbo 的结合使用</h2>
 
                         
                       </div>
@@ -290,10 +280,10 @@ storeCheckpoint=~/mq/data/store-a/checkpoint
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/4/6</span>
+                    <span class="date">2021/4/23</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='RocketMQ.html'>RocketMQ</a></span>
+          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -393,13 +383,19 @@ storeCheckpoint=~/mq/data/store-a/checkpoint
 	      
 		      
 			      <li class="post">
-			        <a href="16176922961413.html">搭建 RocketMQ 集群</a>
+			        <a href="16191464387463.html">nacos</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="16121664688743.html">dubbo SPI</a>
+			        <a href="16121664688743.html">Dubbo SPI</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16173443661607.html">ibatis 升级到 MyBatis</a>
 			      </li>
 		     
 		  
@@ -411,13 +407,7 @@ storeCheckpoint=~/mq/data/store-a/checkpoint
 		  
 		      
 			      <li class="post">
-			        <a href="16038518175830.html">计算机网络--运输层</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16054964627964.html">计算机网络--物理层</a>
+			        <a href="16176922961413.html">搭建 RocketMQ 集群</a>
 			      </li>
 		     
 		  

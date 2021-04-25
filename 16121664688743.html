@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  dubbo SPI - 非著名Java程序员
+  Dubbo SPI - 非著名Java程序员
   
   </title>
   
@@ -122,7 +122,7 @@
       <div class="markdown-body article-wrap">
        <div class="article">
           
-          <h1>dubbo SPI</h1>
+          <h1>Dubbo SPI</h1>
      
         <div class="read-more clearfix">
           <span class="date">2021/2/1</span>
@@ -149,10 +149,10 @@
 <a href="#toc_0">Java SPI</a>
 </li>
 <li>
-<a href="#toc_1">dubbo SPI</a>
+<a href="#toc_1">Dubbo SPI</a>
 </li>
 <li>
-<a href="#toc_2">dubbo SPI 的实现</a>
+<a href="#toc_2">Dubbo SPI 的实现</a>
 <ul>
 <li>
 <a href="#toc_3">ExtensionLoader.getExtensionLoader</a>
@@ -221,13 +221,13 @@ public class Orange implements Fruit {
 <p>应用场景：各种数据库连接<br/>
 <img src="media/16121664688743/16146868237742.jpg" alt=""/></p>
 
-<h2 id="toc_1">dubbo SPI</h2>
+<h2 id="toc_1">Dubbo SPI</h2>
 
-<p>dubbo SPI 扩展点加载，从 JDK 标准的 SPI 扩展点机制加强而来。<br/>
+<p>Dubbo SPI 扩展点加载，从 JDK 标准的 SPI 扩展点机制加强而来。<br/>
 加载的路径约定为： resource/META-INF/dubbo/接口全限定名<br/>
 增加了对扩展点 IOC 和 AOP 的支持，一个扩展点可以直接 setter 注入其它扩展点。</p>
 
-<p>将上面例子中的xx.Fruit文件移到 resource/META-INF/dubbo/ 目录下，同时需要在 Fruit 类上加 dubbo 注解 @SPI。</p>
+<p>将上面例子中的xx.Fruit文件移到 resource/META-INF/dubbo/ 目录下，同时需要在 Fruit 类上加 Dubbo 注解 @SPI。</p>
 
 <p>demo：</p>
 
@@ -241,9 +241,9 @@ public class Orange implements Fruit {
 }
 </code></pre>
 
-<p>dubbo SPI 的实现封装在 ExtensionLoader 中。</p>
+<p>Dubbo SPI 的实现封装在 ExtensionLoader 中。</p>
 
-<h2 id="toc_2">dubbo SPI 的实现</h2>
+<h2 id="toc_2">Dubbo SPI 的实现</h2>
 
 <p>ExtensionLoader.getExtensionLoader<br/>
 ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension())<br/>
@@ -314,16 +314,16 @@ extensionLoader.getExtension</p>
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="16176922961413.html" 
-          title="Previous Post: 搭建 RocketMQ 集群">&laquo; 搭建 RocketMQ 集群</a>
+          <a href="16191464387463.html" 
+          title="Previous Post: nacos">&laquo; nacos</a>
       
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="16169197037719.html" 
-          title="Next Post: Redis 持久化 - RDB、AOF 及 混合持久化机制">Redis 持久化 - RDB、AOF 及 混合持久化机制 &raquo;</a>
+          <a  href="16173443661607.html" 
+          title="Next Post: ibatis 升级到 MyBatis">ibatis 升级到 MyBatis &raquo;</a>
       
       </p>
         </div>
@@ -412,13 +412,19 @@ extensionLoader.getExtension</p>
 	      
 		      
 			      <li class="post">
-			        <a href="16176922961413.html">搭建 RocketMQ 集群</a>
+			        <a href="16191464387463.html">nacos</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="16121664688743.html">dubbo SPI</a>
+			        <a href="16121664688743.html">Dubbo SPI</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16173443661607.html">ibatis 升级到 MyBatis</a>
 			      </li>
 		     
 		  
@@ -430,13 +436,7 @@ extensionLoader.getExtension</p>
 		  
 		      
 			      <li class="post">
-			        <a href="16038518175830.html">计算机网络--运输层</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16054964627964.html">计算机网络--物理层</a>
+			        <a href="16176922961413.html">搭建 RocketMQ 集群</a>
 			      </li>
 		     
 		  
