@@ -286,6 +286,45 @@ spring.application.name=nacos-config
 
 <h2 id="toc_8">nacos 与 Dubbo 的结合使用</h2>
 
+<p>配置</p>
+
+<pre><code class="language-text">dubbo:
+  application:
+    name: nacos-provider
+    version: 1.0.0
+
+  registry:
+    address: nacos://127.0.0.1:8848
+    version: 1.0.0
+</code></pre>
+
+<p>服务提供者、消费者 依赖</p>
+
+<pre><code class="language-text">&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
+    &lt;artifactId&gt;dubbo&lt;/artifactId&gt;
+    &lt;version&gt;2.7.10&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
+    &lt;artifactId&gt;dubbo-registry-nacos&lt;/artifactId&gt;
+    &lt;version&gt;2.7.5&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
+    &lt;artifactId&gt;dubbo-spring-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;2.7.5&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.spring&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-context-support&lt;/artifactId&gt;
+    &lt;version&gt;1.0.10&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<p><img src="http://hitol.blog.cdn.updev.cn/16194947099306.jpg" alt=""/></p>
+
 
     
 
