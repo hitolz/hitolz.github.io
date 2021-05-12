@@ -343,17 +343,23 @@ mapperLocations: mapper.xml 文件存放位置。</p>
 
 <h2 id="toc_9">4、将 ibatis 的 SqlMap 文件 转换为 mapper 文件，与自动生成的代码合并</h2>
 
-<p>插件 <a href="https://github.com/mybatis/ibatis2mybatis">https://github.com/mybatis/ibatis2mybatis</a><br/>
-下载后，将 ibatis 的文件<br/>
-将 build.xml 用 idea 打开，选择 Ant build。</p>
+<p>插件 <a href="https://github.com/mybatis/ibatis2mybatis">https://github.com/mybatis/ibatis2mybatis</a></p>
+
+<p>将 build.xml 用 idea 打开，选择 Ant build。</p>
+
+<ul>
+<li>destination文件夹：第一个区域为目标文件夹，即最后得到的Mybatis mapper文件都会在该目录下；</li>
+<li><p>source文件夹：第二个区域为源文件夹，也就是将我们需要转换的Ibatis mapper文件放在该目录下即可；</p></li>
+<li><p>Ant Build：第三个区域为Ant Build区（如果IntelliJ上没有出现这个，可以通过右上角箭头所指?按钮搜索Ant Build即可出现），我们需要将左侧根目录下build.xml文件拖放到Ant Build区域才会出现图中所示的migrate to mybatis3以及绿色的运行按钮。</p></li>
+</ul>
 
 <h2 id="toc_10">5、修改 service 中使用到的 dao 为新生成的 mybatis 对应的 dao</h2>
+
+<p>体力活</p>
 
 <hr/>
 
 <p><a href="https://blog.csdn.net/zcyzsy/article/details/88912019">https://blog.csdn.net/zcyzsy/article/details/88912019</a></p>
-
-<p><a href="https://segmentfault.com/a/1190000013900758">https://segmentfault.com/a/1190000013900758</a></p>
 
 
     
@@ -364,16 +370,16 @@ mapperLocations: mapper.xml 文件存放位置。</p>
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="16121664688743.html" 
-          title="Previous Post: Dubbo SPI">&laquo; Dubbo SPI</a>
+          <a href="16032821146100.html" 
+          title="Previous Post: MySQL聚集索引和二级索引">&laquo; MySQL聚集索引和二级索引</a>
       
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="16169197037719.html" 
-          title="Next Post: Redis 持久化 - RDB、AOF 及 混合持久化机制">Redis 持久化 - RDB、AOF 及 混合持久化机制 &raquo;</a>
+          <a  href="16191464387463.html" 
+          title="Next Post: nacos">nacos &raquo;</a>
       
       </p>
         </div>
@@ -462,13 +468,19 @@ mapperLocations: mapper.xml 文件存放位置。</p>
 	      
 		      
 			      <li class="post">
-			        <a href="16191464387463.html">nacos</a>
+			        <a href="16208120012139.html">Sentinel</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="16121664688743.html">Dubbo SPI</a>
+			        <a href="16208119771915.html">spring-cloud-alibaba</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16032821146100.html">MySQL聚集索引和二级索引</a>
 			      </li>
 		     
 		  
@@ -480,13 +492,7 @@ mapperLocations: mapper.xml 文件存放位置。</p>
 		  
 		      
 			      <li class="post">
-			        <a href="16169197037719.html">Redis 持久化 - RDB、AOF 及 混合持久化机制</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16176922961413.html">搭建 RocketMQ 集群</a>
+			        <a href="16191464387463.html">nacos</a>
 			      </li>
 		     
 		  

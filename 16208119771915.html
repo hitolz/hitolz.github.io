@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  非著名Java程序员
+  spring-cloud-alibaba - 非著名Java程序员
   
   </title>
   
@@ -113,179 +113,215 @@
        
 
  <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="16191464387463.html">
-                
-                  <h1>nacos</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<ul>
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>spring-cloud-alibaba</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2021/5/12</span>
+
+          
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <ul>
 <li>
-<a href="#toc_0">Quick Start</a>
-</li>
+<a href="#toc_0">Nacos 作为注册中心</a>
+<ul>
 <li>
-<a href="#toc_1">nacos 作为 服务注册中心</a>
+<a href="#toc_1">Nacos REST 服务调用</a>
 <ul>
 <li>
 <a href="#toc_2">服务提供者</a>
-</li>
-<li>
-<a href="#toc_3">服务消费者</a>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_4">nacos 作为 配置中心</a>
 <ul>
 <li>
-<a href="#toc_5">使用 properties 配置文件</a>
+<a href="#toc_3">添加依赖</a>
 </li>
 <li>
-<a href="#toc_6">使用 yml 配置文件</a>
-</li>
-<li>
-<a href="#toc_7">同步刷新</a>
+<a href="#toc_4">修改配置</a>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_8">nacos 与 Dubbo 的结合使用</a>
+<a href="#toc_5">服务消费者</a>
+<ul>
+<li>
+<a href="#toc_6">添加依赖</a>
+</li>
+<li>
+<a href="#toc_7">修改配置</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<a href="#toc_8">Nacos Dubbo</a>
+<ul>
+<li>
+<a href="#toc_9">服务提供者</a>
+<ul>
+<li>
+<a href="#toc_10">添加依赖</a>
+</li>
+<li>
+<a href="#toc_11">修改配置</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#toc_12">服务消费者</a>
+<ul>
+<li>
+<a href="#toc_13">添加依赖</a>
+</li>
+<li>
+<a href="#toc_14">修改配置</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<a href="#toc_15">Nacos 作为配置中心</a>
+<ul>
+<li>
+<a href="#toc_16">客户端</a>
+<ul>
+<li>
+<a href="#toc_17">添加依赖</a>
+</li>
+<li>
+<a href="#toc_18">修改配置</a>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 </ul>
 
 
-<h2 id="toc_0">Quick Start</h2>
+<p>学习下Spring Cloud Alibaba</p>
 
-<p><a href="https://nacos.io/zh-cn/docs/quick-start.html">nacosquick start </a></p>
+<p>Spring Cloud Alibaba 致力于提供分布式应用服务开发的一站式解决方案。项目包含开发分布式应用服务的必需组件，方便开发者通过 Spring Cloud 编程模型轻松使用这些组件来开发分布式应用服务。</p>
 
-<p>下载 nacos zip，启动 nacos 服务</p>
+<h2 id="toc_0">Nacos 作为注册中心</h2>
 
-<p><code>sh startup.sh -m standalone</code></p>
+<p>适配 Spring Cloud 服务注册与发现标准，默认集成了 Ribbon 的支持。<br/>
+ <img src="http://hitol.blog.cdn.updev.cn/2020-09-27-16011860283161.jpg" alt=""/></p>
 
-<p>控制台地址，登录名、密码都是 nacos<br/>
-<a href="http://localhost:8848/nacos/index.html#/login">http://localhost:8848/nacos/index.html#/login</a></p>
+<p>可作为配置中心、服务注册中心<br/>
+Nacos 支持将注册中心(Service Registry）与配置中心(Config Center) 在一个进程合并部署或者将2者分离部署的两种模式。</p>
 
-<h2 id="toc_1">nacos 作为 服务注册中心</h2>
+<p><a href="https://nacos.io/zh-cn/docs/quick-start.html">启动nacos</a></p>
 
-<h3 id="toc_2">服务提供者</h3>
+<p><a href="https://nacos.io/zh-cn/docs/quick-start-spring-cloud.html">Nacos Spring Cloud 快速开始</a></p>
 
-<p>pom 依赖</p>
+<h3 id="toc_1">Nacos REST 服务调用</h3>
+
+<h4 id="toc_2">服务提供者</h4>
+
+<h5 id="toc_3">添加依赖</h5>
 
 <pre><code class="language-text">&lt;dependency&gt;
     &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
+    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
 &lt;/dependency&gt;
+        
+</code></pre>
+
+<h5 id="toc_4">修改配置</h5>
+
+<pre><code class="language-text">server:
+  port: 8070
+spring:
+  application:
+    name: service-provider
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+</code></pre>
+
+<p>编写测试 controller</p>
+
+<pre><code class="language-text">@RestController
+public class EchoController {
+
+    @RequestMapping(value = &quot;/echo/{string}&quot;, method = RequestMethod.GET)
+    public String echo(@PathVariable String string) {
+        return &quot;Hello Nacos222 Discovery &quot; + string;
+    }
+}
+
 </code></pre>
 
 <p>启动类上添加 <code>@EnableDiscoveryClient</code></p>
 
-<p>配置</p>
+<h4 id="toc_5">服务消费者</h4>
 
-<pre><code class="language-text">server.port=8070
-spring.application.name=service-provider
-spring.cloud.nacos.discovery.group=test
-spring.cloud.nacos.discovery.namespace=fed092ce-956c-4792-977c-affc5d8f1dc7
-spring.cloud.nacos.discovery.server-addr=127.0.0.1:8848
-</code></pre>
-
-<p>namespace 要注意用 命名空间的 id。</p>
-
-<h3 id="toc_3">服务消费者</h3>
-
-<p>pom 依赖 与 启动类上添加注解与服务提供者一样。</p>
-
-<p>配置</p>
-
-<pre><code class="language-text">server.port=8080
-spring.application.name=service-consumer
-spring.cloud.nacos.discovery.group=test
-spring.cloud.nacos.discovery.namespace=fed092ce-956c-4792-977c-affc5d8f1dc7
-spring.cloud.nacos.discovery.server-addr=127.0.0.1:8848
-</code></pre>
-
-<p>通过 restTemplate 调用服务提供者的 rest 接口，本例中服务提供者的 url 就是 <code>http://service-provider/xxx/xxx</code></p>
-
-<p><img src="http://hitol.blog.cdn.updev.cn/16193418111736.jpg" alt=""/></p>
-
-<h2 id="toc_4">nacos 作为 配置中心</h2>
-
-<p>pom 依赖与作为注册中心的时候不同。</p>
+<h5 id="toc_6">添加依赖</h5>
 
 <pre><code class="language-text">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-config&lt;/artifactId&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
+    &lt;version&gt;0.2.2.RELEASE&lt;/version&gt;
+    &lt;exclusions&gt;
+        &lt;exclusion&gt;
+            &lt;groupId&gt;com.alibaba.nacos&lt;/groupId&gt;
+            &lt;artifactId&gt;nacos-client&lt;/artifactId&gt;
+        &lt;/exclusion&gt;
+    &lt;/exclusions&gt;
 &lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.nacos&lt;/groupId&gt;
+    &lt;artifactId&gt;nacos-client&lt;/artifactId&gt;
+    &lt;version&gt;1.1.4&lt;/version&gt;
+&lt;/dependency&gt;
+
 </code></pre>
 
-<h3 id="toc_5">使用 properties 配置文件</h3>
+<h5 id="toc_7">修改配置</h5>
 
-<p>在 nacos 控制台上新加配置<br/>
-<img src="http://hitol.blog.cdn.updev.cn/16193432563631.jpg" alt=""/></p>
-
-<p>Data ID 命名好后， 配置中的 应用名，及配置的文件格式 都已经确定了。<br/>
-配置文件格式是 properties <br/>
-应用名是 nacos-config</p>
-
-<p>项目中要新建一个 <code>bootstrap.properties</code> 的配置文件<br/>
-bootstrap.properties 中配置：</p>
-
-<pre><code class="language-text">spring.cloud.nacos.config.server-addr=127.0.0.1:8848
-
-spring.application.name=nacos-config
-</code></pre>
-
-<h3 id="toc_6">使用 yml 配置文件</h3>
-
-<p><img src="http://hitol.blog.cdn.updev.cn/16193444078944.jpg" alt=""/></p>
-
-<p>如图新建 yml 类型的配置，<br/>
-项目中新建 bootstrap-dev.yml 配置文件。</p>
-
-<pre><code class="language-text">spring:
+<pre><code class="language-text">server:
+  port: 8071
+spring:
+  application:
+    name: service-consumer
   cloud:
     nacos:
-      config:
+      discovery:
         server-addr: 127.0.0.1:8848
-        file-extension: yml
-  application:
-    name: nacos-config2
-  profiles:
-    active: dev
-    
 </code></pre>
 
-<p>在项目启动时会到配置中心读取 nacos-config2-dev.yml 的配置</p>
+<p>启动类上添加 <code>@EnableDiscoveryClient</code></p>
 
-<h3 id="toc_7">同步刷新</h3>
+<p>访问 <a href="http://127.0.0.1:8071/echo/123">http://127.0.0.1:8071/echo/123</a> 服务可用</p>
 
-<p>在获取配置的类上 添加注解  @RefreshScope<br/>
-测试过在启动类上添加不起作用。</p>
+<h3 id="toc_8">Nacos Dubbo</h3>
 
-<h2 id="toc_8">nacos 与 Dubbo 的结合使用</h2>
+<h4 id="toc_9">服务提供者</h4>
 
-<p>配置</p>
-
-<pre><code class="language-text">dubbo:
-  application:
-    name: nacos-provider
-    version: 1.0.0
-
-  registry:
-    address: nacos://127.0.0.1:8848
-    version: 1.0.0
-</code></pre>
-
-<p>服务提供者、消费者 依赖</p>
+<h5 id="toc_10">添加依赖</h5>
 
 <pre><code class="language-text">&lt;dependency&gt;
     &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
@@ -303,55 +339,136 @@ spring.application.name=nacos-config
     &lt;artifactId&gt;dubbo-spring-boot-starter&lt;/artifactId&gt;
     &lt;version&gt;2.7.5&lt;/version&gt;
 &lt;/dependency&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.spring&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-context-support&lt;/artifactId&gt;
-    &lt;version&gt;1.0.10&lt;/version&gt;
+</code></pre>
+
+<h5 id="toc_11">修改配置</h5>
+
+<pre><code class="language-text">dubbo:
+  application:
+    name: nacos-provider
+    version: 1.0.0
+
+  registry:
+    address: nacos://127.0.0.1:8848
+    version: 1.0.0
+</code></pre>
+
+<p>启动类上添加 <code>@EnableDubbo</code></p>
+
+<h4 id="toc_12">服务消费者</h4>
+
+<h5 id="toc_13">添加依赖</h5>
+
+<p>与服务提供者依赖一致</p>
+
+<h5 id="toc_14">修改配置</h5>
+
+<pre><code class="language-text">dubbo:
+  application:
+    name: nacos-consumer
+    version: 1.0.0
+
+  registry:
+    address: nacos://127.0.0.1:8848
+    version: 1.0.0
+</code></pre>
+
+<p>启动类上添加 <code>@EnableDubbo</code></p>
+
+<h2 id="toc_15">Nacos 作为配置中心</h2>
+
+<h3 id="toc_16">客户端</h3>
+
+<h4 id="toc_17">添加依赖</h4>
+
+<pre><code class="language-text">&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-config&lt;/artifactId&gt;
+    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
 &lt;/dependency&gt;
 </code></pre>
 
-<p><img src="http://hitol.blog.cdn.updev.cn/16194947099306.jpg" alt=""/></p>
+<h4 id="toc_18">修改配置</h4>
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2021/4/23</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+<p>新建配置文件 bootstrap.yml，配置文件要与 nacos 里配置的 Data ID 一致。<br/>
+nacos 控制台上添加配置 <br/>
+<img src="http://hitol.blog.cdn.updev.cn/16208113798180.jpg" alt=""/><br/>
+Data ID 是 nacos-config2-dev.yml，所以在 bootstrap.yml 配置文件中这么配置</p>
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
+<pre><code class="language-text">spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+  application:
+    name: nacos-config2
+  profiles:
+    active: dev 
+</code></pre>
+
+<p>通过 controller 查看配置</p>
+
+<pre><code class="language-text">@RestController
+@RefreshScope
+@RequestMapping(&quot;/config&quot;)
+public class ConfigController {
 
 
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   <a href="all_3.html">&laquo; Prev Page</a>  
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			 <a href="all_5.html">&raquo; Next Page</a> 
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
+    @Value(&quot;${user.name}&quot;)
+    private String userName;
+
+    @Value(&quot;${user.age}&quot;)
+    private String userAge;
+
+    @RequestMapping(&quot;/get&quot;)
+    public String get() {
+        return &quot;user.name = &quot; + userName + &quot; user.age = &quot; + userAge;
+    }
+}
+</code></pre>
+
+<p><a href="http://127.0.0.1:8081/config/get">http://127.0.0.1:8081/config/get</a></p>
+
+<p>在 nacos 控制台中修改配置后，会同步刷新。</p>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="16208120012139.html" 
+          title="Previous Post: Sentinel">&laquo; Sentinel</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="16032821146100.html" 
+          title="Next Post: MySQL聚集索引和二级索引">MySQL聚集索引和二级索引 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">

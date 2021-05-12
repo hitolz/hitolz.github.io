@@ -122,225 +122,64 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16173443661607.html">
+                <a class="clearlink" href="16032821146100.html">
                 
-                  <h1>ibatis 升级到 MyBatis</h1>
+                  <h1>MySQL聚集索引和二级索引</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<ul>
-<li>
-<a href="#toc_0">1、添加 mybatis 依赖</a>
-</li>
-<li>
-<a href="#toc_1">2、配置 mybatis</a>
-<ul>
-<li>
-<a href="#toc_2">配置 dataSource</a>
-</li>
-<li>
-<a href="#toc_3">配置 sqlSessionFactory</a>
-</li>
-<li>
-<a href="#toc_4">配置 MapperScannerConfigurer</a>
-</li>
-<li>
-<a href="#toc_5">配置 transactionManager</a>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_6">3、配置 mybatis-generater 自动生成代码</a>
-<ul>
-<li>
-<a href="#toc_7">pom 文件中增加插件</a>
-</li>
-<li>
-<a href="#toc_8">mybatis-generatorConfig.xml 配置文件</a>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_9">4、将 ibatis 的 SqlMap 文件 转换为 mapper 文件，与自动生成的代码合并</a>
-</li>
-<li>
-<a href="#toc_10">5、修改 service 中使用到的 dao 为新生成的 mybatis 对应的 dao</a>
-</li>
-</ul>
-
-
-<h2 id="toc_0">1、添加 mybatis 依赖</h2>
-
-<pre><code class="language-text">&lt;!--mybatis--&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
-    &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
-    &lt;version&gt;3.4.6&lt;/version&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
-    &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
-    &lt;version&gt;1.3.2&lt;/version&gt;
-&lt;/dependency&gt;
-
-</code></pre>
-
-<h2 id="toc_1">2、配置 mybatis</h2>
-
-<h3 id="toc_2">配置 dataSource</h3>
-
-<pre><code class="language-text">&lt;bean id=&quot;dataSource&quot; class=&quot;org.apache.commons.dbcp.BasicDataSource&quot;&gt;
-    &lt;property name=&quot;driverClassName&quot;  value=&quot;com.mysql.jdbc.Driver&quot; /&gt;
-    &lt;property name=&quot;url&quot;              value=&quot;${xxx}&quot; /&gt;
-    &lt;property name=&quot;username&quot;         value=&quot;${xxx}&quot; /&gt;
-    &lt;property name=&quot;password&quot;         value=&quot;${xxx}&quot; /&gt;
-    &lt;property name=&quot;maxActive&quot; value=&quot;50&quot; /&gt;
-    &lt;property name=&quot;maxIdle&quot; value=&quot;20&quot; /&gt;
-    &lt;property name=&quot;maxWait&quot; value=&quot;3000&quot; /&gt;
-    &lt;property name=&quot;removeAbandoned&quot; value=&quot;true&quot; /&gt;
-    &lt;property name=&quot;removeAbandonedTimeout&quot; value=&quot;60&quot; /&gt;
-    &lt;property name=&quot;logAbandoned&quot; value=&quot;true&quot; /&gt;
-    &lt;property name=&quot;validationQuery&quot; value=&quot;select 1 from dual&quot; /&gt;
-    &lt;property name=&quot;testOnBorrow&quot; value=&quot;true&quot; /&gt;
-&lt;/bean&gt;
-</code></pre>
-
-<h3 id="toc_3">配置 sqlSessionFactory</h3>
-
-<pre><code class="language-text">&lt;bean id=&quot;sqlSessionFactory&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;
-      p:dataSource-ref=&quot;dataSource&quot;
-      p:configLocation=&quot;classpath:mybatis-config.xml&quot;
-      p:typeAliasesPackage=&quot;com.acc.ac.core.common.model&quot;
-      p:mapperLocations=&quot;classpath:mapper/*.xml&quot;/&gt;
-</code></pre>
-
-<p>configLocation:<br/>
-typeAliasesPackage: 实体类对应的包<br/>
-mapperLocations: mapper.xml 文件存放位置。</p>
-
-<h3 id="toc_4">配置 MapperScannerConfigurer</h3>
-
-<pre><code class="language-text">&lt;bean class=&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;
-      p:sqlSessionFactoryBeanName=&quot;sqlSessionFactory&quot;
-      p:basePackage=&quot;com.acc.ac.core.dao&quot;/&gt;
-</code></pre>
-
-<p>配置之后会自动扫描 basePackage 包下的 mapper interface，加到 Spring 容器中。</p>
-
-<h3 id="toc_5">配置 transactionManager</h3>
-
-<pre><code class="language-text">&lt;bean id=&quot;transactionManager&quot; class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;
-      p:dataSource-ref=&quot;dataSource&quot;/&gt;
-</code></pre>
-
-<h2 id="toc_6">3、配置 mybatis-generater 自动生成代码</h2>
-
-<h3 id="toc_7">pom 文件中增加插件</h3>
-
-<pre><code class="language-text">&lt;build&gt;
-    &lt;plugins&gt;
-        &lt;plugin&gt;
-            &lt;groupId&gt;org.mybatis.generator&lt;/groupId&gt;
-            &lt;artifactId&gt;mybatis-generator-maven-plugin&lt;/artifactId&gt;
-            &lt;version&gt;1.3.5&lt;/version&gt;
-            &lt;configuration&gt;
-                &lt;!-- 在控制台打印执行日志 --&gt;
-                &lt;verbose&gt;true&lt;/verbose&gt;
-                &lt;!-- 重复生成时会覆盖之前的文件--&gt;
-                &lt;overwrite&gt;true&lt;/overwrite&gt;
-                &lt;configurationFile&gt;src/main/resources/META-INF/mybatis-generatorConfig.xml&lt;/configurationFile&gt;
-            &lt;/configuration&gt;
-            &lt;dependencies&gt;
-                &lt;dependency&gt;
-                    &lt;groupId&gt;mysql&lt;/groupId&gt;
-                    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
-                    &lt;version&gt;5.1.43&lt;/version&gt;
-                &lt;/dependency&gt;
-            &lt;/dependencies&gt;
-        &lt;/plugin&gt;
-    &lt;/plugins&gt;
-&lt;/build&gt;
-</code></pre>
-
-<h3 id="toc_8">mybatis-generatorConfig.xml 配置文件</h3>
-
-<pre><code class="language-text">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE generatorConfiguration
-        PUBLIC &quot;-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN&quot;
-        &quot;http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd&quot;&gt;
-&lt;generatorConfiguration&gt;
-
-    &lt;!--defaultModelType=&quot;flat&quot; 大数据字段，不分表 --&gt;
-    &lt;context id=&quot;Mysql&quot; targetRuntime=&quot;MyBatis3Simple&quot; defaultModelType=&quot;flat&quot;&gt;
-        &lt;property name=&quot;autoDelimitKeywords&quot; value=&quot;true&quot; /&gt;
-        &lt;property name=&quot;beginningDelimiter&quot; value=&quot;`&quot; /&gt;
-        &lt;property name=&quot;endingDelimiter&quot; value=&quot;`&quot; /&gt;
-        &lt;property name=&quot;javaFileEncoding&quot; value=&quot;utf-8&quot; /&gt;
-        &lt;plugin type=&quot;org.mybatis.generator.plugins.SerializablePlugin&quot; /&gt;
-
-        &lt;plugin type=&quot;org.mybatis.generator.plugins.ToStringPlugin&quot; /&gt;
-
-        &lt;!-- 注释 --&gt;
-        &lt;commentGenerator &gt;
-            &lt;property name=&quot;suppressAllComments&quot; value=&quot;false&quot;/&gt;&lt;!-- 是否取消注释 --&gt;
-            &lt;property name=&quot;suppressDate&quot; value=&quot;true&quot; /&gt; &lt;!-- 是否生成注释代时间戳--&gt;
-        &lt;/commentGenerator&gt;
-
-        &lt;!--数据库链接地址账号密码--&gt;
-        &lt;!--数据库链接地址账号密码--&gt;
-        &lt;jdbcConnection driverClass=&quot;com.mysql.jdbc.Driver&quot;
-                        connectionURL=&quot;jdbc:mysql://localhost:3306/ac_core_dev?characterEncoding=utf-8&quot;
-                        userId=&quot;root&quot;
-                        password=&quot;root&quot;&gt;
-        &lt;/jdbcConnection&gt;
-
-        &lt;!-- 类型转换 --&gt;
-        &lt;javaTypeResolver&gt;
-            &lt;!-- 是否使用bigDecimal， false可自动转化以下类型（Long, Integer, Short, etc.） --&gt;
-            &lt;property name=&quot;forceBigDecimals&quot; value=&quot;false&quot;/&gt;
-        &lt;/javaTypeResolver&gt;
-
-        &lt;!--生成Model类存放位置--&gt;
-        &lt;javaModelGenerator targetPackage=&quot;com.acc.ac.core.model&quot; targetProject=&quot;src/main/java&quot;&gt;
-            &lt;property name=&quot;enableSubPackages&quot; value=&quot;true&quot;/&gt;
-            &lt;property name=&quot;trimStrings&quot; value=&quot;true&quot;/&gt;
-        &lt;/javaModelGenerator&gt;
-
-        &lt;!-- 生成mapxml文件 --&gt;
-        &lt;sqlMapGenerator targetPackage=&quot;mapper&quot;
-                         targetProject=&quot;src/main/resources/META-INF&quot; &gt;
-            &lt;property name=&quot;enableSubPackages&quot; value=&quot;true&quot; /&gt;
-        &lt;/sqlMapGenerator&gt;
-
-        &lt;!-- 生成mapxml对应client，也就是接口dao --&gt;
-        &lt;javaClientGenerator targetPackage=&quot;com.acc.ac.core.dao&quot; targetProject=&quot;src/main/java&quot; type=&quot;XMLMAPPER&quot; &gt;
-            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
-        &lt;/javaClientGenerator&gt;
-
-
-        &lt;table tableName=&quot;ac_cfg_sys&quot; enableCountByExample=&quot;true&quot; enableUpdateByExample=&quot;true&quot;
-               enableDeleteByExample=&quot;true&quot; enableSelectByExample=&quot;true&quot; selectByExampleQueryId=&quot;true&quot;&gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;Mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;
-
-    &lt;/context&gt;
-&lt;/generatorConfiguration&gt;
-</code></pre>
-
-<h2 id="toc_9">4、将 ibatis 的 SqlMap 文件 转换为 mapper 文件，与自动生成的代码合并</h2>
-
-<p>插件 <a href="https://github.com/mybatis/ibatis2mybatis">https://github.com/mybatis/ibatis2mybatis</a><br/>
-下载后，将 ibatis 的文件<br/>
-将 build.xml 用 idea 打开，选择 Ant build。</p>
-
-<h2 id="toc_10">5、修改 service 中使用到的 dao 为新生成的 mybatis 对应的 dao</h2>
+                        	<p>数据库中B+树索引分为聚集索引(clustered index)和辅助索引(secondary index，也被称作二级索引、非聚集索引)，其内部都是B+树，即高度平衡的，叶子节点存放所有数据，不同的是叶子节点存放的是否是一整行的数据。</p>
 
 <hr/>
 
-<p><a href="https://blog.csdn.net/zcyzsy/article/details/88912019">https://blog.csdn.net/zcyzsy/article/details/88912019</a></p>
+<p>聚集索引：InnoDB存储引擎中，按照每张表的主键构建的一棵B+树，叶子节点存放的即为行记录数据。<br/>
+InnoDB存储引擎中是必须要有一个聚集索引的，如果没有显示指定哪一字段是主键，则选择表中第一个不允许为NULL的唯一索引当作是聚集索引，如果还是没有，就采用InnoDB为每行数据内置的6字节的rowid作为聚集索引。<br/>
+一般聚集索引是自增主键。</p>
 
-<p><a href="https://segmentfault.com/a/1190000013900758">https://segmentfault.com/a/1190000013900758</a></p>
+<hr/>
+
+<p>辅助索引：叶子节点并不包含行记录的全部数据，叶子节点除了包含键值以外，每个叶子节点中的索引行中还包含了一个书签(bookmark)，该书签用来告诉InnoDB存储引擎哪里可以找多与索引相对应的行数据。由于InnoDB存储引擎表是索引组织表，因此 辅助索引的书签就是相应行数据的聚集索引键。</p>
+
+<p>当通过辅助索引来寻找数据时，先查到主键，然后通过主键索引来找到一个完整的行记录。</p>
+
+<hr/>
+
+<p>回表问题：<br/>
+当通过二级索引去查询数据，先查询辅助索引树，得到主键值，再通过聚集索引树查询，得到最终结果。</p>
+
+<p>回到主键索引树搜索的过程，称为回表。</p>
+
+<p>如果在一棵高度为3的辅助索引树中查找数据，那需要对这棵辅助索引遍历3次找到指定主键，如果聚集索引树的高度同样为3，那么还需要对聚集索引树进行3次查找，最终得到一个完整的行数据所在的页，一共需要6次逻辑IO访问得到最终的数据页。</p>
+
+<pre><code class="language-text">CREATE TABLE `user` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) COLLATE utf8_bin NOT NULL,
+  `age` int(11) NOT NULL,
+  `sex` varchar(2) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_name` (`name`)
+) ENGINE=InnoDB  
+</code></pre>
+
+<p>例如，这么一个表结构，两个查询语句</p>
+
+<pre><code class="language-text">select id,name from user where name = &#39;zhangsan1&#39;;
+select id,name,age from user where name = &#39;zhangsan1&#39;;
+</code></pre>
+
+<p>用EXPLAIN看一下执行计划，</p>
+
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-09-17-16000042425726.jpg" alt="" style="width:1110px;"/><br/>
+可以看到，第一个查询语句用到了索引，而第二个查询语句只是多了1个字段，</p>
+
+<p>Extra参数中Using index，表示相应的select操作中使用了覆盖索引（Covering Index），避免访问了表的数据行，效率不错。如果同时出现using where，表明索引被用来执行索引键值的查找；如果没有同时出现using where，表明索引用来读取数据而非执行查找动作。 </p>
+
+<p>覆盖索引含义是所查询的列是和建立的索引字段和个数是一一对应的。那么回表问题的解决方案就是 将所用到的字段建立联合索引，覆盖索引。</p>
+
+<hr/>
+
+<p>B+树 与 B树的区别？</p>
 
                         
                       </div>
@@ -349,10 +188,10 @@ mapperLocations: mapper.xml 文件存放位置。</p>
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/4/2</span>
+                    <span class="date">2020/10/21</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -452,13 +291,19 @@ mapperLocations: mapper.xml 文件存放位置。</p>
 	      
 		      
 			      <li class="post">
-			        <a href="16191464387463.html">nacos</a>
+			        <a href="16208120012139.html">Sentinel</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="16121664688743.html">Dubbo SPI</a>
+			        <a href="16208119771915.html">spring-cloud-alibaba</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16032821146100.html">MySQL聚集索引和二级索引</a>
 			      </li>
 		     
 		  
@@ -470,13 +315,7 @@ mapperLocations: mapper.xml 文件存放位置。</p>
 		  
 		      
 			      <li class="post">
-			        <a href="16169197037719.html">Redis 持久化 - RDB、AOF 及 混合持久化机制</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16176922961413.html">搭建 RocketMQ 集群</a>
+			        <a href="16191464387463.html">nacos</a>
 			      </li>
 		     
 		  

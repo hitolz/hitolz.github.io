@@ -122,111 +122,90 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032822063276.html">
+                <a class="clearlink" href="16032824286367.html">
                 
-                  <h1>线程池</h1>
+                  <h1>Mysql 根据时间戳、时间按年月日分组统计</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h3 id="toc_0">线程池是什么</h3>
-
-<p>线程池是一种基于池化思想来管理线程的工具。<br/>
-使用线程池的好处：</p>
-
-<ul>
-<li>降低资源消耗：通过池化技术复用已经创建的线程，降低线程创建和销毁造成的损耗。</li>
-<li>提高响应速度：任务到达时，无需等待线程创建即可执行。</li>
-<li>提高线程的可管理性：使用线程池进行统一的分配、调优和监控。</li>
-<li>提供更多更强大的功能：比如延时定时线程池ScheduledThreadPoolExecutor，就允许任务延期执行或定期执行。</li>
-</ul>
-
-<h3 id="toc_1">线程池解决的问题</h3>
-
-<p>线程池解决的核心问题就是资源管理问题。<br/>
-1、频繁申请、销毁资源和调度资源，将带来额外的消耗，可能非常巨大。<br/>
-2、对资源无限申请，缺少抑制手段，易引发系统资源耗尽的风险。<br/>
-3、系统无法合理管理内部的资源分布，会降低系统的稳定性。</p>
-
-<h2 id="toc_2"></h2>
-
-<h3 id="toc_3">线程池运行机制</h3>
-
-<p><img src="http://hitol.blog.cdn.updev.cn/16023122966589.jpg" alt="16023122966589"/></p>
-<details>
-<p><summary>ThreadPoolExecutor构造方法</summary></p>
-
-<pre><code class="language-text">public ThreadPoolExecutor(int corePoolSize,
-                          int maximumPoolSize,
-                          long keepAliveTime,
-                          TimeUnit unit,
-                          BlockingQueue&lt;Runnable&gt; workQueue,
-                          ThreadFactory threadFactory,
-                          RejectedExecutionHandler handler) {
-    if (corePoolSize &lt; 0 ||
-        maximumPoolSize &lt;= 0 ||
-        maximumPoolSize &lt; corePoolSize ||
-        keepAliveTime &lt; 0)
-        throw new IllegalArgumentException();
-    if (workQueue == null || threadFactory == null || handler == null)
-        throw new NullPointerException();
-    this.acc = System.getSecurityManager() == null ?
-            null :
-            AccessController.getContext();
-    this.corePoolSize = corePoolSize;
-    this.maximumPoolSize = maximumPoolSize;
-    this.workQueue = workQueue;
-    this.keepAliveTime = unit.toNanos(keepAliveTime);
-    this.threadFactory = threadFactory;
-    this.handler = handler;
-}
+                        	<pre><code class="language-text">SELECT DATE_FORMAT(create_time,&#39;%Y%u&#39;) weeks,COUNT(id) COUNT FROM table GROUP BY weeks; 
+SELECT DATE_FORMAT(create_time,&#39;%Y%m%d&#39;) days,COUNT(id) COUNT FROM table GROUP BY days; 
+SELECT DATE_FORMAT(create_time,&#39;%Y%m&#39;) months,COUNT(id) COUNT FROM table GROUP BY months;
+SELECT DATE_FORMAT(create_time,&#39;%Y&#39;) years,COUNT(id) COUNT FROM table GROUP BY years;
 </code></pre>
-</details>
-<p>这几个核心参数的作用：</p>
 
-<ul>
-<li>corePoolSize：核心线程数，为线程池的基本大小。<strong>核心线程不会被回收</strong>，即使没有任务执行，也会保持空闲状态。</li>
-<li>maximumPoolSize：为线程池最大线程大小。<strong>当线程运行数量达到corePoolSize，且workQueue队列塞满任务了之后</strong>，继续创建线程。</li>
-<li>keepAliveTime 和 unit ：是超过corePoolSize之后的“临时线程”的存活时间。</li>
-<li>workQueue：用于存放任务的阻塞队列。当前运行线程超过核心线程数时，新的任务会处于等待状态，存在workQueue中，BlockingQueue是一个阻塞式队列，相当于一个容器，生产者往里面放资源，消费者从里面拿资源。</li>
-<li>handler：当队列和最大线程池都满了之后的饱和策略。</li>
-</ul>
+<p>函数：<code>DATE_FORMAT</code><br/>
+作用：根据format字符串格式化date值。<br/>
+语法：<code>DATE_FORMAT(date,format)</code></p>
 
-<p>阻塞队列：<br/>
-<img src="http://hitol.blog.cdn.updev.cn/16023150102703.jpg" alt="16023150102703"/></p>
+<p>下列修饰符可以被用在format字符串中：<br/>
+%M 月名字(January……December)<br/>
+%W 星期名字(Sunday……Saturday)<br/>
+%D 有英语前缀的月份的日期(1st, 2nd, 3rd, 等等。）<br/>
+%Y 年, 数字, 4 位<br/>
+%y 年, 数字, 2 位<br/>
+%a 缩写的星期名字(Sun……Sat)<br/>
+%d 月份中的天数, 数字(00……31)<br/>
+%e 月份中的天数, 数字(0……31)<br/>
+%m 月, 数字(01……12)<br/>
+%c 月, 数字(1……12)<br/>
+%b 缩写的月份名字(Jan……Dec)<br/>
+%j 一年中的天数(001……366)<br/>
+%H 小时(00……23)<br/>
+%k 小时(0……23)<br/>
+%h 小时(01……12)<br/>
+%I 小时(01……12)<br/>
+%l 小时(1……12)<br/>
+%i 分钟, 数字(00……59)<br/>
+%r 时间,12 小时(hh:mm:ss [AP]M)<br/>
+%T 时间,24 小时(hh:mm:ss)<br/>
+%S 秒(00……59)<br/>
+%s 秒(00……59)<br/>
+%p AM或PM<br/>
+%w 一个星期中的天数(0=Sunday ……6=Saturday ）<br/>
+%U 星期(0……52), 这里星期天是星期的第一天<br/>
+%u 星期(0……52), 这里星期一是星期的第一天<br/>
+%% 一个文字“%”。</p>
 
-<p>首先检测线程池运行状态，如果不是RUNNING，则直接拒绝，线程池要保证在RUNNING的状态下执行任务。</p>
+<p> </p>
 
-<ul>
-<li>如果workerCount &lt; corePoolSize，则创建并启动一个线程来执行新提交的任务。</li>
-<li>如果workerCount &gt;= corePoolSize，且线程池内的阻塞队列未满，则将任务添加到该阻塞队列中。</li>
-<li>如果workerCount &gt;= corePoolSize &amp;&amp; workerCount &lt; maximumPoolSize，且线程池内的阻塞队列已满，则创建并启动一个线程来执行新提交的任务。</li>
-<li>如果workerCount &gt;= maximumPoolSize，并且线程池内的阻塞队列已满, 则根据拒绝策略来处理该任务, 默认的处理方式是直接抛异常。<br/>
-其执行流程如下图所示：</li>
-</ul>
+<p>函数：<code>FROM_UNIXTIME</code><br/>
+作用：将MYSQL中以INT(11)存储的时间以&quot;YYYY-MM-DD&quot;格式来显示。<br/>
+语法：<code>FROM_UNIXTIME(unix_timestamp,format)</code></p>
 
-<p><img src="http://hitol.blog.cdn.updev.cn/16023179404989.jpg" alt="16023179404989"/></p>
+<p>返回表示 <code>Unix</code> 时间标记的一个字符串，根据format字符串格式化。format可以包含与<code>DATE_FORMAT()</code>函数列出的条目同样的修饰符。</p>
 
-<p>线程运行状态：<br/>
-<img src="http://hitol.blog.cdn.updev.cn/16023123528952.jpg" alt="16023123528952"/></p>
+<p>根据format字符串格式化date值。<br/>
+下列修饰符可以被用在format字符串中：</p>
 
-<p>拒绝策略<br/>
-<img src="http://hitol.blog.cdn.updev.cn/16023245427842.jpg" alt="16023245427842"/></p>
-
-<h2 id="toc_4"></h2>
-
-<p>现有一个线程池，参数corePoolSize = 5，maximumPoolSize = 10，BlockingQueue阻塞队列长度为5，此时有4个任务同时进来，问：线程池会创建几条线程？</p>
-
-<p>如果4个任务还没处理完，这时又同时进来2个任务，问：线程池又会创建几条线程还是不会创建？</p>
-
-<p>如果前面6个任务还是没有处理完，这时又同时进来5个任务，问：线程池又会创建几条线程还是不会创建？</p>
-
-<h2 id="toc_5"></h2>
-
-<p><a href="https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html">https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html</a><br/>
-<a href="http://objcoding.com/2019/04/11/threadpool-initial-parameters/">http://objcoding.com/2019/04/11/threadpool-initial-parameters/</a><br/>
-<a href="https://www.cnblogs.com/frankyou/p/10135212.html">https://www.cnblogs.com/frankyou/p/10135212.html</a><br/>
-<a href="https://www.cnblogs.com/NiceCui/p/11929396.html">https://www.cnblogs.com/NiceCui/p/11929396.html</a></p>
+<p>%M 月名字(January……December)<br/>
+%W 星期名字(Sunday……Saturday)<br/>
+%D 有英语前缀的月份的日期(1st, 2nd, 3rd, 等等。）<br/>
+%Y 年, 数字, 4 位<br/>
+%y 年, 数字, 2 位<br/>
+%a 缩写的星期名字(Sun……Sat)<br/>
+%d 月份中的天数, 数字(00……31)<br/>
+%e 月份中的天数, 数字(0……31)<br/>
+%m 月, 数字(01……12)<br/>
+%c 月, 数字(1……12)<br/>
+%b 缩写的月份名字(Jan……Dec)<br/>
+%j 一年中的天数(001……366)<br/>
+%H 小时(00……23)<br/>
+%k 小时(0……23)<br/>
+%h 小时(01……12)<br/>
+%I 小时(01……12)<br/>
+%l 小时(1……12)<br/>
+%i 分钟, 数字(00……59)<br/>
+%r 时间,12 小时(hh:mm:ss [AP]M)<br/>
+%T 时间,24 小时(hh:mm:ss)<br/>
+%S 秒(00……59)<br/>
+%s 秒(00……59)<br/>
+%p AM或PM<br/>
+%w 一个星期中的天数(0=Sunday ……6=Saturday ）<br/>
+%U 星期(0……52), 这里星期天是星期的第一天<br/>
+%u 星期(0……52), 这里星期一是星期的第一天<br/>
+%% 一个文字“%”。</p>
 
                         
                       </div>
@@ -238,7 +217,7 @@
                     <span class="date">2020/10/21</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -338,13 +317,19 @@
 	      
 		      
 			      <li class="post">
-			        <a href="16191464387463.html">nacos</a>
+			        <a href="16208120012139.html">Sentinel</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="16121664688743.html">Dubbo SPI</a>
+			        <a href="16208119771915.html">spring-cloud-alibaba</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16032821146100.html">MySQL聚集索引和二级索引</a>
 			      </li>
 		     
 		  
@@ -356,13 +341,7 @@
 		  
 		      
 			      <li class="post">
-			        <a href="16169197037719.html">Redis 持久化 - RDB、AOF 及 混合持久化机制</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16176922961413.html">搭建 RocketMQ 集群</a>
+			        <a href="16191464387463.html">nacos</a>
 			      </li>
 		     
 		  
