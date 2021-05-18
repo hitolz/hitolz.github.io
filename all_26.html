@@ -122,108 +122,90 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032826948500.html">
+                <a class="clearlink" href="16032821893434.html">
                 
-                  <h1>Docker 安装 MySQL数据库 实现主从复制</h1>
+                  <h1>Spring事务管理</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>安装mysql镜像，并启动两个容器，分别命名为master\slave1</p>
+                        	<p><code>@Transactional</code> 保证事务一致性。<br/>
+当出现异常时，会回滚</p>
 
-<pre><code class="language-text">docker pull mysql
+<p>隔离级别：<br/>
+隔离级别是指多个并发事务之间的隔离程度。与开发相关的场景主要包括：脏读取、重复读、幻读。</p>
 
-docker run --name master -p 3307:3306 -e MYSQL_ROOT_PASSWORD=masterRoot -d mysql
+<pre><code class="language-text">package org.springframework.transaction.annotation;
 
-docker run --name slave1 -p 3308:3306 -e MYSQL_ROOT_PASSWORD=slave1Root -d mysql
+public enum Isolation {
+    DEFAULT(-1),
+    READ_UNCOMMITTED(1),
+    READ_COMMITTED(2),
+    REPEATABLE_READ(4),
+    SERIALIZABLE(8);
 
+    private final int value;
+
+    private Isolation(int value) {
+        this.value = value;
+    }
+
+    public int value() {
+        return this.value;
+    }
+}
 </code></pre>
 
-<h2 id="toc_0"></h2>
+<p>Isolation枚举类中定义了5个表示隔离级别的值</p>
 
-<p>查看master的ip</p>
+<p>DEFAULT 默认值，表示使用底层数据库的默认隔离级别。对大部分数据库而言，就是READ_COMMITED</p>
 
-<pre><code class="language-text">docker inspect --format=&#39;{{.NetworkSettings.IPAddress}}&#39;  f7e6499911c8
+<p>READ_UNCOMMITED：该隔离级别表示，一个事务可以读取另一个事务修改但是还未提交的数据。不能防止脏读和不可重复读。很少使用。</p>
+
+<p>READ_COMMITED:该隔离级别表示，只能读取另一个事务已经提交的数据。该事务级别可以防止脏读，也是大多数情况下的推荐值。</p>
+
+<p>REPEATABLE_READ:该隔离级别表示一个事务在整个过程中可以多次重复执行某个查询，并返回相同结果。在多次查询之间有新增的值会被忽略。可以防止不可重复读和脏读。</p>
+
+<p>SERIALIZABLE：所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，该级别可以防止脏读、不可重复读以及幻读。但是这将严重影响程序的性能。通常情况下也不会用到该级别</p>
+
+<p>指定方法：</p>
+
+<pre><code class="language-text">@Transactional(isolation = Isolation.DEFAULT)
 </code></pre>
 
-<p>172.17.0.3</p>
+<p>传播行为：</p>
 
-<h2 id="toc_1"></h2>
+<pre><code class="language-text">package org.springframework.transaction.annotation;
 
-<p>修改master配置文件my.cnf<br/>
-在[mysqld]配置中添加两个配置</p>
+public enum Propagation {
+    REQUIRED(0),
+    SUPPORTS(1),
+    MANDATORY(2),
+    REQUIRES_NEW(3),
+    NOT_SUPPORTED(4),
+    NEVER(5),
+    NESTED(6);
 
-<pre><code class="language-text">log-bin         = mysql-bin
-server-id       = 1
+    private final int value;
+
+    private Propagation(int value) {
+        this.value = value;
+    }
+
+    public int value() {
+        return this.value;
+    }
+}
 </code></pre>
 
-<p>修改slave1配置文件my.cnf<br/>
-在[mysqld]配置中添加两个配置</p>
-
-<pre><code class="language-text">log-bin         = mysql-bin
-server-id       = 2
-</code></pre>
-
-<h2 id="toc_2"></h2>
-
-<p>在master数据库中创建用来同步数据的用户</p>
-
-<pre><code class="language-text">CREATE USER &#39;slave&#39;@&#39;%&#39; IDENTIFIED BY &#39;123456&#39;;
-GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO &#39;slave&#39;@&#39;%&#39;;  
-</code></pre>
-
-<p><code>REPLICATION SLAVE</code> 常用于建立复制时所需要用到的用户权限，也就是slave server必须被master server授权具有该权限的用户，才能通过该用户复制。<br/>
-并且&quot;SHOW SLAVE HOSTS&quot;这条命令和REPLICATION SLAVE权限有关，否则执行时会报错：</p>
-
-<blockquote>
-<p>ERROR 1227 (42000): Access denied; you need (at least one of) the REPLICATION SLAVE privilege(s) for this operation </p>
-</blockquote>
-
-<p><code>REPLICATION CLIEN</code>T 不可用于建立复制，有该权限时，只是多了可以使用如&quot;SHOW SLAVE STATUS&quot;、&quot;SHOW MASTER STATUS&quot;等命令。</p>
-
-<h2 id="toc_3"></h2>
-
-<pre><code class="language-text">mysql&gt; show master status
-    -&gt; ;
-+------------------+----------+--------------+------------------+-------------------+
-| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
-+------------------+----------+--------------+------------------+-------------------+
-| mysql-bin.000001 |      156 |              |                  |                   |
-+------------------+----------+--------------+------------------+-------------------+
-1 row in set (0.01 sec)
- 
-mysql&gt; 
-</code></pre>
-
-<h2 id="toc_4"></h2>
-
-<p>在slave1中执行</p>
-
-<pre><code class="language-text">change master to master_host=&#39;172.17.0.3&#39;, master_user=&#39;slave&#39;, master_password=&#39;123456&#39;, master_port=3306, master_log_file=&#39;mysql-bin.000001&#39;, master_log_pos=156, master_connect_retry=30;  
-</code></pre>
-
-<p>这里需要注意下，<code>master_host</code>用master容器的ip，<code>master_port</code>是3306，<code>master_log_file</code>是上面master的<code>show master status</code>的File，<code>master_log_pos</code>则是Position。</p>
-
-<p>我一开始以为master_port是主机映射到master容器的端口3307，搞了半天也搞不通。</p>
-
-<h2 id="toc_5"></h2>
-
-<p>主从同步完成。</p>
-
-<h2 id="toc_6"></h2>
-
-<p>TODO<br/>
-读写分离</p>
-
-<hr/>
-
-<p>建议用 compose，有几点改进：</p>
-
-<ol>
-<li>配置文件改好挂进去，而不是启动容器之后再改</li>
-<li>把数据通过数据卷挂出来，容器没了数据不丢</li>
-<li>compose 下可以用 link 参数，这个参数将容器名/容器 ip 写到 hosts 里，这样就不用去找 ip 了</li>
-</ol>
+<p>Propagation枚举类中定义了6个表示传播行为的枚举值：<br/>
+REQUIRED：如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。<br/>
+SUPPORTS：如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式继续运行。<br/>
+MANDATORY：如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常。<br/>
+REQUIRES_NEW：创建一个新的事务，如果当前存在事务，则把当前事务挂起。<br/>
+NOT_SUPPORTED：以非事务方式运行，如果当前存在事务，则把当前事务挂起。<br/>
+NEVER：以非事务方式运行，如果当前存在事务，则抛出异常。<br/>
+NESTED：如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于REQUIRED</p>
 
                         
                       </div>
@@ -235,7 +217,9 @@ mysql&gt;
                     <span class="date">2020/10/21</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Docker.html'>Docker</a></span>
+          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -335,6 +319,12 @@ mysql&gt;
 	      
 		      
 			      <li class="post">
+			        <a href="16208119771915.html">spring-cloud-alibaba  nacos</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16213217139614.html">MySQL 动态行转列</a>
 			      </li>
 		     
@@ -342,12 +332,6 @@ mysql&gt;
 		      
 			      <li class="post">
 			        <a href="16208120012139.html">Sentinel</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16208119771915.html">spring-cloud-alibaba</a>
 			      </li>
 		     
 		  

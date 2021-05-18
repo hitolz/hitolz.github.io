@@ -122,90 +122,81 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032824286367.html">
+                <a class="clearlink" href="16032826647218.html">
                 
-                  <h1>Mysql 根据时间戳、时间按年月日分组统计</h1>
+                  <h1>Spring Boot 增加缓存功能</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<pre><code class="language-text">SELECT DATE_FORMAT(create_time,&#39;%Y%u&#39;) weeks,COUNT(id) COUNT FROM table GROUP BY weeks; 
-SELECT DATE_FORMAT(create_time,&#39;%Y%m%d&#39;) days,COUNT(id) COUNT FROM table GROUP BY days; 
-SELECT DATE_FORMAT(create_time,&#39;%Y%m&#39;) months,COUNT(id) COUNT FROM table GROUP BY months;
-SELECT DATE_FORMAT(create_time,&#39;%Y&#39;) years,COUNT(id) COUNT FROM table GROUP BY years;
+                        	<pre><code class="language-text">spring.jpa.properties.hibernate.show_sql=true，开启hibernate对sql语句的打印
 </code></pre>
 
-<p>函数：<code>DATE_FORMAT</code><br/>
-作用：根据format字符串格式化date值。<br/>
-语法：<code>DATE_FORMAT(date,format)</code></p>
+<p>单元测试中，用userRepository 查询两次相同内容。</p>
 
-<p>下列修饰符可以被用在format字符串中：<br/>
-%M 月名字(January……December)<br/>
-%W 星期名字(Sunday……Saturday)<br/>
-%D 有英语前缀的月份的日期(1st, 2nd, 3rd, 等等。）<br/>
-%Y 年, 数字, 4 位<br/>
-%y 年, 数字, 2 位<br/>
-%a 缩写的星期名字(Sun……Sat)<br/>
-%d 月份中的天数, 数字(00……31)<br/>
-%e 月份中的天数, 数字(0……31)<br/>
-%m 月, 数字(01……12)<br/>
-%c 月, 数字(1……12)<br/>
-%b 缩写的月份名字(Jan……Dec)<br/>
-%j 一年中的天数(001……366)<br/>
-%H 小时(00……23)<br/>
-%k 小时(0……23)<br/>
-%h 小时(01……12)<br/>
-%I 小时(01……12)<br/>
-%l 小时(1……12)<br/>
-%i 分钟, 数字(00……59)<br/>
-%r 时间,12 小时(hh:mm:ss [AP]M)<br/>
-%T 时间,24 小时(hh:mm:ss)<br/>
-%S 秒(00……59)<br/>
-%s 秒(00……59)<br/>
-%p AM或PM<br/>
-%w 一个星期中的天数(0=Sunday ……6=Saturday ）<br/>
-%U 星期(0……52), 这里星期天是星期的第一天<br/>
-%u 星期(0……52), 这里星期一是星期的第一天<br/>
-%% 一个文字“%”。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729123926.jpg" alt=""/><br/>
+运行一下，会看到在控制台打出了两条sql，说明是查了两次库。</p>
 
-<p> </p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729221221.jpg" alt=""/></p>
 
-<p>函数：<code>FROM_UNIXTIME</code><br/>
-作用：将MYSQL中以INT(11)存储的时间以&quot;YYYY-MM-DD&quot;格式来显示。<br/>
-语法：<code>FROM_UNIXTIME(unix_timestamp,format)</code></p>
+<p>增加缓存：<br/>
+pom中添加依赖：</p>
 
-<p>返回表示 <code>Unix</code> 时间标记的一个字符串，根据format字符串格式化。format可以包含与<code>DATE_FORMAT()</code>函数列出的条目同样的修饰符。</p>
+<pre><code class="language-text">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-cache&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
 
-<p>根据format字符串格式化date值。<br/>
-下列修饰符可以被用在format字符串中：</p>
+<p>SpringBoot主类中添加注解 <code>@EnableCaching</code><br/>
+UserRepository 类添加注解<code>@CacheConfig(cacheNames = &quot;users&quot;)</code><br/>
+findByName方法添加注解<code>@Cacheable</code></p>
 
-<p>%M 月名字(January……December)<br/>
-%W 星期名字(Sunday……Saturday)<br/>
-%D 有英语前缀的月份的日期(1st, 2nd, 3rd, 等等。）<br/>
-%Y 年, 数字, 4 位<br/>
-%y 年, 数字, 2 位<br/>
-%a 缩写的星期名字(Sun……Sat)<br/>
-%d 月份中的天数, 数字(00……31)<br/>
-%e 月份中的天数, 数字(0……31)<br/>
-%m 月, 数字(01……12)<br/>
-%c 月, 数字(1……12)<br/>
-%b 缩写的月份名字(Jan……Dec)<br/>
-%j 一年中的天数(001……366)<br/>
-%H 小时(00……23)<br/>
-%k 小时(0……23)<br/>
-%h 小时(01……12)<br/>
-%I 小时(01……12)<br/>
-%l 小时(1……12)<br/>
-%i 分钟, 数字(00……59)<br/>
-%r 时间,12 小时(hh:mm:ss [AP]M)<br/>
-%T 时间,24 小时(hh:mm:ss)<br/>
-%S 秒(00……59)<br/>
-%s 秒(00……59)<br/>
-%p AM或PM<br/>
-%w 一个星期中的天数(0=Sunday ……6=Saturday ）<br/>
-%U 星期(0……52), 这里星期天是星期的第一天<br/>
-%u 星期(0……52), 这里星期一是星期的第一天<br/>
-%% 一个文字“%”。</p>
+<p>org.springframework.data.redis.serializer.SerializationException:?</p>
+
+<p>缓存对象需要实现序列化接口.<code>UserDO implements Serializable</code></p>
+
+<p>在次运行就会出现</p>
+
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374555362360.jpg" alt="" style="width:1076px;"/>可以看到，第二次请求的时候就没有打印出sql语句。</p>
+
+<p>注解：</p>
+
+<ul>
+<li><p>@CacheConfig：<br/>
+主要配置该类中会用到的一些公用的缓存配置。<br/>
+cacheNames 配置了数据访问对象中返回的内容将存储于名为users的数组中。<br/>
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374561374912.jpg" alt=""/></p></li>
+<li><p>@Cacheable：<br/>
+配置了findByName的函数返回值将会被加入到缓存。同时在查询时，会先查询缓存，若不存在才会查询数据库。<br/>
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374562984908.jpg" alt=""/></p></li>
+<li><p><code>cacheNames</code>、<code>value</code>：用于指定缓存存储的集合名。两个参数等效。</p></li>
+<li><p><code>key</code>：缓存对象存储在Map集合中的key值，非必需，缺省按照函数的所有参数组合作为key值，若自己配置需使用SpEL表达式，比如：@Cacheable(key = &quot;#p0&quot;)：使用函数第一个参数作为缓存的key值，更多关于SpEL表达式的详细内容可参考<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#cache">官方文档</a></p></li>
+<li><p><code>condition</code>:缓存对象的条件，非必需，也需使用SpEL表达式，只有满足表达式条件的内容才会被缓存，比如：@Cacheable(key = &quot;#p0&quot;, condition = &quot;#p0.length() &lt; 3&quot;)，表示只有当第一个参数的长度小于3的时候才会被缓存，若做此配置上面的AAA用户就不会被缓存，读者可自行实验尝试。</p></li>
+<li><p><code>unless</code>:另外一个缓存条件参数，非必需，需使用SpEL表达式。它不同于condition参数的地方在于它的判断时机，该条件是在函数被调用之后才做判断的，所以它可以通过对result进行判断。</p></li>
+<li><p><code>keyGenerator</code>:用于指定key生成器，非必需。若需要指定一个自定义的key生成器，我们需要去实现org.springframework.cache.interceptor.KeyGenerator接口，并使用该参数来指定。需要注意的是：该参数与key是互斥的</p></li>
+<li><p><code>cacheManager</code>:用于指定使用哪个缓存管理器，非必需。只有当有多个时才需要使用</p></li>
+<li><p><code>cacheResolver</code>:用于指定使用那个缓存解析器，非必需。需通过org.springframework.cache.interceptor.CacheResolver接口来实现自己的缓存解析器，并用该参数指定。</p></li>
+</ul>
+
+<p>CacheManager</p>
+
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374571943253.jpg" alt=""/></p>
+
+<p>在Spring Boot中通过@EnableCaching注解自动化配置合适的缓存管理器（CacheManager），Spring Boot根据下面的顺序去侦测缓存提供者：</p>
+
+<ul>
+<li>Generic</li>
+<li>JCache (JSR-107)</li>
+<li>EhCache 2.x</li>
+<li>Hazelcast</li>
+<li>Infinispan</li>
+<li>Redis</li>
+<li>Guava</li>
+<li>Simple</li>
+</ul>
+
+<p>可以通过配置属性spring.cache.type来强制指定</p>
 
                         
                       </div>
@@ -217,7 +208,9 @@ SELECT DATE_FORMAT(create_time,&#39;%Y&#39;) years,COUNT(id) COUNT FROM table GR
                     <span class="date">2020/10/21</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				  
+          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -317,6 +310,12 @@ SELECT DATE_FORMAT(create_time,&#39;%Y&#39;) years,COUNT(id) COUNT FROM table GR
 	      
 		      
 			      <li class="post">
+			        <a href="16208119771915.html">spring-cloud-alibaba  nacos</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16213217139614.html">MySQL 动态行转列</a>
 			      </li>
 		     
@@ -324,12 +323,6 @@ SELECT DATE_FORMAT(create_time,&#39;%Y&#39;) years,COUNT(id) COUNT FROM table GR
 		      
 			      <li class="post">
 			        <a href="16208120012139.html">Sentinel</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16208119771915.html">spring-cloud-alibaba</a>
 			      </li>
 		     
 		  

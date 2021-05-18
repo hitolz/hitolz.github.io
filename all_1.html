@@ -122,209 +122,189 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16208120012139.html">
+                <a class="clearlink" href="16213217139614.html">
                 
-                  <h1>Sentinel</h1>
+                  <h1>MySQL 动态行转列</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<ul>
-<li>
-<a href="#toc_0">Spring boot 与 Sentinel</a>
-<ul>
-<li>
-<a href="#toc_1">Quick Start</a>
-<ul>
-<li>
-<a href="#toc_2">运行控制台</a>
-</li>
-<li>
-<a href="#toc_3">项目添加依赖</a>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_4">流量控制</a>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_5">Dubbo 与 Sentinel</a>
-<ul>
-<li>
-<a href="#toc_6">服务提供者修改</a>
-<ul>
-<li>
-<a href="#toc_7">增加依赖</a>
-</li>
-<li>
-<a href="#toc_8">修改配置</a>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_9">服务消费者修改</a>
-<ul>
-<li>
-<a href="#toc_10">增加依赖</a>
-</li>
-<li>
-<a href="#toc_11">修改配置</a>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_12">运行结果</a>
-</li>
-</ul>
-</li>
-</ul>
+                        	<details>
+<p><MAXmary>表结构及数据</MAXmary></p>
 
+<pre><code class="language-text">  
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
 
-<h2 id="toc_0">Spring boot 与 Sentinel</h2>
+-- ----------------------------
+-- Table structure for Course
+-- ----------------------------
+DROP TABLE IF EXISTS `Course`;
+CREATE TABLE `Course` (
+  `CId` varchar(10) DEFAULT NULL,
+  `Cname` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-<h3 id="toc_1">Quick Start</h3>
+-- ----------------------------
+-- Records of Course
+-- ----------------------------
+BEGIN;
+INSERT INTO `Course` VALUES (&#39;1&#39;, &#39;数据库&#39;);
+INSERT INTO `Course` VALUES (&#39;3&#39;, &#39;编译原理&#39;);
+INSERT INTO `Course` VALUES (&#39;4&#39;, &#39;计算机网络&#39;);
+INSERT INTO `Course` VALUES (&#39;2&#39;, &#39;操作系统&#39;);
+COMMIT;
 
-<h4 id="toc_2">运行控制台</h4>
+-- ----------------------------
+-- Table structure for SC
+-- ----------------------------
+DROP TABLE IF EXISTS `SC`;
+CREATE TABLE `SC` (
+  `SId` varchar(10) DEFAULT NULL,
+  `CId` varchar(10) DEFAULT NULL,
+  `score` decimal(18,1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-<p>github 地址 <a href="https://github.com/alibaba/Sentinel">https://github.com/alibaba/Sentinel</a></p>
+-- ----------------------------
+-- Records of SC
+-- ----------------------------
+BEGIN;
+INSERT INTO `SC` VALUES (&#39;2&#39;, &#39;1&#39;, 80.0);
+INSERT INTO `SC` VALUES (&#39;2&#39;, &#39;2&#39;, 73.0);
+INSERT INTO `SC` VALUES (&#39;2&#39;, &#39;3&#39;, 87.0);
+INSERT INTO `SC` VALUES (&#39;2&#39;, &#39;4&#39;, 68.0);
+INSERT INTO `SC` VALUES (&#39;3&#39;, &#39;1&#39;, 85.0);
+INSERT INTO `SC` VALUES (&#39;3&#39;, &#39;2&#39;, 66.0);
+INSERT INTO `SC` VALUES (&#39;3&#39;, &#39;3&#39;, 66.0);
+INSERT INTO `SC` VALUES (&#39;3&#39;, &#39;4&#39;, 98.0);
+INSERT INTO `SC` VALUES (&#39;1&#39;, &#39;1&#39;, 90.0);
+INSERT INTO `SC` VALUES (&#39;1&#39;, &#39;2&#39;, 55.0);
+INSERT INTO `SC` VALUES (&#39;1&#39;, &#39;3&#39;, 78.0);
+INSERT INTO `SC` VALUES (&#39;1&#39;, &#39;4&#39;, 45.0);
+INSERT INTO `SC` VALUES (&#39;4&#39;, &#39;1&#39;, 70.0);
+INSERT INTO `SC` VALUES (&#39;4&#39;, &#39;2&#39;, 77.0);
+INSERT INTO `SC` VALUES (&#39;4&#39;, &#39;3&#39;, 56.0);
+INSERT INTO `SC` VALUES (&#39;4&#39;, &#39;4&#39;, 82.0);
+COMMIT;
 
-<p>下载 sentinel-dashboard-1.8.1.jar<br/>
-运行 <code>java -jar sentinel-dashboard-1.8.1.jar</code><br/>
-访问web地址：<a href="http://localhost:8080">http://localhost:8080</a>   默认用户名和密码都是sentinel/sentinel，然后进入首页</p>
+-- ----------------------------
+-- Table structure for Student
+-- ----------------------------
+DROP TABLE IF EXISTS `Student`;
+CREATE TABLE `Student` (
+  `SId` varchar(10) DEFAULT NULL,
+  `Sname` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-<h4 id="toc_3">项目添加依赖</h4>
+-- ----------------------------
+-- Records of Student
+-- ----------------------------
+BEGIN;
+INSERT INTO `Student` VALUES (&#39;1&#39;, &#39;张三&#39;);
+INSERT INTO `Student` VALUES (&#39;2&#39;, &#39;李四&#39;);
+INSERT INTO `Student` VALUES (&#39;3&#39;, &#39;王五&#39;);
+INSERT INTO `Student` VALUES (&#39;4&#39;, &#39;孙六&#39;);
+COMMIT;
 
-<pre><code class="language-markup">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
-    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
-&lt;/dependency&gt;
+SET FOREIGN_KEY_CHECKS = 1;
+
+</code></pre>
+</details>
+<p>查看学生哪门课程多少分数</p>
+
+<pre><code class="language-text">SELECT a.SId,a.Sname,c.CId,c.Cname,b.score from Student a join SC b on a.SId = b.SId
+join Course c on c.CId = b.CId order by a.SId;
 </code></pre>
 
-<p>添加配置</p>
+<p>结果是这样<br/>
+<img src="http://hitol.blog.cdn.updev.cn/16213237716609.jpg" alt=""/></p>
 
-<pre><code class="language-properties">server.port=8081
-# sentinel 配置
-spring.application.name=hitol-sentinel
-spring.cloud.sentinel.transport.dashboard=localhost:8080
-spring.cloud.sentinel.transport.heartbeat-interval-ms=500
+<p>但是如果想做成这样的呢？<br/>
+<img src="http://hitol.blog.cdn.updev.cn/16213239029529.jpg" alt=""/></p>
+
+<p>这就是行转列，也叫作竖表转横表<br/>
+可以通过 case when 或者 if</p>
+
+<p>IF 语法：<br/>
+<code>IF(expr1,expr2,expr3)</code><br/>
+如果 expr1 为 true，则返回 expr2，否则返回 expr3</p>
+
+<p>静态行转列:</p>
+
+<pre><code class="language-text">SELECT a.SId,a.Sname,
+
+MAX(IF(c.Cname = &#39;操作系统&#39;,b.score,null)) as &#39;操作系统&#39;,
+MAX(IF(c.Cname = &#39;数据库&#39;,b.score,null)) as &#39;数据库&#39;,
+MAX(IF(c.Cname = &#39;编译原理&#39;,b.score,null)) as &#39;编译原理&#39;,
+MAX(IF(c.Cname = &#39;计算机网络&#39;,b.score,null)) as &#39;计算机网络&#39;
+
+from Student a join SC b on a.SId = b.SId
+join Course c on c.CId = b.CId 
+group by a.Sname
 </code></pre>
 
-<p>编写一个 controller 用于测试</p>
+<p>在这个场景下，用 MAX 或者 SUM 都可以<br/>
+但是如果增加了课程，这条 sql 也要同步修改</p>
 
-<pre><code class="language-java">@RestController
-public class SentinelController {
+<p>动态 行转列</p>
 
-    @RequestMapping(&quot;/&quot;)
-    public String sentinel() {
-        return &quot;sentinel ....&quot;;
-    }
-}
+<pre><code class="language-text">MAX(IF(c.Cname = &#39;操作系统&#39;,b.score,null)) as &#39;操作系统&#39;,
+MAX(IF(c.Cname = &#39;数据库&#39;,b.score,null)) as &#39;数据库&#39;,
+MAX(IF(c.Cname = &#39;编译原理&#39;,b.score,null)) as &#39;编译原理&#39;,
+MAX(IF(c.Cname = &#39;计算机网络&#39;,b.score,null)) as &#39;计算机网络&#39;
 </code></pre>
 
-<p>浏览器访问 localhost:8081,多刷新几次，控制台实时监控<br/>
-<img src="http://hitol.blog.cdn.updev.cn/16208040517121.jpg" alt=""/></p>
+<p>从上面看，这一部分的 sql 语法是一样的，利用 concat 函数动态拼接出来：</p>
 
-<h3 id="toc_4">流量控制</h3>
-
-<p><img src="http://hitol.blog.cdn.updev.cn/16208047724648.jpg" alt=""/></p>
-
-<p>添加规则后多刷新几次接口<br/>
-<img src="http://hitol.blog.cdn.updev.cn/16208047941828.jpg" alt=""/></p>
-
-<h2 id="toc_5">Dubbo 与 Sentinel</h2>
-
-<h3 id="toc_6">服务提供者修改</h3>
-
-<h4 id="toc_7">增加依赖</h4>
-
-<pre><code class="language-text">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
-    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;
-    &lt;artifactId&gt;sentinel-apache-dubbo-adapter&lt;/artifactId&gt;
-    &lt;version&gt;1.7.0&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;
-    &lt;artifactId&gt;sentinel-transport-simple-http&lt;/artifactId&gt;
-    &lt;version&gt;1.7.1&lt;/version&gt;
-&lt;/dependency&gt;
+<pre><code class="language-text">SELECT
+    CONCAT(&#39;MAX(IF(c.Cname = &#39;&#39;&#39;, c.Cname, &#39;&#39;&#39;, a.score, NULL)) AS &#39;&#39;&#39;, c.Cname, &#39;\&#39;&#39;)
+FROM
+    Course c;
 </code></pre>
 
-<h4 id="toc_8">修改配置</h4>
+<p>这一部分有了，把所有的 sql 语句都拼接起来<br/>
+但是这个地方使用 concat 不行，concat 只会返回一条结果</p>
 
-<pre><code class="language-text">server:
-  port: 8070
-spring:
-  application:
-    name: service-provider
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-        group: test
-        namespace: fed092ce-956c-4792-977c-affc5d8f1dc7
+<pre><code class="language-text">SET @sql = &#39;&#39;;
 
-    sentinel:
-      transport:
-        port: 8070
-        dashboard: localhost:8080        
+SELECT
+    CONCAT(&#39;MAX(IF(c.Cname = &#39;&#39;&#39;, c.Cname, &#39;&#39;&#39;, a.score, NULL)) AS &#39;&#39;&#39;, c.Cname, &#39;\&#39;&#39;)
+FROM
+    Course c INTO @sql;
+
+SELECT  @sql;
 </code></pre>
 
-<h3 id="toc_9">服务消费者修改</h3>
+<p>需要把 concat 的返回结果拼接到一起，这就需要用到 group_concat 函数。</p>
 
-<h4 id="toc_10">增加依赖</h4>
+<p><code>PREPARE</code> 语句准备好一条SQL语句，并分配给这条SQL 语句一个名字供之后调用。<br/>
+准备好的 SQL 语句通过 <code>EXECUTE</code> 命令执行，<br/>
+最后通过 <code>DEALLOCATE PREPARE</code> 命令释放掉</p>
 
-<pre><code class="language-text">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
-    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
-&lt;/dependency&gt;
+<p>所以最终结果是这样的:</p>
 
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;
-    &lt;artifactId&gt;sentinel-apache-dubbo-adapter&lt;/artifactId&gt;
-    &lt;version&gt;1.7.0&lt;/version&gt;
-&lt;/dependency&gt;
+<pre><code class="language-text">SET @sql = &#39;&#39;;
+
+SELECT
+    GROUP_CONCAT(CONCAT(&#39;MAX(IF(c.Cname = &#39;&#39;&#39;, c.Cname, &#39;&#39;&#39;, a.score, NULL)) AS &#39;&#39;&#39;, c.Cname, &#39;\&#39;&#39;))
+FROM
+    Course c INTO @sql;
+
+SET @sql = CONCAT(&#39;Select b.Sname as &#39;&#39;姓名&#39;&#39; , &#39;, @sql, &#39; From SC  a
+ JOIN Student b ON a.SId = b.SId
+    JOIN Course c ON a.CId = c.CId
+ Group by b.Sname&#39;);
+
+SELECT
+    @sql;
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
 </code></pre>
 
-<p>因为消费者是通过 http 调用的，所以比服务提供者少了一个依赖</p>
-
-<h4 id="toc_11">修改配置</h4>
-
-<pre><code class="language-text">server:
-  port: 8071
-spring:
-  application:
-    name: service-consumer
-  cloud:
-    nacos:
-      discovery:
-        group: test
-        namespace: fed092ce-956c-4792-977c-affc5d8f1dc7
-        server-addr: 127.0.0.1:8848
-    sentinel:
-      transport:
-        port: 8071
-        dashboard: localhost:8080
-</code></pre>
-
-<p>sentinel.transport.port 跟程序运行的 port 一致才行。</p>
-
-<h3 id="toc_12">运行结果</h3>
-
-<p>添加完依赖，修改完配置，启动即可。<br/>
-调用 服务消费者提供的 api，多刷新几次<br/>
-<img src="http://hitol.blog.cdn.updev.cn/16208082058974.jpg" alt=""/><br/>
-<img src="http://hitol.blog.cdn.updev.cn/16208082166138.jpg" alt=""/></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/16213239029529.jpg" alt=""/></p>
 
                         
                       </div>
@@ -333,8 +313,10 @@ spring:
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/5/12</span>
-                    
+                    <span class="date">2021/5/18</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -434,6 +416,12 @@ spring:
 	      
 		      
 			      <li class="post">
+			        <a href="16208119771915.html">spring-cloud-alibaba  nacos</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16213217139614.html">MySQL 动态行转列</a>
 			      </li>
 		     
@@ -441,12 +429,6 @@ spring:
 		      
 			      <li class="post">
 			        <a href="16208120012139.html">Sentinel</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16208119771915.html">spring-cloud-alibaba</a>
 			      </li>
 		     
 		  
