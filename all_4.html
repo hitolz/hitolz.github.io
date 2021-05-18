@@ -122,195 +122,231 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16191464387463.html">
+                <a class="clearlink" href="16173443661607.html">
                 
-                  <h1>nacos</h1>
+                  <h1>ibatis 升级到 MyBatis</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
                         	<ul>
 <li>
-<a href="#toc_0">Quick Start</a>
+<a href="#toc_0">1、添加 mybatis 依赖</a>
 </li>
 <li>
-<a href="#toc_1">nacos 作为 服务注册中心</a>
+<a href="#toc_1">2、配置 mybatis</a>
 <ul>
 <li>
-<a href="#toc_2">服务提供者</a>
+<a href="#toc_2">配置 dataSource</a>
 </li>
 <li>
-<a href="#toc_3">服务消费者</a>
+<a href="#toc_3">配置 sqlSessionFactory</a>
+</li>
+<li>
+<a href="#toc_4">配置 MapperScannerConfigurer</a>
+</li>
+<li>
+<a href="#toc_5">配置 transactionManager</a>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_4">nacos 作为 配置中心</a>
+<a href="#toc_6">3、配置 mybatis-generater 自动生成代码</a>
 <ul>
 <li>
-<a href="#toc_5">使用 properties 配置文件</a>
+<a href="#toc_7">pom 文件中增加插件</a>
 </li>
 <li>
-<a href="#toc_6">使用 yml 配置文件</a>
-</li>
-<li>
-<a href="#toc_7">同步刷新</a>
+<a href="#toc_8">mybatis-generatorConfig.xml 配置文件</a>
 </li>
 </ul>
 </li>
 <li>
-<a href="#toc_8">nacos 与 Dubbo 的结合使用</a>
+<a href="#toc_9">4、将 ibatis 的 SqlMap 文件 转换为 mapper 文件，与自动生成的代码合并</a>
+</li>
+<li>
+<a href="#toc_10">5、修改 service 中使用到的 dao 为新生成的 mybatis 对应的 dao</a>
 </li>
 </ul>
 
 
-<h2 id="toc_0">Quick Start</h2>
+<h2 id="toc_0">1、添加 mybatis 依赖</h2>
 
-<p><a href="https://nacos.io/zh-cn/docs/quick-start.html">nacosquick start </a></p>
-
-<p>下载 nacos zip，启动 nacos 服务</p>
-
-<p><code>sh startup.sh -m standalone</code></p>
-
-<p>控制台地址，登录名、密码都是 nacos<br/>
-<a href="http://localhost:8848/nacos/index.html#/login">http://localhost:8848/nacos/index.html#/login</a></p>
-
-<h2 id="toc_1">nacos 作为 服务注册中心</h2>
-
-<h3 id="toc_2">服务提供者</h3>
-
-<p>pom 依赖</p>
-
-<pre><code class="language-text">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
-&lt;/dependency&gt;
-</code></pre>
-
-<p>启动类上添加 <code>@EnableDiscoveryClient</code></p>
-
-<p>配置</p>
-
-<pre><code class="language-text">server.port=8070
-spring.application.name=service-provider
-spring.cloud.nacos.discovery.group=test
-spring.cloud.nacos.discovery.namespace=fed092ce-956c-4792-977c-affc5d8f1dc7
-spring.cloud.nacos.discovery.server-addr=127.0.0.1:8848
-</code></pre>
-
-<p>namespace 要注意用 命名空间的 id。</p>
-
-<h3 id="toc_3">服务消费者</h3>
-
-<p>pom 依赖 与 启动类上添加注解与服务提供者一样。</p>
-
-<p>配置</p>
-
-<pre><code class="language-text">server.port=8080
-spring.application.name=service-consumer
-spring.cloud.nacos.discovery.group=test
-spring.cloud.nacos.discovery.namespace=fed092ce-956c-4792-977c-affc5d8f1dc7
-spring.cloud.nacos.discovery.server-addr=127.0.0.1:8848
-</code></pre>
-
-<p>通过 restTemplate 调用服务提供者的 rest 接口，本例中服务提供者的 url 就是 <code>http://service-provider/xxx/xxx</code></p>
-
-<p><img src="http://hitol.blog.cdn.updev.cn/16193418111736.jpg" alt=""/></p>
-
-<h2 id="toc_4">nacos 作为 配置中心</h2>
-
-<p>pom 依赖与作为注册中心的时候不同。</p>
-
-<pre><code class="language-text">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-config&lt;/artifactId&gt;
-&lt;/dependency&gt;
-</code></pre>
-
-<h3 id="toc_5">使用 properties 配置文件</h3>
-
-<p>在 nacos 控制台上新加配置<br/>
-<img src="http://hitol.blog.cdn.updev.cn/16193432563631.jpg" alt=""/></p>
-
-<p>Data ID 命名好后， 配置中的 应用名，及配置的文件格式 都已经确定了。<br/>
-配置文件格式是 properties <br/>
-应用名是 nacos-config</p>
-
-<p>项目中要新建一个 <code>bootstrap.properties</code> 的配置文件<br/>
-bootstrap.properties 中配置：</p>
-
-<pre><code class="language-text">spring.cloud.nacos.config.server-addr=127.0.0.1:8848
-
-spring.application.name=nacos-config
-</code></pre>
-
-<h3 id="toc_6">使用 yml 配置文件</h3>
-
-<p><img src="http://hitol.blog.cdn.updev.cn/16193444078944.jpg" alt=""/></p>
-
-<p>如图新建 yml 类型的配置，<br/>
-项目中新建 bootstrap-dev.yml 配置文件。</p>
-
-<pre><code class="language-text">spring:
-  cloud:
-    nacos:
-      config:
-        server-addr: 127.0.0.1:8848
-        file-extension: yml
-  application:
-    name: nacos-config2
-  profiles:
-    active: dev
-    
-</code></pre>
-
-<p>在项目启动时会到配置中心读取 nacos-config2-dev.yml 的配置</p>
-
-<h3 id="toc_7">同步刷新</h3>
-
-<p>在获取配置的类上 添加注解  @RefreshScope<br/>
-测试过在启动类上添加不起作用。</p>
-
-<h2 id="toc_8">nacos 与 Dubbo 的结合使用</h2>
-
-<p>配置</p>
-
-<pre><code class="language-text">dubbo:
-  application:
-    name: nacos-provider
-    version: 1.0.0
-
-  registry:
-    address: nacos://127.0.0.1:8848
-    version: 1.0.0
-</code></pre>
-
-<p>服务提供者、消费者 依赖</p>
-
-<pre><code class="language-text">&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
-    &lt;artifactId&gt;dubbo&lt;/artifactId&gt;
-    &lt;version&gt;2.7.10&lt;/version&gt;
+<pre><code class="language-text">&lt;!--mybatis--&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+    &lt;version&gt;3.4.6&lt;/version&gt;
 &lt;/dependency&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
-    &lt;artifactId&gt;dubbo-registry-nacos&lt;/artifactId&gt;
-    &lt;version&gt;2.7.5&lt;/version&gt;
+    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
+    &lt;version&gt;1.3.2&lt;/version&gt;
 &lt;/dependency&gt;
 
-&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
-    &lt;artifactId&gt;dubbo-spring-boot-starter&lt;/artifactId&gt;
-    &lt;version&gt;2.7.5&lt;/version&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.spring&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-context-support&lt;/artifactId&gt;
-    &lt;version&gt;1.0.10&lt;/version&gt;
-&lt;/dependency&gt;
 </code></pre>
 
-<p><img src="http://hitol.blog.cdn.updev.cn/16194947099306.jpg" alt=""/></p>
+<h2 id="toc_1">2、配置 mybatis</h2>
+
+<h3 id="toc_2">配置 dataSource</h3>
+
+<pre><code class="language-text">&lt;bean id=&quot;dataSource&quot; class=&quot;org.apache.commons.dbcp.BasicDataSource&quot;&gt;
+    &lt;property name=&quot;driverClassName&quot;  value=&quot;com.mysql.jdbc.Driver&quot; /&gt;
+    &lt;property name=&quot;url&quot;              value=&quot;${xxx}&quot; /&gt;
+    &lt;property name=&quot;username&quot;         value=&quot;${xxx}&quot; /&gt;
+    &lt;property name=&quot;password&quot;         value=&quot;${xxx}&quot; /&gt;
+    &lt;property name=&quot;maxActive&quot; value=&quot;50&quot; /&gt;
+    &lt;property name=&quot;maxIdle&quot; value=&quot;20&quot; /&gt;
+    &lt;property name=&quot;maxWait&quot; value=&quot;3000&quot; /&gt;
+    &lt;property name=&quot;removeAbandoned&quot; value=&quot;true&quot; /&gt;
+    &lt;property name=&quot;removeAbandonedTimeout&quot; value=&quot;60&quot; /&gt;
+    &lt;property name=&quot;logAbandoned&quot; value=&quot;true&quot; /&gt;
+    &lt;property name=&quot;validationQuery&quot; value=&quot;select 1 from dual&quot; /&gt;
+    &lt;property name=&quot;testOnBorrow&quot; value=&quot;true&quot; /&gt;
+&lt;/bean&gt;
+</code></pre>
+
+<h3 id="toc_3">配置 sqlSessionFactory</h3>
+
+<pre><code class="language-text">&lt;bean id=&quot;sqlSessionFactory&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;
+      p:dataSource-ref=&quot;dataSource&quot;
+      p:configLocation=&quot;classpath:mybatis-config.xml&quot;
+      p:typeAliasesPackage=&quot;com.acc.ac.core.common.model&quot;
+      p:mapperLocations=&quot;classpath:mapper/*.xml&quot;/&gt;
+</code></pre>
+
+<p>configLocation:<br/>
+typeAliasesPackage: 实体类对应的包<br/>
+mapperLocations: mapper.xml 文件存放位置。</p>
+
+<h3 id="toc_4">配置 MapperScannerConfigurer</h3>
+
+<pre><code class="language-text">&lt;bean class=&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;
+      p:sqlSessionFactoryBeanName=&quot;sqlSessionFactory&quot;
+      p:basePackage=&quot;com.acc.ac.core.dao&quot;/&gt;
+</code></pre>
+
+<p>配置之后会自动扫描 basePackage 包下的 mapper interface，加到 Spring 容器中。</p>
+
+<h3 id="toc_5">配置 transactionManager</h3>
+
+<pre><code class="language-text">&lt;bean id=&quot;transactionManager&quot; class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;
+      p:dataSource-ref=&quot;dataSource&quot;/&gt;
+</code></pre>
+
+<h2 id="toc_6">3、配置 mybatis-generater 自动生成代码</h2>
+
+<h3 id="toc_7">pom 文件中增加插件</h3>
+
+<pre><code class="language-text">&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.mybatis.generator&lt;/groupId&gt;
+            &lt;artifactId&gt;mybatis-generator-maven-plugin&lt;/artifactId&gt;
+            &lt;version&gt;1.3.5&lt;/version&gt;
+            &lt;configuration&gt;
+                &lt;!-- 在控制台打印执行日志 --&gt;
+                &lt;verbose&gt;true&lt;/verbose&gt;
+                &lt;!-- 重复生成时会覆盖之前的文件--&gt;
+                &lt;overwrite&gt;true&lt;/overwrite&gt;
+                &lt;configurationFile&gt;src/main/resources/META-INF/mybatis-generatorConfig.xml&lt;/configurationFile&gt;
+            &lt;/configuration&gt;
+            &lt;dependencies&gt;
+                &lt;dependency&gt;
+                    &lt;groupId&gt;mysql&lt;/groupId&gt;
+                    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+                    &lt;version&gt;5.1.43&lt;/version&gt;
+                &lt;/dependency&gt;
+            &lt;/dependencies&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+
+<h3 id="toc_8">mybatis-generatorConfig.xml 配置文件</h3>
+
+<pre><code class="language-text">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE generatorConfiguration
+        PUBLIC &quot;-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd&quot;&gt;
+&lt;generatorConfiguration&gt;
+
+    &lt;!--defaultModelType=&quot;flat&quot; 大数据字段，不分表 --&gt;
+    &lt;context id=&quot;Mysql&quot; targetRuntime=&quot;MyBatis3Simple&quot; defaultModelType=&quot;flat&quot;&gt;
+        &lt;property name=&quot;autoDelimitKeywords&quot; value=&quot;true&quot; /&gt;
+        &lt;property name=&quot;beginningDelimiter&quot; value=&quot;`&quot; /&gt;
+        &lt;property name=&quot;endingDelimiter&quot; value=&quot;`&quot; /&gt;
+        &lt;property name=&quot;javaFileEncoding&quot; value=&quot;utf-8&quot; /&gt;
+        &lt;plugin type=&quot;org.mybatis.generator.plugins.SerializablePlugin&quot; /&gt;
+
+        &lt;plugin type=&quot;org.mybatis.generator.plugins.ToStringPlugin&quot; /&gt;
+
+        &lt;!-- 注释 --&gt;
+        &lt;commentGenerator &gt;
+            &lt;property name=&quot;suppressAllComments&quot; value=&quot;false&quot;/&gt;&lt;!-- 是否取消注释 --&gt;
+            &lt;property name=&quot;suppressDate&quot; value=&quot;true&quot; /&gt; &lt;!-- 是否生成注释代时间戳--&gt;
+        &lt;/commentGenerator&gt;
+
+        &lt;!--数据库链接地址账号密码--&gt;
+        &lt;!--数据库链接地址账号密码--&gt;
+        &lt;jdbcConnection driverClass=&quot;com.mysql.jdbc.Driver&quot;
+                        connectionURL=&quot;jdbc:mysql://localhost:3306/ac_core_dev?characterEncoding=utf-8&quot;
+                        userId=&quot;root&quot;
+                        password=&quot;root&quot;&gt;
+        &lt;/jdbcConnection&gt;
+
+        &lt;!-- 类型转换 --&gt;
+        &lt;javaTypeResolver&gt;
+            &lt;!-- 是否使用bigDecimal， false可自动转化以下类型（Long, Integer, Short, etc.） --&gt;
+            &lt;property name=&quot;forceBigDecimals&quot; value=&quot;false&quot;/&gt;
+        &lt;/javaTypeResolver&gt;
+
+        &lt;!--生成Model类存放位置--&gt;
+        &lt;javaModelGenerator targetPackage=&quot;com.acc.ac.core.model&quot; targetProject=&quot;src/main/java&quot;&gt;
+            &lt;property name=&quot;enableSubPackages&quot; value=&quot;true&quot;/&gt;
+            &lt;property name=&quot;trimStrings&quot; value=&quot;true&quot;/&gt;
+        &lt;/javaModelGenerator&gt;
+
+        &lt;!-- 生成mapxml文件 --&gt;
+        &lt;sqlMapGenerator targetPackage=&quot;mapper&quot;
+                         targetProject=&quot;src/main/resources/META-INF&quot; &gt;
+            &lt;property name=&quot;enableSubPackages&quot; value=&quot;true&quot; /&gt;
+        &lt;/sqlMapGenerator&gt;
+
+        &lt;!-- 生成mapxml对应client，也就是接口dao --&gt;
+        &lt;javaClientGenerator targetPackage=&quot;com.acc.ac.core.dao&quot; targetProject=&quot;src/main/java&quot; type=&quot;XMLMAPPER&quot; &gt;
+            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
+        &lt;/javaClientGenerator&gt;
+
+
+        &lt;table tableName=&quot;ac_cfg_sys&quot; enableCountByExample=&quot;true&quot; enableUpdateByExample=&quot;true&quot;
+               enableDeleteByExample=&quot;true&quot; enableSelectByExample=&quot;true&quot; selectByExampleQueryId=&quot;true&quot;&gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;Mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+
+    &lt;/context&gt;
+&lt;/generatorConfiguration&gt;
+</code></pre>
+
+<h2 id="toc_9">4、将 ibatis 的 SqlMap 文件 转换为 mapper 文件，与自动生成的代码合并</h2>
+
+<p>插件 <a href="https://github.com/mybatis/ibatis2mybatis">https://github.com/mybatis/ibatis2mybatis</a></p>
+
+<p>将 build.xml 用 idea 打开，选择 Ant build。</p>
+
+<ul>
+<li>destination文件夹：第一个区域为目标文件夹，即最后得到的Mybatis mapper文件都会在该目录下；</li>
+<li><p>source文件夹：第二个区域为源文件夹，也就是将我们需要转换的Ibatis mapper文件放在该目录下即可；</p></li>
+<li><p>Ant Build：第三个区域为Ant Build区（如果IntelliJ上没有出现这个，可以通过右上角箭头所指?按钮搜索Ant Build即可出现），我们需要将左侧根目录下build.xml文件拖放到Ant Build区域才会出现图中所示的migrate to mybatis3以及绿色的运行按钮。</p></li>
+</ul>
+
+<h2 id="toc_10">5、修改 service 中使用到的 dao 为新生成的 mybatis 对应的 dao</h2>
+
+<p>体力活</p>
+
+<hr/>
+
+<p><a href="https://blog.csdn.net/zcyzsy/article/details/88912019">https://blog.csdn.net/zcyzsy/article/details/88912019</a></p>
 
                         
                       </div>
@@ -319,10 +355,10 @@ spring.application.name=nacos-config
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/4/23</span>
+                    <span class="date">2021/4/2</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -422,6 +458,12 @@ spring.application.name=nacos-config
 	      
 		      
 			      <li class="post">
+			        <a href="16213217139614.html">MySQL 动态行转列</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16208120012139.html">Sentinel</a>
 			      </li>
 		     
@@ -441,12 +483,6 @@ spring.application.name=nacos-config
 		      
 			      <li class="post">
 			        <a href="16173443661607.html">ibatis 升级到 MyBatis</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16191464387463.html">nacos</a>
 			      </li>
 		     
 		  

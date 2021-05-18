@@ -122,108 +122,241 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032826948500.html">
+                <a class="clearlink" href="16032820352897.html">
                 
-                  <h1>Docker 安装 MySQL数据库 实现主从复制</h1>
+                  <h1>JVM初探</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>安装mysql镜像，并启动两个容器，分别命名为master\slave1</p>
+                        	<h2 id="toc_0">JVM运行时数据区</h2>
 
-<pre><code class="language-text">docker pull mysql
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15904079187289.jpg" alt=""/></p>
 
-docker run --name master -p 3307:3306 -e MYSQL_ROOT_PASSWORD=masterRoot -d mysql
+<ul>
+<li><p>程序计数器</p>
+<ul>
+<li>是一块很小的内存空间，可以看做是当前线程执行的行号指示器。字节码解释器工作时就是通过改变这个计数器的数值来选取下一条需要执行的字节码指令</li>
+<li>线程私有</li>
+<li>不会发生OOM</li>
+</ul></li>
+<li><p>Java虚拟机栈</p>
+<ul>
+<li>线程私有</li>
+<li>为执行Java方法服务</li>
+<li>其工作原理类似于数据结构中的栈--FIFO。每个方法在执行的过程中会在虚拟机栈中创建一个栈帧，用于存储局部变量表、操作数栈、动态链接、方法出口等信息。</li>
+<li>会发生OOM、StackOverflowError</li>
+</ul></li>
+<li><p>本地方法栈</p>
+<ul>
+<li>线程私有</li>
+<li>与虚拟机栈功能类似</li>
+<li>为Native方法服务</li>
+<li>会发生OOM、StackOverflowError</li>
+</ul></li>
+<li><p>Java堆</p>
+<ul>
+<li>线程共享</li>
+<li>几乎所有的对象实例都在堆中分配。</li>
+<li>逃逸分析、标量替换--&gt;栈上分配</li>
+<li><p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15904091934707.jpg" alt=""/></p></li>
+<li><p>新生代:老年代 = 1:2</p></li>
+<li><p>Eden:S0:S1 = 8:1:1</p></li>
+</ul></li>
+<li><p>方法区</p>
+<ul>
+<li> 线程共享</li>
+<li> 存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码</li>
+<li> 运行时常量池：用于存放编译期生成的各种字面量和符号引用</li>
+<li> 会出现OOM</li>
+</ul></li>
+</ul>
 
-docker run --name slave1 -p 3308:3306 -e MYSQL_ROOT_PASSWORD=slave1Root -d mysql
+<h2 id="toc_1">辣鸡回收算法与辣鸡回收器</h2>
 
-</code></pre>
+<p>辣鸡回收需要做的3件事情</p>
 
-<h2 id="toc_0"></h2>
+<ul>
+<li>哪些内存需要回收</li>
+<li>什么时候回收</li>
+<li>如何回收</li>
+</ul>
 
-<p>查看master的ip</p>
-
-<pre><code class="language-text">docker inspect --format=&#39;{{.NetworkSettings.IPAddress}}&#39;  f7e6499911c8
-</code></pre>
-
-<p>172.17.0.3</p>
-
-<h2 id="toc_1"></h2>
-
-<p>修改master配置文件my.cnf<br/>
-在[mysqld]配置中添加两个配置</p>
-
-<pre><code class="language-text">log-bin         = mysql-bin
-server-id       = 1
-</code></pre>
-
-<p>修改slave1配置文件my.cnf<br/>
-在[mysqld]配置中添加两个配置</p>
-
-<pre><code class="language-text">log-bin         = mysql-bin
-server-id       = 2
-</code></pre>
+<p>上面JVM运行时数据区中线程私有变量（本地方法栈、JVM虚拟机栈、程序计数器）会随着方法执行的完成而自动释放内存，所以这部分的内存不需要考虑回收。需要考虑回收的内存主要就是堆内存与方法区，只有在程序运行的时候才知道会创建哪些对象，哪些需要回收。</p>
 
 <h2 id="toc_2"></h2>
 
-<p>在master数据库中创建用来同步数据的用户</p>
+<p>判断对象是否存活</p>
 
-<pre><code class="language-text">CREATE USER &#39;slave&#39;@&#39;%&#39; IDENTIFIED BY &#39;123456&#39;;
-GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO &#39;slave&#39;@&#39;%&#39;;  
+<ol>
+<li><p>程序计数器</p>
+<p>给对象添加一个引用计数器，每当有一个地方引用它时，计数器的值就+1，当引用失效时，计数器的值-1.</p>
+<p>但是主流的Java虚拟机里面并没有使用这种方式，最主要的原因是它很难解决对象之间相互循环引用的问题。</p></li>
+<li><p>可达性分析(GC Roots)</p>
+<p>使用最多的是这种方式。<br/>
+这种算法的思路就是，选择一个根节点，从这个节点往下搜索，搜索过程中走过的路径称为引用链，当一个对象到根节点没有引用链存在时，也就是不可达，这种对象就是辣鸡对象。<br/>
+哪些对象可以作为GC Roots</p>
+<ul>
+<li>虚拟机栈中引用的对象</li>
+<li>方法区中静态属性引用的对象</li>
+<li>方法区中常量引用的对象</li>
+<li>本地方法栈中引用的对象</li>
+</ul></li>
+<li><p>引用的类型</p>
+<ul>
+<li><p>强引用：</p>
+<ul>
+<li>new出来的对象都是强引用对象，在没有指定该对象=null，不会被回收。</li>
+</ul>
+<pre><code class="language-text">Object obj =new Object();  // 强引用
+obj = null;//这时候为垃圾回收器回收这个对象，至于什么时候回收，取决于垃圾回收器的算法
+</code></pre></li>
+<li><p>软引用：</p>
+<ul>
+<li>SoftReference</li>
+<li>当内存不够用的时候会回收。</li>
+<li>适合做缓存。</li>
+</ul>
+<pre><code class="language-text">String value = new String(“sy”);
+SoftReference sfRefer = new SoftReference (value );<br/>
+sfRefer .get();//可以获得引用对象值
+</code></pre></li>
+<li><p>弱引用</p>
+<ul>
+<li>WeakReference</li>
+<li>只要发生GC就会回收。</li>
+<li>适合加载的时候初始化用。</li>
+<li>ThreadLocal中有使用。</li>
+</ul>
+<pre><code class="language-text">String value = new String(“sy”);
+WeakReference weakRefer = new WeakReference(value );<br/>
+System.gc();<br/>
+weakRefer.get();//null
+</code></pre></li>
+<li><p>虚引用</p>
+<ul>
+<li>作用：管理堆外内存。</li>
+<li>NIO中 DirectByreBuffer</li>
+</ul></li>
+</ul></li>
+</ol>
+
+<ol>
+<li><p>对象的自我拯救-二次标记</p>
+<ul>
+<li>当一个对象被标记为辣鸡后并不会立马被回收掉。</li>
+<li>第一次经过可达性分析后发现该对象是辣鸡对象，会被第一次标记并且进行一次筛选，筛选的条件是此对象时候有必要执行<code>finalize</code>方法，</li>
+<li>如果该对象需要执行finallize方法，那么这个对象会被放置在一个F-Queue的队列中，稍后GC将会对队列中的对象信心小规模的二次标记。</li>
+<li>如果对象在执行finalize过程中，与GC Roots建立联系了，那么这个对象就不会被回收，反之就会被回收了。</li>
+</ul></li>
+<li><p>回收方法区<br/>
+永久代主要回收两类对象：废弃常量和无用的类。<br/>
+废弃常量好理解，没有任何对象引用常量池中的某个变量，这个变量就是废弃常量。<br/>
+如何判断一个类是无用的类</p>
+<ul>
+<li>该类的所有实例都已经被回收掉</li>
+<li>加载该类的ClassLoader已经被回收</li>
+<li>该类对应的java.lang.Class对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法</li>
+</ul></li>
+</ol>
+
+<h3 id="toc_3">辣鸡回收算法</h3>
+
+<ol>
+<li><p>标记-清除算法<br/>
+当对象被标记为辣鸡后，直接清理掉。<br/>
+效率不高、容易产生内存碎片</p></li>
+<li><p>标记-整理算法<br/>
+被标记为辣鸡的对象回收之后，整理内存空间。</p></li>
+<li><p>复制算法<br/>
+将内存分为大小相等的两块，每次内存分配的时候只使用其中的一块，当这块内存满了只有，将存活对象复制到另一块内存空间中，然后整块清理。<br/>
+实现简单、运行高效<br/>
+但是浪费一半的内存。</p></li>
+<li><p>分代收集算法<br/>
+目前使用这种算法。</p></li>
+</ol>
+
+<p>新生代中发生GC -- minor gc</p>
+
+<p>minor GC test</p>
+
+<pre><code class="language-text">public class HeapTest {
+
+    private byte[] bytes = new byte[1024*100];
+
+    public static void main(String[] args) throws InterruptedException {
+        List&lt;HeapTest&gt; list = new ArrayList&lt;&gt;();
+        while (true) {
+            System.out.println(111);
+            list.add(new HeapTest());
+            Thread.sleep(10);
+        }
+    }
+}
 </code></pre>
 
-<p><code>REPLICATION SLAVE</code> 常用于建立复制时所需要用到的用户权限，也就是slave server必须被master server授权具有该权限的用户，才能通过该用户复制。<br/>
-并且&quot;SHOW SLAVE HOSTS&quot;这条命令和REPLICATION SLAVE权限有关，否则执行时会报错：</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-minor-gc.gif" alt="minor-g"/></p>
 
-<blockquote>
-<p>ERROR 1227 (42000): Access denied; you need (at least one of) the REPLICATION SLAVE privilege(s) for this operation </p>
-</blockquote>
+<p>这图是上面的代码运行时的gc情况。</p>
 
-<p><code>REPLICATION CLIEN</code>T 不可用于建立复制，有该权限时，只是多了可以使用如&quot;SHOW SLAVE STATUS&quot;、&quot;SHOW MASTER STATUS&quot;等命令。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15904106385761.jpg" alt=""/></p>
 
-<h2 id="toc_3"></h2>
-
-<pre><code class="language-text">mysql&gt; show master status
-    -&gt; ;
-+------------------+----------+--------------+------------------+-------------------+
-| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
-+------------------+----------+--------------+------------------+-------------------+
-| mysql-bin.000001 |      156 |              |                  |                   |
-+------------------+----------+--------------+------------------+-------------------+
-1 row in set (0.01 sec)
- 
-mysql&gt; 
-</code></pre>
+<p>从图中可以得出结论，新生成的对象都是在Eden区，当Eden区满了后，会执行gc回收，将Eden区与S0区中的存活对象拷贝到S1，并清空Eden、S0，存活对象年龄+1；<br/>
+当新生对象又一次将Eden区填满后，会将Eden区、S1中的存活对象拷贝到S0，并清空S1，存活对象年龄+1；<br/>
+当存活对象的年龄达到15后，会被认为是老不死对象，挪到老年代内存中。<br/>
+新生代中的GC 叫做minor GC。<br/>
+老年代内存占满后进行的GC就是FULL GC。<br/>
+minor GC正常情况下可以回收70--95%的空间。</p>
 
 <h2 id="toc_4"></h2>
 
-<p>在slave1中执行</p>
+<p>对象进入老年代的情况：</p>
 
-<pre><code class="language-text">change master to master_host=&#39;172.17.0.3&#39;, master_user=&#39;slave&#39;, master_password=&#39;123456&#39;, master_port=3306, master_log_file=&#39;mysql-bin.000001&#39;, master_log_pos=156, master_connect_retry=30;  
-</code></pre>
+<ul>
+<li>长期存活的对象进入老年代
+<ul>
+<li>对象年龄达到15后</li>
+<li>markword中2字节表示</li>
+</ul></li>
+<li>内存担保机制
+<ul>
+<li>当Eden区的内存不足以容纳新生成的对象的时候，新生成的对象会直接进入老年代</li>
+</ul></li>
+<li>动态年龄判断(大对象直接进入老年代)
+<ul>
+<li>新生成的对象的内存大于Eden区内存的50%会直接进入老年代</li>
+</ul></li>
+</ul>
 
-<p>这里需要注意下，<code>master_host</code>用master容器的ip，<code>master_port</code>是3306，<code>master_log_file</code>是上面master的<code>show master status</code>的File，<code>master_log_pos</code>则是Position。</p>
-
-<p>我一开始以为master_port是主机映射到master容器的端口3307，搞了半天也搞不通。</p>
+<p>JVM调优的目的：减少FULL GC</p>
 
 <h2 id="toc_5"></h2>
 
-<p>主从同步完成。</p>
+<h3 id="toc_6">辣鸡收集器</h3>
 
-<h2 id="toc_6"></h2>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15904221132976.jpg" alt="" style="width:501px;"/></p>
+
+<ul>
+<li>Serial</li>
+<li>ParNew</li>
+<li>Parallel Scavenge</li>
+<li>Serial Old</li>
+<li>Parallel Old</li>
+<li>CMS</li>
+<li>G1</li>
+</ul>
+
+<p>-XX:+UseParallelGC</p>
+
+<h2 id="toc_7"></h2>
 
 <p>TODO<br/>
-读写分离</p>
-
-<hr/>
-
-<p>建议用 compose，有几点改进：</p>
-
-<ol>
-<li>配置文件改好挂进去，而不是启动容器之后再改</li>
-<li>把数据通过数据卷挂出来，容器没了数据不丢</li>
-<li>compose 下可以用 link 参数，这个参数将容器名/容器 ip 写到 hosts 里，这样就不用去找 ip 了</li>
-</ol>
+JVM调优参数<br/>
+JDK工具<br/>
+安全点与安全区域<br/>
+STW<br/>
+各种垃圾收集器<br/>
+逃逸分析与标量替换</p>
 
                         
                       </div>
@@ -235,7 +368,7 @@ mysql&gt;
                     <span class="date">2020/10/21</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Docker.html'>Docker</a></span>
+          					    <span class="posted-in"><a href='JVM.html'>JVM</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -335,6 +468,12 @@ mysql&gt;
 	      
 		      
 			      <li class="post">
+			        <a href="16213217139614.html">MySQL 动态行转列</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16208120012139.html">Sentinel</a>
 			      </li>
 		     
@@ -354,12 +493,6 @@ mysql&gt;
 		      
 			      <li class="post">
 			        <a href="16173443661607.html">ibatis 升级到 MyBatis</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16191464387463.html">nacos</a>
 			      </li>
 		     
 		  
