@@ -192,7 +192,10 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
 
 <hr/>
 
-<p>B+树 与 B树的区别？</p>
+<p>B+ 树 与 B树的区别？<br/>
+区别在 B 树的节点，无论是不是叶子几点，都存有 key 和 data，而 B+ 树的中间节点只有 key，data 存在叶子节点上。这样 B+ 树的中间节点就能存更多的 key，使得树更矮，减少 IO 次数。</p>
+
+<p>B+ 树的叶子几点构成一个有序链表，方便区间查找和搜索。而 B 树需要一次次的递归遍历查找。</p>
 
 
     
@@ -203,16 +206,16 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="16208120012139.html" 
-          title="Previous Post: Sentinel">&laquo; Sentinel</a>
+          <a href="16218450358247.html" 
+          title="Previous Post: Spring Cloud Stream 整合 RocketMQ">&laquo; Spring Cloud Stream 整合 RocketMQ</a>
       
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="16173443661607.html" 
-          title="Next Post: ibatis 升级到 MyBatis">ibatis 升级到 MyBatis &raquo;</a>
+          <a  href="16121664688743.html" 
+          title="Next Post: Dubbo SPI">Dubbo SPI &raquo;</a>
       
       </p>
         </div>
@@ -301,19 +304,7 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
 	      
 		      
 			      <li class="post">
-			        <a href="16208119771915.html">spring-cloud-alibaba  nacos</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16213217139614.html">MySQL 动态行转列</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16208120012139.html">Sentinel</a>
+			        <a href="16218450358247.html">Spring Cloud Stream 整合 RocketMQ</a>
 			      </li>
 		     
 		  
@@ -325,7 +316,19 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
 		  
 		      
 			      <li class="post">
-			        <a href="16173443661607.html">ibatis 升级到 MyBatis</a>
+			        <a href="16121664688743.html">Dubbo SPI</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16208119771915.html">spring-cloud-alibaba  nacos</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16213217139614.html">MySQL 动态行转列</a>
 			      </li>
 		     
 		  

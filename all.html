@@ -122,304 +122,126 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16208119771915.html">
+                <a class="clearlink" href="16218450358247.html">
                 
-                  <h1>spring-cloud-alibaba  nacos</h1>
+                  <h1>Spring Cloud Stream 整合 RocketMQ</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<ul>
-<li>
-<a href="#toc_0">Nacos 作为注册中心</a>
-<ul>
-<li>
-<a href="#toc_1">Nacos REST 服务调用</a>
-<ul>
-<li>
-<a href="#toc_2">服务提供者</a>
-<ul>
-<li>
-<a href="#toc_3">添加依赖</a>
-</li>
-<li>
-<a href="#toc_4">修改配置</a>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_5">服务消费者</a>
-<ul>
-<li>
-<a href="#toc_6">添加依赖</a>
-</li>
-<li>
-<a href="#toc_7">修改配置</a>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_8">Nacos Dubbo</a>
-<ul>
-<li>
-<a href="#toc_9">服务提供者</a>
-<ul>
-<li>
-<a href="#toc_10">添加依赖</a>
-</li>
-<li>
-<a href="#toc_11">修改配置</a>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_12">服务消费者</a>
-<ul>
-<li>
-<a href="#toc_13">添加依赖</a>
-</li>
-<li>
-<a href="#toc_14">修改配置</a>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_15">Nacos 作为配置中心</a>
-<ul>
-<li>
-<a href="#toc_16">客户端</a>
-<ul>
-<li>
-<a href="#toc_17">添加依赖</a>
-</li>
-<li>
-<a href="#toc_18">修改配置</a>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+                        	<h2 id="toc_0">Spring Cloud Stream 介绍</h2>
+
+<p>Spring Cloud Stream 是一个用于构建基于消息的微服务应用框架。它基于 SpringBoot 来创建具有生产级别的单机 Spring 应用，并且使用 Spring Integration 与 Broker 进行连接。</p>
+
+<p>Spring Cloud Stream 提供了消息中间件配置的统一抽象，推出了 publish-subscribe、consumer groups、partition 这些统一的概念。</p>
+
+<p>Spring Cloud Stream 内部有两个概念：Binder 和 Binding。</p>
+
+<p>Binder: 跟外部消息中间件集成的组件，用来创建 Binding，各消息中间件都有自己的 Binder 实现。</p>
+
+<p>比如 Kafka 的实现 KafkaMessageChannelBinder，RabbitMQ 的实现 RabbitMessageChannelBinder 以及 RocketMQ 的实现 RocketMQMessageChannelBinder。</p>
+
+<p>Binding: 包括 Input Binding 和 Output Binding。</p>
+
+<p>Binding 在消息中间件与应用程序提供的 Provider 和 Consumer 之间提供了一个桥梁，实现了开发者只需使用应用程序的 Provider 或 Consumer 生产或消费数据即可，屏蔽了开发者与底层消息中间件的接触。</p>
+
+<h2 id="toc_1">整合 RocketMQ</h2>
+
+<h3 id="toc_2">Spring Boot 项目添加依赖</h3>
+
+<pre><code class="language-text">&lt;spring.boot.version&gt;2.2.5.RELEASE&lt;/spring.boot.version&gt;
+&lt;spring.alibaba.cloud.version&gt;2.2.1.RELEASE&lt;/spring.alibaba.cloud.version&gt;
 
 
-<p>学习下Spring Cloud Alibaba</p>
-
-<p>Spring Cloud Alibaba 致力于提供分布式应用服务开发的一站式解决方案。项目包含开发分布式应用服务的必需组件，方便开发者通过 Spring Cloud 编程模型轻松使用这些组件来开发分布式应用服务。</p>
-
-<h2 id="toc_0">Nacos 作为注册中心</h2>
-
-<p>适配 Spring Cloud 服务注册与发现标准，默认集成了 Ribbon 的支持。<br/>
- <img src="http://hitol.blog.cdn.updev.cn/2020-09-27-16011860283161.jpg" alt=""/></p>
-
-<p>可作为配置中心、服务注册中心<br/>
-Nacos 支持将注册中心(Service Registry）与配置中心(Config Center) 在一个进程合并部署或者将2者分离部署的两种模式。</p>
-
-<p><a href="https://nacos.io/zh-cn/docs/quick-start.html">启动nacos</a></p>
-
-<p><a href="https://nacos.io/zh-cn/docs/quick-start-spring-cloud.html">Nacos Spring Cloud 快速开始</a></p>
-
-<h3 id="toc_1">Nacos REST 服务调用</h3>
-
-<h4 id="toc_2">服务提供者</h4>
-
-<h5 id="toc_3">添加依赖</h5>
-
-<pre><code class="language-text">&lt;dependency&gt;
+&lt;dependency&gt;
     &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
-    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
-&lt;/dependency&gt;
-        
-</code></pre>
-
-<h5 id="toc_4">修改配置</h5>
-
-<pre><code class="language-text">server:
-  port: 8070
-spring:
-  application:
-    name: service-provider
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-</code></pre>
-
-<p>编写测试 controller</p>
-
-<pre><code class="language-text">@RestController
-public class EchoController {
-
-    @RequestMapping(value = &quot;/echo/{string}&quot;, method = RequestMethod.GET)
-    public String echo(@PathVariable String string) {
-        return &quot;Hello Nacos222 Discovery &quot; + string;
-    }
-}
-
-</code></pre>
-
-<p>启动类上添加 <code>@EnableDiscoveryClient</code></p>
-
-<h4 id="toc_5">服务消费者</h4>
-
-<h5 id="toc_6">添加依赖</h5>
-
-<pre><code class="language-text">&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
-    &lt;version&gt;0.2.2.RELEASE&lt;/version&gt;
-    &lt;exclusions&gt;
-        &lt;exclusion&gt;
-            &lt;groupId&gt;com.alibaba.nacos&lt;/groupId&gt;
-            &lt;artifactId&gt;nacos-client&lt;/artifactId&gt;
-        &lt;/exclusion&gt;
-    &lt;/exclusions&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.nacos&lt;/groupId&gt;
-    &lt;artifactId&gt;nacos-client&lt;/artifactId&gt;
-    &lt;version&gt;1.1.4&lt;/version&gt;
+    &lt;artifactId&gt;spring-cloud-starter-stream-rocketmq&lt;/artifactId&gt;
+    &lt;version&gt;${spring.alibaba.cloud.version}&lt;/version&gt;
 &lt;/dependency&gt;
 
 </code></pre>
 
-<h5 id="toc_7">修改配置</h5>
+<h3 id="toc_3">添加配置</h3>
 
-<pre><code class="language-text">server:
-  port: 8071
-spring:
-  application:
-    name: service-consumer
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-</code></pre>
-
-<p>启动类上添加 <code>@EnableDiscoveryClient</code></p>
-
-<p>访问 <a href="http://127.0.0.1:8071/echo/123">http://127.0.0.1:8071/echo/123</a> 服务可用</p>
-
-<h3 id="toc_8">Nacos Dubbo</h3>
-
-<h4 id="toc_9">服务提供者</h4>
-
-<h5 id="toc_10">添加依赖</h5>
-
-<pre><code class="language-text">&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
-    &lt;artifactId&gt;dubbo&lt;/artifactId&gt;
-    &lt;version&gt;2.7.10&lt;/version&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
-    &lt;artifactId&gt;dubbo-registry-nacos&lt;/artifactId&gt;
-    &lt;version&gt;2.7.5&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
-    &lt;artifactId&gt;dubbo-spring-boot-starter&lt;/artifactId&gt;
-    &lt;version&gt;2.7.5&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-
-<h5 id="toc_11">修改配置</h5>
-
-<pre><code class="language-text">dubbo:
-  application:
-    name: nacos-provider
-    version: 1.0.0
-
-  registry:
-    address: nacos://127.0.0.1:8848
-    version: 1.0.0
-</code></pre>
-
-<p>启动类上添加 <code>@EnableDubbo</code></p>
-
-<h4 id="toc_12">服务消费者</h4>
-
-<h5 id="toc_13">添加依赖</h5>
-
-<p>与服务提供者依赖一致</p>
-
-<h5 id="toc_14">修改配置</h5>
-
-<pre><code class="language-text">dubbo:
-  application:
-    name: nacos-consumer
-    version: 1.0.0
-
-  registry:
-    address: nacos://127.0.0.1:8848
-    version: 1.0.0
-</code></pre>
-
-<p>启动类上添加 <code>@EnableDubbo</code></p>
-
-<h2 id="toc_15">Nacos 作为配置中心</h2>
-
-<h3 id="toc_16">客户端</h3>
-
-<h4 id="toc_17">添加依赖</h4>
-
-<pre><code class="language-text">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-config&lt;/artifactId&gt;
-    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-
-<h4 id="toc_18">修改配置</h4>
-
-<p>新建配置文件 bootstrap.yml，配置文件要与 nacos 里配置的 Data ID 一致。<br/>
-nacos 控制台上添加配置 <br/>
-<img src="http://hitol.blog.cdn.updev.cn/16208113798180.jpg" alt=""/><br/>
-Data ID 是 nacos-config2-dev.yml，所以在 bootstrap.yml 配置文件中这么配置</p>
+<p>application.yml 中添加配置</p>
 
 <pre><code class="language-text">spring:
   cloud:
-    nacos:
-      config:
-        server-addr: 127.0.0.1:8848
-        file-extension: yml
-  application:
-    name: nacos-config2
-  profiles:
-    active: dev 
+    stream:
+      bindings:
+        # output 相当于生产者
+        output:
+          # 目的地。这里使用 RocketMQ Topic
+          destination: test111
+          content-type: application/json
+
+        # input 相当于消费者
+        input:
+          # 目的地。这里使用 RocketMQ Topic
+          destination: test111
+          content-type: application/json
+          # rocket mq 的消费者必须要有 group，不然启动失败
+          group: test
+
+      rocketmq:
+        binder:
+          # rocket mq 地址
+          name-server: 127.0.0.1:9876
+          # enable-msg-trace: true
 </code></pre>
 
-<p>通过 controller 查看配置</p>
+<h3 id="toc_4">发送与接收消息</h3>
 
-<pre><code class="language-text">@RestController
-@RefreshScope
-@RequestMapping(&quot;/config&quot;)
-public class ConfigController {
+<p>Source</p>
 
+<pre><code class="language-text">public interface Source {
 
-    @Value(&quot;${user.name}&quot;)
-    private String userName;
+    String OUTPUT = &quot;output&quot;;
+    String INPUT = &quot;input&quot;;
 
-    @Value(&quot;${user.age}&quot;)
-    private String userAge;
+    @Output(Source.OUTPUT)
+    MessageChannel output();
 
-    @RequestMapping(&quot;/get&quot;)
-    public String get() {
-        return &quot;user.name = &quot; + userName + &quot; user.age = &quot; + userAge;
-    }
+    @Input(Source.INPUT)
+    SubscribableChannel input();
+
+}
+
+</code></pre>
+
+<p>发送消息</p>
+
+<pre><code class="language-text">@Autowired
+private Source source;
+
+@Override
+public void send(String msg) {
+    Message&lt;String&gt; message = MessageBuilder.withPayload(msg)
+            .build();
+    source.output().send(message);
 }
 </code></pre>
 
-<p><a href="http://127.0.0.1:8081/config/get">http://127.0.0.1:8081/config/get</a></p>
+<p>接收消息</p>
 
-<p>在 nacos 控制台中修改配置后，会同步刷新。</p>
+<pre><code class="language-text">@StreamListener(value = Source.INPUT)
+public void receiveInput(String receiveMsg) {
+    System.out.println(&quot;input receive: &quot; + receiveMsg);
+}
+
+</code></pre>
+
+<h3 id="toc_5">启动</h3>
+
+<p>启动类上添加注解 <code>@EnableBinding({Source.class})</code></p>
+
+<p><a href="https://gitee.com/hitol/spring-alibaba/tree/master/cloud-stream-rocketmq">gitee</a></p>
+
+<hr/>
+
+<p><a href="https://github.com/alibaba/spring-cloud-alibaba/wiki/RocketMQ">https://github.com/alibaba/spring-cloud-alibaba/wiki/RocketMQ</a></p>
+
+<p><a href="https://xie.infoq.cn/article/13407cedcc683163cfce19afc">https://xie.infoq.cn/article/13407cedcc683163cfce19afc</a></p>
 
                         
                       </div>
@@ -428,7 +250,7 @@ public class ConfigController {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/5/12</span>
+                    <span class="date">2021/5/24</span>
                     
           				   
                   </div>
@@ -529,19 +351,7 @@ public class ConfigController {
 	      
 		      
 			      <li class="post">
-			        <a href="16208119771915.html">spring-cloud-alibaba  nacos</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16213217139614.html">MySQL 动态行转列</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16208120012139.html">Sentinel</a>
+			        <a href="16218450358247.html">Spring Cloud Stream 整合 RocketMQ</a>
 			      </li>
 		     
 		  
@@ -553,7 +363,19 @@ public class ConfigController {
 		  
 		      
 			      <li class="post">
-			        <a href="16173443661607.html">ibatis 升级到 MyBatis</a>
+			        <a href="16121664688743.html">Dubbo SPI</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16208119771915.html">spring-cloud-alibaba  nacos</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16213217139614.html">MySQL 动态行转列</a>
 			      </li>
 		     
 		  
