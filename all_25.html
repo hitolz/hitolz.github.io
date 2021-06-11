@@ -122,241 +122,97 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032820352897.html">
+                <a class="clearlink" href="16032824371007.html">
                 
-                  <h1>JVM初探</h1>
+                  <h1>JVM运行时数据区域、Java内存模型、Java对象结构</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h2 id="toc_0">JVM运行时数据区</h2>
+                        	<p>JVM内存模型<br/>
+也是JVM运行时数据区域。<br/>
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.png" alt="JVM内存模型"/></p>
 
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15904079187289.jpg" alt=""/></p>
+<hr/>
+
+<p>Java线程内存模型。<br/>
+是一种内存规范。</p>
+
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-Java%E7%BA%BF%E7%A8%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8BJMM2.png" alt="Java线程内存模型JM"/></p>
+
+<h4 id="toc_0">主内存与线程私有内存</h4>
+
+<h4 id="toc_1">CPU三级缓存</h4>
+
+<h4 id="toc_2">MESI协议</h4>
+
+<h4 id="toc_3">Java操作内存的8个方法</h4>
+
+<h4 id="toc_4">synchronized 与 volitale</h4>
+
+<hr/>
+
+<p>Java对象结构</p>
+
+<p><img src="media/16032824371007/15969632678246.jpg" alt="15969632678246"/></p>
+
+<p>对象在内存中存储的布局可以分为3块区域：</p>
 
 <ul>
-<li><p>程序计数器</p>
-<ul>
-<li>是一块很小的内存空间，可以看做是当前线程执行的行号指示器。字节码解释器工作时就是通过改变这个计数器的数值来选取下一条需要执行的字节码指令</li>
-<li>线程私有</li>
-<li>不会发生OOM</li>
-</ul></li>
-<li><p>Java虚拟机栈</p>
-<ul>
-<li>线程私有</li>
-<li>为执行Java方法服务</li>
-<li>其工作原理类似于数据结构中的栈--FIFO。每个方法在执行的过程中会在虚拟机栈中创建一个栈帧，用于存储局部变量表、操作数栈、动态链接、方法出口等信息。</li>
-<li>会发生OOM、StackOverflowError</li>
-</ul></li>
-<li><p>本地方法栈</p>
-<ul>
-<li>线程私有</li>
-<li>与虚拟机栈功能类似</li>
-<li>为Native方法服务</li>
-<li>会发生OOM、StackOverflowError</li>
-</ul></li>
-<li><p>Java堆</p>
-<ul>
-<li>线程共享</li>
-<li>几乎所有的对象实例都在堆中分配。</li>
-<li>逃逸分析、标量替换--&gt;栈上分配</li>
-<li><p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15904091934707.jpg" alt=""/></p></li>
-<li><p>新生代:老年代 = 1:2</p></li>
-<li><p>Eden:S0:S1 = 8:1:1</p></li>
-</ul></li>
-<li><p>方法区</p>
-<ul>
-<li> 线程共享</li>
-<li> 存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码</li>
-<li> 运行时常量池：用于存放编译期生成的各种字面量和符号引用</li>
-<li> 会出现OOM</li>
-</ul></li>
+<li>对象头 Header</li>
+<li>实例数据Instance Data</li>
+<li>对齐填充。</li>
 </ul>
 
-<h2 id="toc_1">辣鸡回收算法与辣鸡回收器</h2>
+<h4 id="toc_5">对象头</h4>
 
-<p>辣鸡回收需要做的3件事情</p>
+<p>对象头包括两部分信息，<br/>
+第一部分 <code>Mark Word</code>，用于存储对象自身的运行时数据，主要有</p>
 
 <ul>
-<li>哪些内存需要回收</li>
-<li>什么时候回收</li>
-<li>如何回收</li>
+<li>哈希码 HashCode</li>
+<li>GC分代年龄</li>
+<li>锁状态标志</li>
+<li>线程持有的锁</li>
+<li>偏向线程ID</li>
+<li>偏向时间戳</li>
 </ul>
 
-<p>上面JVM运行时数据区中线程私有变量（本地方法栈、JVM虚拟机栈、程序计数器）会随着方法执行的完成而自动释放内存，所以这部分的内存不需要考虑回收。需要考虑回收的内存主要就是堆内存与方法区，只有在程序运行的时候才知道会创建哪些对象，哪些需要回收。</p>
+<p>这部分数据的长度在32位和64位的虚拟机中分别为32bit、64bit，也就是说<code>Mark Word</code>这部分占用内存8个字节。</p>
 
-<h2 id="toc_2"></h2>
+<p>第二部分是类型指针，即这个对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例。<br/>
+类型指针占用内存4个字节。</p>
 
-<p>判断对象是否存活</p>
+<hr/>
 
-<ol>
-<li><p>程序计数器</p>
-<p>给对象添加一个引用计数器，每当有一个地方引用它时，计数器的值就+1，当引用失效时，计数器的值-1.</p>
-<p>但是主流的Java虚拟机里面并没有使用这种方式，最主要的原因是它很难解决对象之间相互循环引用的问题。</p></li>
-<li><p>可达性分析(GC Roots)</p>
-<p>使用最多的是这种方式。<br/>
-这种算法的思路就是，选择一个根节点，从这个节点往下搜索，搜索过程中走过的路径称为引用链，当一个对象到根节点没有引用链存在时，也就是不可达，这种对象就是辣鸡对象。<br/>
-哪些对象可以作为GC Roots</p>
-<ul>
-<li>虚拟机栈中引用的对象</li>
-<li>方法区中静态属性引用的对象</li>
-<li>方法区中常量引用的对象</li>
-<li>本地方法栈中引用的对象</li>
-</ul></li>
-<li><p>引用的类型</p>
-<ul>
-<li><p>强引用：</p>
-<ul>
-<li>new出来的对象都是强引用对象，在没有指定该对象=null，不会被回收。</li>
-</ul>
-<pre><code class="language-text">Object obj =new Object();  // 强引用
-obj = null;//这时候为垃圾回收器回收这个对象，至于什么时候回收，取决于垃圾回收器的算法
-</code></pre></li>
-<li><p>软引用：</p>
-<ul>
-<li>SoftReference</li>
-<li>当内存不够用的时候会回收。</li>
-<li>适合做缓存。</li>
-</ul>
-<pre><code class="language-text">String value = new String(“sy”);
-SoftReference sfRefer = new SoftReference (value );<br/>
-sfRefer .get();//可以获得引用对象值
-</code></pre></li>
-<li><p>弱引用</p>
-<ul>
-<li>WeakReference</li>
-<li>只要发生GC就会回收。</li>
-<li>适合加载的时候初始化用。</li>
-<li>ThreadLocal中有使用。</li>
-</ul>
-<pre><code class="language-text">String value = new String(“sy”);
-WeakReference weakRefer = new WeakReference(value );<br/>
-System.gc();<br/>
-weakRefer.get();//null
-</code></pre></li>
-<li><p>虚引用</p>
-<ul>
-<li>作用：管理堆外内存。</li>
-<li>NIO中 DirectByreBuffer</li>
-</ul></li>
-</ul></li>
-</ol>
+<h4 id="toc_6">实例数据</h4>
 
-<ol>
-<li><p>对象的自我拯救-二次标记</p>
-<ul>
-<li>当一个对象被标记为辣鸡后并不会立马被回收掉。</li>
-<li>第一次经过可达性分析后发现该对象是辣鸡对象，会被第一次标记并且进行一次筛选，筛选的条件是此对象时候有必要执行<code>finalize</code>方法，</li>
-<li>如果该对象需要执行finallize方法，那么这个对象会被放置在一个F-Queue的队列中，稍后GC将会对队列中的对象信心小规模的二次标记。</li>
-<li>如果对象在执行finalize过程中，与GC Roots建立联系了，那么这个对象就不会被回收，反之就会被回收了。</li>
-</ul></li>
-<li><p>回收方法区<br/>
-永久代主要回收两类对象：废弃常量和无用的类。<br/>
-废弃常量好理解，没有任何对象引用常量池中的某个变量，这个变量就是废弃常量。<br/>
-如何判断一个类是无用的类</p>
-<ul>
-<li>该类的所有实例都已经被回收掉</li>
-<li>加载该类的ClassLoader已经被回收</li>
-<li>该类对应的java.lang.Class对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法</li>
-</ul></li>
-</ol>
+<p>是对象真真存储的有效信息，也是程序代码中所定义的各种类型的字段内容。<br/>
+包含从父类继承下来的和子类中定义的。<br/>
+存储顺序会受到虚拟机分配策略参数和字段在Java源码中定义顺序的影响。</p>
 
-<h3 id="toc_3">辣鸡回收算法</h3>
+<p>HotSpot虚拟机默认的分配策略为<br/>
+longs/doubles<br/>
+ints<br/>
+shorts/charts<br/>
+bytes/booleans<br/>
+oops（Ordinary Object Pointers）<br/>
+相同宽度的字段总是被分配到一起。</p>
 
-<ol>
-<li><p>标记-清除算法<br/>
-当对象被标记为辣鸡后，直接清理掉。<br/>
-效率不高、容易产生内存碎片</p></li>
-<li><p>标记-整理算法<br/>
-被标记为辣鸡的对象回收之后，整理内存空间。</p></li>
-<li><p>复制算法<br/>
-将内存分为大小相等的两块，每次内存分配的时候只使用其中的一块，当这块内存满了只有，将存活对象复制到另一块内存空间中，然后整块清理。<br/>
-实现简单、运行高效<br/>
-但是浪费一半的内存。</p></li>
-<li><p>分代收集算法<br/>
-目前使用这种算法。</p></li>
-</ol>
+<h4 id="toc_7">对齐填充</h4>
 
-<p>新生代中发生GC -- minor gc</p>
+<p>HotSpot VM的自动内存管理系统要求对象起始地址必须是8字节的整数倍，对象的大小必须是8字节的整数倍。<br/>
+因此，当该对象的占用内存不是8的整数倍的时候需要对齐填充来补全。</p>
 
-<p>minor GC test</p>
+<hr/>
 
-<pre><code class="language-text">public class HeapTest {
+<p>Object o = new Object()使用了多少内存?</p>
 
-    private byte[] bytes = new byte[1024*100];
-
-    public static void main(String[] args) throws InterruptedException {
-        List&lt;HeapTest&gt; list = new ArrayList&lt;&gt;();
-        while (true) {
-            System.out.println(111);
-            list.add(new HeapTest());
-            Thread.sleep(10);
-        }
-    }
-}
-</code></pre>
-
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-minor-gc.gif" alt="minor-g"/></p>
-
-<p>这图是上面的代码运行时的gc情况。</p>
-
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15904106385761.jpg" alt=""/></p>
-
-<p>从图中可以得出结论，新生成的对象都是在Eden区，当Eden区满了后，会执行gc回收，将Eden区与S0区中的存活对象拷贝到S1，并清空Eden、S0，存活对象年龄+1；<br/>
-当新生对象又一次将Eden区填满后，会将Eden区、S1中的存活对象拷贝到S0，并清空S1，存活对象年龄+1；<br/>
-当存活对象的年龄达到15后，会被认为是老不死对象，挪到老年代内存中。<br/>
-新生代中的GC 叫做minor GC。<br/>
-老年代内存占满后进行的GC就是FULL GC。<br/>
-minor GC正常情况下可以回收70--95%的空间。</p>
-
-<h2 id="toc_4"></h2>
-
-<p>对象进入老年代的情况：</p>
-
-<ul>
-<li>长期存活的对象进入老年代
-<ul>
-<li>对象年龄达到15后</li>
-<li>markword中2字节表示</li>
-</ul></li>
-<li>内存担保机制
-<ul>
-<li>当Eden区的内存不足以容纳新生成的对象的时候，新生成的对象会直接进入老年代</li>
-</ul></li>
-<li>动态年龄判断(大对象直接进入老年代)
-<ul>
-<li>新生成的对象的内存大于Eden区内存的50%会直接进入老年代</li>
-</ul></li>
-</ul>
-
-<p>JVM调优的目的：减少FULL GC</p>
-
-<h2 id="toc_5"></h2>
-
-<h3 id="toc_6">辣鸡收集器</h3>
-
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15904221132976.jpg" alt="" style="width:501px;"/></p>
-
-<ul>
-<li>Serial</li>
-<li>ParNew</li>
-<li>Parallel Scavenge</li>
-<li>Serial Old</li>
-<li>Parallel Old</li>
-<li>CMS</li>
-<li>G1</li>
-</ul>
-
-<p>-XX:+UseParallelGC</p>
-
-<h2 id="toc_7"></h2>
-
-<p>TODO<br/>
-JVM调优参数<br/>
-JDK工具<br/>
-安全点与安全区域<br/>
-STW<br/>
-各种垃圾收集器<br/>
-逃逸分析与标量替换</p>
+<p>Mark Word 8<br/>
+Class Pointer 4<br/>
+Instance Data 0<br/>
+对齐 4<br/>
+总共16个字节。</p>
 
                         
                       </div>
@@ -468,6 +324,12 @@ STW<br/>
 	      
 		      
 			      <li class="post">
+			        <a href="16233986869859.html">MyBatis-Plus 简单使用</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16218450358247.html">Spring Cloud Stream 整合 RocketMQ</a>
 			      </li>
 		     
@@ -487,12 +349,6 @@ STW<br/>
 		      
 			      <li class="post">
 			        <a href="16208119771915.html">spring-cloud-alibaba  nacos</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16213217139614.html">MySQL 动态行转列</a>
 			      </li>
 		     
 		  

@@ -122,67 +122,126 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032821146100.html">
+                <a class="clearlink" href="16218450358247.html">
                 
-                  <h1>MySQL聚集索引和二级索引</h1>
+                  <h1>Spring Cloud Stream 整合 RocketMQ</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>数据库中B+树索引分为聚集索引(clustered index)和辅助索引(secondary index，也被称作二级索引、非聚集索引)，其内部都是B+树，即高度平衡的，叶子节点存放所有数据，不同的是叶子节点存放的是否是一整行的数据。</p>
+                        	<h2 id="toc_0">Spring Cloud Stream 介绍</h2>
 
-<hr/>
+<p>Spring Cloud Stream 是一个用于构建基于消息的微服务应用框架。它基于 SpringBoot 来创建具有生产级别的单机 Spring 应用，并且使用 Spring Integration 与 Broker 进行连接。</p>
 
-<p>聚集索引：InnoDB存储引擎中，按照每张表的主键构建的一棵B+树，叶子节点存放的即为行记录数据。<br/>
-InnoDB存储引擎中是必须要有一个聚集索引的，如果没有显示指定哪一字段是主键，则选择表中第一个不允许为NULL的唯一索引当作是聚集索引，如果还是没有，就采用InnoDB为每行数据内置的6字节的rowid作为聚集索引。<br/>
-一般聚集索引是自增主键。</p>
+<p>Spring Cloud Stream 提供了消息中间件配置的统一抽象，推出了 publish-subscribe、consumer groups、partition 这些统一的概念。</p>
 
-<hr/>
+<p>Spring Cloud Stream 内部有两个概念：Binder 和 Binding。</p>
 
-<p>辅助索引：叶子节点并不包含行记录的全部数据，叶子节点除了包含键值以外，每个叶子节点中的索引行中还包含了一个书签(bookmark)，该书签用来告诉InnoDB存储引擎哪里可以找多与索引相对应的行数据。由于InnoDB存储引擎表是索引组织表，因此 辅助索引的书签就是相应行数据的聚集索引键。</p>
+<p>Binder: 跟外部消息中间件集成的组件，用来创建 Binding，各消息中间件都有自己的 Binder 实现。</p>
 
-<p>当通过辅助索引来寻找数据时，先查到主键，然后通过主键索引来找到一个完整的行记录。</p>
+<p>比如 Kafka 的实现 KafkaMessageChannelBinder，RabbitMQ 的实现 RabbitMessageChannelBinder 以及 RocketMQ 的实现 RocketMQMessageChannelBinder。</p>
 
-<hr/>
+<p>Binding: 包括 Input Binding 和 Output Binding。</p>
 
-<p>回表问题：<br/>
-当通过二级索引去查询数据，先查询辅助索引树，得到主键值，再通过聚集索引树查询，得到最终结果。</p>
+<p>Binding 在消息中间件与应用程序提供的 Provider 和 Consumer 之间提供了一个桥梁，实现了开发者只需使用应用程序的 Provider 或 Consumer 生产或消费数据即可，屏蔽了开发者与底层消息中间件的接触。</p>
 
-<p>回到主键索引树搜索的过程，称为回表。</p>
+<h2 id="toc_1">整合 RocketMQ</h2>
 
-<p>如果在一棵高度为3的辅助索引树中查找数据，那需要对这棵辅助索引遍历3次找到指定主键，如果聚集索引树的高度同样为3，那么还需要对聚集索引树进行3次查找，最终得到一个完整的行数据所在的页，一共需要6次逻辑IO访问得到最终的数据页。</p>
+<h3 id="toc_2">Spring Boot 项目添加依赖</h3>
 
-<pre><code class="language-text">CREATE TABLE `user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) COLLATE utf8_bin NOT NULL,
-  `age` int(11) NOT NULL,
-  `sex` varchar(2) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_name` (`name`)
-) ENGINE=InnoDB  
+<pre><code class="language-text">&lt;spring.boot.version&gt;2.2.5.RELEASE&lt;/spring.boot.version&gt;
+&lt;spring.alibaba.cloud.version&gt;2.2.1.RELEASE&lt;/spring.alibaba.cloud.version&gt;
+
+
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-stream-rocketmq&lt;/artifactId&gt;
+    &lt;version&gt;${spring.alibaba.cloud.version}&lt;/version&gt;
+&lt;/dependency&gt;
+
 </code></pre>
 
-<p>例如，这么一个表结构，两个查询语句</p>
+<h3 id="toc_3">添加配置</h3>
 
-<pre><code class="language-text">select id,name from user where name = &#39;zhangsan1&#39;;
-select id,name,age from user where name = &#39;zhangsan1&#39;;
+<p>application.yml 中添加配置</p>
+
+<pre><code class="language-text">spring:
+  cloud:
+    stream:
+      bindings:
+        # output 相当于生产者
+        output:
+          # 目的地。这里使用 RocketMQ Topic
+          destination: test111
+          content-type: application/json
+
+        # input 相当于消费者
+        input:
+          # 目的地。这里使用 RocketMQ Topic
+          destination: test111
+          content-type: application/json
+          # rocket mq 的消费者必须要有 group，不然启动失败
+          group: test
+
+      rocketmq:
+        binder:
+          # rocket mq 地址
+          name-server: 127.0.0.1:9876
+          # enable-msg-trace: true
 </code></pre>
 
-<p>用EXPLAIN看一下执行计划，</p>
+<h3 id="toc_4">发送与接收消息</h3>
 
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-09-17-16000042425726.jpg" alt="" style="width:1110px;"/><br/>
-可以看到，第一个查询语句用到了索引，而第二个查询语句只是多了1个字段，</p>
+<p>Source</p>
 
-<p>Extra参数中Using index，表示相应的select操作中使用了覆盖索引（Covering Index），避免访问了表的数据行，效率不错。如果同时出现using where，表明索引被用来执行索引键值的查找；如果没有同时出现using where，表明索引用来读取数据而非执行查找动作。 </p>
+<pre><code class="language-text">public interface Source {
 
-<p>覆盖索引含义是所查询的列是和建立的索引字段和个数是一一对应的。那么回表问题的解决方案就是 将所用到的字段建立联合索引，覆盖索引。</p>
+    String OUTPUT = &quot;output&quot;;
+    String INPUT = &quot;input&quot;;
+
+    @Output(Source.OUTPUT)
+    MessageChannel output();
+
+    @Input(Source.INPUT)
+    SubscribableChannel input();
+
+}
+
+</code></pre>
+
+<p>发送消息</p>
+
+<pre><code class="language-text">@Autowired
+private Source source;
+
+@Override
+public void send(String msg) {
+    Message&lt;String&gt; message = MessageBuilder.withPayload(msg)
+            .build();
+    source.output().send(message);
+}
+</code></pre>
+
+<p>接收消息</p>
+
+<pre><code class="language-text">@StreamListener(value = Source.INPUT)
+public void receiveInput(String receiveMsg) {
+    System.out.println(&quot;input receive: &quot; + receiveMsg);
+}
+
+</code></pre>
+
+<h3 id="toc_5">启动</h3>
+
+<p>启动类上添加注解 <code>@EnableBinding({Source.class})</code></p>
+
+<p><a href="https://gitee.com/hitol/spring-alibaba/tree/master/cloud-stream-rocketmq">gitee</a></p>
 
 <hr/>
 
-<p>B+ 树 与 B树的区别？<br/>
-区别在 B 树的节点，无论是不是叶子几点，都存有 key 和 data，而 B+ 树的中间节点只有 key，data 存在叶子节点上。这样 B+ 树的中间节点就能存更多的 key，使得树更矮，减少 IO 次数。</p>
+<p><a href="https://github.com/alibaba/spring-cloud-alibaba/wiki/RocketMQ">https://github.com/alibaba/spring-cloud-alibaba/wiki/RocketMQ</a></p>
 
-<p>B+ 树的叶子几点构成一个有序链表，方便区间查找和搜索。而 B 树需要一次次的递归遍历查找。</p>
+<p><a href="https://xie.infoq.cn/article/13407cedcc683163cfce19afc">https://xie.infoq.cn/article/13407cedcc683163cfce19afc</a></p>
 
                         
                       </div>
@@ -191,10 +250,8 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/10/21</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
+                    <span class="date">2021/5/24</span>
+                    
           				   
                   </div>
                   <div class="more-right right">
@@ -294,6 +351,12 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
 	      
 		      
 			      <li class="post">
+			        <a href="16233986869859.html">MyBatis-Plus 简单使用</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16218450358247.html">Spring Cloud Stream 整合 RocketMQ</a>
 			      </li>
 		     
@@ -313,12 +376,6 @@ select id,name,age from user where name = &#39;zhangsan1&#39;;
 		      
 			      <li class="post">
 			        <a href="16208119771915.html">spring-cloud-alibaba  nacos</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16213217139614.html">MySQL 动态行转列</a>
 			      </li>
 		     
 		  
