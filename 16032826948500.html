@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    Docker 安装 MySQL数据库 实现主从复制 - 非著名Java程序员
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about1.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            Docker 安装 MySQL数据库 实现主从复制   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2020/10/21 20:18 下午</span>
+                                  <span class="tran-posted-in">posted in</span>&nbsp; 
+                                  
+                                      <span class="posted-in"><a href='Docker.html'>Docker</a></span>
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                  
+                                    <a class="tag is-link is-light" href='tag_Docker.html'>#Docker</a>
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <p>安装mysql镜像，并启动两个容器，分别命名为master\slave1</p>
+<pre><code class="language-plain_text">docker pull mysql
+
+docker run --name master -p 3307:3306 -e MYSQL_ROOT_PASSWORD=masterRoot -d mysql
+
+docker run --name slave1 -p 3308:3306 -e MYSQL_ROOT_PASSWORD=slave1Root -d mysql
+
+</code></pre>
+<p>--</p>
+<p>查看master的ip</p>
+<pre><code class="language-plain_text">docker inspect --format='{{.NetworkSettings.IPAddress}}'  f7e6499911c8
+</code></pre>
+<p>172.17.0.3</p>
+<p>--</p>
+<p>修改master配置文件my.cnf<br />
+在[mysqld]配置中添加两个配置</p>
+<pre><code class="language-plain_text">log-bin         = mysql-bin
+server-id		= 1
+</code></pre>
+<p>修改slave1配置文件my.cnf<br />
+在[mysqld]配置中添加两个配置</p>
+<pre><code class="language-plain_text">log-bin         = mysql-bin
+server-id		= 2
+</code></pre>
+<p>--</p>
+<p>在master数据库中创建用来同步数据的用户</p>
+<pre><code class="language-plain_text">CREATE USER 'slave'@'%' IDENTIFIED BY '123456';
+GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'slave'@'%';  
+</code></pre>
+<p><code>REPLICATION SLAVE</code> 常用于建立复制时所需要用到的用户权限，也就是slave server必须被master server授权具有该权限的用户，才能通过该用户复制。<br />
+并且&quot;SHOW SLAVE HOSTS&quot;这条命令和REPLICATION SLAVE权限有关，否则执行时会报错：</p>
+<blockquote>
+<p>ERROR 1227 (42000): Access denied; you need (at least one of) the REPLICATION SLAVE privilege(s) for this operation</p>
+</blockquote>
+<p><code>REPLICATION CLIEN</code>T 不可用于建立复制，有该权限时，只是多了可以使用如&quot;SHOW SLAVE STATUS&quot;、&quot;SHOW MASTER STATUS&quot;等命令。</p>
+<p>--</p>
+<pre><code class="language-plain_text">mysql&gt; show master status
+    -&gt; ;
++------------------+----------+--------------+------------------+-------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++------------------+----------+--------------+------------------+-------------------+
+| mysql-bin.000001 |      156 |              |                  |                   |
++------------------+----------+--------------+------------------+-------------------+
+1 row in set (0.01 sec)
+ 
+mysql&gt; 
+</code></pre>
+<p>--</p>
+<p>在slave1中执行</p>
+<pre><code class="language-plain_text">change master to master_host='172.17.0.3', master_user='slave', master_password='123456', master_port=3306, master_log_file='mysql-bin.000001', master_log_pos=156, master_connect_retry=30;  
+</code></pre>
+<p>这里需要注意下，<code>master_host</code>用master容器的ip，<code>master_port</code>是3306，<code>master_log_file</code>是上面master的<code>show master status</code>的File，<code>master_log_pos</code>则是Position。</p>
+<p>我一开始以为master_port是主机映射到master容器的端口3307，搞了半天也搞不通。</p>
+<p>--<br />
+主从同步完成。</p>
+<p>--</p>
+<p>TODO<br />
+读写分离</p>
+<hr />
+<p>建议用 compose，有几点改进：</p>
+<ol>
+<li>配置文件改好挂进去，而不是启动容器之后再改</li>
+<li>把数据通过数据卷挂出来，容器没了数据不丢</li>
+<li>compose 下可以用 link 参数，这个参数将容器名/容器 ip 写到 hosts 里，这样就不用去找 ip 了</li>
+</ol>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

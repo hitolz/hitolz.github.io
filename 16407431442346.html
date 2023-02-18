@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    时间格式转换问题 - 非著名Java程序员
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about1.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            时间格式转换问题   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2021/12/29 09:59 上午</span>
+                                  
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <div class="mweb_toc"><ul>
+<li><a href="#%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4">各种标准时间</a>
+<ul>
+<li><a href="#%E6%A0%BC%E6%9E%97%E5%A8%81%E6%B2%BB%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4gmt">格林威治标准时间GMT</a></li>
+<li><a href="#%E5%8D%8F%E8%B0%83%E4%B8%96%E7%95%8C%E6%97%B6%E9%97%B4utc">协调世界时间UTC</a></li>
+<li><a href="#iso8601">ISO8601</a></li>
+<li><a href="#cst">CST</a></li>
+</ul>
+</li>
+<li><a href="#%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyymmdd%E4%B8%8E-yyyymmdd%E7%9A%84%E5%8C%BA%E5%88%AB">日期格式化 YYYYMMdd 与 yyyyMMdd 的区别</a></li>
+<li><a href="#%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyy-mm-dd-hh-mm-ss%E4%B8%8E-yyyy-mm-dd-hh-mm-ss%E7%9A%84%E5%8C%BA%E5%88%AB">日期格式化 yyyy-MM-dd HH:mm:SS 与 yyyy-MM-dd HH:mm:ss 的区别</a></li>
+</ul>
+</div>
+<p>在配置文件中全局的配置</p>
+<pre><code class="language-properties">spring.jackson.date-format=yyyy-MM-dd HH:mm:ss
+spring.jackson.time-zone=GMT+8
+</code></pre>
+<p>所有使用到时间格式的地方都会转换为这种格式的</p>
+<h2><a id="%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>各种标准时间</h2>
+<p><a href="https://ahuigo.github.io/b/c/shell-time#/">https://ahuigo.github.io/b/c/shell-time#/</a></p>
+<h3><a id="%E6%A0%BC%E6%9E%97%E5%A8%81%E6%B2%BB%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4gmt" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>格林威治标准时间GMT</h3>
+<p>含义：「格林威治标准时间」(Greenwich Mean Time，简称G.M.T.)以伦敦格林威治的子午线为基线，以地球自转为标准，全球都以此标准设定时间。<br />
+以下几个时间相同，但用于不同的时区/地区。</p>
+<pre><code class="language-plain_text">Wed Aug 14 08:21:05 GMT 2013 //标准GMT时间
+Wed Aug 14 16:21:05 GMT+8 2013 //东8区，即我们的北京时间
+Wed Aug 14 03:21:05 GMT-5 2013 //西5区，美国和加拿大时间
+</code></pre>
+<h3><a id="%E5%8D%8F%E8%B0%83%E4%B8%96%E7%95%8C%E6%97%B6%E9%97%B4utc" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>协调世界时间UTC</h3>
+<p>由于地球每天的自转是有些不规则的，而且正在缓慢减速，因此格林威治时间已经不再被作为标准时间使用。现在的标准时间，是由原子钟报时的协调世界时（UTC: Coordinated Universal Time）。UTC比GMT更精确严谨。</p>
+<pre><code class="language-plain_text">Wed Aug 14 08:21:05 UTC 2013 //标准UTC时间
+Wed Aug 14 16:21:05 UTC+8 2013 //东8区，即我们的北京时间
+Wed Aug 14 03:21:05 UTC-5 2013 //西5区，美国和加拿大时间
+</code></pre>
+<p>常识：<br />
+国际原子时的误差为每日数纳秒<br />
+对我们日常所使用的时间工具而言，UTC和GMT时间没有区别。</p>
+<h3><a id="iso8601" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ISO8601</h3>
+<p>moment.defaultFormat is the ISO8601 format YYYY-MM-DDTHH:mm:ssZ<br />
+ISO8601:</p>
+<pre><code class="language-plain_text">new Date(&quot;2016-01-01 11:13:00Z&quot;);      +0区
+new Date(&quot;2016-01-01T11:13:00Z&quot;);      +0区
+new Date(&quot;2016-01-01 11:13:00+08&quot;);     +8区
+new Date(&quot;2016-01-01 11:13:00+0800&quot;); +8区
+new Date(&quot;2016-01-01T11:13:00+08:00&quot;); +8区
+new Date(&quot;2016-01-01T11:13:00.333+08:00&quot;); +8区
+
+new Date(&quot;2016-01-01&quot;);                 +0区(默认)
+new Date(&quot;2016-01-01 11:13:00&quot;);        +8区(默认)
+new Date(&quot;October 13, 1975 11:13:00&quot;);  +8区(默认)
+</code></pre>
+<h3><a id="cst" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CST</h3>
+<p>CST是时区缩写，可以指下列的时区：</p>
+<p>澳洲中部时间，Central Standard Time (Australia)<br />
+中部标准时区（北美洲），Central Standard Time (North America)<br />
+北京时间，China Standard Time<br />
+古巴标准时间，Cuba Standard Time，参见北美东部时区<br />
+建议不要使用CST时间，对于以下时间，你可能不知道它到底是北京时间，还是其它时间：</p>
+<pre><code class="language-plain_text">Wed Aug 14 08:21:05 CST 2013 //北京、北美中部、古巴、澳洲中部？Who knows?
+</code></pre>
+<p>CST 转北京时间<br />
+在需要转换日期格式的字段上添加注解<code>com.fasterxml.jackson.annotation.JsonFormat</code></p>
+<pre><code class="language-plain_text">@JsonFormat(pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;,timezone = &quot;GMT+8&quot;)
+</code></pre>
+<h2><a id="%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyymmdd%E4%B8%8E-yyyymmdd%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>日期格式化 YYYYMMdd 与 yyyyMMdd 的区别</h2>
+<p>大写的 YYYY 表示这一天所在的周 所在的年份，也就是说如果当前周跨年了，这个获取到的就有问题。</p>
+<h2><a id="%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyy-mm-dd-hh-mm-ss%E4%B8%8E-yyyy-mm-dd-hh-mm-ss%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>日期格式化 yyyy-MM-dd HH:mm:SS 与 yyyy-MM-dd HH:mm:ss 的区别</h2>
+<p>HH 表示按 24 小时格式返回</p>
+<p>SS 表示毫秒？<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot%202022-01-10%20at%2018.04.39@2x.png" alt="CleanShot 2022-01-10 at 18.04.39@2x" /></p>
+<p>用小写的 ss 表示秒。</p>
+<pre><code class="language-sql">select d.queue,
+       count(*) as total
+from gbl_loan a
+         join gbl_loan_type_dictionary b on a.loan_source = b.id and a.channel_id = b.channel_id
+         join gbl_collection_case c on c.loan_id = a.id
+         join gbl_assignment d on c.id = d.collection_id
+where a.loan_source = #{loanSourceId}
+  and a.active = 1
+  and c.active = 1
+  and b.tenant = #{tenant}
+  and d.queue = #{queue}
+  and d.agentId is not null
+&lt;![CDATA[
+  and a.created_time &gt; #{reportStartDate}
+  and a.created_time &lt; #{reportEndDate}
+]]&gt;
+</code></pre>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

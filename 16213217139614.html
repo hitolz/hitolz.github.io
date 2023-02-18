@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    MySQL 动态行转列 - 非著名Java程序员
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about1.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            MySQL 动态行转列   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2021/05/18 15:08 下午</span>
+                                  <span class="tran-posted-in">posted in</span>&nbsp; 
+                                  
+                                      <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <p>表结构及数据</p>
+<pre><code class="language-plain_text">
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for Course
+-- ----------------------------
+DROP TABLE IF EXISTS `Course`;
+CREATE TABLE `Course` (
+`CId` varchar(10) DEFAULT NULL,
+`Cname` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of Course
+-- ----------------------------
+BEGIN;
+INSERT INTO `Course` VALUES ('1', '数据库');
+INSERT INTO `Course` VALUES ('3', '编译原理');
+INSERT INTO `Course` VALUES ('4', '计算机网络');
+INSERT INTO `Course` VALUES ('2', '操作系统');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for SC
+-- ----------------------------
+DROP TABLE IF EXISTS `SC`;
+CREATE TABLE `SC` (
+`SId` varchar(10) DEFAULT NULL,
+`CId` varchar(10) DEFAULT NULL,
+`score` decimal(18,1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of SC
+-- ----------------------------
+BEGIN;
+INSERT INTO `SC` VALUES ('2', '1', 80.0);
+INSERT INTO `SC` VALUES ('2', '2', 73.0);
+INSERT INTO `SC` VALUES ('2', '3', 87.0);
+INSERT INTO `SC` VALUES ('2', '4', 68.0);
+INSERT INTO `SC` VALUES ('3', '1', 85.0);
+INSERT INTO `SC` VALUES ('3', '2', 66.0);
+INSERT INTO `SC` VALUES ('3', '3', 66.0);
+INSERT INTO `SC` VALUES ('3', '4', 98.0);
+INSERT INTO `SC` VALUES ('1', '1', 90.0);
+INSERT INTO `SC` VALUES ('1', '2', 55.0);
+INSERT INTO `SC` VALUES ('1', '3', 78.0);
+INSERT INTO `SC` VALUES ('1', '4', 45.0);
+INSERT INTO `SC` VALUES ('4', '1', 70.0);
+INSERT INTO `SC` VALUES ('4', '2', 77.0);
+INSERT INTO `SC` VALUES ('4', '3', 56.0);
+INSERT INTO `SC` VALUES ('4', '4', 82.0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for Student
+-- ----------------------------
+DROP TABLE IF EXISTS `Student`;
+CREATE TABLE `Student` (
+`SId` varchar(10) DEFAULT NULL,
+`Sname` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of Student
+-- ----------------------------
+BEGIN;
+INSERT INTO `Student` VALUES ('1', '张三');
+INSERT INTO `Student` VALUES ('2', '李四');
+INSERT INTO `Student` VALUES ('3', '王五');
+INSERT INTO `Student` VALUES ('4', '孙六');
+COMMIT;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+</code></pre>
+</details>
+<p>查看学生哪门课程多少分数</p>
+<pre><code class="language-plain_text">SELECT a.SId,a.Sname,c.CId,c.Cname,b.score from Student a join SC b on a.SId = b.SId
+join Course c on c.CId = b.CId order by a.SId;
+</code></pre>
+<p>结果是这样<br />
+<img src="http://hitol.blog.cdn.updev.cn/16213237716609.jpg" alt="" /></p>
+<p>但是如果想做成这样的呢？<br />
+<img src="http://hitol.blog.cdn.updev.cn/16213239029529.jpg" alt="" /></p>
+<p>这就是行转列，也叫作竖表转横表<br />
+可以通过 case when 或者 if</p>
+<p>IF 语法：<br />
+<code>IF(expr1,expr2,expr3)</code><br />
+如果 expr1 为 true，则返回 expr2，否则返回 expr3</p>
+<p>静态行转列:</p>
+<pre><code class="language-plain_text">SELECT a.SId,a.Sname,
+
+MAX(IF(c.Cname = '操作系统',b.score,null)) as '操作系统',
+MAX(IF(c.Cname = '数据库',b.score,null)) as '数据库',
+MAX(IF(c.Cname = '编译原理',b.score,null)) as '编译原理',
+MAX(IF(c.Cname = '计算机网络',b.score,null)) as '计算机网络'
+
+from Student a join SC b on a.SId = b.SId
+join Course c on c.CId = b.CId 
+group by a.Sname
+</code></pre>
+<p>在这个场景下，用 MAX 或者 SUM 都可以<br />
+但是如果增加了课程，这条 sql 也要同步修改</p>
+<p>动态 行转列</p>
+<pre><code class="language-plain_text">MAX(IF(c.Cname = '操作系统',b.score,null)) as '操作系统',
+MAX(IF(c.Cname = '数据库',b.score,null)) as '数据库',
+MAX(IF(c.Cname = '编译原理',b.score,null)) as '编译原理',
+MAX(IF(c.Cname = '计算机网络',b.score,null)) as '计算机网络'
+</code></pre>
+<p>从上面看，这一部分的 sql 语法是一样的，利用 concat 函数动态拼接出来：</p>
+<pre><code class="language-plain_text">SELECT
+	CONCAT('MAX(IF(c.Cname = ''', c.Cname, ''', a.score, NULL)) AS ''', c.Cname, '\'')
+FROM
+	Course c;
+</code></pre>
+<p>这一部分有了，把所有的 sql 语句都拼接起来<br />
+但是这个地方使用 concat 不行，concat 只会返回一条结果</p>
+<pre><code class="language-plain_text">SET @sql = '';
+
+SELECT
+	CONCAT('MAX(IF(c.Cname = ''', c.Cname, ''', a.score, NULL)) AS ''', c.Cname, '\'')
+FROM
+	Course c INTO @sql;
+
+SELECT	@sql;
+</code></pre>
+<p>需要把 concat 的返回结果拼接到一起，这就需要用到 group_concat 函数。</p>
+<p><code>PREPARE</code> 语句准备好一条SQL语句，并分配给这条SQL 语句一个名字供之后调用。<br />
+准备好的 SQL 语句通过 <code>EXECUTE</code> 命令执行，<br />
+最后通过 <code>DEALLOCATE PREPARE</code> 命令释放掉</p>
+<p>所以最终结果是这样的:</p>
+<pre><code class="language-plain_text">SET @sql = '';
+
+SELECT
+	GROUP_CONCAT(CONCAT('MAX(IF(c.Cname = ''', c.Cname, ''', a.score, NULL)) AS ''', c.Cname, '\''))
+FROM
+	Course c INTO @sql;
+
+SET @sql = CONCAT('Select b.Sname as ''姓名'' , ', @sql, ' From SC  a
+ JOIN Student b ON a.SId = b.SId
+ 	JOIN Course c ON a.CId = c.CId
+ Group by b.Sname');
+
+SELECT
+	@sql;
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/16213239029529.jpg" alt="" /></p>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

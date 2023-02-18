@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    Spring Boot 增加缓存功能 - 非著名Java程序员
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about1.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            Spring Boot 增加缓存功能   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2020/10/21 20:17 下午</span>
+                                  <span class="tran-posted-in">posted in</span>&nbsp; 
+                                  
+                                      <span class="posted-in"><a href='Spring.html'>Spring</a></span>
+                                  
+                                      <span class="posted-in"><a href='Java.html'>Java</a></span>
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                  
+                                    <a class="tag is-link is-light" href='tag_Spring.html'>#Spring</a>
+                                  
+                                    <a class="tag is-link is-light" href='tag_Java.html'>#Java</a>
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <pre><code class="language-plain_text">spring.jpa.properties.hibernate.show_sql=true，开启hibernate对sql语句的打印
+</code></pre>
+<p>单元测试中，用userRepository 查询两次相同内容。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729123926.jpg" alt="" /><br />
+运行一下，会看到在控制台打出了两条sql，说明是查了两次库。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729221221.jpg" alt="" /></p>
+<p>增加缓存：<br />
+pom中添加依赖：</p>
+<pre><code class="language-plain_text">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-cache&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>SpringBoot主类中添加注解 <code>@EnableCaching</code><br />
+UserRepository 类添加注解<code>@CacheConfig(cacheNames = &quot;users&quot;)</code><br />
+findByName方法添加注解<code>@Cacheable</code></p>
+<p>org.springframework.data.redis.serializer.SerializationException:?</p>
+<p>缓存对象需要实现序列化接口.<code>UserDO implements Serializable</code></p>
+<p>在次运行就会出现</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374555362360.jpg" alt="" style="width:1076px;" />可以看到，第二次请求的时候就没有打印出sql语句。</p>
+<p>注解：</p>
+<ul>
+<li>
+<p>@CacheConfig：<br />
+主要配置该类中会用到的一些公用的缓存配置。<br />
+cacheNames 配置了数据访问对象中返回的内容将存储于名为users的数组中。<br />
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374561374912.jpg" alt="" /></p>
+</li>
+<li>
+<p>@Cacheable：<br />
+配置了findByName的函数返回值将会被加入到缓存。同时在查询时，会先查询缓存，若不存在才会查询数据库。<br />
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374562984908.jpg" alt="" /></p>
+</li>
+<li>
+<p><code>cacheNames</code>、<code>value</code>：用于指定缓存存储的集合名。两个参数等效。</p>
+</li>
+<li>
+<p><code>key</code>：缓存对象存储在Map集合中的key值，非必需，缺省按照函数的所有参数组合作为key值，若自己配置需使用SpEL表达式，比如：@Cacheable(key = &quot;#p0&quot;)：使用函数第一个参数作为缓存的key值，更多关于SpEL表达式的详细内容可参考<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#cache">官方文档</a></p>
+</li>
+<li>
+<p><code>condition</code>:缓存对象的条件，非必需，也需使用SpEL表达式，只有满足表达式条件的内容才会被缓存，比如：@Cacheable(key = &quot;#p0&quot;, condition = &quot;#p0.length() &lt; 3&quot;)，表示只有当第一个参数的长度小于3的时候才会被缓存，若做此配置上面的AAA用户就不会被缓存，读者可自行实验尝试。</p>
+</li>
+<li>
+<p><code>unless</code>:另外一个缓存条件参数，非必需，需使用SpEL表达式。它不同于condition参数的地方在于它的判断时机，该条件是在函数被调用之后才做判断的，所以它可以通过对result进行判断。</p>
+</li>
+<li>
+<p><code>keyGenerator</code>:用于指定key生成器，非必需。若需要指定一个自定义的key生成器，我们需要去实现org.springframework.cache.interceptor.KeyGenerator接口，并使用该参数来指定。需要注意的是：该参数与key是互斥的</p>
+</li>
+<li>
+<p><code>cacheManager</code>:用于指定使用哪个缓存管理器，非必需。只有当有多个时才需要使用</p>
+</li>
+<li>
+<p><code>cacheResolver</code>:用于指定使用那个缓存解析器，非必需。需通过org.springframework.cache.interceptor.CacheResolver接口来实现自己的缓存解析器，并用该参数指定。</p>
+</li>
+</ul>
+<p>CacheManager</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374571943253.jpg" alt="" /></p>
+<p>在Spring Boot中通过@EnableCaching注解自动化配置合适的缓存管理器（CacheManager），Spring Boot根据下面的顺序去侦测缓存提供者：</p>
+<ul>
+<li>Generic</li>
+<li>JCache (JSR-107)</li>
+<li>EhCache 2.x</li>
+<li>Hazelcast</li>
+<li>Infinispan</li>
+<li>Redis</li>
+<li>Guava</li>
+<li>Simple</li>
+</ul>
+<p>可以通过配置属性spring.cache.type来强制指定</p>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

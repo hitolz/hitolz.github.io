@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    Java 太卷了转 GO（二） - 非著名Java程序员
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about1.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            Java 太卷了转 GO（二）   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2022/09/09 09:43 上午</span>
+                                  <span class="tran-posted-in">posted in</span>&nbsp; 
+                                  
+                                      <span class="posted-in"><a href='GO.html'>GO</a></span>
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <p>上一篇文章简单的学习了 GO 的基础语法，本篇文章用 GO 的框架开发一个短链应用。</p>
+<p>短链应用功能：</p>
+<ol>
+<li>创建短链</li>
+<li>根据短链 code 重定向到原始链接</li>
+</ol>
+<p>主要用到的框架：</p>
+<ol>
+<li>ORM 框架 gorm<br />
+<a href="https://gorm.io/zh_CN/docs/index.html">https://gorm.io/zh_CN/docs/index.html</a></li>
+<li>Web 框架 gin<br />
+<a href="https://gin-gonic.com/zh-cn/docs/">https://gin-gonic.com/zh-cn/docs/</a></li>
+</ol>
+<h2><a id="gin" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>gin</h2>
+<p>最快的 http 路由器和框架。</p>
+<pre><code class="language-go">package main
+
+import &quot;github.com/gin-gonic/gin&quot;
+
+func main() {
+	r := gin.Default()
+	r.GET(&quot;/ping&quot;, func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			&quot;message&quot;: &quot;pong&quot;,
+		})
+	})
+	r.Run() // 监听并在 0.0.0.0:8080 上启动服务
+}
+</code></pre>
+<p>一个最简单的例子，启动后浏览器访问 <a href="http://localhost:8080/ping">http://localhost:8080/ping</a></p>
+<p>使用路由：</p>
+<pre><code class="language-go">func main() {
+	engine := gin.Default()
+	engine.Group(&quot;/&quot;)
+
+	engine.GET(&quot;/ping&quot;, func(context *gin.Context) {
+		context.JSON(200, gin.H{
+			&quot;message&quot;: &quot;pong&quot;,
+		})
+	})
+	engine.Run()
+}
+</code></pre>
+<p>将接口放在程序入口 main 方法中不太合适，通常会创建多个 handler，类似于 java 中的 controller。</p>
+<h2><a id="gorm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>gorm</h2>
+<p>连接数据库</p>
+<pre><code class="language-go">// 数据库连接：&quot;用户名:密码@tcp(IP:端口)/数据库?charset=utf8&quot;
+sqlcon := &quot;root:123456@tcp(127.0.0.1:3306)/amc?charset=utf8&amp;parseTime=True&amp;loc=Local&quot;
+
+
+DB, err := gorm.Open(mysql.Open(sqlcon), &amp;gorm.Config{
+	DisableForeignKeyConstraintWhenMigrating: true, //禁用物理外键
+})
+if err != nil {
+	log.Fatal(&quot;连接失败！&quot;)
+	return nil
+}
+// 连接池设置
+sqlDB, err := DB.DB()
+// 设置数据库最大连接数
+sqlDB.SetMaxOpenConns(500)
+// 设置数据库最大闲置数
+sqlDB.SetMaxIdleConns(20)
+// 全局禁用表名复数
+//sqlDB.SingularTable(true)
+// 调试模式，可以打印sql语句
+//sqlDB.LogMode(true)
+</code></pre>
+<h3><a id="crud" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CRUD</h3>
+<h4><a id="insert" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>insert</h4>
+<p>保存单条数据</p>
+<pre><code class="language-go">createConfig := dao.ShortLinkConfig{
+	Enable:      1,
+	OriginUrl:   &quot;http://localhost:8080&quot;,
+	ShortCode:   &quot;test&quot;,
+	CreatedTime: time.Now(),
+	UpdatedTime: time.Now(),
+}
+mysql.Db.Save(&amp;createConfig)
+</code></pre>
+<p>保存多条数据</p>
+<pre><code class="language-go">shortLinkConfigs := []dao.ShortLinkConfig{
+	{
+		Enable:      1,
+		OriginUrl:   &quot;http://localhost:8080&quot;,
+		ShortCode:   &quot;test1&quot;,
+		CreatedTime: time.Now(),
+		UpdatedTime: time.Now()},
+	{
+		Enable:      1,
+		OriginUrl:   &quot;http://localhost:8080&quot;,
+		ShortCode:   &quot;test2&quot;,
+		CreatedTime: time.Now(),
+		UpdatedTime: time.Now(),
+	},
+	{
+		Enable:      1,
+		OriginUrl:   &quot;http://localhost:8080&quot;,
+		ShortCode:   &quot;test3&quot;,
+		CreatedTime: time.Now(),
+		UpdatedTime: time.Now(),
+	},
+}
+// 批量数据一次性插入
+//mysql.Db.Create(&amp;shortLinkConfigs)
+// 分批次插入
+mysql.Db.CreateInBatches(&amp;shortLinkConfigs, 1000)
+</code></pre>
+<h4><a id="select" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>select</h4>
+<pre><code class="language-go">config := dao.ShortLinkConfig{
+	Enable: 1,
+}
+
+var shortLinkConfig = dao.ShortLinkConfig{}
+
+//获取第一条记录，主键升序 select * from table ORDER BY id asc LIMIT 1
+mysql.Db.Where(&amp;config).First(&amp;shortLinkConfig)
+log.Printf(&quot;first config = %v&quot;, shortLinkConfig)
+
+shortLinkConfig = dao.ShortLinkConfig{}
+//获取最后一条记录，主键降序 select * from table ORDER BY id desc LIMIT 1
+mysql.Db.Where(&amp;config).Last(&amp;shortLinkConfig)
+log.Printf(&quot;last config = %v&quot;, shortLinkConfig)
+
+shortLinkConfig = dao.ShortLinkConfig{}
+// 获取一条记录，没有指定字段排序
+mysql.Db.Where(&amp;config).Take(&amp;shortLinkConfig)
+log.Printf(&quot;config = %v&quot;, shortLinkConfig)
+
+shortLinkConfig = dao.ShortLinkConfig{}
+mysql.Db.First(&amp;shortLinkConfig, 9)
+log.Printf(&quot;id = 9,config = %v&quot;, shortLinkConfig)
+
+// 查询多条记录
+shortLinkConfigs := make([]dao.ShortLinkConfig, 3)
+mysql.Db.Find(&amp;shortLinkConfigs, []int{8, 9, 10})
+for i, linkConfig := range shortLinkConfigs {
+	log.Printf(&quot;i = %d,config = %v&quot;, i, linkConfig)
+}
+
+// 指定字段查询
+shortCode := &quot;acegf&quot;
+shortLinkConfig = dao.ShortLinkConfig{}
+mysql.Db.Where(&quot;short_code = ? and enable = 1&quot;, shortCode).First(&amp;shortLinkConfig)
+log.Printf(&quot;short_code = %s,config = %v&quot;, shortCode, shortLinkConfig)
+
+// 指定字段查询 struct,这种方式要求 struct 中的字段不能为零值，0、false 这种是不会创建查询条件的。
+shortLinkConfig = dao.ShortLinkConfig{}
+mysql.Db.Where(&amp;dao.ShortLinkConfig{ShortCode: shortCode, Enable: 0}).First(&amp;shortLinkConfig)
+log.Printf(&quot;short_code = %s,enable = 0,config = %v&quot;, shortCode, shortLinkConfig)
+
+// 指定字段查询 map
+shortLinkConfigs = make([]dao.ShortLinkConfig, 10)
+mysql.Db.Where(map[string]interface{}{&quot;enable&quot;: 1, &quot;short_code&quot;: shortCode}).Find(&amp;shortLinkConfigs)
+for i, linkConfig := range shortLinkConfigs {
+	log.Printf(&quot; --- i = %d,config = %v&quot;, i, linkConfig)
+}
+
+</code></pre>
+<h4><a id="update" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>update</h4>
+<p>Save</p>
+<pre><code class="language-go">shortCode := &quot;test3&quot;
+shortLinkConfig := dao.ShortLinkConfig{}
+mysql.Db.Where(&quot;short_code = ? and enable = 1&quot;, shortCode).First(&amp;shortLinkConfig)
+log.Printf(&quot;short_code = %s,config = %v&quot;, shortCode, shortLinkConfig)
+
+shortLinkConfig.ShortCode = &quot;test5&quot;
+mysql.Db.Save(&amp;shortLinkConfig)
+</code></pre>
+<p>Update 更新单个列</p>
+<pre><code class="language-go">// update short_link_config set short_code = &quot;123&quot; where short_code = &quot;test5&quot; and enable = 1
+mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&quot;short_code = ? and enable = 1&quot;, shortCode).Update(&quot;short_code&quot;, &quot;123&quot;)
+</code></pre>
+<p>更新多列,struct 方式,只会更新非零值</p>
+<pre><code class="language-go">mysql.Db.Where(&amp;dao.ShortLinkConfig{
+	Enable: 1,
+}).Updates(dao.ShortLinkConfig{
+	Enable:    0,
+	OriginUrl: &quot;http://www.123.com&quot;,
+})
+</code></pre>
+<p>更新多列，map 方式</p>
+<pre><code class="language-go">mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&amp;dao.ShortLinkConfig{Enable: 1}).Updates(map[string]interface{}{&quot;origin_url&quot;: &quot;http://www.baidu.com&quot;})
+</code></pre>
+<h4><a id="delete" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>delete</h4>
+<p>根据主键删除</p>
+<pre><code class="language-go">// delete from short_link_config where id = 10
+mysql.Db.Delete(&amp;dao.ShortLinkConfig{}, 10)
+</code></pre>
+<hr />
+<p>短链应用：<br />
+github: <a href="https://github.com/hitolz/shortLink">https://github.com/hitolz/shortLink</a></p>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

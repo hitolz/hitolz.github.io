@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    Java并发编程的基础 - 非著名Java程序员
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about1.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            Java并发编程的基础   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2020/11/29 13:24 下午</span>
+                                  <span class="tran-posted-in">posted in</span>&nbsp; 
+                                  
+                                      <span class="posted-in"><a href='Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html'>Java并发编程的艺术</a></span>
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <div class="mweb_toc"><ul>
+<li><a href="#volatile">volatile</a></li>
+<li><a href="#synchronized">synchronized</a></li>
+<li><a href="#%E7%AD%89%E5%BE%85%E9%80%9A%E7%9F%A5%E6%9C%BA%E5%88%B6">等待/通知机制</a></li>
+<li><a href="#join">join</a></li>
+<li><a href="#threadlocal">ThreadLocal</a></li>
+</ul>
+</div>
+<p>##线程间通信</p>
+<h3><a id="volatile" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>volatile</h3>
+<p>多线程访问 volatile 修饰的变量都需要从共享内存中获取，而对它的修改必须同步刷新回共享内存，它能保证所有线程对变量访问的可见性。</p>
+<h3><a id="synchronized" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>synchronized</h3>
+<p>可以修饰方法或者以同步代码块的形式来使用，确保多个线程在同一时间只能有一个线程处于方法或者代码块中，保证了线程对变量访问的可见性和排他性。</p>
+<p>同步代码块的底层实现是 monitorenter 和 monitorexit 指令，而同步方法则是一开方法修饰符上的 ACC_SYNCHRONIZED 完成。</p>
+<h3><a id="%E7%AD%89%E5%BE%85%E9%80%9A%E7%9F%A5%E6%9C%BA%E5%88%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>等待/通知机制</h3>
+<p>生产者、消费者模型</p>
+<p>wait()/notify()</p>
+<p>wait和notify方法都是锁对象来调用。它们必须在被synchronized修饰的方法内。</p>
+<p>wait方法会使在临界区内的线程进入等待状态，同时释放被同步对象的锁。</p>
+<p>notify方法会唤醒一个因调用了wait方法而处于阻塞状态的线程，使其进入就绪状态。<br />
+被重新唤醒的线程会试图重新获取锁的控制权，并继续执行wait之后的代码。</p>
+<pre><code class="language-plain_text">static class Provider implements Runnable {
+
+	@SneakyThrows
+	@Override
+	public void run() {
+		synchronized (lock) {
+			System.out.println(&quot;生产者运行开始，当前时间 = &quot; + System.currentTimeMillis());
+			lock.wait();
+			System.out.println(&quot;生产者运行结束，当前时间 = &quot; + System.currentTimeMillis());
+		}
+	}
+}
+
+static class Consumer implements Runnable {
+
+	@SneakyThrows
+	@Override
+	public void run() {
+
+		synchronized (lock) {
+			System.out.println(&quot;消费者运行开始，当前时间 = &quot; + System.currentTimeMillis());
+			lock.notify();
+			System.out.println(&quot;消费者运行结束，当前时间 = &quot; + System.currentTimeMillis());
+		}
+	}
+}
+</code></pre>
+<p>其运行结果如下：</p>
+<pre><code class="language-plain_text">生产者运行开始，当前时间 = 1609770771102
+消费者运行开始，当前时间 = 1609770771103
+消费者运行结束，当前时间 = 1609770771103
+生产者运行结束，当前时间 = 1609770771103
+</code></pre>
+<p>wait方法执行后，线程会立即释放锁，而notify方法执行后，线程并不释放锁。</p>
+<pre><code class="language-plain_text">static class Provider implements Runnable {
+
+	@SneakyThrows
+	@Override
+	public void run() {
+		synchronized (lock) {
+			System.out.println(&quot;生产者运行开始，当前时间 = &quot; + System.currentTimeMillis());
+			lock.wait();
+			TimeUnit.MILLISECONDS.sleep(300);
+			System.out.println(&quot;生产者运行结束，当前时间 = &quot; + System.currentTimeMillis());
+		}
+	}
+}
+
+static class Consumer implements Runnable {
+
+	@SneakyThrows
+	@Override
+	public void run() {
+
+		synchronized (lock) {
+			System.out.println(&quot;消费者运行开始，当前时间 = &quot; + System.currentTimeMillis());
+			lock.notify();
+			TimeUnit.MILLISECONDS.sleep(300);
+			System.out.println(&quot;消费者运行结束，当前时间 = &quot; + System.currentTimeMillis());
+		}
+	}
+}
+</code></pre>
+<p>其运行结果：</p>
+<pre><code class="language-plain_text">生产者运行开始，当前时间 = 1609771313436
+消费者运行开始，当前时间 = 1609771313437
+消费者运行结束，当前时间 = 1609771313738
+生产者运行结束，当前时间 = 1609771314039
+</code></pre>
+<p>从结果上可以证明上述观点。<br />
+生产者wait之后，消费者立即开始执行，然而消费者notify后，还要等待sleep时间过后，生产者才重新拿到锁对象。</p>
+<hr />
+<p>场景例子：<br />
+生产者生产数字到List中，当List中的元素个数为10的时候，发送通知给到消费者，消费者消费List中的元素，使其个数为0.</p>
+<pre><code class="language-plain_text">public class ProviderConsumer {
+
+	static int x = 0;
+	private static List&lt;Integer&gt; list = new ArrayList&lt;&gt;();
+	private static Object lock = new Object();
+
+	public static void main(String[] args) {
+		Thread a = new Thread(new Provider());
+		Thread b = new Thread(new Consumer());
+
+		a.start();
+		b.start();
+	}
+
+	static class Provider implements Runnable {
+
+		@SneakyThrows
+		@Override
+		public void run() {
+			synchronized (lock) {
+				while (true) {
+					TimeUnit.MILLISECONDS.sleep(100);
+					list.add(x++);
+					if (list.size() == 10) {
+						lock.wait();
+					}
+					lock.notify();
+				}
+			}
+		}
+	}
+
+	static class Consumer implements Runnable {
+
+		@SneakyThrows
+		@Override
+		public void run() {
+
+			synchronized (lock) {
+				while (true) {
+					if (list.size() == 10) {
+						System.out.println(list);
+						list.clear();
+						lock.notify();
+					}
+					lock.wait();
+				}
+			}
+		}
+	}
+}
+</code></pre>
+<h3><a id="join" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>join</h3>
+<p>主线程等待子线程执行完成后在接着执行。<br />
+join的作用就是等待子线程对象销毁。</p>
+<pre><code class="language-plain_text">static class MyThread implements Runnable{
+
+	@SneakyThrows
+	@Override
+	public void run() {
+		TimeUnit.SECONDS.sleep(3);
+		System.out.println(&quot;子线程运行结束&quot;);
+	}
+}
+@SneakyThrows
+public static void main(String[] args) {
+	MyThread t = new MyThread();
+
+	Thread a = new Thread(t);
+	a.start();
+	a.join();
+	System.out.println(&quot;主线程运行结束&quot;);
+}
+</code></pre>
+<p>join使得当前线程等待子线程执行完成之后继续执行当前线程的代码。</p>
+<p>join内部使用了wait，所以join方法会释放锁。</p>
+<h3><a id="threadlocal" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ThreadLocal</h3>
+<p>ThreadLocal即线程变量，属于线程私有。多个线程之间是隔离的。<br />
+是一个以ThreadLocal对象为key，任意对象为value的键值对存储结构，绑定在Thread上。</p>
+<p>Thread 中的变量<br />
+<code>ThreadLocal.ThreadLocalMap threadLocals = null;</code></p>
+<p>ThreadLocal set 方法</p>
+<pre><code class="language-java">public void set(T value) {
+    Thread t = Thread.currentThread();
+    // Map 是与当前线程绑定的
+    ThreadLocalMap map = getMap(t);
+    if (map != null)
+        // 
+        map.set(this, value);
+    else
+        createMap(t, value);
+}
+
+ThreadLocalMap getMap(Thread t) {
+    return t.threadLocals;
+}
+
+
+void createMap(Thread t, T firstValue) {
+    t.threadLocals = new ThreadLocalMap(this, firstValue);
+}
+
+
+
+// ThreadLocal 内部类 ThreadLocalMap 
+static class ThreadLocalMap {
+    // ThreadLocalMap 内部类 Entry，用的是 弱引用，GC 的时候就会被回收
+    static class Entry extends WeakReference&lt;ThreadLocal&lt;?&gt;&gt; {
+        Object value;
+        Entry(ThreadLocal&lt;?&gt; k, Object v) {
+            super(k);
+            value = v;
+        }
+    }
+}
+</code></pre>
+<p>Entry 是 弱引用，发生 GC 就会被回收。</p>
+<p>ThreadLocal 本身并不存储，是当做 key 传给内部的 ThreadLocalMap</p>
+<hr />
+<p><a href="https://zhuanlan.zhihu.com/p/138689342">https://zhuanlan.zhihu.com/p/138689342</a></p>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

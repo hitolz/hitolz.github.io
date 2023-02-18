@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    actix-web - 非著名Java程序员
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about1.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            actix-web   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2022/11/10 13:30 下午</span>
+                                  <span class="tran-posted-in">posted in</span>&nbsp; 
+                                  
+                                      <span class="posted-in"><a href='rust.html'>rust</a></span>
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                  
+                                    <a class="tag is-link is-light" href='tag_rust.html'>#rust</a>
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <p>actix-web 是 rust 中的一个 web 框架，本篇文章简单介绍下 actix-web 的使用。</p>
+<h2><a id="getting-started" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+<p><a href="https://actix.rs/docs/getting-started">https://actix.rs/docs/getting-started</a></p>
+<ol>
+<li>创建rust 工程</li>
+</ol>
+<pre><code class="language-rust">cargo new hello-world
+</code></pre>
+<ol start="2">
+<li>Cargo.toml 添加依赖</li>
+</ol>
+<pre><code class="language-rust">[dependencies]
+actix-web=&quot;4&quot;
+</code></pre>
+<ol start="3">
+<li>使用 actix-web<br />
+在 src/main.rs 中编写如下代码</li>
+</ol>
+<pre><code class="language-rust">use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+
+#[get(&quot;/&quot;)]
+async fn hello() -&gt; impl Responder {
+    HttpResponse::Ok().body(&quot;Hello world!&quot;)
+}
+
+#[post(&quot;/echo&quot;)]
+async fn echo(req_body: String) -&gt; impl Responder {
+    HttpResponse::Ok().body(req_body)
+}
+
+async fn manual_hello() -&gt; impl Responder {
+    HttpResponse::Ok().body(&quot;Hey there!&quot;)
+}
+
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new( || {
+        App::new()
+            .service(hello)
+            .service(echo)
+            .route(&quot;/hey&quot;, web::get().to(manual_hello))
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>HttpServer 绑定到 ip、端口，同时，提供了两个 get 方法(/,/hey)，一个 post 方法(/echo)，通过浏览器访问 localhost:8099 即可访问。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-13.36.34.png" alt="2022-11-20-13.36.34" /></p>
+<h2><a id="scope" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>scope</h2>
+<p>scope 就相当于请求路径的前缀</p>
+<pre><code class="language-rust">#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new().service(
+            web::scope(&quot;/app&quot;)
+                .route(&quot;/hey&quot;, web::get().to(manual_hello)),
+        )
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>这样的话在请求 localhost:8099/hey 就请求不到了，这样要请求的路径是 localhost:8099/app/hey</p>
+<h2><a id="state" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>state</h2>
+<p>相当于全局变量、多个线程之间共享的。</p>
+<pre><code class="language-rust">use std::sync::Mutex;
+
+use actix_web::{App, HttpServer, web};
+
+struct AppStateWithCounter {
+    counter: Mutex&lt;i32&gt;, // &lt;- Mutex is necessary to mutate safely across threads
+}
+
+async fn index(data: web::Data&lt;AppStateWithCounter&gt;) -&gt; String {
+    let mut counter = data.counter.lock().unwrap(); // &lt;- get counter's MutexGuard
+    *counter += 1; // &lt;- access counter inside MutexGuard
+
+    format!(&quot;Request number: {counter}&quot;) // &lt;- response with count
+}
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    // Note: web::Data created _outside_ HttpServer::new closure
+    let counter = web::Data::new(AppStateWithCounter {
+        counter: Mutex::new(0),
+    });
+
+    HttpServer::new(move || {
+        // move counter into the closure
+        App::new()
+            .app_data(counter.clone()) // &lt;- register the created data
+            .route(&quot;/&quot;, web::get().to(index))
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>浏览器请求 localhost:8099,每次刷新都会导致 counter+1；</p>
+<h2><a id="%E8%BF%94%E5%9B%9Ejson" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>返回 json</h2>
+<p>cargo.toml添加依赖</p>
+<pre><code class="language-rust">serde = { version = &quot;1.0&quot;, features = [&quot;derive&quot;] }
+serde_json = { version = &quot;1.0.2&quot;, optional = true }
+</code></pre>
+<p>main.rs</p>
+<pre><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web};
+use actix_web::web::Json;
+use serde::Serialize;
+
+#[derive(Debug, Serialize)]
+pub struct Response&lt;T: Serialize&gt; {
+    pub ok: bool,
+    pub code: Option&lt;i32&gt;,
+    pub data: Option&lt;T&gt;,
+    pub error: Option&lt;String&gt;,
+}
+
+impl&lt;T: Serialize&gt; Response&lt;T&gt; {
+    pub fn success(data: Option&lt;T&gt;) -&gt; Response&lt;T&gt; {
+        Response {
+            ok: true,
+            code: Some(0),
+            data,
+            error: None,
+        }
+    }
+
+    pub fn error(err: Option&lt;String&gt;) -&gt; Response&lt;T&gt; {
+        Response {
+            ok: false,
+            code: Some(-1),
+            data: None,
+            error: err,
+        }
+    }
+}
+
+
+#[get(&quot;/&quot;)]
+async fn hello() -&gt; impl Responder {
+    let response = Response::success(Option::from(&quot;Hello&quot;));
+    println!(&quot;{:?}&quot;, response);
+    Json(response)
+}
+
+
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .service(hello)
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-14.58.01.png" alt="2022-11-20-14.58.01" /></p>
+<hr />
+<p><a href="https://juejin.cn/post/7108743876659118117">https://juejin.cn/post/7108743876659118117</a><br />
+<a href="https://web.veaba.me/rust/actix-web/#application">https://web.veaba.me/rust/actix-web/#application</a></p>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

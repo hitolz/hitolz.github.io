@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    rust 包管理与工作空间 - 非著名Java程序员
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about1.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            rust 包管理与工作空间   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2023/01/03 21:26 下午</span>
+                                  <span class="tran-posted-in">posted in</span>&nbsp; 
+                                  
+                                      <span class="posted-in"><a href='rust.html'>rust</a></span>
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <p>在编写较为复杂的项目时，合理的对代码进行组织与管理很重要。</p>
+<p>只有按照不同的特性来组织或分隔相关功能的代码，我们才能够清晰地找到实现指定功能的代码片段，或者确定哪些地方需要修改。</p>
+<p>Rust 提供了一系列的功能来帮助我们管理代码，包括决定哪些细节是暴露的，哪些细节是私有的，以及不同的作用域内存在哪些名称。这些功能有时被称为模块系统，他们包括</p>
+<ul>
+<li>
+<p>包（package）：一个用于构建、测试并分享单元包的 Cargo 功能、</p>
+</li>
+<li>
+<p>单元包（crate）：一个用于生成库或可执行文件的树形模块结构<br />
+对于 Rust 而言，包是一个独立的可编译单元，它编译后会生成一个可执行文件或者一个库。</p>
+</li>
+<li>
+<p>模块（module）及 use 关键字：他们被用于控制文件结构、作用域及路径的私有性。</p>
+</li>
+<li>
+<p>路径（path）：一种用于命名条目的方法，这些条目包括结构体、函数和模块等。</p>
+</li>
+</ul>
+<p>rust 中包一般指的是 crate。</p>
+<h2><a id="%E5%8C%85%E4%B8%8E%E5%8D%95%E5%85%83%E5%8C%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>包与单元包</h2>
+<p>包（package），可以理解为项目、工程。<br />
+由于 Package 就是一个项目，因此它包含有独立的 Cargo.toml 文件，以及因为功能性被组织在一起的一个或多个包。一个 Package 只能包含一个库(library)类型的包，但是可以包含多个二进制可执行类型的包。</p>
+<ul>
+<li>一个包中只能拥有最多一个库单元包。</li>
+<li>包可以拥有任意多的二进制单元包。</li>
+<li>包内必须存在至少一个单元包（库单元包或二进制单元包）。</li>
+</ul>
+<p>Cargo 会默认将 src/main.rs 视作一个二进制单元包的根节点而无需指定，这个二进制单元包与包拥有相同的名称。</p>
+<p>假设包的目录中包含 src/lib.rs，Cargo 也会自动将其视作与包同名的库单元包的根节点。</p>
+<blockquote>
+<p>main.rs 所在包是二进制单元包，lib.rs 所在包是库单元包。</p>
+</blockquote>
+<ul>
+<li>创建二进制包</li>
+</ul>
+<pre><code class="language-plain_text">cargo new my-project
+</code></pre>
+<ul>
+<li>创建 lib 包</li>
+</ul>
+<pre><code class="language-plain_text">cargo new my-lib --lib
+</code></pre>
+<p>库单元包（lib）只能被其他二进制单元包引用而不能独立运行。</p>
+<h2><a id="%E5%85%B8%E5%9E%8B%E7%9A%84%E5%8C%85%E7%BB%93%E6%9E%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>典型的包结构</h2>
+<pre><code class="language-plain_text">.
+├── Cargo.toml
+├── Cargo.lock
+├── src
+│   ├── main.rs
+│   ├── lib.rs
+│   └── bin
+│       └── main1.rs
+│       └── main2.rs
+├── tests
+│   └── some_integration_tests.rs
+├── benches
+│   └── simple_bench.rs
+└── examples
+    └── simple_example.rs
+
+</code></pre>
+<ul>
+<li>唯一库包：src/lib.rs</li>
+<li>默认二进制包：src/main.rs，编译后生成的可执行文件与 Package 同名</li>
+<li>其余二进制包：src/bin/main1.rs 和 src/bin/main2.rs，它们会分别生成一个文件同名的二进制可执行文件</li>
+<li>集成测试文件：tests 目录下</li>
+<li>基准性能测试 benchmark 文件：benches 目录下</li>
+<li>项目示例：examples 目录下</li>
+</ul>
+<h2><a id="%E4%BD%BF%E7%94%A8%E5%A4%96%E9%83%A8%E5%8C%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>使用外部包</h2>
+<p>Cargo.toml 文件中的 [dependencies]<br />
+<img src="media/16727524082529/2023-01-05-07.36.08.png" alt="2023-01-05-07.36.08" /></p>
+<h2><a id="workspace" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>workspace</h2>
+<p>如何使用工作空间来管理代码目录结构，通过一个例子来说明一下。<br />
+在这个例子中，创建了一个 add 工作空间，这个空间中有一个二进制包 adder，有一个 lib 包 add-one，adder 依赖 add-one。</p>
+<p>下面是操作步骤</p>
+<ol>
+<li>
+<p>创建一个工作空间目录，就是创建一个空的文件夹。</p>
+<pre><code class="language-bash">mkdir add
+</code></pre>
+</li>
+<li>
+<p>新创建的目录中添加 Cargo.toml</p>
+<pre><code class="language-bash">cd add
+touch Cargo.toml
+</code></pre>
+</li>
+<li>
+<p>编辑 Cargo.toml</p>
+<pre><code class="language-toml">[workspace]
+members = [
+    &quot;adder&quot;,
+    &quot;add-one&quot;
+]
+</code></pre>
+</li>
+<li>
+<p>在 add 目录下，创建 adder 二进制包</p>
+<pre><code class="language-plain_text">cargo new adder
+</code></pre>
+<p>输出</p>
+<pre><code class="language-plain_text">Created binary (application) `adder` project
+</code></pre>
+<p>现在的目录结构:</p>
+<pre><code class="language-plain_text">├── Cargo.lock
+├── Cargo.toml
+├── adder
+│   ├── Cargo.toml
+│   └── src
+│       └── main.rs
+└── target
+</code></pre>
+</li>
+<li>
+<p>创建新的 lib 包 add-one</p>
+<pre><code class="language-plain_text">cargo new add-one --lib
+</code></pre>
+<p>输出</p>
+<pre><code class="language-plain_text">Created library `add-one` project
+</code></pre>
+<p>此时的目录结构:</p>
+<pre><code class="language-plain_text">├── Cargo.lock
+├── Cargo.toml
+├── add-one
+│   ├── Cargo.toml
+│   └── src
+│       └── lib.rs
+├── adder
+│   ├── Cargo.toml
+│   └── src
+│       └── main.rs
+└── target
+</code></pre>
+</li>
+<li>
+<p>add-one/src/lib.rs</p>
+<p>lib 文件中自动生成了代码，一个 add 方法，一个 test 方法</p>
+<pre><code class="language-rust">pub fn add(left: usize, right: usize) -&gt; usize {
+    left + right
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        let result = add(2, 2);
+        assert_eq!(result, 4);
+    }
+}
+</code></pre>
+</li>
+<li>
+<p>让二进制包 adder 依赖 add-one 这个 lib<br />
+需要在 adder 的 Cargo.toml 文件中添加 add-one 的路径作为依赖。</p>
+<pre><code class="language-plain_text">[dependencies]
+add-one = {path = &quot;../add-one&quot;}
+</code></pre>
+</li>
+<li>
+<p>在 adder 包中使用 add-one 中的 add 方法<br />
+adder/src/main.rs</p>
+<pre><code class="language-rust">use add_one;
+fn main() {
+    println!(&quot;Hello, world!&quot;);
+    let x = add_one::add(1, 2);
+    assert_eq!(x,3);
+    println!(&quot;Hello, world!&quot;);
+}
+</code></pre>
+</li>
+<li>
+<p>在 add 目录下构建整个工作空间</p>
+</li>
+<li>
+<p>为了能够在工作空间的目录下运行二进制包，在执行 cargo run 命令时需要指定 -p 参数</p>
+<pre><code class="language-plain_text">cargo run -p adder
+</code></pre>
+</li>
+</ol>
+<p>以上10个步骤就是使用工作空间的操作步骤了。<br />
+lib 包相当于工具包，一般用来实现核心功能，同时还可以给别的模块提供依赖，<br />
+二进制包相当于启动包，可以运行。</p>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

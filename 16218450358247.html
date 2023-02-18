@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    Spring Cloud Stream 整合 RocketMQ - 非著名Java程序员
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about1.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            Spring Cloud Stream 整合 RocketMQ   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2021/05/24 16:30 下午</span>
+                                  
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                  
+                                    <a class="tag is-link is-light" href='tag_Spring.html'>#Spring</a>
+                                  
+                                    <a class="tag is-link is-light" href='tag_Java.html'>#Java</a>
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <h2><a id="spring-cloud-stream%E4%BB%8B%E7%BB%8D" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spring Cloud Stream 介绍</h2>
+<p>Spring Cloud Stream 是一个用于构建基于消息的微服务应用框架。它基于 SpringBoot 来创建具有生产级别的单机 Spring 应用，并且使用 Spring Integration 与 Broker 进行连接。</p>
+<p>Spring Cloud Stream 提供了消息中间件配置的统一抽象，推出了 publish-subscribe、consumer groups、partition 这些统一的概念。</p>
+<p>Spring Cloud Stream 内部有两个概念：Binder 和 Binding。</p>
+<p>Binder: 跟外部消息中间件集成的组件，用来创建 Binding，各消息中间件都有自己的 Binder 实现。</p>
+<p>比如 Kafka 的实现 KafkaMessageChannelBinder，RabbitMQ 的实现 RabbitMessageChannelBinder 以及 RocketMQ 的实现 RocketMQMessageChannelBinder。</p>
+<p>Binding: 包括 Input Binding 和 Output Binding。</p>
+<p>Binding 在消息中间件与应用程序提供的 Provider 和 Consumer 之间提供了一个桥梁，实现了开发者只需使用应用程序的 Provider 或 Consumer 生产或消费数据即可，屏蔽了开发者与底层消息中间件的接触。</p>
+<h2><a id="%E6%95%B4%E5%90%88rocketmq" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>整合 RocketMQ</h2>
+<h3><a id="spring-boot%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spring Boot 项目添加依赖</h3>
+<pre><code class="language-plain_text">&lt;spring.boot.version&gt;2.2.5.RELEASE&lt;/spring.boot.version&gt;
+&lt;spring.alibaba.cloud.version&gt;2.2.1.RELEASE&lt;/spring.alibaba.cloud.version&gt;
+
+
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-stream-rocketmq&lt;/artifactId&gt;
+    &lt;version&gt;${spring.alibaba.cloud.version}&lt;/version&gt;
+&lt;/dependency&gt;
+
+</code></pre>
+<h3><a id="%E6%B7%BB%E5%8A%A0%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加配置</h3>
+<p>application.yml 中添加配置</p>
+<pre><code class="language-plain_text">spring:
+  cloud:
+    stream:
+      bindings:
+        # output 相当于生产者
+        output:
+          # 目的地。这里使用 RocketMQ Topic
+          destination: test111
+          content-type: application/json
+
+        # input 相当于消费者
+        input:
+          # 目的地。这里使用 RocketMQ Topic
+          destination: test111
+          content-type: application/json
+          # rocket mq 的消费者必须要有 group，不然启动失败
+          group: test
+
+      rocketmq:
+        binder:
+          # rocket mq 地址
+          name-server: 127.0.0.1:9876
+          # enable-msg-trace: true
+</code></pre>
+<h3><a id="%E5%8F%91%E9%80%81%E4%B8%8E%E6%8E%A5%E6%94%B6%E6%B6%88%E6%81%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>发送与接收消息</h3>
+<p>Source</p>
+<pre><code class="language-plain_text">public interface Source {
+
+	String OUTPUT = &quot;output&quot;;
+	String INPUT = &quot;input&quot;;
+
+	@Output(Source.OUTPUT)
+	MessageChannel output();
+
+	@Input(Source.INPUT)
+	SubscribableChannel input();
+
+}
+
+</code></pre>
+<p>发送消息</p>
+<pre><code class="language-plain_text">@Autowired
+private Source source;
+
+@Override
+public void send(String msg) {
+	Message&lt;String&gt; message = MessageBuilder.withPayload(msg)
+			.build();
+	source.output().send(message);
+}
+</code></pre>
+<p>接收消息</p>
+<pre><code class="language-plain_text">@StreamListener(value = Source.INPUT)
+public void receiveInput(String receiveMsg) {
+	System.out.println(&quot;input receive: &quot; + receiveMsg);
+}
+
+</code></pre>
+<h3><a id="%E5%90%AF%E5%8A%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动</h3>
+<p>启动类上添加注解 <code>@EnableBinding({Source.class})</code></p>
+<p><a href="https://gitee.com/hitol/spring-alibaba/tree/master/cloud-stream-rocketmq">gitee</a></p>
+<hr />
+<p><a href="https://github.com/alibaba/spring-cloud-alibaba/wiki/RocketMQ">https://github.com/alibaba/spring-cloud-alibaba/wiki/RocketMQ</a></p>
+<p><a href="https://xie.infoq.cn/article/13407cedcc683163cfce19afc">https://xie.infoq.cn/article/13407cedcc683163cfce19afc</a></p>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

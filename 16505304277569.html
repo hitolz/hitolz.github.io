@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    Redis 过期键删除策略 - 非著名Java程序员
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about1.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            Redis 过期键删除策略   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2022/04/21 16:40 下午</span>
+                                  <span class="tran-posted-in">posted in</span>&nbsp; 
+                                  
+                                      <span class="posted-in"><a href='redis.html'>redis</a></span>
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <p>redis 数据库键的过期时间都保存在过期字典中，过期字典的键是一个指针，指向键空间下的一个对象（也就是某个数据库键），过期字典的值是一个 long long 类型的整数，这个整数保存了数据库键的过期时间，一个毫秒精确度的 UNIX 时间戳。</p>
+<p>过期键的判定</p>
+<ol>
+<li>检查给定键是否存在与过期字典中，如果存在，取得键的过期时间</li>
+<li>检查当前 UNIX 时间戳是否大于键的过期时间，如果是的话，那么键已经过期</li>
+</ol>
+<p>如果一个键过期了，redis 什么时候删除它呢？</p>
+<h2><a id="%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>删除策略</h2>
+<h3><a id="%E5%AE%9A%E6%97%B6%E5%88%A0%E9%99%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定时删除</h3>
+<p>在设置键的过期时间的同时，创建一个定时器，让定时器在键的过期时间来临时，立即对键进行删除</p>
+<p>定时删除策略对内存是最友好的，通过定时器可以保证过期的键尽快的被删除，释放内存<br />
+对 CPU 是最不友好的，在过期键比较多的情况下，删除过期键这一行为会占用非常多的 CPU。会对服务器的响应时间和吞吐量造成影响。</p>
+<h3><a id="%E6%83%B0%E6%80%A7%E5%88%A0%E9%99%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>惰性删除</h3>
+<p>每次从数据库中获取键时判断它是不是过期了，如果是过期的就删掉该键。</p>
+<p>对 CPU 时间来说是最友好的，<br />
+对内存是最不友好的，如果一个键已经过期，一直没有访问的话那么这个键一直不会被删掉，其对应的内存一直不会被释放。某种程度上可以说是内存泄露。</p>
+<h3><a id="%E5%AE%9A%E6%9C%9F%E5%88%A0%E9%99%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定期删除</h3>
+<p>每隔一段时间，程序就对数据库进行一次检查，删除过期的键。</p>
+<p>定期删除策略是前面两种策略的一种整合和折中。</p>
+<p>定期删除策略每隔一段时间执行一次删除过期键的操作，并通过限制操作的时长和频率来减少操作对 CPU 带来的影响</p>
+<p>有效的减少了内存的浪费。</p>
+<p>定期删除策略的难点是确定删除操作的时长的频率</p>
+<h2><a id="rdb%E3%80%81aof%E5%92%8C%E5%A4%8D%E5%88%B6%E5%8A%9F%E8%83%BD%E5%AF%B9%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%A4%84%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RDB、AOF 和复制功能对过期键的处理</h2>
+<h3><a id="%E7%94%9F%E6%88%90rdb%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>生成 RDB 文件</h3>
+<p>在执行 SAVE 或者 BGSAVE 命令创建一个新的 RDB 文件时，程序会对数据库中的键进行检查，已过期的键不会保存到 RDB 文件中。</p>
+<h3><a id="%E8%BD%BD%E5%85%A5rdb%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>载入 RDB 文件</h3>
+<p>在启动 Redis 时，如果启用了 RDB 功能，那么服务器将对 RDB 文件进行载入：</p>
+<ol>
+<li>如果是 master，过期键不会载入</li>
+<li>如果是 slave，载入全部的，但主从服务器在进行数据同步时，从服务器上的数据会全部清空，</li>
+</ol>
+<h3><a id="aof%E8%BF%BD%E5%8A%A0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>AOF 追加</h3>
+<p>如果一个键在 AOF 中已经存在，当它过期时会往 AOF 文件中追加一条删除命令来记录该键已被删除</p>
+<h3><a id="aof%E9%87%8D%E5%86%99" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>AOF 重写</h3>
+<p>在执行 AOF 重写的过程中，程序会对数据库键进行检查，已经删除的键不会出现在重写后的文件中。</p>
+<h3><a id="%E5%A4%8D%E5%88%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>复制</h3>
+<p>从服务器的删除操作由主服务器控制<br />
+当键在主服务器上被删除时，主服务器会显示的发一条 DEL 指令到从服务器，告知从服务器删除这个过期键</p>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>
