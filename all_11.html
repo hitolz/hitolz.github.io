@@ -1,0 +1,649 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+    
+  非著名Java程序员
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
+ 
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="_self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li id=""><a target="_self" href="about1.html">About</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; 非著名Java程序员</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="_self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li><a target="_self" href="about1.html">About</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="redis.html">redis</a></li>
+        
+            <li><a href="dubbo.html">dubbo</a></li>
+        
+            <li><a href="RocketMQ.html">RocketMQ</a></li>
+        
+            <li><a href="kubernetes.html">kubernetes</a></li>
+        
+            <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a></li>
+        
+            <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a></li>
+        
+            <li><a href="JVM.html">JVM</a></li>
+        
+            <li><a href="Java.html">Java</a></li>
+        
+            <li><a href="MySQL.html">MySQL</a></li>
+        
+            <li><a href="Docker.html">Docker</a></li>
+        
+            <li><a href="Spring.html">Spring</a></li>
+        
+            <li><a href="GO.html">GO</a></li>
+        
+            <li><a href="rust.html">rust</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+	$(function(){
+		$('#menu_item_index').addClass('is_active');
+	});
+</script>
+<div class="row">
+	<div class="large-8 medium-8 columns">
+		<div class="markdown-body home-categories">
+		
+			<div class="article">
+                <a class="clearlink" href="16407431442346.html">
+                
+                  <h1>时间格式转换问题</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<div class="mweb_toc"><ul>
+<li><a href="#%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4">各种标准时间</a>
+<ul>
+<li><a href="#%E6%A0%BC%E6%9E%97%E5%A8%81%E6%B2%BB%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4gmt">格林威治标准时间GMT</a></li>
+<li><a href="#%E5%8D%8F%E8%B0%83%E4%B8%96%E7%95%8C%E6%97%B6%E9%97%B4utc">协调世界时间UTC</a></li>
+<li><a href="#iso8601">ISO8601</a></li>
+<li><a href="#cst">CST</a></li>
+</ul>
+</li>
+<li><a href="#%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyymmdd%E4%B8%8E-yyyymmdd%E7%9A%84%E5%8C%BA%E5%88%AB">日期格式化 YYYYMMdd 与 yyyyMMdd 的区别</a></li>
+<li><a href="#%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyy-mm-dd-hh-mm-ss%E4%B8%8E-yyyy-mm-dd-hh-mm-ss%E7%9A%84%E5%8C%BA%E5%88%AB">日期格式化 yyyy-MM-dd HH:mm:SS 与 yyyy-MM-dd HH:mm:ss 的区别</a></li>
+</ul>
+</div>
+<p>在配置文件中全局的配置</p>
+<pre><code class="language-properties">spring.jackson.date-format=yyyy-MM-dd HH:mm:ss
+spring.jackson.time-zone=GMT+8
+</code></pre>
+<p>所有使用到时间格式的地方都会转换为这种格式的</p>
+<h2><a id="%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>各种标准时间</h2>
+<p><a href="https://ahuigo.github.io/b/c/shell-time#/">https://ahuigo.github.io/b/c/shell-time#/</a></p>
+<h3><a id="%E6%A0%BC%E6%9E%97%E5%A8%81%E6%B2%BB%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4gmt" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>格林威治标准时间GMT</h3>
+<p>含义：「格林威治标准时间」(Greenwich Mean Time，简称G.M.T.)以伦敦格林威治的子午线为基线，以地球自转为标准，全球都以此标准设定时间。<br />
+以下几个时间相同，但用于不同的时区/地区。</p>
+<pre><code class="language-plain_text">Wed Aug 14 08:21:05 GMT 2013 //标准GMT时间
+Wed Aug 14 16:21:05 GMT+8 2013 //东8区，即我们的北京时间
+Wed Aug 14 03:21:05 GMT-5 2013 //西5区，美国和加拿大时间
+</code></pre>
+<h3><a id="%E5%8D%8F%E8%B0%83%E4%B8%96%E7%95%8C%E6%97%B6%E9%97%B4utc" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>协调世界时间UTC</h3>
+<p>由于地球每天的自转是有些不规则的，而且正在缓慢减速，因此格林威治时间已经不再被作为标准时间使用。现在的标准时间，是由原子钟报时的协调世界时（UTC: Coordinated Universal Time）。UTC比GMT更精确严谨。</p>
+<pre><code class="language-plain_text">Wed Aug 14 08:21:05 UTC 2013 //标准UTC时间
+Wed Aug 14 16:21:05 UTC+8 2013 //东8区，即我们的北京时间
+Wed Aug 14 03:21:05 UTC-5 2013 //西5区，美国和加拿大时间
+</code></pre>
+<p>常识：<br />
+国际原子时的误差为每日数纳秒<br />
+对我们日常所使用的时间工具而言，UTC和GMT时间没有区别。</p>
+<h3><a id="iso8601" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ISO8601</h3>
+<p>moment.defaultFormat is the ISO8601 format YYYY-MM-DDTHH:mm:ssZ<br />
+ISO8601:</p>
+<pre><code class="language-plain_text">new Date(&quot;2016-01-01 11:13:00Z&quot;);      +0区
+new Date(&quot;2016-01-01T11:13:00Z&quot;);      +0区
+new Date(&quot;2016-01-01 11:13:00+08&quot;);     +8区
+new Date(&quot;2016-01-01 11:13:00+0800&quot;); +8区
+new Date(&quot;2016-01-01T11:13:00+08:00&quot;); +8区
+new Date(&quot;2016-01-01T11:13:00.333+08:00&quot;); +8区
+
+new Date(&quot;2016-01-01&quot;);                 +0区(默认)
+new Date(&quot;2016-01-01 11:13:00&quot;);        +8区(默认)
+new Date(&quot;October 13, 1975 11:13:00&quot;);  +8区(默认)
+</code></pre>
+<h3><a id="cst" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CST</h3>
+<p>CST是时区缩写，可以指下列的时区：</p>
+<p>澳洲中部时间，Central Standard Time (Australia)<br />
+中部标准时区（北美洲），Central Standard Time (North America)<br />
+北京时间，China Standard Time<br />
+古巴标准时间，Cuba Standard Time，参见北美东部时区<br />
+建议不要使用CST时间，对于以下时间，你可能不知道它到底是北京时间，还是其它时间：</p>
+<pre><code class="language-plain_text">Wed Aug 14 08:21:05 CST 2013 //北京、北美中部、古巴、澳洲中部？Who knows?
+</code></pre>
+<p>CST 转北京时间<br />
+在需要转换日期格式的字段上添加注解<code>com.fasterxml.jackson.annotation.JsonFormat</code></p>
+<pre><code class="language-plain_text">@JsonFormat(pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;,timezone = &quot;GMT+8&quot;)
+</code></pre>
+<h2><a id="%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyymmdd%E4%B8%8E-yyyymmdd%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>日期格式化 YYYYMMdd 与 yyyyMMdd 的区别</h2>
+<p>大写的 YYYY 表示这一天所在的周 所在的年份，也就是说如果当前周跨年了，这个获取到的就有问题。</p>
+<h2><a id="%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyy-mm-dd-hh-mm-ss%E4%B8%8E-yyyy-mm-dd-hh-mm-ss%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>日期格式化 yyyy-MM-dd HH:mm:SS 与 yyyy-MM-dd HH:mm:ss 的区别</h2>
+<p>HH 表示按 24 小时格式返回</p>
+<p>SS 表示毫秒？<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot%202022-01-10%20at%2018.04.39@2x.png" alt="CleanShot 2022-01-10 at 18.04.39@2x" /></p>
+<p>用小写的 ss 表示秒。</p>
+<pre><code class="language-sql">select d.queue,
+       count(*) as total
+from gbl_loan a
+         join gbl_loan_type_dictionary b on a.loan_source = b.id and a.channel_id = b.channel_id
+         join gbl_collection_case c on c.loan_id = a.id
+         join gbl_assignment d on c.id = d.collection_id
+where a.loan_source = #{loanSourceId}
+  and a.active = 1
+  and c.active = 1
+  and b.tenant = #{tenant}
+  and d.queue = #{queue}
+  and d.agentId is not null
+&lt;![CDATA[
+  and a.created_time &gt; #{reportStartDate}
+  and a.created_time &lt; #{reportEndDate}
+]]&gt;
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2021/12/29 09:59 上午</span>
+                    
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+              
+
+
+			<div class="row">
+			  <div class="large-6 columns">
+			  <p class="text-left" style="padding-top:25px;">
+			   <a href="all_10.html">&laquo; Prev Page</a>  
+			  </p>
+			  </div>
+			  <div class="large-6 columns">
+			<p class="text-right" style="padding-top:25px;">
+			 <a href="all_12.html">&raquo; Next Page</a> 
+			</p>
+			  </div>
+			</div>
+		</div>
+	</div><!-- large 8 -->
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>非著名Java程序员</h1>
+                <div class="site-des"></div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+
+
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="redis.html"><strong>redis</strong></a>
+        
+            <a href="dubbo.html"><strong>dubbo</strong></a>
+        
+            <a href="RocketMQ.html"><strong>RocketMQ</strong></a>
+        
+            <a href="kubernetes.html"><strong>kubernetes</strong></a>
+        
+            <a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html"><strong>Java并发编程的艺术</strong></a>
+        
+            <a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html"><strong>网络协议</strong></a>
+        
+            <a href="JVM.html"><strong>JVM</strong></a>
+        
+            <a href="Java.html"><strong>Java</strong></a>
+        
+            <a href="MySQL.html"><strong>MySQL</strong></a>
+        
+            <a href="Docker.html"><strong>Docker</strong></a>
+        
+            <a href="Spring.html"><strong>Spring</strong></a>
+        
+            <a href="GO.html"><strong>GO</strong></a>
+        
+            <a href="rust.html"><strong>rust</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16727524082529.html">rust 包管理与工作空间</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16689222220789.html">actix-web</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16672061401168.html">rust 所有权</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
+      </div>
+    </div>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+figure{margin: 0;padding: 0;}
+figcaption{text-align:center;}
+
+/* PrismJS 1.14.0
+ http://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javascript */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    text-shadow: 0 1px white;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+    text-shadow: none;
+    background:#b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+    text-shadow: none;
+    background: #b3d4fc;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background: #F7F7F7;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1em;
+    border-radius: .3em;
+    white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: slategray;
+}
+
+.token.punctuation {
+    color: #999;
+}
+
+.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #9a6e3a;
+    background: hsla(0, 0%, 100%, .5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #07a;
+}
+
+.token.function,
+.token.class-name {
+    color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e90;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+    .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+    }
+
+        .line-numbers-rows > span:before {
+            content: counter(linenumber);
+            color: #999;
+            display: block;
+            padding-right: 0.8em;
+            text-align: right;
+        }
+
+</style>
+
+  
+    
+
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+
+
+  </body>
+</html>

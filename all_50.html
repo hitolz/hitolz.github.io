@@ -1,0 +1,712 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+    
+  非著名Java程序员
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
+ 
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="_self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li id=""><a target="_self" href="about1.html">About</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; 非著名Java程序员</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="_self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li><a target="_self" href="about1.html">About</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="redis.html">redis</a></li>
+        
+            <li><a href="dubbo.html">dubbo</a></li>
+        
+            <li><a href="RocketMQ.html">RocketMQ</a></li>
+        
+            <li><a href="kubernetes.html">kubernetes</a></li>
+        
+            <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a></li>
+        
+            <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a></li>
+        
+            <li><a href="JVM.html">JVM</a></li>
+        
+            <li><a href="Java.html">Java</a></li>
+        
+            <li><a href="MySQL.html">MySQL</a></li>
+        
+            <li><a href="Docker.html">Docker</a></li>
+        
+            <li><a href="Spring.html">Spring</a></li>
+        
+            <li><a href="GO.html">GO</a></li>
+        
+            <li><a href="rust.html">rust</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+	$(function(){
+		$('#menu_item_index').addClass('is_active');
+	});
+</script>
+<div class="row">
+	<div class="large-8 medium-8 columns">
+		<div class="markdown-body home-categories">
+		
+			<div class="article">
+                <a class="clearlink" href="16032812571910.html">
+                
+                  <h1>Spring IOC 容器 bean 加载过程</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<div class="mweb_toc"><ul>
+<li><a href="#refresh%E6%96%B9%E6%B3%95">refresh方法</a></li>
+<li><a href="#bean%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90">bean 加载过程分析</a>
+<ul>
+<li><a href="#xml%E6%96%B9%E5%BC%8F">xml 方式</a></li>
+<li><a href="#%E6%B3%A8%E8%A7%A3%E6%96%B9%E5%BC%8F">注解方式</a></li>
+<li><a href="#beanfactory-getbean">BeanFactory.getBean</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96">三级缓存解决循环依赖</a></li>
+</ul>
+</div>
+<p>本文主要内容：分析 Spring 加载 bean 的过程，重点分析下 Spring 解决循环依赖的三级缓存。</p>
+<h2><a id="refresh%E6%96%B9%E6%B3%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>refresh方法</h2>
+<p>IoC 初始化过程中核心方法 refresh ：</p>
+<p>org.springframework.context.support.AbstractApplicationContext#refresh ：</p>
+<pre><code class="language-plain_text">public void refresh() throws BeansException, IllegalStateException {
+	synchronized (this.startupShutdownMonitor) {
+		// Prepare this context for refreshing.
+		// 刷新上下文
+		prepareRefresh();
+
+		// Tell the subclass to refresh the internal bean factory.
+		// 在子类中启动 refreshBeanFactory。 该方法执行完成之后，xml中的bean已经加载完成,但是 注解方式的bean 在
+		// invokeBeanFactoryPostProcessors 加载
+		ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+
+		// Prepare the bean factory for use in this context.
+		prepareBeanFactory(beanFactory);
+
+		try {
+			// Allows post-processing of the bean factory in context subclasses.
+			// 设置BeanFactory的后置处理
+			postProcessBeanFactory(beanFactory);
+
+			// Invoke factory processors registered as beans in the context.
+			// 调用BeanFactory的后处理器，这些后处理器是在Bean定义中项容器注册的，这里面会实例化 后置处理器的bean对象
+			invokeBeanFactoryPostProcessors(beanFactory);
+
+			// Register bean processors that intercept bean creation.
+			// 注册Bean的后处理器，在Bean创建过程中调用
+			registerBeanPostProcessors(beanFactory);
+
+			// Initialize message source for this context.
+			// 对上下文中的消息源进行初始化
+			initMessageSource();
+
+			// Initialize event multicaster for this context.
+			// 初始化上下文中的事件机制
+			initApplicationEventMulticaster();
+
+			// Initialize other special beans in specific context subclasses.
+			// 初始化其他特殊Bean
+			onRefresh();
+
+			// Check for listener beans and register them.
+			// 检查监听Bean并且将这些Bean向容器注册
+			registerListeners();
+
+			// Instantiate all remaining (non-lazy-init) singletons.
+			// 实例化所有的单例bean
+			finishBeanFactoryInitialization(beanFactory);
+
+			// Last step: publish corresponding event.
+			// 发布容器事件，结束Refresh过程。
+			finishRefresh();
+		}
+
+		catch (BeansException ex) {
+			if (logger.isWarnEnabled()) {
+				logger.warn(&quot;Exception encountered during context initialization - &quot; +
+						&quot;cancelling refresh attempt: &quot; + ex);
+			}
+
+			// Destroy already created singletons to avoid dangling resources.
+			// 为防止Bean资源占用，在异常处理中，销毁已经在前面过程中生成的单例bean
+			destroyBeans();
+
+			// Reset 'active' flag.
+			// 重置 active 标志
+			cancelRefresh(ex);
+
+			// Propagate exception to caller.
+			throw ex;
+		}
+
+		finally {
+			// Reset common introspection caches in Spring's core, since we
+			// might not ever need metadata for singleton beans anymore...
+			resetCommonCaches();
+		}
+	}
+}
+</code></pre>
+<h2><a id="bean%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>bean 加载过程分析</h2>
+<p>xml 方式(ClassPathXmlApplicationContext) 和 注解方式(AnnotationConfigApplicationContext) 启动 Spring 容器，bean 加载过程处理方式不太一样</p>
+<h3><a id="xml%E6%96%B9%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>xml 方式</h3>
+<p>xml 方式加载过程主要是 obtainFreshBeanFactory 这个方法，先通过文件流读取 xml 文件中的信息，loadBeanDefinitions 方法解析 xml 文件，将其中的内容加载成 beanDefinition，放到 beanDefinitionMap 中，通过 BeanFactory.getBean 方法生产bean</p>
+<h3><a id="%E6%B3%A8%E8%A7%A3%E6%96%B9%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>注解方式</h3>
+<p>注解方式加载过程主要是 invokeBeanFactoryPostProcessors 这个方法，AnnotationConfigApplicationContext 在 new AnnotatedBeanDefinitionReader 的时候会注册一些 bean 后置处理器</p>
+<ul>
+<li>ConfigurationClassPostProcessor</li>
+<li>AutowiredAnnotationBeanPostProcessor</li>
+<li>CommonAnnotationBeanPostProcessor</li>
+</ul>
+<p>通过 BeanFactory.getBean 方法生产bean</p>
+<h3><a id="beanfactory-getbean" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>BeanFactory.getBean</h3>
+<p>BeanFactory 中最重要的方法就是 getBean，这个方法既可以获取 bean、也可以生产 bean，获取 bean 是从缓存中去拿，如果缓存中没有在去生产 bean 。</p>
+<h2><a id="%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>三级缓存解决循环依赖</h2>
+<p>假设这么一个场景</p>
+<pre><code class="language-java">class A{
+	@Autowired
+	private B b;
+
+}
+
+class B{
+	@Autowired
+	private A a;
+}
+</code></pre>
+<p>A 依赖 B，B 又依赖 A，但是 Spring 却没有出现 循环依赖，其解决方式是通过 三个缓存 map 。</p>
+<pre><code class="language-java">一级缓存，存的是实例化、初始化完成的 bean，最终的 bean，可以直接拿来用的
+private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap&lt;&gt;(256);
+
+二级缓存，存放的是完成实例化，但是还未进行初始化的 bean
+private final Map&lt;String, Object&gt; earlySingletonObjects = new HashMap&lt;&gt;(16);
+
+三级缓存，进入实例化阶段的单例 bean
+private final Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories = new HashMap&lt;&gt;(16);
+</code></pre>
+<p>通过一个流程图来看下 A、B 两个类在 IOC 加载创建 bean 的流程，注意，图中省略了好多步骤、细节部分，但是不影响主流程。<br />
+<img src="http://hitol.blog.cdn.updev.cn/2021-08-01-Spring-IOC16032812571910.png" alt="Spring-IOC16032812571910" /></p>
+<p>竖向表示当前方法的执行顺序，横向表示进入到该方法。</p>
+<p>这个流程图分为了 三列，第一列创建 bean A 的流程，在创建 A 的时候发现要依赖 B，第二列就是创建 bena B 的流程，在创建 B 的时候又发现依赖 A，第三列就是 创建 B 的时候 创建 A 的流程。</p>
+<p>图中用颜色标注的是表示用到三级缓存的地方。</p>
+<ol>
+<li>第一个是在获取缓存的方法 getSingleton 中，先从第一级缓存去查找，如果没有则去第二级缓存中查找，没有再去第三级缓存中查找，如果第三级缓存中查到了，将其从第三级缓存中删掉，放到第二级缓存中。</li>
+<li>第二个用到缓存的地方是 doCreateBean 中，bean 通过反射获取到实例后，先放入到第三级缓存中</li>
+<li>第三个是 doCreateBean 完成后，bean 都初始化好，放入到第一级缓存中</li>
+</ol>
+<p>创建 A 的时候发现要依赖 B，于是递归调用 getBean(B) 去创建 B，这个时候三个缓存中只有第三级缓存中有 A</p>
+<p>创建 B 的时候发现要依赖 A，于是递归调用 getBean(A)去创建 A ，这个时候第三级缓存中有 A、B，于是从第三级缓存中取出 bean A，放到二级缓存中去，接着执行创建 B 的流程，B 初始化完成后，将 B 放到第一级缓存</p>
+<p>然后在执行创建 A 的流程，初始化实例 A，完事后将 A 也加入到第一级缓存中。<br />
+<img src="http://hitol.blog.cdn.updev.cn/2021-08-01-16277856258251.jpg" alt="" /></p>
+<p>每个步骤对应的三个缓存中的内容：</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2021-08-02-16278669180573.jpg" alt="" /></p>
+<p>以上；</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2020/10/21 19:54 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+              
+
+
+			<div class="row">
+			  <div class="large-6 columns">
+			  <p class="text-left" style="padding-top:25px;">
+			   <a href="all_49.html">&laquo; Prev Page</a>  
+			  </p>
+			  </div>
+			  <div class="large-6 columns">
+			<p class="text-right" style="padding-top:25px;">
+			 <a href="all_51.html">&raquo; Next Page</a> 
+			</p>
+			  </div>
+			</div>
+		</div>
+	</div><!-- large 8 -->
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>非著名Java程序员</h1>
+                <div class="site-des"></div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+
+
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="redis.html"><strong>redis</strong></a>
+        
+            <a href="dubbo.html"><strong>dubbo</strong></a>
+        
+            <a href="RocketMQ.html"><strong>RocketMQ</strong></a>
+        
+            <a href="kubernetes.html"><strong>kubernetes</strong></a>
+        
+            <a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html"><strong>Java并发编程的艺术</strong></a>
+        
+            <a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html"><strong>网络协议</strong></a>
+        
+            <a href="JVM.html"><strong>JVM</strong></a>
+        
+            <a href="Java.html"><strong>Java</strong></a>
+        
+            <a href="MySQL.html"><strong>MySQL</strong></a>
+        
+            <a href="Docker.html"><strong>Docker</strong></a>
+        
+            <a href="Spring.html"><strong>Spring</strong></a>
+        
+            <a href="GO.html"><strong>GO</strong></a>
+        
+            <a href="rust.html"><strong>rust</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16727524082529.html">rust 包管理与工作空间</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16689222220789.html">actix-web</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16672061401168.html">rust 所有权</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
+      </div>
+    </div>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+figure{margin: 0;padding: 0;}
+figcaption{text-align:center;}
+
+/* PrismJS 1.14.0
+ http://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javascript */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    text-shadow: 0 1px white;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+    text-shadow: none;
+    background:#b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+    text-shadow: none;
+    background: #b3d4fc;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background: #F7F7F7;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1em;
+    border-radius: .3em;
+    white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: slategray;
+}
+
+.token.punctuation {
+    color: #999;
+}
+
+.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #9a6e3a;
+    background: hsla(0, 0%, 100%, .5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #07a;
+}
+
+.token.function,
+.token.class-name {
+    color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e90;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+    .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+    }
+
+        .line-numbers-rows > span:before {
+            content: counter(linenumber);
+            color: #999;
+            display: block;
+            padding-right: 0.8em;
+            text-align: right;
+        }
+
+</style>
+
+  
+    
+
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+
+
+  </body>
+</html>

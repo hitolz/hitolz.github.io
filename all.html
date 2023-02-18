@@ -1,466 +1,474 @@
-<!DOCTYPE html>
-<html lang="zh">
+<!doctype html>
+<html class="no-js" lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-      
-    非著名Java程序员
     
-    </title>
-    
-
-    
-    
-    <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
-    <link rel="stylesheet" href="asset/css/style.min.css">
-    <link rel="stylesheet" href="asset/css/doc.css">
-    <script src="asset/app.js"></script>
-</head>
-  <body>
-    <section class="hero">
-      <div class="hero-head">
-          <nav class="navbar" role="navigation" aria-label="main navigation">
-              <div class="container">
-              <div class="navbar-brand">
-                
-                <a target="_self" class="navbar-item " href="index.html">Home</a>
-                
-                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
-                
-                <a target="_self" class="navbar-item " href="about1.html">About</a>
-                
-
-                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
-                  <span aria-hidden="true"></span>
-                  <span aria-hidden="true"></span>
-                  <span aria-hidden="true"></span>
-                </a>
-              </div>
-            
-              <div id="navbarSNSRssButtons" class="navbar-menu">
-                <div class="navbar-start">
-                  
-                </div>
-            
-                <div class="navbar-end">
-                  <div class="navbar-item">
-                    <!--buttons start-->
-                    <div class="buttons">
-                      
-                        
-                        
-                        
-                        
-                      
-                      <a href="atom.xml" target="_blank" title="RSS">
-                          <span class="icon is-large has-text-black-bis">
-                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
-                          </span>
-                      </a>
-                    </div>
-                    <!--buttons end-->
-
-                  </div>
-                </div>
-                </div>
-              </div>
-            </nav>
-      </div>
-
+  非著名Java程序员
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
  
-<div class="hero-body ct-body">
-        <div class="container">
-              <div class="columns is-centered">
-                  <div class="column  is-four-fifths">
-                      <div class="columns is-mobile">
-                          <div class="column">
-                              <h1 class="title">
-非著名Java程序员
-              
-                              </h1>
-                              <h2 class="subtitle">
-                                 
-                              </h2>
-                          </div>
-                          <div class="column is-narrow"><figure class="image is-128x128">
-                            
-                            </figure></div>
-                      </div>
-                        
-                      
-                  </div>
-                  
-                </div>
-            
-              
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
         
-        </div>
-      </div>
-</section>
-<section class="ct-body">
-      <div class="container">
-          <div class="columns is-variable bd-klmn-columns is-4">
-              <div class="column is-two-thirds">
+        <li id=""><a target="_self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li id=""><a target="_self" href="about1.html">About</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; 非著名Java程序员</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="_self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li><a target="_self" href="about1.html">About</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="redis.html">redis</a></li>
+        
+            <li><a href="dubbo.html">dubbo</a></li>
+        
+            <li><a href="RocketMQ.html">RocketMQ</a></li>
+        
+            <li><a href="kubernetes.html">kubernetes</a></li>
+        
+            <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a></li>
+        
+            <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a></li>
+        
+            <li><a href="JVM.html">JVM</a></li>
+        
+            <li><a href="Java.html">Java</a></li>
+        
+            <li><a href="MySQL.html">MySQL</a></li>
+        
+            <li><a href="Docker.html">Docker</a></li>
+        
+            <li><a href="Spring.html">Spring</a></li>
+        
+            <li><a href="GO.html">GO</a></li>
+        
+            <li><a href="rust.html">rust</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+	$(function(){
+		$('#menu_item_index').addClass('is_active');
+	});
+</script>
+<div class="row">
+	<div class="large-8 medium-8 columns">
+		<div class="markdown-body home-categories">
+		
+			<div class="article">
+                <a class="clearlink" href="16761949639234.html">
                 
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16761949639234.html"> 
-                            <h2 class="title">使用 ChatGPT 学习 Javassist</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16761949639234.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2023/02/12 17:42 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='JVM.html'>JVM</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16727524082529.html"> 
-                            <h2 class="title">rust 包管理与工作空间</h2>
-                          </a>        
-                          
-                          <p>R</p>
-                                                    
-                          <p> 
-                            <a href="16727524082529.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2023/01/03 21:26 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='rust.html'>rust</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16669473309292.html"> 
-                            <h2 class="title">rust actix-diesel-mysql demo</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16669473309292.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2022/11/22 16:55 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='rust.html'>rust</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16689222220789.html"> 
-                            <h2 class="title">actix-web</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16689222220789.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2022/11/10 13:30 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='rust.html'>rust</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16672061401168.html"> 
-                            <h2 class="title">rust 所有权</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16672061401168.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2022/10/31 16:49 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='rust.html'>rust</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16626878291486.html"> 
-                            <h2 class="title">Java 太卷了转 GO（二）</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16626878291486.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2022/09/09 09:43 上午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='GO.html'>GO</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16625340324703.html"> 
-                            <h2 class="title">Java 太卷了转 GO（一）</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16625340324703.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2022/09/07 15:00 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='GO.html'>GO</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16587443411197.html"> 
-                            <h2 class="title">centos7 安装 NFS</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16587443411197.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2022/07/25 18:19 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='kubernetes.html'>kubernetes</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16505304277569.html"> 
-                            <h2 class="title">Redis 过期键删除策略</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16505304277569.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2022/04/21 16:40 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='redis.html'>redis</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16466651837804.html"> 
-                            <h2 class="title">使用 kubeadm 搭建 Kubernetes 集群</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16466651837804.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2022/03/07 22:59 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='kubernetes.html'>kubernetes</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
+                  <h1>使用 ChatGPT 学习 Javassist</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16767189601796.jpg" alt="" /></p>
+<h2><a id="q-javassist%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 是什么？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p>Javassist是一个开源的Java字节码操作库，它允许开发人员在运行时编辑和创建Java类。使用Javassist，开发人员可以通过修改现有类的字节码来动态地改变它们的行为，也可以使用Javassist的API来创建全新的Java类。Javassist提供了一个易于使用的API，使开发人员能够在不需要了解复杂的字节码结构的情况下轻松地创建和编辑Java类。Javassist还提供了一些高级功能，如动态代理、AOP（面向切面编程）和Java字节码的转换。由于它的灵活性和易用性，Javassist被广泛用于Java应用程序的动态编程和增强。</p>
+<h2><a id="q-javassist%E5%85%A5%E9%97%A8%E7%A4%BA%E4%BE%8B%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 入门示例？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<pre><code class="language-java">import javassist.*;
 
-                  <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-                    <a class="pagination-previous"  disabled="disabled" ><span class="tran-prev-page">&laquo; Prev Page</span></a>  
-                    <a class="pagination-next"   href="all_1.html" ><span class="tran-next-page">Next Page &raquo;</span></a>                   
-                  </nav>
+public class JavassistExample {
+    public static void main(String[] args) throws Exception {
+        ClassPool pool = ClassPool.getDefault();
+        CtClass cc = pool.makeClass(&quot;MyClass&quot;);
 
-              </div><!-- end column -->
-              <div class="column">
-                  <div class="card">
-                      <header class="card-header">
-                        <p class="card-header-title">
-                           <span class="tran-site-categories">Categories</span> 
-                        </p>
-                     
-                      </header>
-                      <div class="card-content site-categories">
-                        <div class="content"> 
-                          <ul>
-                          
-                                <li><a href="redis.html">redis</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="dubbo.html">dubbo</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="RocketMQ.html">RocketMQ</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="kubernetes.html">kubernetes</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="JVM.html">JVM</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="Java.html">Java</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="MySQL.html">MySQL</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="Docker.html">Docker</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="Spring.html">Spring</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="GO.html">GO</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="rust.html">rust</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                          </ul>
-                        </div>
+        // 添加属性
+        CtField field = new CtField(CtClass.intType, &quot;myField&quot;, cc);
+        cc.addField(field);
+
+        // 添加方法
+        CtMethod method = CtNewMethod.make(&quot;public void setMyField(int value) { this.myField = value; }&quot;, cc);
+        cc.addMethod(method);
+
+        // 输出类的字节码
+        cc.writeFile(&quot;output&quot;);
+    }
+}
+
+</code></pre>
+<p>这个示例创建了一个名为&quot;MyClass&quot;的新类，添加了一个名为&quot;myField&quot;的int类型属性和一个名为&quot;setMyField&quot;的公共void类型方法，该方法设置myField属性的值。最后，将该类的字节码写入名为&quot;output&quot;的文件夹中。</p>
+<p>通过运行该示例，将在output文件夹中生成一个MyClass.class文件，该文件包含上述定义的类的字节码。这个示例只是Javassist的入门示例，Javassist还提供了许多其他功能，如修改现有类、动态代理等。</p>
+<h2><a id="q%E9%9C%80%E8%A6%81%E6%B7%BB%E5%8A%A0%E4%BB%80%E4%B9%88-maven%E4%BE%9D%E8%B5%96%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:需要添加什么 maven 依赖？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.javassist&lt;/groupId&gt;
+    &lt;artifactId&gt;javassist&lt;/artifactId&gt;
+    &lt;version&gt;3.28.0-GA&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>添加完 maven 依赖后运行，确实在 output 文件夹下生成了 MyClass.class<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1816.57.14@2x.png" alt="CleanShot2023-02-1816.57.14@2x" /></p>
+<h2><a id="q%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:如何修改现有类？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p>使用Javassist修改现有类可以通过以下步骤完成：</p>
+<ol>
+<li>获取类池（ClassPool）对象。
+<pre><code class="language-java">ClassPool pool = ClassPool.getDefault();
+</code></pre>
+</li>
+<li>使用类池获取要修改的类的CtClass对象。
+<pre><code class="language-java">CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
+</code></pre>
+</li>
+<li>修改类的字节码，比如添加新的方法或属性，修改现有方法或属性等。下面是一个添加新方法的示例：
+<pre><code class="language-java">CtMethod newMethod = CtNewMethod.make(
+&quot;public void newMethod() { System.out.println(\&quot;This is a new method!\&quot;); }&quot;, cc);
+cc.addMethod(newMethod);
+</code></pre>
+</li>
+<li>将修改后的字节码写入class文件或者加载到当前JVM中。
+<pre><code class="language-java">cc.writeFile();
+</code></pre>
+或者
+<pre><code class="language-java">cc.toClass();
+</code></pre>
+<code>writeFile</code>方法会将修改后的字节码写入到磁盘上，<code>toClass</code>方法会将字节码加载到当前JVM中。</li>
+</ol>
+<p>下面是一个完整的示例，它会将现有类&quot;com.example.MyClass&quot;中的方法&quot;oldMethod&quot;修改为输出一条新的信息：</p>
+<pre><code class="language-java">import javassist.*;
+
+public class JavassistExample {
+    public static void main(String[] args) throws Exception {
+        ClassPool pool = ClassPool.getDefault();
+        CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
+
+        CtMethod oldMethod = cc.getDeclaredMethod(&quot;oldMethod&quot;);
+        oldMethod.setBody(&quot;System.out.println(\&quot;This is a modified old method!\&quot;);&quot;);
+
+        cc.writeFile();
+    }
+}
+</code></pre>
+<p>注意，为了执行这个示例，你需要将&quot;com.example.MyClass&quot;这个类的字节码文件放在类路径下。</p>
+<hr />
+<p>执行前，我的 TestClass类，里面 test 方法，输出1<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1817.07.50@2x.png" alt="CleanShot2023-02-1817.07.50@2x" /></p>
+<p>执行后<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1817.08.29@2x.png" alt="CleanShot2023-02-1817.08.29@2x" /></p>
+<p>执行后的这个是新生成的文件，并不是覆盖掉原来的文件。</p>
+<h2><a id="q-cc-toclass%E5%92%8C-cc-writefile%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:cc.toClass() 和 cc.writeFile() 的区别</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p><code>toClass()</code> 方法会将 <code>Javassist</code> 修改后的类直接转换为 <code>java.lang.Class</code> 对象，并将该对象加载到 JVM 中，因此你可以在代码中直接使用修改后的类。如果你调用了 <code>toClass()</code> 方法，<code>Javassist</code> 会尝试在 JVM 中加载修改后的类，如果加载成功，则返回一个 <code>java.lang.Class</code> 对象，否则会抛出一个异常。</p>
+<p><code>writeFile()</code> 方法会将 <code>Javassist</code> 修改后的类写入到磁盘上的一个 .class 文件中。这个文件可以用来替换原来的类文件，或者在以后的运行中使用，以避免每次运行时重新生成修改后的类。注意，<code>writeFile()</code> 方法只是将类保存到磁盘上，并没有将其加载到 JVM 中，因此你不能直接在代码中使用修改后的类，除非你手动加载它。</p>
+<p>通常来说，<code>toClass()</code> 方法比 <code>writeFile()</code> 更方便，因为它可以直接在 JVM 中加载修改后的类，而不需要手动加载它。但是，如果你需要在多个应用程序之间共享修改后的类，或者想要在以后的运行中使用这个类，那么 <code>writeFile()</code> 方法可能更有用。</p>
+<p>需要注意的是，<code>toClass()</code> 和 <code>writeFile()</code> 方法可以结合使用，以便在将修改后的类加载到 JVM 中之前，先将它们保存到磁盘上。这样做可以避免每次运行时重新生成修改后的类。</p>
+<h2><a id="q%E4%BD%BF%E7%94%A8-javassist%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%8C%E5%9C%A8%E5%85%B6%E4%B8%AD%E6%AF%8F%E4%B8%AA%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E5%89%8D%E5%90%8E%E8%BE%93%E5%87%BA%E5%BD%93%E5%89%8D%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4%EF%BC%8C%E4%BB%A5%E6%AD%A4%E6%9D%A5%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E7%9A%84%E6%97%B6%E9%97%B4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:使用Javassist修改现有类，在其中每个方法执行前后输出当前系统时间，以此来计算方法执行的时间</h2>
+<h2><a id="a%EF%BC%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A：</h2>
+<p>回答的步骤跟上一个问题的步骤是一样的，不过示例代码不同，而且有错误，最终修改完成后的示例：</p>
+<pre><code class="language-java">import javassist.*;
+
+public class JavassistExample {
+    public static void main(String[] args) throws Exception {
+        modifyClass();
+    }
+
+    public static void modifyClass() throws Exception {
+        ClassPool pool = ClassPool.getDefault();
+        CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
+
+        CtMethod[] methods = cc.getDeclaredMethods();
+        for (CtMethod method : methods) {
+            // 判断是否已经存在同名字段
+            CtField field = cc.getDeclaredField(&quot;startTime&quot;);
+            if (field == null) {
+                // 在方法执行前定义一个 startTime 字段
+                field = new CtField(CtClass.longType, &quot;startTime&quot;, cc);
+                cc.addField(field, &quot;0&quot;);
+            }
+            method.insertBefore(&quot;this.startTime = System.currentTimeMillis();&quot;);
+
+            // 在方法执行后插入代码
+            method.insertAfter(&quot;long endTime = System.currentTimeMillis();&quot;
+                    + &quot;System.out.println(\&quot;Time taken to execute &quot;
+                    + method.getName() + &quot; : \&quot; + (endTime - this.startTime) + \&quot;ms\&quot;);&quot;);
+        }
+        cc.toClass();
+    }
+}
+</code></pre>
+<h2><a id="%E8%BF%90%E8%A1%8C%E7%94%9F%E6%88%90%E7%9A%84%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行生成的代码</h2>
+<pre><code class="language-java">public class MyApp {
+    public static void main(String[] args) throws Exception {
+        // 在 Javassist 中修改 MyClass
+        JavassistExample.modifyClass();
+
+        // 已经加载到 JVM 内存中，这里使用的是修改后的类
+        MyClass cc = new MyClass();
+        cc.method1();
+    }
+}
+</code></pre>
+
+                        
                       </div>
-                     
-                    </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2023/02/12 17:42 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='JVM.html'>JVM</a></span>
+          				   
+                    
 
-                    <div class="card">
-                        <header class="card-header">
-                          <p class="card-header-title">
-                              <span class="tran-site-tags">Tags</span> 
-                          </p>
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
                        
-                        </header>
-                        <div class="card-content site-tags">
-                          <div class="content">
-                           <div class="tags">
-                            
-                              <a class="tag is-link is-light" href="tag_AQS.html">#AQS</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_Docker.html">#Docker</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_JVM.html">#JVM</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_Java.html">#Java</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_MySQL.html">#MySQL</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_Spring.html">#Spring</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_git.html">#git</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_mongoDB.html">#mongoDB</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_rust.html">#rust</a> 
-                            
-                           </div>
-                             
-                          </div>
-                        </div>
-                       
-                      </div>
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+              
 
+
+			<div class="row">
+			  <div class="large-6 columns">
+			  <p class="text-left" style="padding-top:25px;">
+			   
+			  </p>
+			  </div>
+			  <div class="large-6 columns">
+			<p class="text-right" style="padding-top:25px;">
+			 <a href="all_1.html">&raquo; Next Page</a> 
+			</p>
+			  </div>
+			</div>
+		</div>
+	</div><!-- large 8 -->
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>非著名Java程序员</h1>
+                <div class="site-des"></div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+
+
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="redis.html"><strong>redis</strong></a>
+        
+            <a href="dubbo.html"><strong>dubbo</strong></a>
+        
+            <a href="RocketMQ.html"><strong>RocketMQ</strong></a>
+        
+            <a href="kubernetes.html"><strong>kubernetes</strong></a>
+        
+            <a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html"><strong>Java并发编程的艺术</strong></a>
+        
+            <a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html"><strong>网络协议</strong></a>
+        
+            <a href="JVM.html"><strong>JVM</strong></a>
+        
+            <a href="Java.html"><strong>Java</strong></a>
+        
+            <a href="MySQL.html"><strong>MySQL</strong></a>
+        
+            <a href="Docker.html"><strong>Docker</strong></a>
+        
+            <a href="Spring.html"><strong>Spring</strong></a>
+        
+            <a href="GO.html"><strong>GO</strong></a>
+        
+            <a href="rust.html"><strong>rust</strong></a>
+         
+        </p>
+
+
+                </div>
               </div>
-            </div>
 
-          
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16727524082529.html">rust 包管理与工作空间</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16689222220789.html">actix-web</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16672061401168.html">rust 所有权</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
       </div>
-    </section>
-
-    <footer class="footer">
-        <div class="content has-text-centered">
-          <p>
-              Copyright &copy; 2019
-              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
-              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
-          </p>
-        </div>
-      </footer>
+    </div>
 
 
 
@@ -479,10 +487,215 @@
 
 
 
+<style type="text/css">
+figure{margin: 0;padding: 0;}
+figcaption{text-align:center;}
+
+/* PrismJS 1.14.0
+ http://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javascript */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    text-shadow: 0 1px white;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+    text-shadow: none;
+    background:#b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+    text-shadow: none;
+    background: #b3d4fc;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background: #F7F7F7;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1em;
+    border-radius: .3em;
+    white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: slategray;
+}
+
+.token.punctuation {
+    color: #999;
+}
+
+.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #9a6e3a;
+    background: hsla(0, 0%, 100%, .5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #07a;
+}
+
+.token.function,
+.token.class-name {
+    color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e90;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+    .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+    }
+
+        .line-numbers-rows > span:before {
+            content: counter(linenumber);
+            color: #999;
+            display: block;
+            padding-right: 0.8em;
+            text-align: right;
+        }
+
+</style>
 
   
     
 
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
 
 
 

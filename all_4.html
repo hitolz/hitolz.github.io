@@ -1,464 +1,527 @@
-<!DOCTYPE html>
-<html lang="zh">
+<!doctype html>
+<html class="no-js" lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-      
-    非著名Java程序员
     
-    </title>
-    
-
-    
-    
-    <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
-    <link rel="stylesheet" href="asset/css/style.min.css">
-    <link rel="stylesheet" href="asset/css/doc.css">
-    <script src="asset/app.js"></script>
-</head>
-  <body>
-    <section class="hero">
-      <div class="hero-head">
-          <nav class="navbar" role="navigation" aria-label="main navigation">
-              <div class="container">
-              <div class="navbar-brand">
-                
-                <a target="_self" class="navbar-item " href="index.html">Home</a>
-                
-                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
-                
-                <a target="_self" class="navbar-item " href="about1.html">About</a>
-                
-
-                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
-                  <span aria-hidden="true"></span>
-                  <span aria-hidden="true"></span>
-                  <span aria-hidden="true"></span>
-                </a>
-              </div>
-            
-              <div id="navbarSNSRssButtons" class="navbar-menu">
-                <div class="navbar-start">
-                  
-                </div>
-            
-                <div class="navbar-end">
-                  <div class="navbar-item">
-                    <!--buttons start-->
-                    <div class="buttons">
-                      
-                        
-                        
-                        
-                        
-                      
-                      <a href="atom.xml" target="_blank" title="RSS">
-                          <span class="icon is-large has-text-black-bis">
-                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
-                          </span>
-                      </a>
-                    </div>
-                    <!--buttons end-->
-
-                  </div>
-                </div>
-                </div>
-              </div>
-            </nav>
-      </div>
-
+  非著名Java程序员
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
  
-<div class="hero-body ct-body">
-        <div class="container">
-              <div class="columns is-centered">
-                  <div class="column  is-four-fifths">
-                      <div class="columns is-mobile">
-                          <div class="column">
-                              <h1 class="title">
-非著名Java程序员
-              
-                              </h1>
-                              <h2 class="subtitle">
-                                 
-                              </h2>
-                          </div>
-                          <div class="column is-narrow"><figure class="image is-128x128">
-                            
-                            </figure></div>
-                      </div>
-                        
-                      
-                  </div>
-                  
-                </div>
-            
-              
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
         
-        </div>
-      </div>
-</section>
-<section class="ct-body">
-      <div class="container">
-          <div class="columns is-variable bd-klmn-columns is-4">
-              <div class="column is-two-thirds">
+        <li id=""><a target="_self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li id=""><a target="_self" href="about1.html">About</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; 非著名Java程序员</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="_self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li><a target="_self" href="about1.html">About</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="redis.html">redis</a></li>
+        
+            <li><a href="dubbo.html">dubbo</a></li>
+        
+            <li><a href="RocketMQ.html">RocketMQ</a></li>
+        
+            <li><a href="kubernetes.html">kubernetes</a></li>
+        
+            <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a></li>
+        
+            <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a></li>
+        
+            <li><a href="JVM.html">JVM</a></li>
+        
+            <li><a href="Java.html">Java</a></li>
+        
+            <li><a href="MySQL.html">MySQL</a></li>
+        
+            <li><a href="Docker.html">Docker</a></li>
+        
+            <li><a href="Spring.html">Spring</a></li>
+        
+            <li><a href="GO.html">GO</a></li>
+        
+            <li><a href="rust.html">rust</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+	$(function(){
+		$('#menu_item_index').addClass('is_active');
+	});
+</script>
+<div class="row">
+	<div class="large-8 medium-8 columns">
+		<div class="markdown-body home-categories">
+		
+			<div class="article">
+                <a class="clearlink" href="16672061401168.html">
                 
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16032824286367.html"> 
-                            <h2 class="title">Mysql 根据时间戳、时间按年月日分组统计</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16032824286367.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2020/10/21 20:13 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16032822998588.html"> 
-                            <h2 class="title">AOP及自定义注解实现Redis缓存</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16032822998588.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2020/10/21 20:11 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='Java.html'>Java</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16032822130201.html"> 
-                            <h2 class="title">JVM类加载</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16032822130201.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2020/10/21 20:10 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='JVM.html'>JVM</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16032822063276.html"> 
-                            <h2 class="title">线程池</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16032822063276.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2020/10/21 20:10 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='Java.html'>Java</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16032821893434.html"> 
-                            <h2 class="title">Spring事务管理</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16032821893434.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2020/10/21 20:09 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='Spring.html'>Spring</a></span>
-                            
-                                <span class="posted-in"><a href='Java.html'>Java</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16032821146100.html"> 
-                            <h2 class="title">MySQL聚集索引和二级索引</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16032821146100.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2020/10/21 20:08 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16032820634281.html"> 
-                            <h2 class="title">Java类文件结构</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16032820634281.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2020/10/21 20:07 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='JVM.html'>JVM</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16032820521240.html"> 
-                            <h2 class="title">EXPLAIN</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16032820521240.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2020/10/21 20:07 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16032820352897.html"> 
-                            <h2 class="title">JVM初探</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16032820352897.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2020/10/21 20:07 下午</span>
-                            <span class="tran-posted-in">posted in</span>&nbsp; 
-                            
-                                <span class="posted-in"><a href='JVM.html'>JVM</a></span>
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  <div class="card">
-                    
-                      <div class="card-content">
-                        <div class="content">
-                          <a href="16032819981795.html"> 
-                            <h2 class="title">[转]写给工程师的十条精进原则</h2>
-                          </a>        
-                                                    
-                          <p> 
-                            <a href="16032819981795.html"><span class="tran-readmore">Read more...</span></a>&nbsp;&nbsp; 
-                            <span class="date">2020/10/21 20:06 下午</span>
-                            
-                                                      
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  
+                  <h1>rust 所有权</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<blockquote>
+<p>所有权可以说是Rust中最为独特的一个功能了。正是所有权概念和相关工具的引入，Rust才能够在没有垃圾回收机制的前提下保障内存安全。因此，正确地了解所有权概念及其在Rust中的实现方式，对于所有Rust开发者来讲都是十分重要的。在本章中，我们会详细地讨论所有权及其相关功能：借用、切片，以及Rust在内存中布局数据的方式。</p>
+</blockquote>
+<p>所有权就是指一个东西归属谁。Rust 中一个变量对应一个值，变量就称为这个值的所有者。</p>
+<pre><code class="language-rust">lex x = 5;
+</code></pre>
+<p>这句话的意思就是，5这个数字所在的内存块的所有者是 x。</p>
+<h2><a id="%E6%89%80%E6%9C%89%E6%9D%83%E8%A7%84%E5%88%99" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>所有权规则</h2>
+<ol>
+<li>Rust 中的每一个值都有一个对应的变量作为它的所有者</li>
+<li>在同一时间内，值有且仅有一个所有者</li>
+<li>当所有者离开自己的作用域时，它持有的值就会被释放掉</li>
+</ol>
+<h2><a id="%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BA%92%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%9A%E7%A7%BB%E5%8A%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>变量和数据交互的方式：移动</h2>
+<p>把一个变量赋值给另一个变量</p>
+<pre><code class="language-rust">fn main() {
+    let x = 5;
+    let y = x;
+    println!(&quot;x = {}, y = {}&quot;, x, y);
 
-                  <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-                    <a class="pagination-previous"   href="all_3.html" ><span class="tran-prev-page">&laquo; Prev Page</span></a>  
-                    <a class="pagination-next"   href="all_5.html" ><span class="tran-next-page">Next Page &raquo;</span></a>                   
-                  </nav>
 
-              </div><!-- end column -->
-              <div class="column">
-                  <div class="card">
-                      <header class="card-header">
-                        <p class="card-header-title">
-                           <span class="tran-site-categories">Categories</span> 
-                        </p>
-                     
-                      </header>
-                      <div class="card-content site-categories">
-                        <div class="content"> 
-                          <ul>
-                          
-                                <li><a href="redis.html">redis</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="dubbo.html">dubbo</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="RocketMQ.html">RocketMQ</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="kubernetes.html">kubernetes</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="JVM.html">JVM</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="Java.html">Java</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="MySQL.html">MySQL</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="Docker.html">Docker</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="Spring.html">Spring</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="GO.html">GO</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                                <li><a href="rust.html">rust</a>
-                                  
-                                  
-                                  
-                                </li> 
-                          
-                          </ul>
-                        </div>
+    let s1 = String::from(&quot;hello&quot;);
+    let s2 = s1;
+    println!(&quot;s1 = {}, s2 = {}&quot;, s1, s2);
+}
+</code></pre>
+<p>这段代码的作用就是 把一个变量赋值给另一个变量。</p>
+<p>整数是已知固定大小的简单值，x y 两个值 5 会同时被推入到当前的栈中。</p>
+<p>然而，将 s1 赋值给 s2 时，便复制了一次 String 的数据，这意味着我们复制了它存储在栈上的指针、长度及容量字段，没有复制指针指向的堆数据。此时的内存布局应该是这样：</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-10-31-16.48.47.png" alt="2022-10-31-16.48.47" /></p>
+<p>为了确保内存安全，避免复制分配的内存，Rust 在这种场景下回简单的将 s1 废弃，不再视其为一个有效的变量。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/2022-10-31-17.03.02.png" alt="2022-10-31-17.03.02" /></p>
+<p>也就解释了这段代码执行为什么报错</p>
+<pre><code class="language-plain_text">error[E0382]: borrow of moved value: `s1`
+  --&gt; src/main.rs:11:34
+   |
+8  |     let s1 = String::from(&quot;hello&quot;);
+   |         -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait
+9  |     let s2 = s1;
+   |              -- value moved here
+10 |
+11 |     println!(&quot;s1 = {}, s2 = {}&quot;, s1, s2);
+   |                                  ^^ value borrowed here after move
+   |
+   = note: this error originates in the macro `$crate::format_args_nl` which comes from the expansion of the macro `println` (in Nightly builds, run with -Z macro-backtrace for more info)
+</code></pre>
+<p>总的来说 移动(move) 这种变量和数据交互方式，仅仅是将栈上的数据移动了，堆数据还是同一个，并且将移动前的变量 s1 设置为失效，意味着 s1 和堆数据之间的绑定关系已经不存在了(相当于一个野指针?)。所以移动后在访问 s1 是不被允许的。</p>
+<h2><a id="%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BA%92%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%9A%E5%85%8B%E9%9A%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>变量和数据交互的方式：克隆</h2>
+<pre><code class="language-rust">let mut s1 = String::from(&quot;hello&quot;);
+// let s2 = s1;
+let s2 = s1.clone();
+
+s1.push_str(&quot;, world&quot;);
+println!(&quot;s1 = {}, s2 = {}&quot;, s1, s2);
+</code></pre>
+<p>克隆 = 深度 copy 堆上的数据。s1、s2 是两个独立的变量，指向的堆数据也不是同一个，所以在 clone 后对 s1 进行修改，s2 还是不变的。</p>
+<p>trait ：Copy 、Drop</p>
+<p>当一种类型拥有了 Copy 这种 trait，那么它的变量就可以在赋值给其他变量之后保持可用性。</p>
+<p>如果一种类型实现了 Drop，那么 Rust 就不允许它再实现 Copy。</p>
+<h2><a id="%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%8E%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>所有权与函数</h2>
+<p>将值传递给函数在语义上类似于对变量进行赋值，会触发移动或者复制，就像赋值语句一样。</p>
+<pre><code class="language-rust">fn main() {
+    let x = 5;
+    show(x);
+    println!(&quot;x = {}&quot;, x);
+
+    let s1 = String::from(&quot;hello&quot;);
+    show_str(s1);
+    println!(&quot;函数外部 s1 = {}&quot;, s1)
+}
+
+fn show(x: i32) {
+    println!(&quot;函数内部 x = {}&quot;, x)
+}
+
+fn show_str(s: String) {
+    println!(&quot;函数内部 s1 = {}&quot;, s)
+}
+
+</code></pre>
+<p>string 类型变量当做参数传递给函数后，变量的所有权会移动到函数的作用域内，main 函数中就不在持有当前变量的所有权了，所以当调用 show_str 之后在访问 s1就会报错。</p>
+<p>从另一个方面来理解，函数执行结束后会销毁变量对应的内存空间，然后在 main 函数中访问一个已经移除调的内存空间报错也是合情合理的。</p>
+<blockquote>
+<p>赋值并不是唯一涉及移动的操作。值在作为参数传递或从函数返回时也会被移动。</p>
+</blockquote>
+<pre><code class="language-plain_text">error[E0382]: borrow of moved value: `s1`
+ --&gt; src/main.rs:8:30
+  |
+6 |     let s1 = String::from(&quot;hello&quot;);
+  |         -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait
+7 |     show_str(s1);
+  |              -- value moved here
+8 |     println!(&quot;函数内部 s1 = {}&quot;, s1)
+  |                                  ^^ value borrowed here after move
+  |
+  = note: this error originates in the macro `$crate::format_args_nl` which comes from the expansion of the macro `println` (in Nightly builds, run with -Z macro-backtrace for more info)
+</code></pre>
+<h2><a id="%E5%BC%95%E7%94%A8%E4%B8%8E%E5%80%9F%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>引用与借用</h2>
+<p>如果我们想在函数结束后还想要使用变量，可以将变量的引用传递到参数中。</p>
+<p>引用允许在不获取所有权的情况下使用值。</p>
+<pre><code class="language-rust">fn main() {
+    let x = 5;
+    show(x);
+    println!(&quot;x = {}&quot;, x);
+
+    let s1 = String::from(&quot;hello&quot;);
+    show_str(&amp;s1);
+    println!(&quot;函数外部 s1 = {}&quot;, s1)
+}
+
+fn show(x: i32) {
+    println!(&quot;函数内部 x = {}&quot;, x)
+}
+
+fn show_str(s: &amp;String) {
+    println!(&quot;函数内部 s1 = {}&quot;, s)
+}
+
+</code></pre>
+<p>修改点</p>
+<ol>
+<li>show_str(&amp;s1);传递参数，传的是 s1 的引用</li>
+<li>fn show_str(s: &amp;String) 修改为 String 的引用类型</li>
+</ol>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-10-31-17.38.00.png" alt="2022-10-31-17.38.00" /></p>
+<p>&amp;s1，指在不转移所有权的前提下，创建一个指向 s1 值的引用，引用不持有 s1 的所有权，所以在函数结束时，原 s1 仍然可用。<br />
+函数签名中的 &amp; 用来表名参数 s 的类型是一个引用。s 并不持有指向值的所有权，在函数结束时不会销毁指向值。</p>
+<p><strong>通过引用传递参数给函数的方法也被称为借用。</strong></p>
+<h2><a id="%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>可变引用</h2>
+<pre><code class="language-rust">fn main() {
+    let mut s1 = String::from(&quot;hello&quot;);
+    show_str(&amp;mut s1);
+    println!(&quot;函数外部 s1 = {}&quot;, s1)
+}
+
+fn show_str(s: &amp;mut String) {
+    println!(&quot;函数内部 s1 = {}&quot;, s);
+    s.push_str(&quot;, world&quot;);
+}
+</code></pre>
+<p>mut 表示可变的，变量使用 mut，引用使用 &amp;mut。<br />
+通过 mut 关键字将变量或者引用声明为可变的。<br />
+可以在函数内部修改其引用变量的值。<br />
+一个变量可以有多个不可变引用，但是只能有一个<strong>可变引用</strong>。<br />
+一个变量不能同时有不可变引用和可变引用。</p>
+<h2><a id="%E6%82%AC%E5%9E%82%E5%BC%95%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>悬垂引用</h2>
+<p>这类指针指向曾经存在某处内存地址，但该内存已经被释放掉甚至被重新分配另作他用了。</p>
+<p>这不就是野指针？</p>
+<p>rust 语言中 ，编译器会 确保引用永远不会进入这种悬垂状态。</p>
+<p>假如当前持有某一个数据的引用，编译器保证这个数据不会在引用被销毁前离开自己的作用域。</p>
+<p>创造一个悬垂引用的例子：</p>
+<pre><code class="language-rust">fn main() {
+    let x = dangle();
+    println!(&quot;x = {}&quot;, x)
+}
+
+fn dangle() -&gt; &amp;String {
+    let s = String::from(&quot;hello&quot;);
+    return &amp;s;
+}
+</code></pre>
+<p>dangle 函数，返回 String 的引用，函数内部，声明了一个字符串 s，返回给调用者 s 的引用，看着貌似没什么问题。</p>
+<p>由于变量 s 创建在函数内，所以它会在函数执行完毕时随之释放，但是我们的代码依旧返回指向 s 的引用，这个引用指向的是一个无效的内存地址。</p>
+<pre><code class="language-plain_text">error[E0106]: missing lifetime specifier
+ --&gt; src/main.rs:6:16
+  |
+6 | fn dangle() -&gt; &amp;String {
+  |                ^ expected named lifetime parameter
+  |
+  = help: this function's return type contains a borrowed value, but there is no value for it to be borrowed from
+help: consider using the `'static` lifetime
+  |
+6 | fn dangle() -&gt; &amp;'static String {
+  |                 +++++++
+
+</code></pre>
+<h2><a id="%E5%88%87%E7%89%87" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>切片</h2>
+<p>切片也是不持有所有权的数据类型。<br />
+切片：集合中某一段连续的元素序列，而不是整个集合。</p>
+<p>字符串字面量就是切片。</p>
+<h2><a id="%E6%80%BB%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>总结</h2>
+<p>所有权是 Rust 区别于其他编程语言的一个重要部分。<br />
+变量称为其对应的内存块的所有者，变量拥有所有权。</p>
+<p>所有权发生移动的几个方式</p>
+<ol>
+<li>变量赋值给其他变量</li>
+<li>变量当做参数传递到函数</li>
+<li>函数返回值赋值给变量</li>
+</ol>
+<p>作用域可以简单理解为{}，大括号内部称为一个作用域。<br />
+当变量离开作用域时，变量会自动释放其所有权。</p>
+<p>所有权只会发生在堆上分配的数据，栈上分配的数据没有所有权的概念。</p>
+
+                        
                       </div>
-                     
-                    </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2022/10/31 16:49 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='rust.html'>rust</a></span>
+          				   
+                    
 
-                    <div class="card">
-                        <header class="card-header">
-                          <p class="card-header-title">
-                              <span class="tran-site-tags">Tags</span> 
-                          </p>
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
                        
-                        </header>
-                        <div class="card-content site-tags">
-                          <div class="content">
-                           <div class="tags">
-                            
-                              <a class="tag is-link is-light" href="tag_AQS.html">#AQS</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_Docker.html">#Docker</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_JVM.html">#JVM</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_Java.html">#Java</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_MySQL.html">#MySQL</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_Spring.html">#Spring</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_git.html">#git</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_mongoDB.html">#mongoDB</a> 
-                            
-                              <a class="tag is-link is-light" href="tag_rust.html">#rust</a> 
-                            
-                           </div>
-                             
-                          </div>
-                        </div>
-                       
-                      </div>
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+              
 
+
+			<div class="row">
+			  <div class="large-6 columns">
+			  <p class="text-left" style="padding-top:25px;">
+			   <a href="all_3.html">&laquo; Prev Page</a>  
+			  </p>
+			  </div>
+			  <div class="large-6 columns">
+			<p class="text-right" style="padding-top:25px;">
+			 <a href="all_5.html">&raquo; Next Page</a> 
+			</p>
+			  </div>
+			</div>
+		</div>
+	</div><!-- large 8 -->
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>非著名Java程序员</h1>
+                <div class="site-des"></div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+
+
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="redis.html"><strong>redis</strong></a>
+        
+            <a href="dubbo.html"><strong>dubbo</strong></a>
+        
+            <a href="RocketMQ.html"><strong>RocketMQ</strong></a>
+        
+            <a href="kubernetes.html"><strong>kubernetes</strong></a>
+        
+            <a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html"><strong>Java并发编程的艺术</strong></a>
+        
+            <a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html"><strong>网络协议</strong></a>
+        
+            <a href="JVM.html"><strong>JVM</strong></a>
+        
+            <a href="Java.html"><strong>Java</strong></a>
+        
+            <a href="MySQL.html"><strong>MySQL</strong></a>
+        
+            <a href="Docker.html"><strong>Docker</strong></a>
+        
+            <a href="Spring.html"><strong>Spring</strong></a>
+        
+            <a href="GO.html"><strong>GO</strong></a>
+        
+            <a href="rust.html"><strong>rust</strong></a>
+         
+        </p>
+
+
+                </div>
               </div>
-            </div>
 
-          
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16727524082529.html">rust 包管理与工作空间</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16689222220789.html">actix-web</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16672061401168.html">rust 所有权</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
       </div>
-    </section>
-
-    <footer class="footer">
-        <div class="content has-text-centered">
-          <p>
-              Copyright &copy; 2019
-              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
-              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
-          </p>
-        </div>
-      </footer>
+    </div>
 
 
 
@@ -477,10 +540,215 @@
 
 
 
+<style type="text/css">
+figure{margin: 0;padding: 0;}
+figcaption{text-align:center;}
+
+/* PrismJS 1.14.0
+ http://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javascript */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    text-shadow: 0 1px white;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+    text-shadow: none;
+    background:#b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+    text-shadow: none;
+    background: #b3d4fc;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background: #F7F7F7;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1em;
+    border-radius: .3em;
+    white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: slategray;
+}
+
+.token.punctuation {
+    color: #999;
+}
+
+.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #9a6e3a;
+    background: hsla(0, 0%, 100%, .5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #07a;
+}
+
+.token.function,
+.token.class-name {
+    color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e90;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+    .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+    }
+
+        .line-numbers-rows > span:before {
+            content: counter(linenumber);
+            color: #999;
+            display: block;
+            padding-right: 0.8em;
+            text-align: right;
+        }
+
+</style>
 
   
     
 
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
 
 
 

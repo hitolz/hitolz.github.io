@@ -1,0 +1,829 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+    
+  非著名Java程序员
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
+ 
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="_self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li id=""><a target="_self" href="about1.html">About</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; 非著名Java程序员</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="_self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li><a target="_self" href="about1.html">About</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="redis.html">redis</a></li>
+        
+            <li><a href="dubbo.html">dubbo</a></li>
+        
+            <li><a href="RocketMQ.html">RocketMQ</a></li>
+        
+            <li><a href="kubernetes.html">kubernetes</a></li>
+        
+            <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a></li>
+        
+            <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a></li>
+        
+            <li><a href="JVM.html">JVM</a></li>
+        
+            <li><a href="Java.html">Java</a></li>
+        
+            <li><a href="MySQL.html">MySQL</a></li>
+        
+            <li><a href="Docker.html">Docker</a></li>
+        
+            <li><a href="Spring.html">Spring</a></li>
+        
+            <li><a href="GO.html">GO</a></li>
+        
+            <li><a href="rust.html">rust</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+	$(function(){
+		$('#menu_item_index').addClass('is_active');
+	});
+</script>
+<div class="row">
+	<div class="large-8 medium-8 columns">
+		<div class="markdown-body home-categories">
+		
+			<div class="article">
+                <a class="clearlink" href="16121664688743.html">
+                
+                  <h1>Dubbo SPI</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<div class="mweb_toc"><ul>
+<li><a href="#java-spi">Java SPI</a></li>
+<li><a href="#dubbo-spi">Dubbo SPI</a></li>
+<li><a href="#dubbo-spi%E7%9A%84%E5%AE%9E%E7%8E%B0">Dubbo SPI 的实现</a>
+<ul>
+<li><a href="#extensionloader-getextensionloader">ExtensionLoader.getExtensionLoader</a></li>
+<li><a href="#getadaptiveextension">getAdaptiveExtension()</a></li>
+<li><a href="#extensionloader-getextension">extensionLoader.getExtension</a></li>
+<li><a href="#createextension">createExtension</a></li>
+</ul>
+</li>
+<li><a href="#wrapper%E7%B1%BB">wrapper 类</a></li>
+</ul>
+</div>
+<p>Dubbo 源码阅读 gitee：<a href="https://gitee.com/hitol/dubbo-source/tree/read_2.7.5/">https://gitee.com/hitol/dubbo-source/tree/read_2.7.5/</a></p>
+<h2><a id="java-spi" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Java SPI</h2>
+<p>SPI 是服务发现机制，为某个接口寻找服务的实现。<br />
+是 JDK 6 的特性，ServiceLoader。<br />
+ServiceLoader启动时会到 resource/META-INF/services/ 目录下读取以 实现类的全限定名 命名的文件。</p>
+<p>程序通过 ServiceLoader 动态加载实现类模块，通过扫描 META-INF/services 目录下的配置文件找到实现类的全限定名，把类加载到JVM;</p>
+<p>demo：</p>
+<pre><code class="language-plain_text">// 一个接口，两个实现类
+public interface Fruit {
+
+	void printName();
+
+}
+
+
+public class Apple implements Fruit {
+	@Override
+	public void printName() {
+		System.out.println(&quot;Apple&quot;);
+	}
+}
+
+public class Orange implements Fruit {
+	@Override
+	public void printName() {
+		System.out.println(&quot;Orange&quot;);
+	}
+}
+
+</code></pre>
+<p>在 src/main/resources/META-INF/services 下新建文件 xxx.xxx.xx.Fruit，这个文件名就是Fruit接口的全限定名，<br />
+文件内容：</p>
+<pre><code class="language-plain_text">com.hitol.service.impl.Apple
+com.hitol.service.impl.Orange
+</code></pre>
+<p>文件中的内容是 Apple、Orange类的全限定名，可以配置一个也可以配置多个。</p>
+<pre><code class="language-plain_text">public static void main(String[] args) {
+	ServiceLoader&lt;Fruit&gt; fruits = ServiceLoader.load(Fruit.class);
+
+	for (Fruit fruit : fruits) {
+		fruit.printName();
+	}
+}
+</code></pre>
+<p>会依次调用xxx.xxx.xx.Fruit文件中配置的具体实现类。</p>
+<hr />
+<p>应用场景：各种数据库连接<br />
+<img src="http://hitol.blog.cdn.updev.cn/16146868237742.jpg" alt="" /></p>
+<h2><a id="dubbo-spi" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dubbo SPI</h2>
+<p>Dubbo SPI 扩展点加载，从 JDK 标准的 SPI 扩展点机制加强而来。<br />
+加载的路径约定为： resource/META-INF/dubbo/接口全限定名<br />
+增加了对扩展点 IOC 和 AOP 的支持，一个扩展点可以直接 setter 注入其它扩展点。</p>
+<p>将上面例子中的xx.Fruit文件移到 resource/META-INF/dubbo/ 目录下，同时需要在 Fruit 类上加 Dubbo 注解 @SPI。<br />
+文件内容</p>
+<pre><code class="language-plain_text">orange=com.hitol.util.services.impl.Orange
+apple=com.hitol.util.services.impl.Apple
+
+</code></pre>
+<p>demo：</p>
+<pre><code class="language-plain_text">public static void main(String[] args) {
+	ExtensionLoader&lt;Fruit&gt; extensionLoader = ExtensionLoader.getExtensionLoader(Fruit.class);
+	Fruit apple = extensionLoader.getExtension(&quot;apple&quot;);
+	Fruit orange = extensionLoader.getExtension(&quot;orange&quot;);
+
+	apple.printName();
+	orange.printName();
+}
+</code></pre>
+<p>Dubbo SPI 的实现封装在 ExtensionLoader 中。</p>
+<p>Dubbo 中几乎到处可见 SPI 机制的应用，比如说，</p>
+<ol>
+<li>反射创建默认实现类，org.apache.dubbo.common.extension.ExtensionLoader#createAdaptiveExtensionClass</li>
+<li>dubbo 协议</li>
+</ol>
+<h2><a id="dubbo-spi%E7%9A%84%E5%AE%9E%E7%8E%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dubbo SPI 的实现</h2>
+<p>ExtensionLoader.getExtensionLoader<br />
+ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension())<br />
+extensionLoader.getExtension</p>
+<h3><a id="extensionloader-getextensionloader" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ExtensionLoader.getExtensionLoader</h3>
+<p><img src="http://hitol.blog.cdn.updev.cn/SPI-1-getExtensionLoader.png" alt="SPI-1-getExtensionLoade" /></p>
+<p>这个方法的逻辑比较简单，是否有 SPI 注解，缓存中没有的话就 new 一个 ExtensionLoader 出来，不过在 new 的时候会去获取 objectFactory 属性的值。第一次 new 的话，会加载 ExtensionFactory，并获取它的默认实现。</p>
+<pre><code class="language-java">private ExtensionLoader(Class&lt;?&gt; type) {
+    this.type = type;
+    objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
+}
+</code></pre>
+<h3><a id="getadaptiveextension" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>getAdaptiveExtension()</h3>
+<p>SPI 修饰的接口的实现类中，获取带有 @Adaptive 注解的实现。<br />
+在同一个接口的实现类中，@Adaptive 注解只能修饰其中的一个实现类，表示该接口的默认实现。</p>
+<p>getAdaptiveExtension 方法就是获取这个默认的实现类。</p>
+<p>SPI(value= &quot;apple&quot;) 注解上可以指定 默认的实现类。</p>
+<h3><a id="extensionloader-getextension" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>extensionLoader.getExtension</h3>
+<pre><code class="language-java">public T getExtension(String name) {
+    if (StringUtils.isEmpty(name)) {
+        throw new IllegalArgumentException(&quot;Extension name == null&quot;);
+    }
+    if (&quot;true&quot;.equals(name)) {
+        return getDefaultExtension();
+    }
+    // 获取holder，相当于持有对象的锁
+    // 从缓存map cachedInstances 中获取，获取不到就new
+    final Holder&lt;Object&gt; holder = getOrCreateHolder(name);
+    Object instance = holder.get();
+    // 双重检测单例模式
+    // 此处这个锁对象是holder，而不是整个class对象，锁粒度更小，并发更高
+    if (instance == null) {
+        synchronized (holder) {
+            instance = holder.get();
+            if (instance == null) {
+                instance = createExtension(name);
+                holder.set(instance);
+            }
+        }
+    }
+    return (T) instance;
+}
+
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/getExtension.png" alt="getExtension" /></p>
+<p>拓展类对象的获取过程，都是先从缓存中查找，没有在新建对象。最重要的实现逻辑是在 createExtension 方法中。</p>
+<h3><a id="createextension" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>createExtension</h3>
+<pre><code class="language-java">private T createExtension(String name) {
+        // 先从cachedClasses 缓存map中获取类对象，获取不到则new
+        Class&lt;?&gt; clazz = getExtensionClasses().get(name);
+        if (clazz == null) {
+            throw findException(name);
+        }
+        try {
+            T instance = (T) EXTENSION_INSTANCES.get(clazz);
+            if (instance == null) {
+                // 生成具体类实例对象，放入缓存
+                EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance());
+                instance = (T) EXTENSION_INSTANCES.get(clazz);
+            }
+            // IOC 注入
+            injectExtension(instance);
+            Set&lt;Class&lt;?&gt;&gt; wrapperClasses = cachedWrapperClasses;
+            if (CollectionUtils.isNotEmpty(wrapperClasses)) {
+                for (Class&lt;?&gt; wrapperClass : wrapperClasses) {
+                    instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance));
+                }
+                
+            }
+            initExtension(instance);
+            return instance;
+        } catch (Throwable t) {
+            throw new IllegalStateException(&quot;Extension instance (name: &quot; + name + &quot;, class: &quot; +
+                    type + &quot;) couldn't be instantiated: &quot; + t.getMessage(), t);
+        }
+    }
+=========================================
+private Map&lt;String, Class&lt;?&gt;&gt; getExtensionClasses() {
+    // 缓存
+    Map&lt;String, Class&lt;?&gt;&gt; classes = cachedClasses.get();
+    // 双重检查单例模式
+    if (classes == null) {
+        synchronized (cachedClasses) {
+            classes = cachedClasses.get();
+            if (classes == null) {
+                // 加载所有的扩展点对象，然后放到缓存中
+                // SpiExtensionFactory
+                classes = loadExtensionClasses();
+                cachedClasses.set(classes);
+            }
+        }
+    }
+    return classes;
+}
+=========================================
+private Map&lt;String, Class&lt;?&gt;&gt; loadExtensionClasses() {
+    cacheDefaultExtensionName();
+
+    Map&lt;String, Class&lt;?&gt;&gt; extensionClasses = new HashMap&lt;&gt;();
+    // internal extension load from ExtensionLoader's ClassLoader first . 先加载 /internal 目录下的扩展点
+    loadDirectory(extensionClasses, DUBBO_INTERNAL_DIRECTORY, type.getName(), true);
+    // replace(&quot;org.apache&quot;, &quot;com.alibaba&quot;) 替换包名这个骚操作
+    loadDirectory(extensionClasses, DUBBO_INTERNAL_DIRECTORY, type.getName().replace(&quot;org.apache&quot;, &quot;com.alibaba&quot;), true);
+
+    loadDirectory(extensionClasses, DUBBO_DIRECTORY, type.getName());
+    loadDirectory(extensionClasses, DUBBO_DIRECTORY, type.getName().replace(&quot;org.apache&quot;, &quot;com.alibaba&quot;));
+    loadDirectory(extensionClasses, SERVICES_DIRECTORY, type.getName());
+    loadDirectory(extensionClasses, SERVICES_DIRECTORY, type.getName().replace(&quot;org.apache&quot;, &quot;com.alibaba&quot;));
+    return extensionClasses;
+}
+</code></pre>
+<h2><a id="wrapper%E7%B1%BB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>wrapper 类</h2>
+<p>wrapper 相当于 AOP 动态代理生成的 代理对象。</p>
+<p>一个类它是 wrapper 类的条件:</p>
+<ol>
+<li>实现某个接口</li>
+<li>类中只有一个属性变量，是该接口的实例</li>
+<li>只有包含这个属性变量的构造方法。</li>
+</ol>
+<pre><code class="language-java">/**
+ * test if clazz is a wrapper class
+ * &lt;p&gt;
+ * which has Constructor with given class type as its only argument
+ */
+private boolean isWrapperClass(Class&lt;?&gt; clazz) {
+    try {
+        clazz.getConstructor(type);
+        return true;
+    } catch (NoSuchMethodException e) {
+        return false;
+    }
+}
+</code></pre>
+<pre><code class="language-java">Fruit 的 wrapper 类
+public class FruitWrapper implements Fruit {
+	private Fruit fruit;
+
+	public FruitWrapper(Fruit fruit) {
+		this.fruit = fruit;
+	}
+
+	@Override
+	public void printName() {
+		System.out.println(&quot;this is wrapper&quot;);
+		fruit.printName();
+	}
+}
+
+---
+
+文件内容
+
+orange=com.hitol.util.services.impl.Orange
+apple=com.hitol.util.services.impl.Apple
+com.hitol.util.services.impl.FruitWrapper
+
+---
+
+ExtensionLoader&lt;Fruit&gt; extensionLoader = ExtensionLoader.getExtensionLoader(Fruit.class);
+Fruit apple = extensionLoader.getExtension(&quot;apple&quot;);
+
+apple.printName();
+
+---
+输出内容：
+this is wrapper
+Apple
+</code></pre>
+<p>输出内容：</p>
+<pre><code class="language-plain_text">this is wrapper
+Apple
+</code></pre>
+<hr />
+<p><a href="https://dubbo.apache.org/zh/docs/v2.7/dev/spi/">https://dubbo.apache.org/zh/docs/v2.7/dev/spi/</a><br />
+<a href="https://dubbo.apache.org/zh/docs/v2.7/dev/source/dubbo-spi/">https://dubbo.apache.org/zh/docs/v2.7/dev/source/dubbo-spi/</a></p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2021/02/01 16:01 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				  
+          					    <span class="posted-in"><a href='dubbo.html'>dubbo</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+              
+
+
+			<div class="row">
+			  <div class="large-6 columns">
+			  <p class="text-left" style="padding-top:25px;">
+			   <a href="all_27.html">&laquo; Prev Page</a>  
+			  </p>
+			  </div>
+			  <div class="large-6 columns">
+			<p class="text-right" style="padding-top:25px;">
+			 <a href="all_29.html">&raquo; Next Page</a> 
+			</p>
+			  </div>
+			</div>
+		</div>
+	</div><!-- large 8 -->
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>非著名Java程序员</h1>
+                <div class="site-des"></div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+
+
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="redis.html"><strong>redis</strong></a>
+        
+            <a href="dubbo.html"><strong>dubbo</strong></a>
+        
+            <a href="RocketMQ.html"><strong>RocketMQ</strong></a>
+        
+            <a href="kubernetes.html"><strong>kubernetes</strong></a>
+        
+            <a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html"><strong>Java并发编程的艺术</strong></a>
+        
+            <a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html"><strong>网络协议</strong></a>
+        
+            <a href="JVM.html"><strong>JVM</strong></a>
+        
+            <a href="Java.html"><strong>Java</strong></a>
+        
+            <a href="MySQL.html"><strong>MySQL</strong></a>
+        
+            <a href="Docker.html"><strong>Docker</strong></a>
+        
+            <a href="Spring.html"><strong>Spring</strong></a>
+        
+            <a href="GO.html"><strong>GO</strong></a>
+        
+            <a href="rust.html"><strong>rust</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16727524082529.html">rust 包管理与工作空间</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16689222220789.html">actix-web</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16672061401168.html">rust 所有权</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
+      </div>
+    </div>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+figure{margin: 0;padding: 0;}
+figcaption{text-align:center;}
+
+/* PrismJS 1.14.0
+ http://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javascript */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    text-shadow: 0 1px white;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+    text-shadow: none;
+    background:#b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+    text-shadow: none;
+    background: #b3d4fc;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background: #F7F7F7;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1em;
+    border-radius: .3em;
+    white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: slategray;
+}
+
+.token.punctuation {
+    color: #999;
+}
+
+.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #9a6e3a;
+    background: hsla(0, 0%, 100%, .5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #07a;
+}
+
+.token.function,
+.token.class-name {
+    color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e90;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+    .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+    }
+
+        .line-numbers-rows > span:before {
+            content: counter(linenumber);
+            color: #999;
+            display: block;
+            padding-right: 0.8em;
+            text-align: right;
+        }
+
+</style>
+
+  
+    
+
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+
+
+  </body>
+</html>
