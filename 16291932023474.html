@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -170,7 +170,7 @@
 一行数据可能有多个版本，每个版本都有一个 row trx_id。</p>
 <p>在实现上， InnoDB为每个事务构造了一个数组，用来保存这个事务启动瞬间，当前正在“活跃”的所有事务ID。“活跃”指的就是，启动了但还没提交。</p>
 <h2><a id="%E4%BE%8B%E5%AD%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>例子</h2>
-<pre><code class="language-sql">mysql&gt; CREATE TABLE `t` (
+<pre class="line-numbers"><code class="language-sql">mysql&gt; CREATE TABLE `t` (
   `id` int(11) NOT NULL,
   `k` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -339,6 +339,12 @@ read view 视图</p>
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -358,12 +364,6 @@ read view 视图</p>
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

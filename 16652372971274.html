@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  .gitignore 更新后如何生效 - 非著名Java程序员
+  git 操作 - 非著名Java程序员
   
   </title>
   
@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -126,7 +126,7 @@
       <div class="markdown-body article-wrap">
        <div class="article">
           
-          <h1>.gitignore 更新后如何生效</h1>
+          <h1>git 操作</h1>
      
         <div class="read-more clearfix">
           <span class="date">2020/10/08 21:54 下午</span>
@@ -144,8 +144,12 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <p>git 修改了 .gitignore 后执行</p>
-<pre><code class="language-plain_text">git rm -r --cached .
+      <h2><a id="git-commit%E5%90%8E%E6%92%A4%E9%94%80" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>git commit 后撤销</h2>
+<pre class="line-numbers"><code class="language-plain_text">git reset --soft HEAD^ 
+</code></pre>
+<h2><a id="gitignore%E6%9B%B4%E6%96%B0%E5%90%8E%E5%A6%82%E4%BD%95%E7%94%9F%E6%95%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>.gitignore 更新后如何生效</h2>
+<p>git 修改了 .gitignore 后执行</p>
+<pre class="line-numbers"><code class="language-plain_text">git rm -r --cached .
 git add .
 git commit -m &quot;.gitignore is now working&quot;
 </code></pre>
@@ -261,6 +265,12 @@ git commit -m &quot;.gitignore is now working&quot;
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -280,12 +290,6 @@ git commit -m &quot;.gitignore is now working&quot;
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

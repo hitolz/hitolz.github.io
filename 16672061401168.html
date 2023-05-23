@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -150,7 +150,7 @@
 <p>所有权可以说是Rust中最为独特的一个功能了。正是所有权概念和相关工具的引入，Rust才能够在没有垃圾回收机制的前提下保障内存安全。因此，正确地了解所有权概念及其在Rust中的实现方式，对于所有Rust开发者来讲都是十分重要的。在本章中，我们会详细地讨论所有权及其相关功能：借用、切片，以及Rust在内存中布局数据的方式。</p>
 </blockquote>
 <p>所有权就是指一个东西归属谁。Rust 中一个变量对应一个值，变量就称为这个值的所有者。</p>
-<pre><code class="language-rust">lex x = 5;
+<pre class="line-numbers"><code class="language-rust">lex x = 5;
 </code></pre>
 <p>这句话的意思就是，5这个数字所在的内存块的所有者是 x。</p>
 <h2><a id="%E6%89%80%E6%9C%89%E6%9D%83%E8%A7%84%E5%88%99" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>所有权规则</h2>
@@ -161,7 +161,7 @@
 </ol>
 <h2><a id="%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BA%92%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%9A%E7%A7%BB%E5%8A%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>变量和数据交互的方式：移动</h2>
 <p>把一个变量赋值给另一个变量</p>
-<pre><code class="language-rust">fn main() {
+<pre class="line-numbers"><code class="language-rust">fn main() {
     let x = 5;
     let y = x;
     println!(&quot;x = {}, y = {}&quot;, x, y);
@@ -179,7 +179,7 @@
 <p>为了确保内存安全，避免复制分配的内存，Rust 在这种场景下回简单的将 s1 废弃，不再视其为一个有效的变量。<br />
 <img src="http://hitol.blog.cdn.updev.cn/mweb/2022-10-31-17.03.02.png" alt="2022-10-31-17.03.02" /></p>
 <p>也就解释了这段代码执行为什么报错</p>
-<pre><code class="language-plain_text">error[E0382]: borrow of moved value: `s1`
+<pre class="line-numbers"><code class="language-plain_text">error[E0382]: borrow of moved value: `s1`
   --&gt; src/main.rs:11:34
    |
 8  |     let s1 = String::from(&quot;hello&quot;);
@@ -194,7 +194,7 @@
 </code></pre>
 <p>总的来说 移动(move) 这种变量和数据交互方式，仅仅是将栈上的数据移动了，堆数据还是同一个，并且将移动前的变量 s1 设置为失效，意味着 s1 和堆数据之间的绑定关系已经不存在了(相当于一个野指针?)。所以移动后在访问 s1 是不被允许的。</p>
 <h2><a id="%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BA%92%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%9A%E5%85%8B%E9%9A%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>变量和数据交互的方式：克隆</h2>
-<pre><code class="language-rust">let mut s1 = String::from(&quot;hello&quot;);
+<pre class="line-numbers"><code class="language-rust">let mut s1 = String::from(&quot;hello&quot;);
 // let s2 = s1;
 let s2 = s1.clone();
 
@@ -207,7 +207,7 @@ println!(&quot;s1 = {}, s2 = {}&quot;, s1, s2);
 <p>如果一种类型实现了 Drop，那么 Rust 就不允许它再实现 Copy。</p>
 <h2><a id="%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%8E%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>所有权与函数</h2>
 <p>将值传递给函数在语义上类似于对变量进行赋值，会触发移动或者复制，就像赋值语句一样。</p>
-<pre><code class="language-rust">fn main() {
+<pre class="line-numbers"><code class="language-rust">fn main() {
     let x = 5;
     show(x);
     println!(&quot;x = {}&quot;, x);
@@ -231,7 +231,7 @@ fn show_str(s: String) {
 <blockquote>
 <p>赋值并不是唯一涉及移动的操作。值在作为参数传递或从函数返回时也会被移动。</p>
 </blockquote>
-<pre><code class="language-plain_text">error[E0382]: borrow of moved value: `s1`
+<pre class="line-numbers"><code class="language-plain_text">error[E0382]: borrow of moved value: `s1`
  --&gt; src/main.rs:8:30
   |
 6 |     let s1 = String::from(&quot;hello&quot;);
@@ -246,7 +246,7 @@ fn show_str(s: String) {
 <h2><a id="%E5%BC%95%E7%94%A8%E4%B8%8E%E5%80%9F%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>引用与借用</h2>
 <p>如果我们想在函数结束后还想要使用变量，可以将变量的引用传递到参数中。</p>
 <p>引用允许在不获取所有权的情况下使用值。</p>
-<pre><code class="language-rust">fn main() {
+<pre class="line-numbers"><code class="language-rust">fn main() {
     let x = 5;
     show(x);
     println!(&quot;x = {}&quot;, x);
@@ -275,7 +275,7 @@ fn show_str(s: &amp;String) {
 函数签名中的 &amp; 用来表名参数 s 的类型是一个引用。s 并不持有指向值的所有权，在函数结束时不会销毁指向值。</p>
 <p><strong>通过引用传递参数给函数的方法也被称为借用。</strong></p>
 <h2><a id="%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>可变引用</h2>
-<pre><code class="language-rust">fn main() {
+<pre class="line-numbers"><code class="language-rust">fn main() {
     let mut s1 = String::from(&quot;hello&quot;);
     show_str(&amp;mut s1);
     println!(&quot;函数外部 s1 = {}&quot;, s1)
@@ -297,7 +297,7 @@ fn show_str(s: &amp;mut String) {
 <p>rust 语言中 ，编译器会 确保引用永远不会进入这种悬垂状态。</p>
 <p>假如当前持有某一个数据的引用，编译器保证这个数据不会在引用被销毁前离开自己的作用域。</p>
 <p>创造一个悬垂引用的例子：</p>
-<pre><code class="language-rust">fn main() {
+<pre class="line-numbers"><code class="language-rust">fn main() {
     let x = dangle();
     println!(&quot;x = {}&quot;, x)
 }
@@ -309,7 +309,7 @@ fn dangle() -&gt; &amp;String {
 </code></pre>
 <p>dangle 函数，返回 String 的引用，函数内部，声明了一个字符串 s，返回给调用者 s 的引用，看着貌似没什么问题。</p>
 <p>由于变量 s 创建在函数内，所以它会在函数执行完毕时随之释放，但是我们的代码依旧返回指向 s 的引用，这个引用指向的是一个无效的内存地址。</p>
-<pre><code class="language-plain_text">error[E0106]: missing lifetime specifier
+<pre class="line-numbers"><code class="language-plain_text">error[E0106]: missing lifetime specifier
  --&gt; src/main.rs:6:16
   |
 6 | fn dangle() -&gt; &amp;String {
@@ -452,6 +452,12 @@ help: consider using the `'static` lifetime
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -471,12 +477,6 @@ help: consider using the `'static` lifetime
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

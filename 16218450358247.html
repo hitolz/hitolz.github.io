@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -154,7 +154,7 @@
 <p>Binding 在消息中间件与应用程序提供的 Provider 和 Consumer 之间提供了一个桥梁，实现了开发者只需使用应用程序的 Provider 或 Consumer 生产或消费数据即可，屏蔽了开发者与底层消息中间件的接触。</p>
 <h2><a id="%E6%95%B4%E5%90%88rocketmq" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>整合 RocketMQ</h2>
 <h3><a id="spring-boot%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spring Boot 项目添加依赖</h3>
-<pre><code class="language-plain_text">&lt;spring.boot.version&gt;2.2.5.RELEASE&lt;/spring.boot.version&gt;
+<pre class="line-numbers"><code class="language-plain_text">&lt;spring.boot.version&gt;2.2.5.RELEASE&lt;/spring.boot.version&gt;
 &lt;spring.alibaba.cloud.version&gt;2.2.1.RELEASE&lt;/spring.alibaba.cloud.version&gt;
 
 
@@ -167,7 +167,7 @@
 </code></pre>
 <h3><a id="%E6%B7%BB%E5%8A%A0%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加配置</h3>
 <p>application.yml 中添加配置</p>
-<pre><code class="language-plain_text">spring:
+<pre class="line-numbers"><code class="language-plain_text">spring:
   cloud:
     stream:
       bindings:
@@ -193,7 +193,7 @@
 </code></pre>
 <h3><a id="%E5%8F%91%E9%80%81%E4%B8%8E%E6%8E%A5%E6%94%B6%E6%B6%88%E6%81%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>发送与接收消息</h3>
 <p>Source</p>
-<pre><code class="language-plain_text">public interface Source {
+<pre class="line-numbers"><code class="language-plain_text">public interface Source {
 
 	String OUTPUT = &quot;output&quot;;
 	String INPUT = &quot;input&quot;;
@@ -208,7 +208,7 @@
 
 </code></pre>
 <p>发送消息</p>
-<pre><code class="language-plain_text">@Autowired
+<pre class="line-numbers"><code class="language-plain_text">@Autowired
 private Source source;
 
 @Override
@@ -219,7 +219,7 @@ public void send(String msg) {
 }
 </code></pre>
 <p>接收消息</p>
-<pre><code class="language-plain_text">@StreamListener(value = Source.INPUT)
+<pre class="line-numbers"><code class="language-plain_text">@StreamListener(value = Source.INPUT)
 public void receiveInput(String receiveMsg) {
 	System.out.println(&quot;input receive: &quot; + receiveMsg);
 }
@@ -345,6 +345,12 @@ public void receiveInput(String receiveMsg) {
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -364,12 +370,6 @@ public void receiveInput(String receiveMsg) {
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -153,7 +153,7 @@
 spring.factories 中一般都是一些配置 bean，也就是使用了 @Configuration 这个注解的 bean，在这个配置 bean 中初始化一些我们的工具包需要的 bean 就比较方便了。</p>
 <p>在<code>src/main/resources/META-INF</code>下新建 spring.factories 文件<br />
 类似这种的配置：</p>
-<pre><code class="language-properties">org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.wacai.gbl.config.LinkupSmsAutoConfiguration
+<pre class="line-numbers"><code class="language-properties">org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.wacai.gbl.config.LinkupSmsAutoConfiguration
 </code></pre>
 <h2><a id="%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E6%B3%A8%E8%A7%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>一些常用的注解</h2>
 <h3><a id="configuration" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Configuration</h3>
@@ -283,6 +283,12 @@ xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&qu
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -302,12 +308,6 @@ xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&qu
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

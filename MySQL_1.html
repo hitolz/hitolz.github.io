@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -136,7 +136,7 @@
                         	<p>MyBatis-Plus 是 MyBatis 的一个增强工具，目的是为了简化开发，提高效率。</p>
 <h2><a id="springboot%E9%9B%86%E6%88%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>SpringBoot 集成</h2>
 <h3><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h3>
-<pre><code class="language-plain_text">&lt;springboot.version&gt;2.3.0.RELEASE&lt;/springboot.version&gt;
+<pre class="line-numbers"><code class="language-plain_text">&lt;springboot.version&gt;2.3.0.RELEASE&lt;/springboot.version&gt;
 
 &lt;dependency&gt;
     &lt;groupId&gt;com.baomidou&lt;/groupId&gt;
@@ -160,7 +160,7 @@
 <p><code>mybatis-plus-generator</code> 代码生成器可以生成 <code>controller</code>、<code>entity</code>、<code>mapper</code>、<code>service</code>、<code>mapper.xml</code>，只要定义好了表结构，使用代码生成器生成代码，即可使用 CRUD</p>
 <details>
 <MAXmary>代码生成工具demo</MAXmary>
-<pre><code class="language-plain_text">public class CreateCode {
+<pre class="line-numbers"><code class="language-plain_text">public class CreateCode {
 
 	public static void main(String[] args) {
 		String packageName = &quot;com.hitol.mybatisplusdemo&quot;;
@@ -246,7 +246,7 @@
 </code></pre>
 </details>
 <h3><a id="test" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Test</h3>
-<pre><code class="language-plain_text">List&lt;Book&gt; list = bookService.list();
+<pre class="line-numbers"><code class="language-plain_text">List&lt;Book&gt; list = bookService.list();
 System.out.println(JSONObject.toJSONString(list));
 
 Book book = bookService.getById(1);
@@ -262,7 +262,7 @@ System.out.println(JSONObject.toJSONString(one));
 <p>主数据源中的 @Bean 需要加注解 Primary，在 Spring 加载过程中会优先加载 Primary 标注的 bean。</p>
 <details>
 <MAXmary>第一个数据源</MAXmary>
-<pre><code class="language-plain_text">@Configuration
+<pre class="line-numbers"><code class="language-plain_text">@Configuration
 @MapperScan(basePackages = &quot;com.hitol.mybatisplusdemo.mapper&quot;,
 		sqlSessionTemplateRef=&quot;ds1SqlSessionTemplate&quot;)
 public class MyBatisPlusConfig {
@@ -330,7 +330,7 @@ public class MyBatisPlusConfig {
 </details>
 <details>
 <MAXmary>第二个数据源</MAXmary>
-<pre><code class="language-plain_text">@Configuration
+<pre class="line-numbers"><code class="language-plain_text">@Configuration
 @MapperScan(basePackages = &quot;com.hitol.mybatisplusdemo.chinespoetry.mapper&quot;,
 		sqlSessionTemplateRef=&quot;ds2SqlSessionTemplate&quot;)
 public class MyBatisPlusConfig2 {
@@ -395,7 +395,7 @@ public class MyBatisPlusConfig2 {
 </details>
 <h2><a id="%E8%B8%A9%E5%9D%91%E4%B9%90%E8%A7%82%E9%94%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>踩坑-乐观锁</h2>
 <p>官网上的示例:</p>
-<pre><code class="language-plain_text">@Bean
+<pre class="line-numbers"><code class="language-plain_text">@Bean
 public MybatisPlusInterceptor mybatisPlusInterceptor() {
     MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
     interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
@@ -404,7 +404,7 @@ public MybatisPlusInterceptor mybatisPlusInterceptor() {
 
 </code></pre>
 <p>根据官方文档配置后，一般情况下可以正常使用的，但是如果自己生成了 sqlSessionFactory 需要将乐观锁拦截器添加下</p>
-<pre><code class="language-plain_text">public MyOptimisticLockerInterceptor optimisticLockerInterceptor(@Qualifier(&quot;ds1SqlSessionFactory&quot;) SqlSessionFactory sqlSessionFactory) {
+<pre class="line-numbers"><code class="language-plain_text">public MyOptimisticLockerInterceptor optimisticLockerInterceptor(@Qualifier(&quot;ds1SqlSessionFactory&quot;) SqlSessionFactory sqlSessionFactory) {
     MyOptimisticLockerInterceptor myOptimisticLockerInterceptor = new MyOptimisticLockerInterceptor();
     sqlSessionFactory.getConfiguration().addInterceptor(myOptimisticLockerInterceptor);
     return myOptimisticLockerInterceptor;
@@ -414,7 +414,7 @@ public MybatisPlusInterceptor mybatisPlusInterceptor() {
 <h2><a id="%E8%B8%A9%E5%9D%91%E8%87%AA%E5%8A%A8%E5%A1%AB%E5%85%85%E5%8A%9F%E8%83%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>踩坑-自动填充功能</h2>
 <p>官网示例：<a href="https://mp.baomidou.com/guide/auto-fill-metainfo.html">https://mp.baomidou.com/guide/auto-fill-metainfo.html</a></p>
 <p>如果自己生成了 sqlSessionFactory，需要将自定义的 handler 加到 GlobalConfig 中。</p>
-<pre><code class="language-plain_text">@Primary
+<pre class="line-numbers"><code class="language-plain_text">@Primary
 @Bean(&quot;ds1SqlSessionFactory&quot;)
 public SqlSessionFactory ds1SqlSessionFactory(@Qualifier(&quot;ds1DataSource&quot;) DataSource dataSource) throws Exception {
     MybatisSqlSessionFactoryBean sessionFactoryBean = new MybatisSqlSessionFactoryBean();
@@ -546,6 +546,12 @@ public SqlSessionFactory ds1SqlSessionFactory(@Qualifier(&quot;ds1DataSource&quo
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -565,12 +571,6 @@ public SqlSessionFactory ds1SqlSessionFactory(@Qualifier(&quot;ds1DataSource&quo
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

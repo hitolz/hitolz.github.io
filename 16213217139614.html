@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -147,7 +147,7 @@
 
       <div class="article-content">
       <p>表结构及数据</p>
-<pre><code class="language-plain_text">
+<pre class="line-numbers"><code class="language-plain_text">
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -226,7 +226,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 </code></pre>
 </details>
 <p>查看学生哪门课程多少分数</p>
-<pre><code class="language-plain_text">SELECT a.SId,a.Sname,c.CId,c.Cname,b.score from Student a join SC b on a.SId = b.SId
+<pre class="line-numbers"><code class="language-plain_text">SELECT a.SId,a.Sname,c.CId,c.Cname,b.score from Student a join SC b on a.SId = b.SId
 join Course c on c.CId = b.CId order by a.SId;
 </code></pre>
 <p>结果是这样<br />
@@ -239,7 +239,7 @@ join Course c on c.CId = b.CId order by a.SId;
 <code>IF(expr1,expr2,expr3)</code><br />
 如果 expr1 为 true，则返回 expr2，否则返回 expr3</p>
 <p>静态行转列:</p>
-<pre><code class="language-plain_text">SELECT a.SId,a.Sname,
+<pre class="line-numbers"><code class="language-plain_text">SELECT a.SId,a.Sname,
 
 MAX(IF(c.Cname = '操作系统',b.score,null)) as '操作系统',
 MAX(IF(c.Cname = '数据库',b.score,null)) as '数据库',
@@ -253,20 +253,20 @@ group by a.Sname
 <p>在这个场景下，用 MAX 或者 SUM 都可以<br />
 但是如果增加了课程，这条 sql 也要同步修改</p>
 <p>动态 行转列</p>
-<pre><code class="language-plain_text">MAX(IF(c.Cname = '操作系统',b.score,null)) as '操作系统',
+<pre class="line-numbers"><code class="language-plain_text">MAX(IF(c.Cname = '操作系统',b.score,null)) as '操作系统',
 MAX(IF(c.Cname = '数据库',b.score,null)) as '数据库',
 MAX(IF(c.Cname = '编译原理',b.score,null)) as '编译原理',
 MAX(IF(c.Cname = '计算机网络',b.score,null)) as '计算机网络'
 </code></pre>
 <p>从上面看，这一部分的 sql 语法是一样的，利用 concat 函数动态拼接出来：</p>
-<pre><code class="language-plain_text">SELECT
+<pre class="line-numbers"><code class="language-plain_text">SELECT
 	CONCAT('MAX(IF(c.Cname = ''', c.Cname, ''', a.score, NULL)) AS ''', c.Cname, '\'')
 FROM
 	Course c;
 </code></pre>
 <p>这一部分有了，把所有的 sql 语句都拼接起来<br />
 但是这个地方使用 concat 不行，concat 只会返回一条结果</p>
-<pre><code class="language-plain_text">SET @sql = '';
+<pre class="line-numbers"><code class="language-plain_text">SET @sql = '';
 
 SELECT
 	CONCAT('MAX(IF(c.Cname = ''', c.Cname, ''', a.score, NULL)) AS ''', c.Cname, '\'')
@@ -280,7 +280,7 @@ SELECT	@sql;
 准备好的 SQL 语句通过 <code>EXECUTE</code> 命令执行，<br />
 最后通过 <code>DEALLOCATE PREPARE</code> 命令释放掉</p>
 <p>所以最终结果是这样的:</p>
-<pre><code class="language-plain_text">SET @sql = '';
+<pre class="line-numbers"><code class="language-plain_text">SET @sql = '';
 
 SELECT
 	GROUP_CONCAT(CONCAT('MAX(IF(c.Cname = ''', c.Cname, ''', a.score, NULL)) AS ''', c.Cname, '\''))
@@ -415,6 +415,12 @@ DEALLOCATE PREPARE stmt;
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -434,12 +440,6 @@ DEALLOCATE PREPARE stmt;
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

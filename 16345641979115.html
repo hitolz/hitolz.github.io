@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -223,7 +223,7 @@
 一个 mongoDB 中可以建立多个数据库。<br />
 默认数据库为 db。</p>
 <p>命令</p>
-<pre><code class="language-plain_text">show dbs # 查看所有数据库
+<pre class="line-numbers"><code class="language-plain_text">show dbs # 查看所有数据库
 
 db # 查看当前连接的数据库
 
@@ -309,13 +309,13 @@ use xx # 连接到 xx 数据库,如果数据库不存在，则创建数据库
 <h2><a id="%E6%93%8D%E4%BD%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>操作</h2>
 <h3><a id="%E6%9F%A5%E8%AF%A2%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>查询文档</h3>
 <p>语法：</p>
-<pre><code class="language-plain_text">db.collection.find(query, projection)
+<pre class="line-numbers"><code class="language-plain_text">db.collection.find(query, projection)
 query ：可选，使用查询操作符指定查询条件
 projection ：可选，使用投影操作符指定返回的键。查询时返回文档中所有键值， 只需省略该参数即可（默认省略）。
 
 </code></pre>
 <p>例子：</p>
-<pre><code class="language-plain_text">查询所有: 
+<pre class="line-numbers"><code class="language-plain_text">查询所有: 
 db.chat_calls.find()
 
 按条件查询:
@@ -327,17 +327,17 @@ db.chat_calls.find({&quot;machine_id&quot;:&quot;GV2_T1&quot;,&quot;call_uuid&qu
 </code></pre>
 <h3><a id="%E6%8F%92%E5%85%A5%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>插入文档</h3>
 <p>语法:</p>
-<pre><code class="language-plain_text">db.COLLECTION_NAME.insert(document)
+<pre class="line-numbers"><code class="language-plain_text">db.COLLECTION_NAME.insert(document)
 或
 db.COLLECTION_NAME.save(document)
 </code></pre>
 <p>例子:</p>
-<pre><code class="language-plain_text">db.chat_calls.insert(
+<pre class="line-numbers"><code class="language-plain_text">db.chat_calls.insert(
 {&quot;machine_id&quot;:&quot;test&quot;,&quot;call_uuid&quot;:&quot;test&quot;})
 </code></pre>
 <h3><a id="%E6%9B%B4%E6%96%B0%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>更新文档</h3>
 <p>语法:</p>
-<pre><code class="language-plain_text">db.collection.update(
+<pre class="line-numbers"><code class="language-plain_text">db.collection.update(
    &lt;query&gt;,
    &lt;update&gt;,
    {
@@ -354,7 +354,7 @@ multi : 可选，mongodb 默认是false,只更新找到的第一条记录，如�
 writeConcern :可选，抛出异常的级别。
 </code></pre>
 <p>例子:</p>
-<pre><code class="language-plain_text">db.chat_calls.update(
+<pre class="line-numbers"><code class="language-plain_text">db.chat_calls.update(
 	{&quot;machine_id&quot;:&quot;test&quot;,&quot;call_uuid&quot;:&quot;test&quot;}, 
 	{
 		$set:{&quot;machine_id&quot;:&quot;test111&quot;}
@@ -363,7 +363,7 @@ writeConcern :可选，抛出异常的级别。
 运算符 $set,将 machine_id 修改为 test111
 </code></pre>
 <p>save() 方法，通过 _id 主键存在则更新，如果不存在则新增。</p>
-<pre><code class="language-plain_text">db.collection.save(
+<pre class="line-numbers"><code class="language-plain_text">db.collection.save(
    &lt;document&gt;,
    {
      writeConcern: &lt;document&gt;
@@ -374,7 +374,7 @@ writeConcern :可选，抛出异常的级别。
 <p>db.collection.deleteOne()<br />
 db.collection.deleteMany()</p>
 <p>语法：</p>
-<pre><code class="language-plain_text">db.collection.deleteOne(
+<pre class="line-numbers"><code class="language-plain_text">db.collection.deleteOne(
    &lt;filter&gt;,
    {
       writeConcern: &lt;document&gt;,
@@ -394,7 +394,7 @@ db.collection.deleteMany(
 
 </code></pre>
 <p>例子:</p>
-<pre><code class="language-plain_text">db.chat_calls.deleteOne({&quot;machine_id&quot;:&quot;test&quot;})
+<pre class="line-numbers"><code class="language-plain_text">db.chat_calls.deleteOne({&quot;machine_id&quot;:&quot;test&quot;})
 </code></pre>
 <h1><a id="gridfs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>GridFS</h1>
 <p>GridFS 用于存储和恢复那些超过16M（BSON文件限制）的文件(如：图片、音频、视频等)。</p>
@@ -402,7 +402,7 @@ db.collection.deleteMany(
 <p>GridFS 可以更好的存储大于16M的文件。</p>
 <p>GridFS 会将大文件对象分割成多个小的chunk(文件片段),一般为256k/个,每个chunk将作为MongoDB的一个文档(document)被存储在chunks集合中。</p>
 <p>GridFS 用两个集合来存储一个文件：fs.files与fs.chunks。</p>
-<pre><code class="language-plain_text">gridfs = GridFS(db_client.get_database(db_name), collection=collection)
+<pre class="line-numbers"><code class="language-plain_text">gridfs = GridFS(db_client.get_database(db_name), collection=collection)
 </code></pre>
 <h1><a id="%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>安装</h1>
 <h2><a id="mac%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>mac 安装</h2>
@@ -531,6 +531,12 @@ docker run -di --name=my_mongo -p 27017:27017 mongo</p>
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -550,12 +556,6 @@ docker run -di --name=my_mongo -p 27017:27017 mongo</p>
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

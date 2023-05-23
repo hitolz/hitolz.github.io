@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -150,16 +150,18 @@
 <ol>
 <li>
 <p>创建工程</p>
-<pre><code class="language-plain_text">cargo new rust_diesel_mysql_demo
+<pre class="line-numbers"><code class="language-plain_text">cargo new rust_diesel_mysql_demo
 </code></pre>
 </li>
 <li>
-<p>添加 diesel 依赖<br />
-diesel = { version = &quot;2.0.0&quot;, features = [&quot;mysql&quot;] }</p>
+<p>添加 diesel 依赖</p>
+<pre class="line-numbers"><code class="language-plain_text">diesel = { version = &quot;2.0.0&quot;, features = [&quot;mysql&quot;] }
+dotenvy = &quot;0.15&quot;
+</code></pre>
 </li>
 <li>
 <p>mysql 连接信息写入到 env 文件</p>
-<pre><code class="language-plain_text">echo DATABASE_URL=mysql://root:123456@localhost:3306/diesel_demo &gt;.env
+<pre class="line-numbers"><code class="language-plain_text">echo DATABASE_URL=mysql://root:123456@localhost:3306/diesel_demo &gt;.env
 </code></pre>
 </li>
 <li>
@@ -170,7 +172,7 @@ diesel = { version = &quot;2.0.0&quot;, features = [&quot;mysql&quot;] }</p>
 <ol>
 <li>生成 migrations 存放初始化 sql 文件的目录。</li>
 <li>生成 diesel.toml，存放生成文件的目录
-<pre><code class="language-plain_text">[print_schema]
+<pre class="line-numbers"><code class="language-plain_text">[print_schema]
 file = &quot;src/schema.rs&quot;
 
 [migrations_directory]
@@ -182,11 +184,11 @@ dir = &quot;migrations&quot;
 <li>
 <p>diesel migration generate create_posts<br />
 生成初始化 sql 文件。</p>
-<pre><code class="language-plain_text">Creating migrations/2022-11-22-085601_create_posts/up.sql
+<pre class="line-numbers"><code class="language-plain_text">Creating migrations/2022-11-22-085601_create_posts/up.sql
 Creating migrations/2022-11-22-085601_create_posts/down.sql
 </code></pre>
 <p>将初始化 sql 写到 up.sql 中。</p>
-<pre><code class="language-sql">CREATE TABLE `posts` (
+<pre class="line-numbers"><code class="language-sql">CREATE TABLE `posts` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `title` varchar(256) NOT NULL COMMENT '标题',
   `body` text NOT NULL COMMENT '内容',
@@ -208,7 +210,7 @@ Creating migrations/2022-11-22-085601_create_posts/down.sql
 <ol>
 <li>
 <p>在 src 目录下创建文件夹 api、database、models、service</p>
-<pre><code class="language-plain_text">├── src
+<pre class="line-numbers"><code class="language-plain_text">├── src
 │   ├── api
 │   │   ├── mod.rs
 │   │   └── test_api.rs
@@ -236,7 +238,7 @@ Creating migrations/2022-11-22-085601_create_posts/down.sql
 </ol>
 <p>每个文件夹里都有个 mod.rs，里边有声明 mod 的语句，而声明的 mod 在同级别的目录下有对应名字的文件存在。<br />
 例如 database 文件夹里的 mod.rs:</p>
-<pre><code class="language-plain_text">pub mod mysql;
+<pre class="line-numbers"><code class="language-plain_text">pub mod mysql;
 pub mod schema;
 </code></pre>
 <p>database 文件夹里还有 mysql.rs、schema.rs 两个文件。</p>
@@ -245,23 +247,23 @@ pub mod schema;
 <h2><a id="diesel-crud" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>diesel crud</h2>
 <p><a href="https://docs.diesel.rs/diesel/query_dsl/trait.QueryDsl.html">https://docs.diesel.rs/diesel/query_dsl/trait.QueryDsl.html</a></p>
 <p>insert</p>
-<pre><code class="language-rust">diesel::insert_into(posts::table)
+<pre class="line-numbers"><code class="language-rust">diesel::insert_into(posts::table)
         .values(&amp;new_post)
         .execute(connection)
         .expect(&quot;Error saving new post&quot;);
 </code></pre>
 <p>select<br />
 一个 selectById 都能有好几中写法</p>
-<pre><code class="language-rust">posts::table.filter(posts::id.eq(id)).first(connection).unwrap()
+<pre class="line-numbers"><code class="language-rust">posts::table.filter(posts::id.eq(id)).first(connection).unwrap()
 posts::dsl::posts.find(id).first(connection).unwrap()
 posts::table.find(id).first(connection).unwrap()
 </code></pre>
 <p>delete</p>
-<pre><code class="language-rust">diesel::delete(posts::table).filter(posts::id.eq(id))
+<pre class="line-numbers"><code class="language-rust">diesel::delete(posts::table).filter(posts::id.eq(id))
     .execute(connection).unwrap();
 </code></pre>
 <p>update</p>
-<pre><code class="language-rust">diesel::update(posts::table).filter(posts::id.eq(id))
+<pre class="line-numbers"><code class="language-rust">diesel::update(posts::table).filter(posts::id.eq(id))
     .set(posts::published.eq(true))
     .execute(connection).unwrap();
 </code></pre>
@@ -384,6 +386,12 @@ posts::table.find(id).first(connection).unwrap()
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -403,12 +411,6 @@ posts::table.find(id).first(connection).unwrap()
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -164,11 +164,11 @@ markword  锁的信息都在这里 8字节<br />
 实例数据 instance data 成员变量所在<br />
 对齐 padding 整体字节数不能被8整除的时候，补齐<br />
 (loss due to the next object alignment)</p>
-<pre><code class="language-plain_text">Object o = new Object();
+<pre class="line-numbers"><code class="language-plain_text">Object o = new Object();
 System.out.println(ClassLayout.parseInstance(o).toPrintable());
 </code></pre>
 <p>执行上面代码，</p>
-<pre><code class="language-plain_text">java.lang.Object object internals:
+<pre class="line-numbers"><code class="language-plain_text">java.lang.Object object internals:
  OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
       0     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
       4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
@@ -215,7 +215,7 @@ StringBuffer  append一堆,锁会消除</p>
 <h3><a id="volatile" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>volatile</h3>
 <p>内存可见性和禁止指令重排序<br />
 看一个例子</p>
-<pre><code class="language-plain_text">	Boolean running = true;
+<pre class="line-numbers"><code class="language-plain_text">	Boolean running = true;
 	void m(){
 		System.out.println(&quot; m start &quot;);
 		while (running){
@@ -258,7 +258,7 @@ return</p>
 <p>1、代码中变量用volatile修饰<br />
 2、在编译为字节码文件后，该属性的acc_flags 是ACC_VOLATILE<br />
 3、JVM的内存屏障，虚拟机看到ACC_VOLATILE后,屏障两边的指令不可以重排，保障有序</p>
-<pre><code class="language-plain_text">LoadLoad
+<pre class="line-numbers"><code class="language-plain_text">LoadLoad
 StoreStore
 LoadStore
 StoreLoad
@@ -275,7 +275,7 @@ lock</p>
 <h3><a id="dcl%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>DCL 单例模式</h3>
 <h3><a id="%E7%BC%93%E5%AD%98%E8%A1%8Ccache-line" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>缓存行 cache line</h3>
 <p>举个栗子：</p>
-<pre><code class="language-plain_text">public static class T{
+<pre class="line-numbers"><code class="language-plain_text">public static class T{
 	private long a1,a2,a3,a4,a5,a6,a7;
 	public volatile long x = 0L;
 }
@@ -455,6 +455,12 @@ Q：请描述synchronized 和reentrantlock的底层实现及重入的底层原�
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -474,12 +480,6 @@ Q：请描述synchronized 和reentrantlock的底层实现及重入的底层原�
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

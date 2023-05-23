@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -154,7 +154,7 @@
 <p>wait方法会使在临界区内的线程进入等待状态，同时释放被同步对象的锁。</p>
 <p>notify方法会唤醒一个因调用了wait方法而处于阻塞状态的线程，使其进入就绪状态。<br />
 被重新唤醒的线程会试图重新获取锁的控制权，并继续执行wait之后的代码。</p>
-<pre><code class="language-plain_text">static class Provider implements Runnable {
+<pre class="line-numbers"><code class="language-plain_text">static class Provider implements Runnable {
 
 	@SneakyThrows
 	@Override
@@ -182,13 +182,13 @@ static class Consumer implements Runnable {
 }
 </code></pre>
 <p>其运行结果如下：</p>
-<pre><code class="language-plain_text">生产者运行开始，当前时间 = 1609770771102
+<pre class="line-numbers"><code class="language-plain_text">生产者运行开始，当前时间 = 1609770771102
 消费者运行开始，当前时间 = 1609770771103
 消费者运行结束，当前时间 = 1609770771103
 生产者运行结束，当前时间 = 1609770771103
 </code></pre>
 <p>wait方法执行后，线程会立即释放锁，而notify方法执行后，线程并不释放锁。</p>
-<pre><code class="language-plain_text">static class Provider implements Runnable {
+<pre class="line-numbers"><code class="language-plain_text">static class Provider implements Runnable {
 
 	@SneakyThrows
 	@Override
@@ -218,7 +218,7 @@ static class Consumer implements Runnable {
 }
 </code></pre>
 <p>其运行结果：</p>
-<pre><code class="language-plain_text">生产者运行开始，当前时间 = 1609771313436
+<pre class="line-numbers"><code class="language-plain_text">生产者运行开始，当前时间 = 1609771313436
 消费者运行开始，当前时间 = 1609771313437
 消费者运行结束，当前时间 = 1609771313738
 生产者运行结束，当前时间 = 1609771314039
@@ -228,7 +228,7 @@ static class Consumer implements Runnable {
 <hr />
 <p>场景例子：<br />
 生产者生产数字到List中，当List中的元素个数为10的时候，发送通知给到消费者，消费者消费List中的元素，使其个数为0.</p>
-<pre><code class="language-plain_text">public class ProviderConsumer {
+<pre class="line-numbers"><code class="language-plain_text">public class ProviderConsumer {
 
 	static int x = 0;
 	private static List&lt;Integer&gt; list = new ArrayList&lt;&gt;();
@@ -283,7 +283,7 @@ static class Consumer implements Runnable {
 <h3><a id="join" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>join</h3>
 <p>主线程等待子线程执行完成后在接着执行。<br />
 join的作用就是等待子线程对象销毁。</p>
-<pre><code class="language-plain_text">static class MyThread implements Runnable{
+<pre class="line-numbers"><code class="language-plain_text">static class MyThread implements Runnable{
 
 	@SneakyThrows
 	@Override
@@ -310,7 +310,7 @@ public static void main(String[] args) {
 <p>Thread 中的变量<br />
 <code>ThreadLocal.ThreadLocalMap threadLocals = null;</code></p>
 <p>ThreadLocal set 方法</p>
-<pre><code class="language-java">public void set(T value) {
+<pre class="line-numbers"><code class="language-java">public void set(T value) {
     Thread t = Thread.currentThread();
     // Map 是与当前线程绑定的
     ThreadLocalMap map = getMap(t);
@@ -467,6 +467,12 @@ static class ThreadLocalMap {
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -486,12 +492,6 @@ static class ThreadLocalMap {
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

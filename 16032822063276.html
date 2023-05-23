@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -231,7 +231,7 @@ public ThreadPoolExecutor(int corePoolSize,
 <img src="http://hitol.blog.cdn.updev.cn/16023245427842.jpg" alt="16023245427842" /></p>
 <h2><a id="%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%96%B9%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>创建线程池的四种方式</h2>
 <h3><a id="newcachedthreadpool" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>newCachedThreadPool</h3>
-<pre><code class="language-plain_text">public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
+<pre class="line-numbers"><code class="language-plain_text">public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
     return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
                                   60L, TimeUnit.SECONDS,
                                   new SynchronousQueue&lt;Runnable&gt;(),
@@ -243,7 +243,7 @@ public ThreadPoolExecutor(int corePoolSize,
 <p>弊端：<br />
 并发量大了后线程创建的太多，导致 OOM</p>
 <h3><a id="newfixedthreadpool" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>newFixedThreadPool</h3>
-<pre><code class="language-plain_text">public static ExecutorService newFixedThreadPool(int nThreads, ThreadFactory threadFactory) {
+<pre class="line-numbers"><code class="language-plain_text">public static ExecutorService newFixedThreadPool(int nThreads, ThreadFactory threadFactory) {
     return new ThreadPoolExecutor(nThreads, nThreads,
                                   0L, TimeUnit.MILLISECONDS,
                                   new LinkedBlockingQueue&lt;Runnable&gt;(),
@@ -256,7 +256,7 @@ public ThreadPoolExecutor(int corePoolSize,
 因为队列容量无限大，可能会出现请求太多，出现 OOM</p>
 <h3><a id="newscheduledthreadpool" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>newScheduledThreadPool</h3>
 <p>可以延迟处理，或者定时处理</p>
-<pre><code class="language-plain_text">public ScheduledThreadPoolExecutor(int corePoolSize,
+<pre class="line-numbers"><code class="language-plain_text">public ScheduledThreadPoolExecutor(int corePoolSize,
                                    ThreadFactory threadFactory) {
     super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,
           new DelayedWorkQueue(), threadFactory);
@@ -264,7 +264,7 @@ public ThreadPoolExecutor(int corePoolSize,
 </code></pre>
 <p>核心线程数可以指定，最大线程数是 Integer 最大值，空闲线程存存活时间为0，</p>
 <h3><a id="newsinglethreadexecutor" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>newSingleThreadExecutor</h3>
-<pre><code class="language-plain_text">public static ExecutorService newSingleThreadExecutor() {
+<pre class="line-numbers"><code class="language-plain_text">public static ExecutorService newSingleThreadExecutor() {
     return new FinalizableDelegatedExecutorService
         (new ThreadPoolExecutor(1, 1,
                                 0L, TimeUnit.MILLISECONDS,
@@ -415,6 +415,12 @@ CPU 个数 +1</p>
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -434,12 +440,6 @@ CPU 个数 +1</p>
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -160,32 +160,32 @@ Centos7、2 cpu、 2G 内存</p>
 <code>hostnamectl set-hostname worker1</code><br />
 <code>hostnamectl set-hostname worker2</code></p>
 <h2><a id="%E9%85%8D%E7%BD%AEip-etchosts" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 IP /etc/hosts</h2>
-<pre><code class="language-plain_text">192.168.0.130 master
+<pre class="line-numbers"><code class="language-plain_text">192.168.0.130 master
 192.168.0.122 worker1
 192.168.0.123 worker2
 </code></pre>
 <h2><a id="%E5%85%B3%E9%97%ADfirewalld" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>关闭 firewalld</h2>
-<pre><code class="language-plain_text">systemctl stop firewalld
+<pre class="line-numbers"><code class="language-plain_text">systemctl stop firewalld
 systemctl disable firewalld
 
 &lt;!--确认是否运行--&gt;
 firewall-cmd --state
 </code></pre>
 <h2><a id="selinux" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>SELINUX</h2>
-<pre><code class="language-plain_text"> cat /etc/selinux/config
+<pre class="line-numbers"><code class="language-plain_text"> cat /etc/selinux/config
 
 
 sed -ri 's/SELINUX=enforcing/SELINUX=disable/' /etc/selinux/config
 </code></pre>
 <h2><a id="%E6%97%B6%E9%97%B4%E5%90%8C%E6%AD%A5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>时间同步</h2>
-<pre><code class="language-plain_text">yum install ntpdate
+<pre class="line-numbers"><code class="language-plain_text">yum install ntpdate
 ntpdate time1.aliyun.com
 
 crontab -e 
 0 */1 * * * ntpdate time1.aliyun.com
 </code></pre>
 <h2><a id="%E5%85%B3%E9%97%ADswap%E5%88%86%E5%8C%BA" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>关闭 swap 分区</h2>
-<pre><code class="language-plain_text">vim /etc/fstab
+<pre class="line-numbers"><code class="language-plain_text">vim /etc/fstab
 
 Swap 前加 # 注释掉
 
@@ -194,7 +194,7 @@ reboot
 重启之后没有
 </code></pre>
 <h2><a id="%E9%85%8D%E7%BD%AE%E7%BD%91%E6%A1%A5%E8%BF%87%E6%BB%A4%E5%8A%9F%E8%83%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置网桥过滤功能</h2>
-<pre><code class="language-plain_text">touch /etc/sysctl.d/k8s.conf
+<pre class="line-numbers"><code class="language-plain_text">touch /etc/sysctl.d/k8s.conf
 添加以下内容
 
 net.bridge.bridge-nf-call-ip6tables = 1
@@ -203,22 +203,22 @@ net.ipv4.ip_forward = 1
 vm.swappiness = 0
 </code></pre>
 <p>加载过滤模块 br_netfilter</p>
-<pre><code class="language-plain_text">modprobe br_netfilter
+<pre class="line-numbers"><code class="language-plain_text">modprobe br_netfilter
 
 查看是否
 lsmod | grep br_netfilter
 </code></pre>
 <p>加载网桥过滤配置文件</p>
-<pre><code class="language-plain_text">sysctl -p /etc/sysctl.d/k8s.conf
+<pre class="line-numbers"><code class="language-plain_text">sysctl -p /etc/sysctl.d/k8s.conf
 </code></pre>
 <h2><a id="%E5%BC%80%E5%90%AFipvs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>开启 ipvs</h2>
 <p>service 需要使用到 iptable 或者 ipvs<br />
 ipvs 比 iptables 转化效率高。</p>
 <p>安装 ipset、ipvsadm</p>
-<pre><code class="language-bash">yum -y install ipset ipvsadm
+<pre class="line-numbers"><code class="language-bash">yum -y install ipset ipvsadm
 </code></pre>
 <p>在所有节点执行</p>
-<pre><code class="language-bash">cat &gt; /etc/sysconfig/modules/ipvs.modules &lt;&lt;EOF
+<pre class="line-numbers"><code class="language-bash">cat &gt; /etc/sysconfig/modules/ipvs.modules &lt;&lt;EOF
 #!/bin/bash
 modprobe -- ip_vs
 modprobe -- ip_vs_rr
@@ -227,17 +227,17 @@ modprobe -- ip_vs_sh
 modprobe -- nf_conntrack_ipv4
 EOF
 </code></pre>
-<pre><code class="language-bash">chmod 755 /etc/sysconfig/modules/ipvs.modules &amp;&amp; bash /etc/sysconfig/modules/ipvs.modules &amp;&amp; lsmod | grep -e ip_vs -e nf_conntrack_ipv4
+<pre class="line-numbers"><code class="language-bash">chmod 755 /etc/sysconfig/modules/ipvs.modules &amp;&amp; bash /etc/sysconfig/modules/ipvs.modules &amp;&amp; lsmod | grep -e ip_vs -e nf_conntrack_ipv4
 </code></pre>
 <p>检查是否加载</p>
-<pre><code class="language-bash">lsmod | grep -e ipvs -e nf_conntrack_ipv4
+<pre class="line-numbers"><code class="language-bash">lsmod | grep -e ipvs -e nf_conntrack_ipv4
 </code></pre>
 <h2><a id="%E5%AE%89%E8%A3%85docker" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>安装 docker</h2>
 <p>centos 安装 docker 脚本</p>
-<pre><code class="language-plain_text">curl -sSL https://get.daocloud.io/docker | sh
+<pre class="line-numbers"><code class="language-plain_text">curl -sSL https://get.daocloud.io/docker | sh
 </code></pre>
 <h3><a id="%E5%BC%80%E5%90%AF%E5%90%AF%E5%8A%A8docker" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>开启启动 docker</h3>
-<pre><code class="language-plain_text">systemctl enable docker
+<pre class="line-numbers"><code class="language-plain_text">systemctl enable docker
 </code></pre>
 <!--### 修改 docker 镜像源地址
 sudo vim /etc/docker/daemon.json
@@ -249,7 +249,7 @@ sudo vim /etc/docker/daemon.json
 ```-->
 <h3><a id="%E4%BF%AE%E6%94%B9docker%E7%9A%84-cgroup-driver" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改 docker 的 cgroup driver</h3>
 <p>sudo vim /etc/docker/daemon.json</p>
-<pre><code class="language-plain_text">{
+<pre class="line-numbers"><code class="language-plain_text">{
 &quot;exec-opts&quot;: [&quot;native.cgroupdriver=systemd&quot;]
 }
 </code></pre>
@@ -259,7 +259,7 @@ sudo vim /etc/docker/daemon.json
 <p>kubelet：在集群中的每个节点上用来启动 Pod 和容器等。</p>
 <p>kubectl：用来与集群通信的命令行工具。</p>
 <p>新建 /etc/yum.repos.d/kubernetes.repo，内容为：</p>
-<pre><code class="language-plain_text">[kubernetes]
+<pre class="line-numbers"><code class="language-plain_text">[kubernetes]
 name=Kubernetes
 baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
 enabled=1
@@ -267,19 +267,19 @@ gpgcheck=0
 
 </code></pre>
 <p>安装最新版本</p>
-<pre><code class="language-plain_text">yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+<pre class="line-numbers"><code class="language-plain_text">yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 </code></pre>
 <p>安装指定版本</p>
-<pre><code class="language-plain_text">yum install -y kubelet-1.23.5 kubeadm-1.23.5 kubectl-1.23.5
+<pre class="line-numbers"><code class="language-plain_text">yum install -y kubelet-1.23.5 kubeadm-1.23.5 kubectl-1.23.5
 </code></pre>
 <h2><a id="%E9%85%8D%E7%BD%AEkubelet" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 kubelet</h2>
 <p>为了实现 docker 使用的 cgroupdriver 与 kubelet 使用的 cgroup 一致，修改如下文件内容</p>
-<pre><code class="language-plain_text">vim /etc/sysconfig/kubelet
+<pre class="line-numbers"><code class="language-plain_text">vim /etc/sysconfig/kubelet
 添加以下内容
 KUBELET_EXTRA_ARGS=&quot;--cgroup-driver=systemd&quot;
 </code></pre>
 <h2><a id="%E4%B8%8B%E8%BD%BD%E6%89%80%E9%9C%80%E9%95%9C%E5%83%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>下载所需镜像</h2>
-<pre><code class="language-plain_text">k8s.gcr.io/kube-apiserver:v1.23.5
+<pre class="line-numbers"><code class="language-plain_text">k8s.gcr.io/kube-apiserver:v1.23.5
 k8s.gcr.io/kube-controller-manager:v1.23.5
 k8s.gcr.io/kube-scheduler:v1.23.5
 k8s.gcr.io/kube-proxy:v1.23.5
@@ -297,7 +297,7 @@ docker pull 下载所有镜像，需要科学上网。<br />
 <p>通过脚本下载</p>
 </li>
 </ol>
-<pre><code class="language-bash">#!/bin/bash
+<pre class="line-numbers"><code class="language-bash">#!/bin/bash
 url=registry.cn-hangzhou.aliyuncs.com/google_containers
 version=v1.23.5
 images=(`kubeadm config images list --kubernetes-version=$version|awk -F '/' '{print $2}'`)
@@ -308,10 +308,10 @@ for imagename in ${images[@]} ; do
 done
 </code></pre>
 <h2><a id="kubeadm%E5%88%9D%E5%A7%8B%E5%8C%96%E9%9B%86%E7%BE%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>kubeadm 初始化集群</h2>
-<pre><code class="language-plain_text">kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.0.130 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+<pre class="line-numbers"><code class="language-plain_text">kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.0.130 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
 </code></pre>
 <p>然后成功后有以下输出内容：</p>
-<pre><code class="language-plain_text">Your Kubernetes control-plane has initialized successfully!
+<pre class="line-numbers"><code class="language-plain_text">Your Kubernetes control-plane has initialized successfully!
 
 To start using your cluster, you need to run the following as a regular user:
 
@@ -334,19 +334,19 @@ kubeadm join 192.168.0.118:6443 --token tprabz.gefub6pvv1x2qalv \
 
 </code></pre>
 <p>依次执行</p>
-<pre><code class="language-plain_text">mkdir -p $HOME/.kube
+<pre class="line-numbers"><code class="language-plain_text">mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 </code></pre>
 <p>这时候 kubectl get nodes 只有 master，并且还没启动，原因是缺了网络插件，可以使用 flannel 网络插件，比较简单。<br />
 <img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot%202022-07-02%20at%2023.59.29@2x.png" alt="CleanShot 2022-07-02 at 23.59.29@2x" /></p>
 <p>Flannel is an overlay network provider that can be used with Kubernetes.</p>
-<pre><code class="language-plain_text">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+<pre class="line-numbers"><code class="language-plain_text">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 </code></pre>
 <p>或者使用 yml 文件</p>
 <details>
 <summary>kube-flannel.yml</summary>
-<pre><code class="language-yml">---
+<pre class="line-numbers"><code class="language-yml">---
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
@@ -596,11 +596,11 @@ spec:
 </details>
 <p>kubectl apply -f kube-flannel.yml</p>
 <p>worker 节点中执行下面命令添加到集群中。</p>
-<pre><code class="language-plain_text">kubeadm join 192.168.0.118:6443 --token tprabz.gefub6pvv1x2qalv \
+<pre class="line-numbers"><code class="language-plain_text">kubeadm join 192.168.0.118:6443 --token tprabz.gefub6pvv1x2qalv \
         --discovery-token-ca-cert-hash sha256:b617b1efda2e97a3f98c624a20090c0dc711bfe2e432a31631cbe87f215c103d 
 </code></pre>
 <p>如果忘记了 join 需要的 token，重新再 master 机器上生成一个</p>
-<pre><code class="language-plain_text">kubeadm token create --print-join-command
+<pre class="line-numbers"><code class="language-plain_text">kubeadm token create --print-join-command
 </code></pre>
 <p>然后将输出内容，在 worker 节点上运行就行。</p>
 <p>不出意外，集群搭建完成。<br />
@@ -608,7 +608,7 @@ spec:
 <p>将上面的操作整理成脚本</p>
 <details>
 <summary>k8s_install.sh</summary>
-<pre><code class="language-shell">#!/bin/bash
+<pre class="line-numbers"><code class="language-shell">#!/bin/bash
 # 第一个参数是 ip
 # 第二个参数是 master or worker
 
@@ -726,7 +726,7 @@ reboot
 </details>
 <details>
 <summary>image.sh</summary>
-<pre><code class="language-shell">#!/bin/bash
+<pre class="line-numbers"><code class="language-shell">#!/bin/bash
 url=registry.cn-hangzhou.aliyuncs.com/google_containers
 version=v1.23.5
 images=(`kubeadm config images list --kubernetes-version=$version|awk -F '/' '{print $2}'`)
@@ -738,11 +738,11 @@ done
 </code></pre>
 </details>
 <p>安装</p>
-<pre><code class="language-plain_text">kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.0.130 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+<pre class="line-numbers"><code class="language-plain_text">kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.0.130 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
 </code></pre>
 <details>
 <summary>after_install.sh</summary>
-<pre><code class="language-shell">mkdir -p $HOME/.kube
+<pre class="line-numbers"><code class="language-shell">mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
@@ -868,6 +868,12 @@ kubectl apply -f kube-flannel.yml
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -887,12 +893,6 @@ kubectl apply -f kube-flannel.yml
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

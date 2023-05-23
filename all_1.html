@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -126,14 +126,326 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16727524082529.html">
+                <a class="clearlink" href="16761949639234.html">
                 
-                  <h1>rust 包管理与工作空间</h1>
+                  <h1>使用 ChatGPT 学习 Javassist</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	R
+                        	<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16767189601796.jpg" alt="" /></p>
+<h2><a id="q-javassist%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 是什么？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p>Javassist是一个开源的Java字节码操作库，它允许开发人员在运行时编辑和创建Java类。使用Javassist，开发人员可以通过修改现有类的字节码来动态地改变它们的行为，也可以使用Javassist的API来创建全新的Java类。Javassist提供了一个易于使用的API，使开发人员能够在不需要了解复杂的字节码结构的情况下轻松地创建和编辑Java类。Javassist还提供了一些高级功能，如动态代理、AOP（面向切面编程）和Java字节码的转换。由于它的灵活性和易用性，Javassist被广泛用于Java应用程序的动态编程和增强。</p>
+<h2><a id="q-javassist%E5%85%A5%E9%97%A8%E7%A4%BA%E4%BE%8B%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 入门示例？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<pre class="line-numbers"><code class="language-java">import javassist.*;
+
+public class JavassistExample {
+    public static void main(String[] args) throws Exception {
+        ClassPool pool = ClassPool.getDefault();
+        CtClass cc = pool.makeClass(&quot;MyClass&quot;);
+
+        // 添加属性
+        CtField field = new CtField(CtClass.intType, &quot;myField&quot;, cc);
+        cc.addField(field);
+
+        // 添加方法
+        CtMethod method = CtNewMethod.make(&quot;public void setMyField(int value) { this.myField = value; }&quot;, cc);
+        cc.addMethod(method);
+
+        // 输出类的字节码
+        cc.writeFile(&quot;output&quot;);
+    }
+}
+
+</code></pre>
+<p>这个示例创建了一个名为&quot;MyClass&quot;的新类，添加了一个名为&quot;myField&quot;的int类型属性和一个名为&quot;setMyField&quot;的公共void类型方法，该方法设置myField属性的值。最后，将该类的字节码写入名为&quot;output&quot;的文件夹中。</p>
+<p>通过运行该示例，将在output文件夹中生成一个MyClass.class文件，该文件包含上述定义的类的字节码。这个示例只是Javassist的入门示例，Javassist还提供了许多其他功能，如修改现有类、动态代理等。</p>
+<h2><a id="q%E9%9C%80%E8%A6%81%E6%B7%BB%E5%8A%A0%E4%BB%80%E4%B9%88-maven%E4%BE%9D%E8%B5%96%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:需要添加什么 maven 依赖？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.javassist&lt;/groupId&gt;
+    &lt;artifactId&gt;javassist&lt;/artifactId&gt;
+    &lt;version&gt;3.28.0-GA&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>最新版本是 3.29.1-GA</p>
+<p>添加完 maven 依赖后运行，确实在 output 文件夹下生成了 MyClass.class<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1816.57.14@2x.png" alt="CleanShot2023-02-1816.57.14@2x" /></p>
+<h2><a id="q%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:如何修改现有类？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p>使用Javassist修改现有类可以通过以下步骤完成：</p>
+<ol>
+<li>获取类池（ClassPool）对象。
+<pre class="line-numbers"><code class="language-java">ClassPool pool = ClassPool.getDefault();
+</code></pre>
+</li>
+<li>使用类池获取要修改的类的CtClass对象。
+<pre class="line-numbers"><code class="language-java">CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
+</code></pre>
+</li>
+<li>修改类的字节码，比如添加新的方法或属性，修改现有方法或属性等。下面是一个添加新方法的示例：
+<pre class="line-numbers"><code class="language-java">CtMethod newMethod = CtNewMethod.make(
+&quot;public void newMethod() { System.out.println(\&quot;This is a new method!\&quot;); }&quot;, cc);
+cc.addMethod(newMethod);
+</code></pre>
+</li>
+<li>将修改后的字节码写入class文件或者加载到当前JVM中。
+<pre class="line-numbers"><code class="language-java">cc.writeFile();
+</code></pre>
+或者
+<pre class="line-numbers"><code class="language-java">cc.toClass();
+</code></pre>
+<code>writeFile</code>方法会将修改后的字节码写入到磁盘上，<code>toClass</code>方法会将字节码加载到当前JVM中。</li>
+</ol>
+<p>下面是一个完整的示例，它会将现有类&quot;com.example.MyClass&quot;中的方法&quot;oldMethod&quot;修改为输出一条新的信息：</p>
+<pre class="line-numbers"><code class="language-java">import javassist.*;
+
+public class JavassistExample {
+    public static void main(String[] args) throws Exception {
+        ClassPool pool = ClassPool.getDefault();
+        CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
+
+        CtMethod oldMethod = cc.getDeclaredMethod(&quot;oldMethod&quot;);
+        oldMethod.setBody(&quot;System.out.println(\&quot;This is a modified old method!\&quot;);&quot;);
+
+        cc.writeFile();
+    }
+}
+</code></pre>
+<p>注意，为了执行这个示例，你需要将&quot;com.example.MyClass&quot;这个类的字节码文件放在类路径下。</p>
+<hr />
+<p>执行前，我的 TestClass类，里面 test 方法，输出1<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1817.07.50@2x.png" alt="CleanShot2023-02-1817.07.50@2x" /></p>
+<p>执行后<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1817.08.29@2x.png" alt="CleanShot2023-02-1817.08.29@2x" /></p>
+<p>执行后的这个是新生成的文件，并不是覆盖掉原来的文件。</p>
+<h2><a id="q-cc-toclass%E5%92%8C-cc-writefile%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:cc.toClass() 和 cc.writeFile() 的区别</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p><code>toClass()</code> 方法会将 <code>Javassist</code> 修改后的类直接转换为 <code>java.lang.Class</code> 对象，并将该对象加载到 JVM 中，因此你可以在代码中直接使用修改后的类。如果你调用了 <code>toClass()</code> 方法，<code>Javassist</code> 会尝试在 JVM 中加载修改后的类，如果加载成功，则返回一个 <code>java.lang.Class</code> 对象，否则会抛出一个异常。</p>
+<p><code>writeFile()</code> 方法会将 <code>Javassist</code> 修改后的类写入到磁盘上的一个 .class 文件中。这个文件可以用来替换原来的类文件，或者在以后的运行中使用，以避免每次运行时重新生成修改后的类。注意，<code>writeFile()</code> 方法只是将类保存到磁盘上，并没有将其加载到 JVM 中，因此你不能直接在代码中使用修改后的类，除非你手动加载它。</p>
+<p>通常来说，<code>toClass()</code> 方法比 <code>writeFile()</code> 更方便，因为它可以直接在 JVM 中加载修改后的类，而不需要手动加载它。但是，如果你需要在多个应用程序之间共享修改后的类，或者想要在以后的运行中使用这个类，那么 <code>writeFile()</code> 方法可能更有用。</p>
+<p>需要注意的是，<code>toClass()</code> 和 <code>writeFile()</code> 方法可以结合使用，以便在将修改后的类加载到 JVM 中之前，先将它们保存到磁盘上。这样做可以避免每次运行时重新生成修改后的类。</p>
+<h2><a id="q%E4%BD%BF%E7%94%A8-javassist%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%8C%E5%9C%A8%E5%85%B6%E4%B8%AD%E6%AF%8F%E4%B8%AA%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E5%89%8D%E5%90%8E%E8%BE%93%E5%87%BA%E5%BD%93%E5%89%8D%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4%EF%BC%8C%E4%BB%A5%E6%AD%A4%E6%9D%A5%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E7%9A%84%E6%97%B6%E9%97%B4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:使用Javassist修改现有类，在其中每个方法执行前后输出当前系统时间，以此来计算方法执行的时间</h2>
+<h2><a id="a%EF%BC%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A：</h2>
+<p>回答的步骤跟上一个问题的步骤是一样的，不过示例代码不同，而且有错误，最终修改完成后的示例：</p>
+<pre class="line-numbers"><code class="language-java">import javassist.*;
+
+
+public class JavassistExample {
+    public static void main(String[] args) throws Exception {
+        modifyClass();
+    }
+
+    public static void modifyClass() throws Exception {
+        ClassPool cp = ClassPool.getDefault();
+        CtClass cc = cp.get(&quot;com.example.MyClass&quot;);
+        System.out.println(&quot;modifyClass &quot; + cc.getName());
+        CtMethod[] methods = cc.getDeclaredMethods();
+        for (CtMethod method : methods) {
+            String methodName = &quot;modifyClass &quot; + cc.getName() + &quot;#&quot; + method.getName();
+            System.out.println(methodName);
+            method.addLocalVariable(&quot;startNanos&quot;, CtClass.longType);
+            method.insertBefore(&quot;{ startNanos = System.nanoTime(); }&quot;);
+            method.insertAfter(&quot;System.out.println(System.nanoTime() - startNanos);&quot;);
+        }
+        // 重新生成字节码并返回
+        cc.writeFile();
+        cc.toClass();
+    }
+}
+</code></pre>
+<h2><a id="%E8%BF%90%E8%A1%8C%E7%94%9F%E6%88%90%E7%9A%84%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行生成的代码</h2>
+<pre class="line-numbers"><code class="language-java">public class MyApp {
+    public static void main(String[] args) throws Exception {
+        // 在 Javassist 中修改 MyClass
+        JavassistExample.modifyClass();
+
+        // 已经加载到 JVM 内存中，这里使用的是修改后的类
+        MyClass cc = new MyClass();
+        cc.method1();
+    }
+}
+</code></pre>
+<h2><a id="%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改后的字节码</h2>
+<pre class="line-numbers"><code class="language-java">
+public class MyClass {
+    public MyClass() {
+    }
+
+    public void method1() {
+        long startNanos = System.nanoTime();
+        System.out.println(&quot;This is method 1&quot;);
+
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException var6) {
+            var6.printStackTrace();
+        }
+
+        Object var5 = null;
+        System.out.println(System.nanoTime() - startNanos);
+    }
+
+    public void method2(String name, Integer age) {
+        long startNanos = System.nanoTime();
+        System.out.println(&quot;This is method 2&quot;);
+        System.out.println(name);
+        System.out.println(age);
+
+        try {
+            Thread.sleep(2000L);
+        } catch (InterruptedException var8) {
+            var8.printStackTrace();
+        }
+
+        Object var7 = null;
+        System.out.println(System.nanoTime() - startNanos);
+    }
+}
+</code></pre>
+<h2><a id="q%EF%BC%9Ajavaagent%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q：javaagent 的使用原理</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p>Java Agent 是一种基于 JVM 的动态代理技术，它可以在应用程序启动时通过参数的方式将一个 Jar 包加载到 JVM 中，从而实现对 Java 应用程序的动态监控和控制。Java Agent 的原理是通过 Java Instrumentation API，它提供了对 Java 应用程序字节码的操作能力，可以在 Java 应用程序启动时通过 Agent 将 Java 类进行动态修改，从而实现对应用程序的监控和控制。</p>
+<p>在使用 Java Agent 时，需要编写一个代理程序，并将其打包成 Jar 文件。在代理程序中，需要实现 premain 方法，该方法会在应用程序启动时被自动调用。在 premain 方法中，可以通过 Instrumentation API 获取应用程序的类定义，并对其进行动态修改，从而实现对应用程序的增强和监控。</p>
+<p>具体而言，Java Agent 可以在 premain 方法中使用 Instrumentation API 的 addTransformer() 方法注册一个 ClassFileTransformer 对象。ClassFileTransformer 对象可以在应用程序加载类文件时对类字节码进行转换。在转换过程中，可以使用字节码操作库，比如 Javassist，ASM 或 ByteBuddy 等，来修改类字节码。通过这种方式，Java Agent 可以实现对应用程序类的增强和监控。</p>
+<p>在 Java Agent 中，还可以通过 Instrumentation API 提供的其他方法获取和修改类加载器、管理运行时代理、获取类定义信息等。这些功能可以用于实现更加复杂的增强和监控操作。</p>
+<p>总之，Java Agent 是一种非常强大的工具，可以用于实现各种应用程序的增强和监控，比如性能监控、安全审计、调试等。它通过动态修改应用程序的字节码，可以实现非侵入式的监控和增强，而且对应用程序的性能影响非常小。</p>
+<hr />
+<p>ClassFileTransformer 是 Java 中的一个接口，它是用于修改或增强字节码的核心接口之一。在 Java 应用程序启动时，通过 -javaagent 参数加载的 Java 代理会自动注册一个 ClassFileTransformer 实现，用于对 JVM 中加载的类进行字节码修改或增强操作。</p>
+<p>ClassFileTransformer 接口只有一个方法 transform，该方法接收三个参数：原始类名、类加载器、原始类字节码。该方法的返回值是一个字节数组，表示经过修改后的新的字节码。ClassFileTransformer 可以在类加载过程中的各个阶段进行字节码的修改，例如在类加载之前，类加载时，类被重新转换时等。</p>
+<hr />
+<h2><a id="javassist" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Javassist</h2>
+<p>Javassist是一个开源的分析、编辑和创建Java字节码的类库；</p>
+<p>相比ASM，Javassist提供了更加简单便捷的API，使用Javassist我们可以像写Java代码一样直接插入Java代码片段，让我们不再需要关注Java底层的字节码的和栈操作，仅需要学会如何使用Javassist的API即可实现字节码编辑。</p>
+<p>学习Javassist可以阅读官方的入门教程：<a href="http://www.javassist.org/tutorial/tutorial.html">Getting Started with Javassist</a>。</p>
+<h3><a id="api" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h3>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ClassPool</td>
+<td>ClassPool是一个存储CtClass的容器，如果调用get方法会搜索并创建一个表示该类的CtClass对象</td>
+</tr>
+<tr>
+<td>CtClass</td>
+<td>CtClass表示的是从ClassPool获取的类对象，可对该类就行读写编辑等操作</td>
+</tr>
+<tr>
+<td>CtMethod</td>
+<td>可读写的类方法对象</td>
+</tr>
+<tr>
+<td>CtConstructor</td>
+<td>可读写的类构造方法对象</td>
+</tr>
+<tr>
+<td>CtField</td>
+<td>可读写的类成员变量对象</td>
+</tr>
+</tbody>
+</table>
+<h3><a id="%E6%A0%87%E8%AF%86%E7%AC%A6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>标识符</h3>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$0, $1, $2, ...</code></td>
+<td>this和方法参数</td>
+</tr>
+<tr>
+<td><code>$args</code></td>
+<td>Object[]类型的参数数组</td>
+</tr>
+<tr>
+<td><code>$$</code></td>
+<td>所有的参数，如<code>m($$)</code>等价于<code>m($1,$2,...)</code></td>
+</tr>
+<tr>
+<td><code>$cflow(...)</code></td>
+<td>cflow变量</td>
+</tr>
+<tr>
+<td><code>$r</code></td>
+<td>返回类型，用于类型转换</td>
+</tr>
+<tr>
+<td><code>$w</code></td>
+<td>包装类型，用于类型转换</td>
+</tr>
+<tr>
+<td><code>$_</code></td>
+<td>方法返回值</td>
+</tr>
+<tr>
+<td><code>$sig</code></td>
+<td>方法签名，返回java.lang.Class[]数组类型</td>
+</tr>
+<tr>
+<td><code>$type</code></td>
+<td>返回值类型，java.lang.Class类型</td>
+</tr>
+<tr>
+<td><code>$class</code></td>
+<td>当前类，java.lang.Class类型</td>
+</tr>
+</tbody>
+</table>
+<h2><a id="agent" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Agent</h2>
+<p>JDK1.5开始，Java新增了Instrumentation(Java Agent API)和JVMTI(JVM Tool Interface)功能，允许JVM在加载某个class文件之前对其字节码进行修改，同时也支持对已加载的class(类字节码)进行重新加载(Retransform)。</p>
+<p>利用Java Agent这一特性衍生出了APM(Application Performance Management，应用性能管理)、RASP(Runtime application self-protection，运行时应用自我保护)、IAST(Interactive Application Security Testing，交互式应用程序安全测试)等相关产品，它们都无一例外的使用了Instrumentation/JVMTI的API来实现动态修改Java类字节码并插入监控或检测代码。</p>
+<p>Java Agent有两种运行模式：</p>
+<ol>
+<li>启动Java程序时添加-javaagent(Instrumentation API实现方式)或-agentpath/-agentlib(JVMTI的实现方式)参数，如java -javaagent:/data/XXX.jar LingXeTest。</li>
+<li>JDK1.6新增了attach(附加方式)方式，可以对运行中的Java进程附加Agent。<br />
+这两种运行方式的最大区别在于第一种方式只能在程序启动时指定Agent文件，而attach方式可以在Java程序运行后根据进程ID动态注入Agent到JVM。</li>
+</ol>
+<p>Java Agent和普通的Java类并没有任何区别，普通的Java程序中规定了main方法为程序入口，而Java Agent则将premain（Agent模式）和agentmain（Attach模式）作为了Agent程序的入口，两者所接受的参数是完全一致的，如下：</p>
+<pre class="line-numbers"><code class="language-java">public static void premain(String args, Instrumentation inst) {}
+public static void agentmain(String args, Instrumentation inst) {}
+</code></pre>
+<p>Java Agent还限制了我们必须以jar包的形式运行或加载，我们必须将编写好的Agent程序打包成一个jar文件。</p>
+<p>使用命令：</p>
+<pre class="line-numbers"><code class="language-plain_text">java -javaagent:/path/to/agent.jar -jar yourapp.jar
+</code></pre>
+<p>除此之外，Java Agent还强制要求了所有的jar文件中必须包含/META-INF/MANIFEST.MF文件，且该文件中必须定义好Premain-Class（Agent模式）或Agent-Class:（Agent模式）配置，可以通过 maven 插件实现:</p>
+<pre class="line-numbers"><code class="language-xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;
+    &lt;version&gt;3.2.0&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;archive&gt;
+            &lt;addMavenDescriptor&gt;true&lt;/addMavenDescriptor&gt;
+            &lt;index&gt;true&lt;/index&gt;
+            &lt;manifest&gt;
+                &lt;addDefaultSpecificationEntries&gt;true&lt;/addDefaultSpecificationEntries&gt;
+                &lt;addDefaultImplementationEntries&gt;true&lt;/addDefaultImplementationEntries&gt;
+            &lt;/manifest&gt;
+            &lt;manifestEntries&gt;
+                &lt;Premain-Class&gt;com.example.PreMain&lt;/Premain-Class&gt;
+                &lt;Specification-Version&gt;${project.version}&lt;/Specification-Version&gt;
+                &lt;Implementation-Version&gt;${project.version}&lt;/Implementation-Version&gt;
+            &lt;/manifestEntries&gt;
+        &lt;/archive&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;
+</code></pre>
+<h2><a id="%E5%B0%86%E7%9B%91%E6%8E%A7%E4%BF%A1%E6%81%AF%E8%BE%93%E5%87%BA%E5%88%B0%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>将监控信息输出到日志文件</h2>
+<p>上面的例子中已经实现了，在方法运行前后记录时间戳来监控方法执行时间。<br />
+下一步计划，将执行时间记录下来。<br />
+在下一步，记录到时序数据库中，加载到 Prometheus</p>
+
                         
                       </div>
                   </div>
@@ -141,10 +453,10 @@
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2023/01/03 21:26 下午</span>
+                    <span class="date">2023/02/12 17:42 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='rust.html'>rust</a></span>
+          					    <span class="posted-in"><a href='JVM.html'>JVM</a></span>
           				   
                     
 
@@ -252,6 +564,12 @@
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -271,12 +589,6 @@
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

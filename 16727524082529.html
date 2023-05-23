@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -181,16 +181,16 @@
 <ul>
 <li>创建二进制包</li>
 </ul>
-<pre><code class="language-plain_text">cargo new my-project
+<pre class="line-numbers"><code class="language-plain_text">cargo new my-project
 </code></pre>
 <ul>
 <li>创建 lib 包</li>
 </ul>
-<pre><code class="language-plain_text">cargo new my-lib --lib
+<pre class="line-numbers"><code class="language-plain_text">cargo new my-lib --lib
 </code></pre>
 <p>库单元包（lib）只能被其他二进制单元包引用而不能独立运行。</p>
 <h2><a id="%E5%85%B8%E5%9E%8B%E7%9A%84%E5%8C%85%E7%BB%93%E6%9E%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>典型的包结构</h2>
-<pre><code class="language-plain_text">.
+<pre class="line-numbers"><code class="language-plain_text">.
 ├── Cargo.toml
 ├── Cargo.lock
 ├── src
@@ -225,18 +225,18 @@
 <ol>
 <li>
 <p>创建一个工作空间目录，就是创建一个空的文件夹。</p>
-<pre><code class="language-bash">mkdir add
+<pre class="line-numbers"><code class="language-bash">mkdir add
 </code></pre>
 </li>
 <li>
 <p>新创建的目录中添加 Cargo.toml</p>
-<pre><code class="language-bash">cd add
+<pre class="line-numbers"><code class="language-bash">cd add
 touch Cargo.toml
 </code></pre>
 </li>
 <li>
 <p>编辑 Cargo.toml</p>
-<pre><code class="language-toml">[workspace]
+<pre class="line-numbers"><code class="language-toml">[workspace]
 members = [
     &quot;adder&quot;,
     &quot;add-one&quot;
@@ -245,13 +245,13 @@ members = [
 </li>
 <li>
 <p>在 add 目录下，创建 adder 二进制包</p>
-<pre><code class="language-plain_text">cargo new adder
+<pre class="line-numbers"><code class="language-plain_text">cargo new adder
 </code></pre>
 <p>输出</p>
-<pre><code class="language-plain_text">Created binary (application) `adder` project
+<pre class="line-numbers"><code class="language-plain_text">Created binary (application) `adder` project
 </code></pre>
 <p>现在的目录结构:</p>
-<pre><code class="language-plain_text">├── Cargo.lock
+<pre class="line-numbers"><code class="language-plain_text">├── Cargo.lock
 ├── Cargo.toml
 ├── adder
 │   ├── Cargo.toml
@@ -262,13 +262,13 @@ members = [
 </li>
 <li>
 <p>创建新的 lib 包 add-one</p>
-<pre><code class="language-plain_text">cargo new add-one --lib
+<pre class="line-numbers"><code class="language-plain_text">cargo new add-one --lib
 </code></pre>
 <p>输出</p>
-<pre><code class="language-plain_text">Created library `add-one` project
+<pre class="line-numbers"><code class="language-plain_text">Created library `add-one` project
 </code></pre>
 <p>此时的目录结构:</p>
-<pre><code class="language-plain_text">├── Cargo.lock
+<pre class="line-numbers"><code class="language-plain_text">├── Cargo.lock
 ├── Cargo.toml
 ├── add-one
 │   ├── Cargo.toml
@@ -284,7 +284,7 @@ members = [
 <li>
 <p>add-one/src/lib.rs</p>
 <p>lib 文件中自动生成了代码，一个 add 方法，一个 test 方法</p>
-<pre><code class="language-rust">pub fn add(left: usize, right: usize) -&gt; usize {
+<pre class="line-numbers"><code class="language-rust">pub fn add(left: usize, right: usize) -&gt; usize {
     left + right
 }
 
@@ -303,14 +303,14 @@ mod tests {
 <li>
 <p>让二进制包 adder 依赖 add-one 这个 lib<br />
 需要在 adder 的 Cargo.toml 文件中添加 add-one 的路径作为依赖。</p>
-<pre><code class="language-plain_text">[dependencies]
+<pre class="line-numbers"><code class="language-plain_text">[dependencies]
 add-one = {path = &quot;../add-one&quot;}
 </code></pre>
 </li>
 <li>
 <p>在 adder 包中使用 add-one 中的 add 方法<br />
 adder/src/main.rs</p>
-<pre><code class="language-rust">use add_one;
+<pre class="line-numbers"><code class="language-rust">use add_one;
 fn main() {
     println!(&quot;Hello, world!&quot;);
     let x = add_one::add(1, 2);
@@ -324,7 +324,7 @@ fn main() {
 </li>
 <li>
 <p>为了能够在工作空间的目录下运行二进制包，在执行 cargo run 命令时需要指定 -p 参数</p>
-<pre><code class="language-plain_text">cargo run -p adder
+<pre class="line-numbers"><code class="language-plain_text">cargo run -p adder
 </code></pre>
 </li>
 </ol>
@@ -445,6 +445,12 @@ lib 包相当于工具包，一般用来实现核心功能，同时还可以给�
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -464,12 +470,6 @@ lib 包相当于工具包，一般用来实现核心功能，同时还可以给�
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

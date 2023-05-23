@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -152,19 +152,19 @@
 <ol>
 <li>创建rust 工程</li>
 </ol>
-<pre><code class="language-rust">cargo new hello-world
+<pre class="line-numbers"><code class="language-rust">cargo new hello-world
 </code></pre>
 <ol start="2">
 <li>Cargo.toml 添加依赖</li>
 </ol>
-<pre><code class="language-rust">[dependencies]
+<pre class="line-numbers"><code class="language-rust">[dependencies]
 actix-web=&quot;4&quot;
 </code></pre>
 <ol start="3">
 <li>使用 actix-web<br />
 在 src/main.rs 中编写如下代码</li>
 </ol>
-<pre><code class="language-rust">use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+<pre class="line-numbers"><code class="language-rust">use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 #[get(&quot;/&quot;)]
 async fn hello() -&gt; impl Responder {
@@ -198,7 +198,7 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 <img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-13.36.34.png" alt="2022-11-20-13.36.34" /></p>
 <h2><a id="scope" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>scope</h2>
 <p>scope 就相当于请求路径的前缀</p>
-<pre><code class="language-rust">#[actix_web::main]
+<pre class="line-numbers"><code class="language-rust">#[actix_web::main]
 async fn main() -&gt; std::io::Result&lt;()&gt; {
     HttpServer::new(|| {
         App::new().service(
@@ -214,7 +214,7 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 <p>这样的话在请求 localhost:8099/hey 就请求不到了，这样要请求的路径是 localhost:8099/app/hey</p>
 <h2><a id="state" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>state</h2>
 <p>相当于全局变量、多个线程之间共享的。</p>
-<pre><code class="language-rust">use std::sync::Mutex;
+<pre class="line-numbers"><code class="language-rust">use std::sync::Mutex;
 
 use actix_web::{App, HttpServer, web};
 
@@ -250,11 +250,11 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 <p>浏览器请求 localhost:8099,每次刷新都会导致 counter+1；</p>
 <h2><a id="%E8%BF%94%E5%9B%9Ejson" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>返回 json</h2>
 <p>cargo.toml添加依赖</p>
-<pre><code class="language-rust">serde = { version = &quot;1.0&quot;, features = [&quot;derive&quot;] }
+<pre class="line-numbers"><code class="language-rust">serde = { version = &quot;1.0&quot;, features = [&quot;derive&quot;] }
 serde_json = { version = &quot;1.0.2&quot;, optional = true }
 </code></pre>
 <p>main.rs</p>
-<pre><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web};
+<pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web};
 use actix_web::web::Json;
 use serde::Serialize;
 
@@ -425,6 +425,12 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -444,12 +450,6 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -206,7 +206,7 @@ Nacos 支持将注册中心(Service Registry）与配置中心(Config Center) �
 <h3><a id="nacos-rest%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nacos REST 服务调用</h3>
 <h4><a id="%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务提供者</h4>
 <h5><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h5>
-<pre><code class="language-plain_text">&lt;dependency&gt;
+<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
     &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
     &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
@@ -214,7 +214,7 @@ Nacos 支持将注册中心(Service Registry）与配置中心(Config Center) �
         
 </code></pre>
 <h5><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h5>
-<pre><code class="language-plain_text">server:
+<pre class="line-numbers"><code class="language-plain_text">server:
   port: 8070
 spring:
   application:
@@ -225,7 +225,7 @@ spring:
         server-addr: 127.0.0.1:8848
 </code></pre>
 <p>编写测试 controller</p>
-<pre><code class="language-plain_text">@RestController
+<pre class="line-numbers"><code class="language-plain_text">@RestController
 public class EchoController {
 
 	@RequestMapping(value = &quot;/echo/{string}&quot;, method = RequestMethod.GET)
@@ -238,7 +238,7 @@ public class EchoController {
 <p>启动类上添加 <code>@EnableDiscoveryClient</code></p>
 <h4><a id="%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务消费者</h4>
 <h5><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h5>
-<pre><code class="language-plain_text">&lt;dependency&gt;
+<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
     &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
     &lt;version&gt;0.2.2.RELEASE&lt;/version&gt;
@@ -257,7 +257,7 @@ public class EchoController {
 
 </code></pre>
 <h5><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h5>
-<pre><code class="language-plain_text">server:
+<pre class="line-numbers"><code class="language-plain_text">server:
   port: 8071
 spring:
   application:
@@ -272,7 +272,7 @@ spring:
 <h3><a id="nacos-dubbo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nacos Dubbo</h3>
 <h4><a id="%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务提供者</h4>
 <h5><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h5>
-<pre><code class="language-plain_text">&lt;dependency&gt;
+<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
     &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
     &lt;artifactId&gt;dubbo&lt;/artifactId&gt;
     &lt;version&gt;2.7.10&lt;/version&gt;
@@ -290,7 +290,7 @@ spring:
 &lt;/dependency&gt;
 </code></pre>
 <h5><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h5>
-<pre><code class="language-plain_text">dubbo:
+<pre class="line-numbers"><code class="language-plain_text">dubbo:
   application:
     name: nacos-provider
     version: 1.0.0
@@ -304,7 +304,7 @@ spring:
 <h5><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h5>
 <p>与服务提供者依赖一致</p>
 <h5><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h5>
-<pre><code class="language-plain_text">dubbo:
+<pre class="line-numbers"><code class="language-plain_text">dubbo:
   application:
     name: nacos-consumer
     version: 1.0.0
@@ -317,7 +317,7 @@ spring:
 <h2><a id="nacos%E4%BD%9C%E4%B8%BA%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nacos 作为配置中心</h2>
 <h3><a id="%E5%AE%A2%E6%88%B7%E7%AB%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>客户端</h3>
 <h4><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h4>
-<pre><code class="language-plain_text">&lt;dependency&gt;
+<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
     &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-config&lt;/artifactId&gt;
     &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
@@ -330,7 +330,7 @@ nacos 控制台上添加配置<br />
 Data ID 是 nacos-config2-dev.yml，所以在 bootstrap.yml 配置文件中这么配置</p>
 <p>Data ID 与配置文件之间的联系 <code>${prefix}-${spring.profile.active}.${file-extension}</code><br />
 prefix 默认为 spring.application.name 的值，也可以通过配置项 spring.cloud.nacos.config.prefix来配置。</p>
-<pre><code class="language-plain_text">spring:
+<pre class="line-numbers"><code class="language-plain_text">spring:
   cloud:
     nacos:
       config:
@@ -342,7 +342,7 @@ prefix 默认为 spring.application.name 的值，也可以通过配置项 sprin
     active: dev 
 </code></pre>
 <p>通过 controller 查看配置</p>
-<pre><code class="language-plain_text">@RestController
+<pre class="line-numbers"><code class="language-plain_text">@RestController
 @RefreshScope
 @RequestMapping(&quot;/config&quot;)
 public class ConfigController {
@@ -483,6 +483,12 @@ public class ConfigController {
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -502,12 +508,6 @@ public class ConfigController {
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

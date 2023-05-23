@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -231,12 +231,12 @@
 <ul>
 <li>new出来的对象都是强引用对象，在没有指定该对象=null，不会被回收。</li>
 </ul>
-<pre><code class="language-plain_text">Object obj =new Object();  // 强引用
+<pre class="line-numbers"><code class="language-plain_text">Object obj =new Object();  // 强引用
 </code></pre>
 </li>
 </ul>
 <p>obj = null;//这时候为垃圾回收器回收这个对象，至于什么时候回收，取决于垃圾回收器的算法</p>
-<pre><code class="language-plain_text">     
+<pre class="line-numbers"><code class="language-plain_text">     
  - 软引用：
      - SoftReference
      - 当内存不够用的时候会回收。
@@ -256,7 +256,7 @@ sfRefer .get();//可以获得引用对象值<br />
 - 只要发生GC就会回收。<br />
 - 适合加载的时候初始化用。<br />
 - ThreadLocal中有使用。</p>
-<pre><code class="language-plain_text">    ```
+<pre class="line-numbers"><code class="language-plain_text">    ```
     String value = new String(“sy”);
     WeakReference weakRefer = new WeakReference(value );
     System.gc();
@@ -313,7 +313,7 @@ sfRefer .get();//可以获得引用对象值<br />
 </ol>
 <p>新生代中发生GC -- minor gc</p>
 <p>minor GC test</p>
-<pre><code class="language-plain_text">public class HeapTest {
+<pre class="line-numbers"><code class="language-plain_text">public class HeapTest {
 
 	private byte[] bytes = new byte[1024*100];
 
@@ -497,6 +497,12 @@ STW<br />
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -516,12 +522,6 @@ STW<br />
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

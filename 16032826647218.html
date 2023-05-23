@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -148,7 +148,7 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <pre><code class="language-plain_text">spring.jpa.properties.hibernate.show_sql=true，开启hibernate对sql语句的打印
+      <pre class="line-numbers"><code class="language-plain_text">spring.jpa.properties.hibernate.show_sql=true，开启hibernate对sql语句的打印
 </code></pre>
 <p>单元测试中，用userRepository 查询两次相同内容。</p>
 <p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729123926.jpg" alt="" /><br />
@@ -156,7 +156,7 @@
 <p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729221221.jpg" alt="" /></p>
 <p>增加缓存：<br />
 pom中添加依赖：</p>
-<pre><code class="language-plain_text">&lt;dependency&gt;
+<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
     &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
     &lt;artifactId&gt;spring-boot-starter-cache&lt;/artifactId&gt;
 &lt;/dependency&gt;
@@ -331,6 +331,12 @@ cacheNames 配置了数据访问对象中返回的内容将存储于名为users�
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -350,12 +356,6 @@ cacheNames 配置了数据访问对象中返回的内容将存储于名为users�
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

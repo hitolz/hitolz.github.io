@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -292,7 +292,7 @@
 <h2><a id="%E5%8F%8C%E9%87%8D%E6%A3%80%E6%9F%A5%E9%94%81%E5%AE%9A%E4%B8%8E%E5%BB%B6%E8%BF%9F%E5%88%9D%E5%A7%8B%E5%8C%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>双重检查锁定与延迟初始化</h2>
 <p>Java程序中，有时候可能需要延迟对象的初始化操作，在使用对象时才进行初始化，但是很容易出问题。</p>
 <p>下面是使用双重检查锁定来实现延迟初始化的示例代码：</p>
-<pre><code class="language-plain_text">public class SingleTon {
+<pre class="line-numbers"><code class="language-plain_text">public class SingleTon {
 	private static SingleTon INSTANCE = null;
 
 	private SingleTon() {
@@ -321,7 +321,7 @@
 <p>基于类初始化(静态内部类)的解决方案</p>
 </li>
 </ul>
-<pre><code class="language-plain_text">public class SingleTon {
+<pre class="line-numbers"><code class="language-plain_text">public class SingleTon {
 	private static SingleTon INSTANCE = null;
 
 	private static class InstanceHolder{
@@ -467,6 +467,12 @@
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -486,12 +492,6 @@
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

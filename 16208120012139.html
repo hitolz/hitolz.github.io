@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -188,21 +188,21 @@
 运行 <code>java -jar sentinel-dashboard-1.8.1.jar</code><br />
 访问web地址：<a href="http://localhost:8080">http://localhost:8080</a>   默认用户名和密码都是sentinel/sentinel，然后进入首页</p>
 <h4><a id="%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>项目添加依赖</h4>
-<pre><code class="language-xml">&lt;dependency&gt;
+<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
     &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
     &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
 &lt;/dependency&gt;
 </code></pre>
 <p>添加配置</p>
-<pre><code class="language-properties">server.port=8081
+<pre class="line-numbers"><code class="language-properties">server.port=8081
 # sentinel 配置
 spring.application.name=hitol-sentinel
 spring.cloud.sentinel.transport.dashboard=localhost:8080
 spring.cloud.sentinel.transport.heartbeat-interval-ms=500
 </code></pre>
 <p>编写一个 controller 用于测试</p>
-<pre><code class="language-java">@RestController
+<pre class="line-numbers"><code class="language-java">@RestController
 public class SentinelController {
 
 	@RequestMapping(&quot;/&quot;)
@@ -220,7 +220,7 @@ public class SentinelController {
 <h2><a id="dubbo%E4%B8%8E-sentinel" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dubbo 与 Sentinel</h2>
 <h3><a id="%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%BF%AE%E6%94%B9" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务提供者修改</h3>
 <h4><a id="%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>增加依赖</h4>
-<pre><code class="language-plain_text">&lt;dependency&gt;
+<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
     &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
     &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
@@ -239,7 +239,7 @@ public class SentinelController {
 &lt;/dependency&gt;
 </code></pre>
 <h4><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h4>
-<pre><code class="language-plain_text">server:
+<pre class="line-numbers"><code class="language-plain_text">server:
   port: 8070
 spring:
   application:
@@ -258,7 +258,7 @@ spring:
 </code></pre>
 <h3><a id="%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E4%BF%AE%E6%94%B9" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务消费者修改</h3>
 <h4><a id="%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>增加依赖</h4>
-<pre><code class="language-plain_text">&lt;dependency&gt;
+<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
     &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
     &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
@@ -272,7 +272,7 @@ spring:
 </code></pre>
 <p>因为消费者是通过 http 调用的，所以比服务提供者少了一个依赖</p>
 <h4><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h4>
-<pre><code class="language-plain_text">server:
+<pre class="line-numbers"><code class="language-plain_text">server:
   port: 8071
 spring:
   application:
@@ -408,6 +408,12 @@ spring:
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -427,12 +433,6 @@ spring:
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

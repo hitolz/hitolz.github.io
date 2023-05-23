@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -146,19 +146,19 @@ B 192.168.153.132</p>
 <li>2m-noslave :2个master,没有slave</li>
 </ul>
 <p>首先在每台机器上启动 nameServer</p>
-<pre><code class="language-plain_text">nohub sh bin/mqnamesrv &amp;
+<pre class="line-numbers"><code class="language-plain_text">nohub sh bin/mqnamesrv &amp;
 </code></pre>
 <p>然后配置 Broker，每台机器上都要分别配置一个 Master 角色的 Broker 和一个 Slave 角色的 Broker，并互为主备。</p>
 <p>A 机器启动 broker-a master, broker-b slave<br />
 B 机器启动 broker-a slave, broker-b master</p>
 <p>启动</p>
-<pre><code class="language-plain_text">nohub sh bin/mqbroker -c conf/2m-2s-async/broker-xxx.properties
+<pre class="line-numbers"><code class="language-plain_text">nohub sh bin/mqbroker -c conf/2m-2s-async/broker-xxx.properties
 </code></pre>
 <p>然后在安装 console ，最终效果如图：<br />
 <img src="http://hitol.blog.cdn.updev.cn/16177202877632.jpg" alt="" /></p>
 <p>配置文件：<br />
 broker-a-master</p>
-<pre><code class="language-plain_text">brokerClusterName=DefaultCluster
+<pre class="line-numbers"><code class="language-plain_text">brokerClusterName=DefaultCluster
 brokerName=broker-a
 brokerId=0
 deleteWhen=04
@@ -185,7 +185,7 @@ storePathIndex=~/mq/data/store-a/index
 storeCheckpoint=~/mq/data/store-a/checkpoint
 </code></pre>
 <p>broker-b-slave</p>
-<pre><code class="language-plain_text">brokerClusterName=DefaultCluster
+<pre class="line-numbers"><code class="language-plain_text">brokerClusterName=DefaultCluster
 brokerName=broker-b
 brokerId=1
 deleteWhen=04
@@ -212,7 +212,7 @@ storePathIndex=~/mq/data/store-b/index
 storeCheckpoint=~/mq/data/store-b/checkpoint
 </code></pre>
 <p>broker-b-master</p>
-<pre><code class="language-plain_text">brokerClusterName=DefaultCluster
+<pre class="line-numbers"><code class="language-plain_text">brokerClusterName=DefaultCluster
 brokerName=broker-b
 brokerId=0
 deleteWhen=04
@@ -241,7 +241,7 @@ storeCheckpoint=~/mq/data/store-b/checkpoint
 
 </code></pre>
 <p>broker-a-slave</p>
-<pre><code class="language-plain_text">brokerClusterName=DefaultCluster
+<pre class="line-numbers"><code class="language-plain_text">brokerClusterName=DefaultCluster
 brokerName=broker-a
 brokerId=1
 deleteWhen=04
@@ -386,6 +386,12 @@ storeCheckpoint=~/mq/data/store-a/checkpoint
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -405,12 +411,6 @@ storeCheckpoint=~/mq/data/store-a/checkpoint
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

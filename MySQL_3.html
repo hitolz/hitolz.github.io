@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -133,7 +133,7 @@
                       
                       <div class="a-content-text">
                         
-                        	<pre><code class="language-plain_text">SELECT DATE_FORMAT(create_time,'%Y%u') weeks,COUNT(id) COUNT FROM table GROUP BY weeks; 
+                        	<pre class="line-numbers"><code class="language-plain_text">SELECT DATE_FORMAT(create_time,'%Y%u') weeks,COUNT(id) COUNT FROM table GROUP BY weeks; 
 SELECT DATE_FORMAT(create_time,'%Y%m%d') days,COUNT(id) COUNT FROM table GROUP BY days; 
 SELECT DATE_FORMAT(create_time,'%Y%m') months,COUNT(id) COUNT FROM table GROUP BY months;
 SELECT DATE_FORMAT(create_time,'%Y') years,COUNT(id) COUNT FROM table GROUP BY years;
@@ -322,6 +322,12 @@ SELECT DATE_FORMAT(create_time,'%Y') years,COUNT(id) COUNT FROM table GROUP BY y
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -341,12 +347,6 @@ SELECT DATE_FORMAT(create_time,'%Y') years,COUNT(id) COUNT FROM table GROUP BY y
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

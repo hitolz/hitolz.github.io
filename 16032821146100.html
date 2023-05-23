@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -159,7 +159,7 @@ InnoDB存储引擎中是必须要有一个聚集索引的，如果没有显示�
 当通过二级索引去查询数据，先查询辅助索引树，得到主键值，再通过聚集索引树查询，得到最终结果。</p>
 <p>回到主键索引树搜索的过程，称为回表。</p>
 <p>如果在一棵高度为3的辅助索引树中查找数据，那需要对这棵辅助索引遍历3次找到指定主键，如果聚集索引树的高度同样为3，那么还需要对聚集索引树进行3次查找，最终得到一个完整的行数据所在的页，一共需要6次逻辑IO访问得到最终的数据页。</p>
-<pre><code class="language-plain_text">CREATE TABLE `user` (
+<pre class="line-numbers"><code class="language-plain_text">CREATE TABLE `user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) COLLATE utf8_bin NOT NULL,
   `age` int(11) NOT NULL,
@@ -169,7 +169,7 @@ InnoDB存储引擎中是必须要有一个聚集索引的，如果没有显示�
 ) ENGINE=InnoDB  
 </code></pre>
 <p>例如，这么一个表结构，两个查询语句</p>
-<pre><code class="language-plain_text">select id,name from user where name = 'zhangsan1';
+<pre class="line-numbers"><code class="language-plain_text">select id,name from user where name = 'zhangsan1';
 select id,name,age from user where name = 'zhangsan1';
 </code></pre>
 <p>用EXPLAIN看一下执行计划，</p>
@@ -295,6 +295,12 @@ select id,name,age from user where name = 'zhangsan1';
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -314,12 +320,6 @@ select id,name,age from user where name = 'zhangsan1';
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

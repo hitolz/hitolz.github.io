@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -152,7 +152,7 @@
 当出现异常时，会回滚</p>
 <p>隔离级别：<br />
 隔离级别是指多个并发事务之间的隔离程度。与开发相关的场景主要包括：脏读取、重复读、幻读。</p>
-<pre><code class="language-plain_text">package org.springframework.transaction.annotation;
+<pre class="line-numbers"><code class="language-plain_text">package org.springframework.transaction.annotation;
 
 public enum Isolation {
     DEFAULT(-1),
@@ -179,10 +179,10 @@ public enum Isolation {
 <p>REPEATABLE_READ:该隔离级别表示一个事务在整个过程中可以多次重复执行某个查询，并返回相同结果。在多次查询之间有新增的值会被忽略。可以防止不可重复读和脏读。</p>
 <p>SERIALIZABLE：所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，该级别可以防止脏读、不可重复读以及幻读。但是这将严重影响程序的性能。通常情况下也不会用到该级别</p>
 <p>指定方法：</p>
-<pre><code class="language-plain_text">@Transactional(isolation = Isolation.DEFAULT)
+<pre class="line-numbers"><code class="language-plain_text">@Transactional(isolation = Isolation.DEFAULT)
 </code></pre>
 <p>传播行为：</p>
-<pre><code class="language-plain_text">package org.springframework.transaction.annotation;
+<pre class="line-numbers"><code class="language-plain_text">package org.springframework.transaction.annotation;
 
 public enum Propagation {
     REQUIRED(0),
@@ -326,6 +326,12 @@ NESTED：如果当前存在事务，则创建一个事务作为当前事务的�
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -345,12 +351,6 @@ NESTED：如果当前存在事务，则创建一个事务作为当前事务的�
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

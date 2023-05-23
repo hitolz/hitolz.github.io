@@ -1,0 +1,5102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[非著名Java程序员]]></title>
+  <link href="http://blog.hitol.top/atom.xml" rel="self"/>
+  <link href="http://blog.hitol.top/"/>
+  <updated>2023-05-23T10:55:19+08:00</updated>
+  <id>http://blog.hitol.top/</id>
+  <author>
+    <name><![CDATA[]]></name>
+    
+  </author>
+  <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[rust 快速入门指南]]></title>
+    <link href="http://blog.hitol.top/16748079623338.html"/>
+    <updated>2023-01-27T16:26:02+08:00</updated>
+    <id>http://blog.hitol.top/16748079623338.html</id>
+    <content type="html"><![CDATA[
+<div class="mweb_toc"><ul>
+<li><a href="#%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F">定义变量</a></li>
+<li><a href="#%E5%B8%B8%E9%87%8F">常量</a></li>
+<li><a href="#%E5%AD%97%E7%AC%A6%E4%B8%B2">字符串</a></li>
+<li><a href="#u64%E3%80%81i64%E3%80%81f64">u64、i64、f64</a></li>
+<li><a href="#if">if</a></li>
+<li><a href="#match">match</a></li>
+<li><a href="#%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6">读取文件</a></li>
+<li><a href="#%E8%A7%A3%E6%9E%90json">解析 json</a></li>
+<li><a href="#%E5%BE%AA%E7%8E%AF">循环</a></li>
+<li><a href="#iter">iter</a></li>
+<li><a href="#while">while</a></li>
+<li><a href="#loop">loop</a></li>
+<li><a href="#%E5%87%BD%E6%95%B0">函数</a>
+<ul>
+<li><a href="#%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC">函数返回值 -&gt;</a></li>
+<li><a href="#%E5%8F%82%E6%95%B0%E5%80%BC%E4%BC%A0%E9%80%92">参数-值传递</a></li>
+<li><a href="#%E5%8F%82%E6%95%B0%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92">参数-引用传递</a></li>
+</ul>
+</li>
+<li><a href="#%E5%85%83%E7%BB%84tuple">元组 tuple</a>
+<ul>
+<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+</ul>
+</li>
+<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93">结构体</a>
+<ul>
+<li><a href="#%E5%AE%9A%E4%B9%89%E7%BB%93%E6%9E%84%E4%BD%93">定义结构体</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9E%E4%BE%8B">创建结构体实例</a></li>
+<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93%E4%BD%9C%E4%B8%BA%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0">结构体作为函数参数</a></li>
+<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93%E4%BD%9C%E4%B8%BA%E8%BF%94%E5%9B%9E%E5%80%BC">结构体作为返回值</a></li>
+<li><a href="#%E6%96%B9%E6%B3%95">方法</a></li>
+<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95">结构体静态方法</a></li>
+</ul>
+</li>
+<li><a href="#%E6%9E%9A%E4%B8%BE">枚举</a>
+<ul>
+<li><a href="#option%E6%9E%9A%E4%B8%BE">Option枚举</a></li>
+</ul>
+</li>
+<li><a href="#%E9%9B%86%E5%90%88">集合</a>
+<ul>
+<li><a href="#vec">Vec</a></li>
+<li><a href="#hashmap">HashMap</a></li>
+<li><a href="#hashset">HashSet</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B3%9B%E5%9E%8B">泛型</a></li>
+<li><a href="#trait">Trait</a></li>
+<li><a href="#%E8%BF%AD%E4%BB%A3%E5%99%A8">迭代器</a></li>
+<li><a href="#%E9%97%AD%E5%8C%85">闭包</a></li>
+<li><a href="#%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8">闭包的使用</a></li>
+<li><a href="#%E7%BA%BF%E7%A8%8B">线程</a>
+<ul>
+<li><a href="#join">join</a></li>
+</ul>
+</li>
+<li><a href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">错误处理</a>
+<ul>
+<li><a href="#panic%E4%B8%8D%E5%8F%AF%E6%81%A2%E5%A4%8D%E9%94%99%E8%AF%AF">panic!() 不可恢复错误</a></li>
+<li><a href="#result%E6%9E%9A%E4%B8%BE%E5%92%8C%E5%8F%AF%E6%81%A2%E5%A4%8D%E9%94%99%E8%AF%AF">Result 枚举和可恢复错误</a></li>
+<li><a href="#unwrap%E5%92%8C-expect">unwrap() 和 expect()</a></li>
+</ul>
+</li>
+<li><a href="#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88">智能指针</a>
+<ul>
+<li><a href="#%E4%BD%BF%E7%94%A8box-t%E5%9C%A8%E5%A0%86%E4%B8%8A%E5%88%86%E9%85%8D%E6%95%B0%E6%8D%AE">使用 Box<T> 在堆上分配数据</a></li>
+<li><a href="#%E9%80%9A%E8%BF%87deref-trait%E5%B0%86%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E8%A7%86%E4%BD%9C%E5%B8%B8%E8%A7%84%E5%BC%95%E7%94%A8">通过 Deref trait 将智能指针视作常规引用</a></li>
+</ul>
+</li>
+<li><a href="#rc-t%E5%9F%BA%E4%BA%8E%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%9A%84%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88">Rc<T> 基于引用计数的智能指针</a></li>
+<li><a href="#refcell-t%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F"><code>RefCell&lt;T&gt;</code>: 内部可变性模式</a></li>
+<li><a href="#%E5%8C%85%E7%AE%A1%E7%90%86">包管理</a></li>
+<li><a href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95">单元测试</a></li>
+<li><a href="#arc">Arc</a></li>
+<li><a href="#rwlock">RwLock</a></li>
+<li><a href="#%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F">时间格式</a></li>
+<li><a href="#%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F">策略模式</a></li>
+<li><a href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1">多线程与定时任务</a></li>
+<li><a href="#channel">channel</a></li>
+<li><a href="#rayon">rayon</a></li>
+<li><a href="#%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%EF%BC%8C%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8">&lt;'_&gt; 是什么意思，什么作用</a></li>
+<li><a href="#%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88">函数指针</a></li>
+<li><a href="#%E9%97%AD%E5%8C%85%E4%B8%8Efn%E3%80%81fnmut%E3%80%81fnonce">闭包与Fn、FnMut、FnOnce</a></li>
+<li><a href="#%E5%AE%8F">宏</a>
+<ul>
+<li><a href="#macro-rules%E5%A3%B0%E6%98%8E%E5%AE%8F">macro_rules! 声明宏</a></li>
+<li><a href="#%E5%B1%9E%E6%80%A7%E5%AE%8F">属性宏</a></li>
+<li><a href="#%E5%87%BD%E6%95%B0%E5%AE%8F">函数宏</a></li>
+</ul>
+</li>
+<li><a href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AAderive%E5%AE%8F">自定义一个 derive 宏</a></li>
+<li><a href="#%E5%AE%9E%E7%8E%B0kafka%E7%9A%84%E5%B7%A5%E5%85%B7%E5%8C%85%EF%BC%8C%E5%8F%91%E5%B8%83%E5%88%B0-crate-io">实现 kafka 的工具包，发布到 crate.io</a></li>
+</ul>
+</div>
+<h2><a id="%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定义变量</h2>
+<pre class="line-numbers"><code class="language-rust">let 变量名 = 值;           // 不指定变量类型
+let 变量名:数据类型 = 值;   // 指定变量类型
+</code></pre>
+<p>可以包含 字母、数字 和 下划线 。</p>
+<p>变量名必须以 字母 或 下划线 开头。不能以 数字 开头。</p>
+<p>变量名是 区分大小 写的。也就是大写的 Study 和小写的 study 是两个不同的变量。</p>
+<p>let 关键字定义的变量是不可变变量<br />
+mut 表示可变，在变量前边加</p>
+<h2><a id="%E5%B8%B8%E9%87%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>常量</h2>
+<pre class="line-numbers"><code class="language-rust">const 常量名称:数据类型=值;
+</code></pre>
+<p>Rust 中，常量不能被隐藏，也不能被重复定义。</p>
+<h2><a id="%E5%AD%97%E7%AC%A6%E4%B8%B2" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>字符串</h2>
+<p>Rust 语言提供了两种字符串</p>
+<ol>
+<li>Rust 核心内置的数据类型&amp;str，字符串字面量 。</li>
+<li>Rust 标准库中的一个 公开 pub 结构体。字符串对象 String。</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">String::new() //创建一个新的空字符串,它是静态方法。
+String::from() //从具体的字符串字面量创建字符串对象。
+
+
+let mut s3 = String::new();
+
+
+s3.push('O');
+s3.push('K');
+println!(&quot;{}&quot;,s3);//输出 Go语言极简一本通OK
+
+replace()
+
+len()
+
+to_string()
+
+as_str()
+
+trim()
+
+split()
+
+chars()
+
+</code></pre>
+<h2><a id="u64%E3%80%81i64%E3%80%81f64" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>u64、i64、f64</h2>
+<p>u64 是一个无符号的 64 位整数，表示范围为从 0 到 18,446,744,073,709,551,615，可用于表示不需要小数的正整数值。</p>
+<p>i64 是一个带符号的 64 位整数，表示范围为 -9,223,372,036,854,775,808 到 9,223,372,036,854,775,807，可以表示正数和负数，适用于需要保存有符号整数的场景。</p>
+<p>f64 是一个 64 位浮点数，可以表示带小数点的浮点值，并且可以表示非常小或非常大的数字，可以在一定的精度范围内表示几乎所有实数。但是由于精度限制，浮点数在进行数值计算时容易出现误差，所以需要谨慎使用。</p>
+<p>在 Rust 中，您需要根据实际的应用场景选择合适的数据类型。如果您需要保存的整数是正数且不需要超过 u64 的取值范围，那么使用 u64 可能会更合适，而如果您需要保存的整数可以是正数或者负数，使用 i64 可能更合适。如果您需要进行小数数值计算，不需要非常高的精度，那么选择 f64 可能更简单。但是如果您需要进行高精度货币计算等精确计算，建议使用 Decimal 等第三方库。</p>
+<p>需要注意的是，在 Rust 中，这三种类型之间的转换需要谨慎，因为它们的类型不兼容，并且在进行转换时，可能发生数据精度丢失等问题。对于 i64 到 f64 或者 u64 到 f64 的转换，可以使用 as 运算符。而对于 f64 到 i64 或者 f64 到 u64 的转换，需要使用 .round() 等函数将浮点数向上或向下取整，并处理溢出的情况。</p>
+<h2><a id="if" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>if</h2>
+<pre class="line-numbers"><code class="language-rust">if 条件表达式1 {
+   // 当 条件表达式1 为 true 时要执行的语句
+} else if 条件表达式2 {
+   // 当 条件表达式2 为 true 时要执行的语句
+} else {
+   // 如果 条件表达式1 和 条件表达式2 都为 false 时要执行的语句
+}
+
+let total:f32=366.00;
+if total&gt;200.00 &amp;&amp; total&lt;500.00{
+   println!(&quot;打9折,{}&quot;,total*0.9)
+}else if total&gt;500.00{
+   println!(&quot;打8折,{}&quot;,total*0.9)
+} else{
+   println!(&quot;无折扣优惠,{}&quot;,total)
+}
+//输出 打9折,329.4
+</code></pre>
+<h2><a id="match" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>match</h2>
+<pre class="line-numbers"><code class="language-rust">match variable_expression {
+   constant_expr1 =&gt; {
+      // 语句;
+   },
+   constant_expr2 =&gt; {
+      // 语句;
+   },
+   _ =&gt; {
+      // 默认
+      // 其它语句
+   }
+};
+
+let code = &quot;10010&quot;;
+let choose = match code {
+   &quot;10010&quot; =&gt; &quot;联通&quot;,
+   &quot;10086&quot; =&gt; &quot;移动&quot;,
+   _ =&gt; &quot;Unknown&quot;
+};
+println!(&quot;选择 {}&quot;, choose);
+//输出 选择 联通
+
+
+let code = &quot;80010&quot;;
+let choose = match code {
+   &quot;10010&quot; =&gt; &quot;联通&quot;,
+   &quot;10086&quot; =&gt; &quot;移动&quot;,
+   _ =&gt; &quot;Unknown&quot;
+};
+println!(&quot;选择 {}&quot;, choose);
+//输出 选择 Unknown
+</code></pre>
+<h2><a id="%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>读取文件</h2>
+<pre class="line-numbers"><code class="language-rust">let content = fs::read_to_string(&quot;json.json&quot;).unwrap();
+</code></pre>
+<h2><a id="%E8%A7%A3%E6%9E%90json" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>解析 json</h2>
+<pre class="line-numbers"><code class="language-rust">let json = serde_json::to_string(&amp;content).unwrap();
+print!(&quot;json: {}&quot;, json);
+</code></pre>
+<pre class="line-numbers"><code class="language-rust">let parsed:WebResponse = serde_json::from_str(raw_json).unwrap();
+return pased
+</code></pre>
+<h2><a id="%E5%BE%AA%E7%8E%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>循环</h2>
+<pre class="line-numbers"><code class="language-rust">for num in 1..5{
+   println!(&quot;num is {}&quot;, num);
+}
+//输出
+num is 1
+num is 2
+num is 3
+num is 4
+
+
+for num in 1..=5 {
+   println!(&quot;num is {}&quot;, num);
+}
+输出
+num is 1
+num is 2
+num is 3
+num is 4
+num is 5
+</code></pre>
+<h2><a id="iter" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>iter</h2>
+<pre class="line-numbers"><code class="language-rust">let array = vec![
+    &quot;1&quot;,
+    &quot;2&quot;,
+    &quot;3&quot;,
+];
+for name in array.iter() {
+    match name {
+        &amp;&quot;3&quot; =&gt; println!(&quot;3-{}!&quot;, name),
+        _ =&gt; println!(&quot;{}&quot;, name),
+    }
+}
+
+//输出
+1
+2
+3-3!
+</code></pre>
+<p>iter 在每次迭代的时候会从集合中借用元素，这样集合本身不会被改变，循环结束后，集合依然可以使用。</p>
+<p>into_iter会消耗集合，会remove 集合中的元素。</p>
+<pre class="line-numbers"><code class="language-rust">let array = vec![
+    &quot;1&quot;,
+    &quot;2&quot;,
+    &quot;3&quot;,
+];
+for name in array.into_iter() { // `array` moved due to this method call
+    match name {
+        &quot;3&quot; =&gt; println!(&quot;3-{}!&quot;, name),
+        _ =&gt; println!(&quot;{}&quot;, name),
+    }
+}
+println!(&quot;{:?}&quot;,array) // value  borrowed here after move
+</code></pre>
+<h2><a id="while" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>while</h2>
+<pre class="line-numbers"><code class="language-rust">while ( 条件表达式 ) {
+    // 执行业务逻辑
+}
+</code></pre>
+<pre class="line-numbers"><code class="language-rust">let mut num = 1;
+while num &lt; 20 {
+    num = num + 1;
+    println!(&quot;{}&quot;,num)
+}
+
+while 内部也是可以使用 break；
+</code></pre>
+<h2><a id="loop" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>loop</h2>
+<pre class="line-numbers"><code class="language-rust">let mut num = 1;
+loop {
+    num = num + 1;
+    if num &gt; 20{
+        break;
+    }
+    println!(&quot;{}&quot;,num)
+}
+</code></pre>
+<h2><a id="%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数</h2>
+<pre class="line-numbers"><code class="language-rust">fn 函数名称([参数:数据类型]) -&gt; 返回值 {
+   // 函数代码
+}
+
+fn hello(){
+    println!(&quot;Hello, rust!&quot;);
+}
+
+fn main() {
+    hello();
+}
+
+//输出 Hello, rust!
+</code></pre>
+<p>一个 “不” 返回值的函数。实际上会返回一个单元类型 ()</p>
+<h3><a id="%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数返回值 -&gt;</h3>
+<p>如果函数最后没有 return，那么函数会使用最后一条语句的执行结果当做返回值返回，没有分号。</p>
+<h3><a id="%E5%8F%82%E6%95%B0%E5%80%BC%E4%BC%A0%E9%80%92" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>参数-值传递</h3>
+<p>值传递 是把传递的变量的值传递给函数的 形参，所以，函数体外的变量值和函数参数是各自保存了相同的值，互不影响。因此函数内部修改函数参数的值并不会影响外部变量的值。</p>
+<p>值传递变量导致重新创建一个变量</p>
+<pre class="line-numbers"><code class="language-rust">fn double_price(mut price:i32){
+    price=price*2;
+    println!(&quot;内部的price是{}&quot;,price)
+}
+
+fn main() {
+    let mut price=99;
+    double_price(price); //输出 内部的price是198
+    println!(&quot;外部的price是{}&quot;,price); //输出 外部的price是99
+}
+</code></pre>
+<h3><a id="%E5%8F%82%E6%95%B0%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>参数-引用传递</h3>
+<p>引用传递把当前变量的内存位置传递给函数。传递的变量和函数参数都共同指向了同一个内存位置。引用传递在参数类型的前面加上 &amp; 符号。</p>
+<pre class="line-numbers"><code class="language-rust">fn 函数名称(参数: &amp;数据类型) {
+   // 执行逻辑代码
+}
+
+fn double_price2(price:&amp;mut i32){
+    *price=*price*2;
+    println!(&quot;内部的price是{}&quot;,price)
+}
+
+fn main() {
+    let mut price=88;
+    double_price2(&amp;mut price); //输出 内部的price是176
+    println!(&quot;外部的price是{}&quot;,price);//输出 外部的price是176
+}
+</code></pre>
+<h2><a id="%E5%85%83%E7%BB%84tuple" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>元组 tuple</h2>
+<p>Tuple 元组是一个 复合类型 ，可以存储多个不同类型的数据。 Rust 支持元组 tuple 类型。元组使用括号 () 来构造（construct）。函数可以使用元组来返回多个值，因为元组可以拥有任意多个值。</p>
+<p>元组一旦定义，就不能再增长或缩小，长度是固定的。元组的下标从 0 开始。</p>
+<h3><a id="%E5%AE%9A%E4%B9%89" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定义</h3>
+<pre class="line-numbers"><code class="language-rust">let tuple变量名称:(数据类型1,数据类型2,...) = (数据1，数据2，...);
+let tuple变量名称 = (数据1，数据2，...);
+</code></pre>
+<p>tuple 使用一对小括号 () 把所有元素放在一起，元素之间使用逗号 , 分隔。如果显式指定了元组的数据类型，那么数据类型的个数必须和元组的个数相同，否则会报错。</p>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let t:(&amp;str,&amp;str) = (&quot;GO&quot;,&quot;rust&quot;);
+    println!(&quot;{:?}&quot;,t);
+    println!(&quot;{}&quot;,t.0);
+    println!(&quot;{}&quot;,t.1);
+    
+    // 解构，将2个元素的元组，赋值给两个变量
+    let (go,rust) = t;
+    println!(&quot;{}&quot;,go);
+    println!(&quot;{}&quot;,rust)
+}
+</code></pre>
+<h2><a id="%E7%BB%93%E6%9E%84%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体</h2>
+<h3><a id="%E5%AE%9A%E4%B9%89%E7%BB%93%E6%9E%84%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定义结构体</h3>
+<pre class="line-numbers"><code class="language-rust">struct 结构体名称 {
+    字段1:数据类型,
+    字段2:数据类型,
+    ...
+}
+</code></pre>
+<h3><a id="%E5%88%9B%E5%BB%BA%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9E%E4%BE%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>创建结构体实例</h3>
+<pre class="line-numbers"><code class="language-rust">let 实例名称 = 结构体名称{
+    field1:value1,
+    field2:value2
+    ...
+};
+
+-------
+
+#[derive(Debug)]
+struct Study {
+    name: String,
+    target: String,
+    spend: i32,
+}
+
+fn main() {
+    let s = Study {
+        name: String::from(&quot;GO&quot;),
+        target: String::from(&quot;GOGOGO&quot;),
+        spend: 3,
+    };
+    println!(&quot;{:?}&quot;, s);
+    println!(&quot;{:?}&quot;, s.name);
+}
+
+</code></pre>
+<h3><a id="%E7%BB%93%E6%9E%84%E4%BD%93%E4%BD%9C%E4%B8%BA%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体作为函数参数</h3>
+<pre class="line-numbers"><code class="language-rust">fn show(s: Study) {
+    println!(
+        &quot;name is :{} target is {} spend is{}&quot;,
+        s.name, s.target, s.spend
+    );
+}
+</code></pre>
+<h3><a id="%E7%BB%93%E6%9E%84%E4%BD%93%E4%BD%9C%E4%B8%BA%E8%BF%94%E5%9B%9E%E5%80%BC" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体作为返回值</h3>
+<pre class="line-numbers"><code class="language-rust">fn get_instance(name: String, target: String, spend: i32) -&gt; Study {
+    return Study {
+        name,
+        target,
+        spend,
+    };
+}
+</code></pre>
+<h3><a id="%E6%96%B9%E6%B3%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>方法</h3>
+<p>方法是依附于对象的函数。<br />
+这些方法通过关键字 self 来访问对象中的数据和其他。方法在 impl 代码块中定义。</p>
+<blockquote>
+<p>与函数的区别<br />
+函数：可以直接调用，同一个程序不能出现 2 个相同的函数签名的函数，应为函数不归属任何 owner。<br />
+方法：归属某一个 owner，不同的 owner 可以有相同的方法签名。</p>
+</blockquote>
+<pre class="line-numbers"><code class="language-rust">impl 结构体{
+    fn 方法名(&amp;self,参数列表) 返回值 {
+        //方法体
+    }
+}
+</code></pre>
+<pre class="line-numbers"><code class="language-rust">struct User{
+    name:String,
+    age:u32
+}
+
+impl User{
+    fn get_name(&amp;self) -&gt; String {
+        return String::from(self.name.to_string())
+    }
+}
+
+fn main() {
+    let user = User{
+        name:&quot;zhangsan&quot;.to_string(),
+        age:1
+    };
+    println!(&quot;{}&quot;,user.get_name());
+}
+</code></pre>
+<h3><a id="%E7%BB%93%E6%9E%84%E4%BD%93%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体静态方法</h3>
+<pre class="line-numbers"><code class="language-rust">fn 方法名(参数: 数据类型,...) -&gt; 返回值类型 {
+      // 方法体
+   }
+
+调用方式
+结构体名称::方法名(参数列表)
+
+
+impl Study {
+    fn get_instance_another(name: String, target: String, spend: i32) -&gt; Study {
+        return Study {
+            name,
+            target,
+            spend,
+        };
+    }
+}
+fn main() {
+    let s = Study::get_instance_another(&quot;GO&quot;.to_string(),&quot;GOGOGO&quot;.to_string(),3);
+    println!(&quot;{:?}&quot;, s);
+    println!(&quot;{:?}&quot;, s.name);
+}
+</code></pre>
+<h2><a id="%E6%9E%9A%E4%B8%BE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>枚举</h2>
+<pre class="line-numbers"><code class="language-rust">enum 枚举名称{
+ variant1,
+ variant2,
+ ...
+}
+
+使用：
+枚举名称::variant
+</code></pre>
+<h3><a id="option%E6%9E%9A%E4%B8%BE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Option枚举</h3>
+<pre class="line-numbers"><code class="language-rust">enum Option&lt;T&gt; {
+   Some(T),      // 用于返回一个值
+   None          // 用于返回 null,用None来代替。
+}
+</code></pre>
+<p>Option 枚举经常用在函数中的返回值，它可以表示有返回值，也可以用于表示没有返回值。如果有返回值。可以使用返回 Some(data)，如果函数没有返回值，可以返回 None。</p>
+<h2><a id="%E9%9B%86%E5%90%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>集合</h2>
+<p>Rust 语言标准库提供了通用的数据结构的实现。包括 向量 （Vector）、哈希表（ HashMap ）、哈希集合（ HashSet ） 。</p>
+<h3><a id="vec" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Vec</h3>
+<p>Rust 在标准库中定义了结构体 Vec 用于表示一个向量。向量和数组很相似，只是数组长度是编译时就确定了，定义后就不能改变了，那要么改数组，让他支持可变长度，显然 Rust 没有这么做，它用向量这个数据结构，也是在内存中开辟一段连续的内存空间来存储元素。</p>
+<p>特点：</p>
+<ol>
+<li>向量中的元素都是相同类型元素的集合。</li>
+<li>长度可变，运行时可以增加和减少。</li>
+<li>使用索引查找元素。（索引从 0 开始）</li>
+<li>添加元素时，添加到向量尾部。</li>
+<li>向量的内存在堆上，长度可动态变化。</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">let mut 向量的变量名称 = Vec::new();
+// 使用 vec宏简化
+let 向量的变量名称 = vec![val1,val2,...]
+</code></pre>
+<p>常用方法</p>
+<ol>
+<li>new():创建一个空的向量实例</li>
+<li>push():添加到向量末尾</li>
+<li>remove():删除并返回指定的下表元素</li>
+<li>contains():判断向量中是否包含某个值</li>
+<li>len():返回向量中元素个数</li>
+</ol>
+<h3><a id="hashmap" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>HashMap</h3>
+<pre class="line-numbers"><code class="language-rust">let mut 变量名称 = HashMap::new();
+
+
+fn main() {
+    let mut map = HashMap::new();
+    map.insert(1,&quot;rust&quot;);
+    map.insert(2,&quot;go&quot;);
+    map.insert(3,&quot;java&quot;);
+
+    println!(&quot;len = {}&quot;,map.len());
+
+    let value = map.get(&amp;1);
+    match value {
+        Some(v) =&gt;{
+            println!(&quot;{}&quot;,v)
+        }
+        None =&gt;{
+            println!(&quot;none&quot;)
+        }
+    }
+
+    let map2 = map.clone();
+    for x in map2 {
+        println!(&quot;{:?}&quot;,x)
+    }
+
+    for (k,v) in map.iter() {
+        println!(&quot;k = {},v = {}&quot;,k,v);
+    }
+}
+</code></pre>
+<h3><a id="hashset" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>HashSet</h3>
+<p>Hashset 是相同数据类型的集合，它是没有重复值的。如果集合中已经存在相同的值，则会插入失败。</p>
+<pre class="line-numbers"><code class="language-rust">let mut 变量名称 = HashSet::new();
+
+</code></pre>
+<h2><a id="%E6%B3%9B%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>泛型</h2>
+<p>Rust 语言中的泛型主要包含 泛型集合、泛型结构体、泛型函数、范型枚举 和 特质 。</p>
+<p>Rust 使用使用 <T> 语法来实现泛型, 其中 T 可以是任意数据类型。</p>
+<pre class="line-numbers"><code class="language-rust">struct 结构体名称&lt;T&gt; {
+   元素:T,
+}
+
+
+struct Data&lt;T&gt; {
+   value:T,
+}
+
+fn main() {
+    let t:Data&lt;i32&gt; = Data{value:100};
+    println!(&quot;值:{} &quot;,t.value);//输出 值:100
+    let t:Data&lt;f64&gt; = Data{value:66.00};
+    println!(&quot;值:{} &quot;,t.value);//输出 值:66
+    let t:Data&lt;String&gt; = Data{value:&quot;123&quot;.to_string()};
+    println!(&quot;值:{} &quot;,t.value);//输出 值 123
+}
+</code></pre>
+<h2><a id="trait" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Trait</h2>
+<p>可以把这个特质（traits）对标其他语言的接口，都是对行为的抽象。使用 trait关键字用来定义。特质，可以包含具体的方法，也可以包含抽象的方法。</p>
+<pre class="line-numbers"><code class="language-rust">trait some_trait {
+   // 没有任何实现的虚方法
+   fn method1(&amp;self);
+
+   // 有具体实现的普通方法
+   fn method2(&amp;self){
+      //方法的具体代码
+   }
+}
+</code></pre>
+<p>实现特质  demo</p>
+<pre class="line-numbers"><code class="language-rust">struct Book {
+    name: String,
+    id: u32,
+    author: String,
+}
+
+trait ShowBook {
+    fn Show(&amp;self);
+}
+
+impl ShowBook for Book{
+    fn Show(&amp;self) {
+        println!(&quot;Id:{},Name:{},Author:{}&quot;,self.id,self.name,self.author);
+    }
+}
+
+fn main() {
+    let book = Book{
+        id:1,
+        name: String::from(&quot;GO&quot;),
+        author: String::from(&quot;xx&quot;)
+    };
+    book.Show();
+}
+</code></pre>
+<p>泛型函数</p>
+<pre class="line-numbers"><code class="language-rust">fn 方法名&lt;T[:特质名称]&gt;(参数1:T, ...) {
+
+   // 函数实现代码
+}
+
+
+fn show2&lt;T:Display&gt;(t:T){
+    println!(&quot;{}&quot;,t);
+}
+impl Display for Book{
+    fn fmt(&amp;self, f: &amp;mut Formatter&lt;'_&gt;) -&gt; std::fmt::Result {
+        println!(&quot;Id:{},Name:{},Author:{}&quot;,self.id,self.name,self.author);
+        let r=Result::Ok(());
+        return r;
+    }
+}
+
+show2(book);
+</code></pre>
+<h2><a id="%E8%BF%AD%E4%BB%A3%E5%99%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>迭代器</h2>
+<p>迭代器 就是把集合中的所有元素按照顺序一个接一个的传递给处理逻辑。</p>
+<p>Iterator 特质有两个函数：</p>
+<ol>
+<li>一个是 iter()，用于返回一个 迭代器 对象，也称之为 项 ( items ) 。</li>
+<li>一个是 next()，用于返回迭代器中的下一个元素。如果已经迭代到集合的末尾（最后一个项后面）则返回 None。</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let array = vec![
+        &quot;1&quot;,
+        &quot;2&quot;,
+        &quot;3&quot;,
+    ];
+    let mut iter = array.iter();
+    println!(&quot;{:?}&quot;,iter.next());
+    println!(&quot;{:?}&quot;,iter.next());
+    println!(&quot;{:?}&quot;,iter.next());
+
+    for x in array {
+        println!(&quot;{:?}&quot;,x)
+    }
+}
+</code></pre>
+<h2><a id="%E9%97%AD%E5%8C%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>闭包</h2>
+<p>Rust 中的闭包（closure），也叫做 lambda 表达式或者 lambda，是一类能够捕获周围作用域中变量的函数。</p>
+<p>调用一个闭包和调用一个函数完全相同，不过调用闭包时，输入和返回类型两者都可以自动推导，而输入变量名必须指明。</p>
+<p>其他的特点包括：</p>
+<ol>
+<li>声明时使用 || 替代 () 将输入参数括起来。</li>
+<li>函数体定界符（{}）对于单个表达式是可选的，其他情况必须加上。</li>
+<li>有能力捕获外部环境的变量。</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">普通函数
+fn 函数名(参数列表) -&gt; 返回值 {
+   // 业务逻辑
+}
+
+// 闭包
+|参数列表| {
+	// 业务逻辑
+}
+// 无参数闭包
+|| {
+	// 业务逻辑
+}
+
+let 闭包变量 = |参数列表| {
+   // 闭包的具体逻辑
+}
+
+</code></pre>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let double = |x| { x * 2 };
+
+    let add = |a, b| { a + b };
+    
+    let x = add(2, 4);
+    println!(&quot;{:?}&quot;, x);
+
+    let y = double(5);
+    println!(&quot;{:?}&quot;, y);
+
+    let v = 3;
+    let add2 = |x| { v + x };
+    println!(&quot;{:?}&quot;, add2(4));
+    
+    let r = (|x| x + 1)(3); // 3 是参数，结果r是4
+}
+</code></pre>
+<p>闭包就是在一个函数内创建立即调用的另一个函数。</p>
+<p>闭包是一个匿名函数。</p>
+<p>闭包虽然没有函数名，但可以把整个闭包赋值一个变量，通过调用该变量来完成闭包的调用。</p>
+<p>闭包不用声明返回值，但它却可以有返回值。并且使用最后一条语句的执行结果作为返回值。闭包的返回值可以赋值给变量。</p>
+<p>闭包又称之为 内联函数。可以让闭包访问外层函数里的变量。</p>
+<h2><a id="%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>闭包的使用</h2>
+<p><a href="https://www.go-edu.cn/2022/07/05/rust-39-%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/">https://www.go-edu.cn/2022/07/05/rust-39-%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</a></p>
+<pre class="line-numbers"><code class="language-rust">let add = |x, y| x + y;
+let result = add(3, 4);
+println!(&quot;{}&quot;, result);
+
+------------
+闭包像普通函数一样被调用。
+fn receives_closure&lt;F&gt;(closure: F)
+    where
+        F: Fn(i32, i32) -&gt; i32,
+{
+    let result = closure(3, 5);
+    println!(&quot;闭包作为参数执行结果 =&gt; {}&quot;, result);
+}
+
+fn main() {
+    let add = |x, y| x + y;
+    receives_closure(add);
+}
+
+输出:
+闭包作为参数执行结果 =&gt; 8
+
+
+------------
+闭包捕获变量
+fn receives_closure2&lt;F&gt;(closure:F)
+    where
+        F:Fn(i32)-&gt;i32{
+    let result = closure(1);
+    println!(&quot;closure(1) =&gt; {}&quot;, result);
+}
+
+fn main() {
+    let y = 2;
+    receives_closure2(|x| x + y);
+
+    let y = 3;
+    receives_closure2(|x| x + y);
+}
+输出:
+捕获变量的结果 =&gt; 3
+捕获变量的结果 =&gt; 4
+
+
+
+
+-------
+返回闭包
+fn returns_closure() -&gt; impl Fn(i32) -&gt; i32 {
+    |x| x + 6
+}
+
+fn main() {
+    let closure = returns_closure();
+    println!(&quot;返回闭包 =&gt; {}&quot;, closure(1));
+}
+输出:
+返回闭包 =&gt; 7
+
+
+
+------
+参数和返回值都有闭包
+
+</code></pre>
+<h2><a id="%E7%BA%BF%E7%A8%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>线程</h2>
+<pre class="line-numbers"><code class="language-rust">创建线程
+std::thread::spawn()
+
+//spawn() 函数的原型
+pub fn spawn&lt;F, T&gt;(f: F) -&gt; JoinHandle&lt;T&gt;
+</code></pre>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    //子线程
+    thread::spawn(|| {
+        for i in 1..10 {
+            println!(&quot;子线程 {}&quot;, i);
+            thread::sleep(Duration::from_millis(1));
+        }
+    });
+    // 主线程
+    for i in 1..5 {
+        println!(&quot;主线程 {}&quot;, i);
+        thread::sleep(Duration::from_millis(1));
+    }
+}
+
+|| 是闭包，匿名函数，也可以使用外部函数
+
+fn a(){
+    for i in 1..10 {
+        println!(&quot;子线程 {}&quot;, i);
+        thread::sleep(Duration::from_millis(1));
+    }
+}
+
+fn main() {
+
+    thread::spawn(a);
+    // 主线程
+    for i in 1..5 {
+        println!(&quot;主线程 {}&quot;, i);
+        thread::sleep(Duration::from_millis(1));
+    }
+}
+</code></pre>
+<h3><a id="join" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>join</h3>
+<p>上面的例子主线程结束后，子线程还没有运行完，但是子线程也结束了。如果想让子线程结束后，主线程再结束，我们就要使用Join 方法，把子线程加入主线程等待队列。</p>
+<pre class="line-numbers"><code class="language-rust">fn a(){
+    for i in 1..10 {
+        println!(&quot;子线程 {}&quot;, i);
+        thread::sleep(Duration::from_millis(1));
+    }
+}
+
+fn main() {
+
+   let handler = thread::spawn(a);
+    // 主线程
+    for i in 1..5 {
+        println!(&quot;主线程 {}&quot;, i);
+        thread::sleep(Duration::from_millis(1));
+    }
+    handler.join().unwrap();
+
+}
+</code></pre>
+<h2><a id="%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>错误处理</h2>
+<h3><a id="panic%E4%B8%8D%E5%8F%AF%E6%81%A2%E5%A4%8D%E9%94%99%E8%AF%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>panic!() 不可恢复错误</h3>
+<p>panic!() 程序立即退出，退出时调用者抛出退出原因。</p>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    panic!(&quot;出错啦&quot;);
+    println!(&quot;Hello Rust&quot;); // 不可能执行的语句
+}
+//输出
+thread 'main' panicked at '出错啦', src/main.rs:2:5
+
+</code></pre>
+<h3><a id="result%E6%9E%9A%E4%B8%BE%E5%92%8C%E5%8F%AF%E6%81%A2%E5%A4%8D%E9%94%99%E8%AF%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Result 枚举和可恢复错误</h3>
+<p>枚举的定义</p>
+<pre class="line-numbers"><code class="language-rust">enum Result&lt;T,E&gt; {
+   OK(T),
+   Err(E)
+}
+OK(T) T OK 时作为正常返回的值的数据类型。
+Err(E) E Err 时作为错误返回的错误的类型。
+</code></pre>
+<h3><a id="unwrap%E5%92%8C-expect" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>unwrap() 和 expect()</h3>
+<p>unwrap是 Result&lt;T, E&gt;的方法，在实例上调用此方法时，如果是 Ok 枚举值，就会返回 Ok 中的对象，如果是 Err 枚举值，在运行时会 panic，报错信息是 format!(“{}”, error)。其缺点是，如果在不同地方都使用 unwrap，运行时出现 panic 的时候。</p>
+<pre class="line-numbers"><code class="language-rust">fn is_even(no:i32)-&gt;Result&lt;bool,String&gt; {
+    return if no % 2 == 0 {
+        Ok(true)
+    } else {
+        Err(&quot;输入值，不是偶数&quot;.to_string())
+    }
+}
+
+let result = is_even(6).unwrap();
+println!(&quot;结果 {}&quot;,result);
+//输出 结果 true
+
+let result = is_even(11).unwrap();
+println!(&quot;结果 {}&quot;,result);
+//输出 thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: &quot;输入值，不是偶数&quot;'
+</code></pre>
+<p>expect方法的作用和unwrap类似，区别在于，expect方法接受msg: &amp;str作为参数，它在运行时的panic信息为format!(&quot;{}: {}&quot;, msg, error)，使用expect时，可以自定义报错信息，因此出现panic时比较容易定位。</p>
+<pre class="line-numbers"><code class="language-rust">let f = File::open(&quot;abc.txt&quot;).expect(&quot;无法打开该文件&quot;); // 文件不存在
+//输出 thread 'main' panicked at '无法打开该文件: Os { code: 2, kind: NotFound, message: &quot;No such file or directory&quot; }'
+</code></pre>
+<h2><a id="%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>智能指针</h2>
+<p>指针，指代那些包含内存地址的变量。这个地址被用于索引，或者说用于指向内存中的其他数据。<br />
+rust 中最常用的指针就是 引用。</p>
+<p>而智能指针则是一些数据结构，他们的行为类似于指针但拥有额外的元数据和附加功能。<br />
+引用是只借用数据的指针，而大多数智能指针本身就拥有它们指向的数据。</p>
+<p><code>String</code> 和 <code>Vec&lt;T&gt;</code> 也是智能指针。因为他们拥有一片内存区域并允许用户对其进行操作。他们还拥有元数据，例如容量，并提供额外的功能或保障。</p>
+<p>一般用结构体实现智能指针，通常会实现 Deref 和 Drop 这两个 trait。<br />
+Deref 使得智能指针结构体的实例拥有与引用一致的行为，可以编写出能够同时用于引用和智能指针的代码</p>
+<p>Drop 可以自定义智能指针离开作用域时运行的代码。</p>
+<p>常见的智能指针：</p>
+<ul>
+<li><code>Box&lt;T&gt;</code>:可用于在堆上分配值。</li>
+<li><code>Rc&lt;T&gt;</code>:允许多重所有权的引用计数类型。</li>
+<li><code>Ref&lt;T&gt;</code>和 <code>RefMut&lt;T&gt;</code>：可以通过 <code>RefCell&lt;T&gt;</code> 访问，是一种可以在运行时而不是编译时执行借用规则的类型。</li>
+</ul>
+<p>内部可变性模式，使用了这一模式的不可变类型会暴露出能够改变自己内部值的 API。</p>
+<h3><a id="%E4%BD%BF%E7%94%A8box-t%E5%9C%A8%E5%A0%86%E4%B8%8A%E5%88%86%E9%85%8D%E6%95%B0%E6%8D%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>使用 Box<T> 在堆上分配数据</h3>
+<p><code>Box&lt;T&gt;</code> 装箱，是最简单直接的一种智能指针。将数据保存在堆上，并在栈中保留一个指向堆数据的指针。<br />
+装箱使用场景：</p>
+<ol>
+<li>当拥有一个无法编译时确定大小的类型，但又想在一个要求固定尺寸的上下文环境中使用这个类型的值时</li>
+<li>当希望拥有一个实现了指定 trait 的类型值，但又不关心具体的类型时</li>
+</ol>
+<h3><a id="%E9%80%9A%E8%BF%87deref-trait%E5%B0%86%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E8%A7%86%E4%BD%9C%E5%B8%B8%E8%A7%84%E5%BC%95%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>通过 Deref trait 将智能指针视作常规引用</h3>
+<p>实现这个 trait 可以自定义解引用运算符的行为</p>
+<pre class="line-numbers"><code class="language-rust">use std::ops::Deref;
+
+/// 定义一个 名为 MyBox 的结构体。结构体的定义中附带了泛型参数 T，可以存储任意类型的值。
+/// MyBox 是一个拥有 T 类型单元素的元组结构体。
+struct MyBox&lt;T&gt;(T);
+
+impl&lt;T&gt; MyBox&lt;T&gt; {
+    fn new(x: T) -&gt; MyBox&lt;T&gt; {
+        MyBox(x)
+    }
+}
+
+impl&lt;T&gt; Deref for MyBox&lt;T&gt; {
+    // 定义了 Deref trait 的一个关联类型、
+    // 关联类型是一种稍微有些不同的泛型参数定义方式。
+    type Target = T;
+
+    // 返回一个指向值的引用。进而允许通过 * 访问。
+    // * -&gt; *(y.deref())
+    fn deref(&amp;self) -&gt; &amp;Self::Target {
+        &amp;self.0
+    }
+}
+
+fn main() {
+    let x = 5;
+    let y = MyBox::new(x);
+
+    assert_eq!(5, x);
+    assert_eq!(5, *y);
+}
+</code></pre>
+<p>Rust 语言把指针封装在如下两个特质Trait中。<br />
+Deref	std::ops::Deref	用于创建一个只读智能指针，例如 *v<br />
+Drop	std::ops::Drop	智能指针超出它的作用域范围时会回调该特质的 drop() 方法。 类似于其它语言的 析构函数。</p>
+<p>当一个结构体实现了以上的接口后，它们就是智能指针。</p>
+<p>Rust 提供了在 堆 上存储数据的能力并把这个能力封装到了 Box 中。</p>
+<p>这种把 栈 上数据搬到 堆 上的能力，我们称之为 装箱。<br />
+Box 指针可以把数据存储在堆（heap）上，而不是栈（stack）上。这就是装箱（box），栈（stack）还是包含指向 堆（heap） 上数据的指针。</p>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let a = 6;           // 默认保存在 栈 上
+    let b = Box::new(a); // 使用 Box 后数据会存储在堆上
+    println!(&quot;b = {}&quot;, b);// 输出 b = 6
+}
+</code></pre>
+<h2><a id="rc-t%E5%9F%BA%E4%BA%8E%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%9A%84%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rc<T> 基于引用计数的智能指针</h2>
+<p>某些场景下，单个值可能同时被多个所有者持有，Rust 提供了一个名为 <code>Rc&lt;T&gt;</code>的类型来支持多重所有权，RC 是 Reference counting （引用计数）的缩写。<br />
+<code>Rc&lt;T&gt;</code> 类型的实例会在内部维护一个用于记录值引用次数的计数器，从而确定这个值是否仍在使用。</p>
+<p>将堆上的一些数据分享给程序的锁哥部分同时使用，而又无法在编译期确定哪个部分会最后释放这些数据时，就可以使用 <code>Rc&lt;T&gt;</code> 类型、Rc 仅适用于单线程场景。</p>
+<p>clone Rc 会增加引用计数</p>
+<h2><a id="refcell-t%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>RefCell&lt;T&gt;</code>: 内部可变性模式</h2>
+<p>RefCell 代表了其持有数据的唯一所有权。</p>
+<h2><a id="%E5%8C%85%E7%AE%A1%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>包管理</h2>
+<p><a href="https://blog.hitol.top/16727524082529.html">https://blog.hitol.top/16727524082529.html</a></p>
+<h2><a id="%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>单元测试</h2>
+<pre class="line-numbers"><code class="language-rust">#[test]
+fn it_works(){
+    let result = 2 + 2;
+    assert_eq!(result,4);
+}
+</code></pre>
+<h2><a id="arc" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Arc</h2>
+<p>Arc（Atomic Reference Counted）是 Rust 标准库中的一种类型，它实现了原子引用计数（Atomic Reference Counting）。Arc 可以在多个线程间共享数据，而不必担心数据安全。</p>
+<p>Arc 使用了一个内部计数器，来记录有多少个引用指向该数据。当最后一个引用被销毁时，Arc 会自动销毁数据。</p>
+<p>例如：</p>
+<pre class="line-numbers"><code class="language-rust">use std::sync::Arc;
+use std::thread;
+
+fn main() {
+    let data = Arc::new(vec![1, 2, 3, 4, 5]);
+
+    for i in 0..5 {
+        let data = data.clone();
+        thread::spawn(move || {
+            println!(&quot;Thread {}: {:?}&quot;, i, data);
+        });
+    }
+}
+
+</code></pre>
+<p>在上面的代码中，我们创建了一个用于存储整数的 vector，并用 Arc 包装它。然后在循环中，我们创建了五个线程，每个线程都有一个对该 vector 的引用。当最后一个引用被销毁时，Arc 会自动销毁 vector。</p>
+<p>Arc 是一种非常有用的工具，特别是当你需要在多个线程间共享数据时，可以替代手写的计数器。</p>
+<h2><a id="rwlock" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RwLock</h2>
+<p>RwLock 是 Rust 标准库中的一种类型，用于实现读写锁。读写锁是一种线程同步机制，它可以同时允许多个读线程读取共享数据，但是只允许一个写线程对共享数据进行修改。</p>
+<pre class="line-numbers"><code class="language-rust">use std::sync::{Arc, RwLock};
+use std::thread;
+
+fn main() {
+    let data = Arc::new(RwLock::new(vec![1, 2, 3, 4, 5]));
+
+    for i in 0..5 {
+        let data = data.clone();
+        thread::spawn(move || {
+            let mut data = data.write().unwrap();
+            data[i] += 1;
+        });
+    }
+
+    thread::sleep_ms(50);
+
+    let data = data.read().unwrap();
+    println!(&quot;{:?}&quot;, data);
+}
+
+</code></pre>
+<p>在上面的代码中，我们创建了一个用于存储整数的 vector，并用 RwLock 包装它。然后在循环中，我们创建了五个线程，每个线程都试图对该 vector 进行修改。由于我们使用了读写锁，因此在任意时刻只有一个线程能够修改 vector，从而避免了竞争条件的产生。</p>
+<p>RwLock 是一种非常有用的工具，特别是当你需要保护共享数据不被多个线程同时修改时，可以使用它来保证数据安全。</p>
+<h2><a id="%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>时间格式</h2>
+<pre class="line-numbers"><code class="language-rust">use chrono::{DateTime, Utc};
+
+fn main() {
+    let now: DateTime&lt;Utc&gt; = Utc::now();
+
+    println!(&quot;UTC now is: {}&quot;, now);
+    println!(&quot;UTC now in RFC 2822 is: {}&quot;, now.to_rfc2822());
+    println!(&quot;UTC now in RFC 3339 is: {}&quot;, now.to_rfc3339());
+    println!(&quot;UTC now in a custom format is: {}&quot;, now.format(&quot;%a %b %e %T %Y&quot;));
+}
+
+</code></pre>
+<h2><a id="%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>策略模式</h2>
+<p>在 Rust 中，策略模式是一种常见的设计模式，用于将算法与其实现分离开来，并在运行时动态选择不同的算法实现。</p>
+<p>以下是一个简单的示例代码，展示了如何使用策略模式来实现对两个整数进行加法、减法和乘法计算：</p>
+<pre class="line-numbers"><code class="language-rust">trait Calculator {
+    fn calculate(&amp;self, a: i32, b: i32) -&gt; i32;
+}
+
+struct AddCalculator;
+
+impl Calculator for AddCalculator {
+    fn calculate(&amp;self, a: i32, b: i32) -&gt; i32 {
+        a + b
+    }
+}
+
+struct SubtractCalculator;
+
+impl Calculator for SubtractCalculator {
+    fn calculate(&amp;self, a: i32, b: i32) -&gt; i32 {
+        a - b
+    }
+}
+
+struct MultiplyCalculator;
+
+impl Calculator for MultiplyCalculator {
+    fn calculate(&amp;self, a: i32, b: i32) -&gt; i32 {
+        a * b
+    }
+}
+
+struct Context&lt;'a&gt; {
+    calculator: Box&lt;dyn Calculator + 'a&gt;,
+}
+
+impl&lt;'a&gt; Context&lt;'a&gt; {
+    fn new(calculator: Box&lt;dyn Calculator + 'a&gt;) -&gt; Self {
+        Self { calculator }
+    }
+
+    fn set_calculator(&amp;mut self, calculator: Box&lt;dyn Calculator + 'a&gt;) {
+        self.calculator = calculator;
+    }
+
+    fn execute(&amp;self, a: i32, b: i32) -&gt; i32 {
+        self.calculator.calculate(a, b)
+    }
+}
+
+fn main() {
+    let mut context = Context::new(Box::new(AddCalculator));
+    println!(&quot;1 + 2 = {}&quot;, context.execute(1, 2));
+
+    context.set_calculator(Box::new(SubtractCalculator));
+    println!(&quot;3 - 1 = {}&quot;, context.execute(3, 1));
+
+    context.set_calculator(Box::new(MultiplyCalculator));
+    println!(&quot;2 * 4 = {}&quot;, context.execute(2, 4));
+}
+</code></pre>
+<p>在上面的代码中，首先定义了一个 Calculator trait，该 trait 包含一个用于计算两个整数的 calculate() 方法。然后，分别实现了 AddCalculator、SubtractCalculator 和 MultiplyCalculator 三种不同的计算方法，并让它们都实现了 Calculator trait。</p>
+<p>接着，定义了一个 Context 结构体，包含一个 Box<dyn Calculator> 类型的成员变量，用于保存当前选定的计算方法。定义了 new() 方法用于创建新的 Context 对象并设置默认的计算方法；定义了 set_calculator() 方法用于切换计算方法；定义了 execute() 方法用于执行具体的计算操作。</p>
+<p>最后，在 main() 函数中，创建一个 Context 对象，并使用 execute() 方法分别执行加法、减法和乘法计算。</p>
+<p>需要注意的是，采用策略模式可以解除算法与其实现之间的耦合关系，并提高代码的可扩展性和可维护性。同时，也可以根据具体需求选择不同的计算方法，从而灵活地应对各种计算场景。</p>
+<pre class="line-numbers"><code class="language-rust">#[derive(Clone, Copy)]
+struct TaskRecord {
+    code: u32,
+}
+
+ trait TaskStepService {
+     fn do_task_step(task_record: &amp;TaskRecord);
+     fn retry_task_step(task_record: &amp;TaskRecord);
+}
+
+
+pub struct StepA;
+
+impl TaskStepService for StepA {
+     fn do_task_step(task_record: &amp;TaskRecord) {
+        println!(&quot;Do task step A with code {}&quot;, task_record.code);
+    }
+
+     fn retry_task_step(task_record: &amp;TaskRecord) {
+        println!(&quot;Retry task step A with code {}&quot;, task_record.code);
+    }
+}
+
+pub struct StepB;
+
+impl TaskStepService for StepB {
+     fn do_task_step(task_record: &amp;TaskRecord) {
+        println!(&quot;Do task step B with code {}&quot;, task_record.code);
+    }
+
+     fn retry_task_step(task_record: &amp;TaskRecord) {
+        println!(&quot;Retry task step B with code {}&quot;, task_record.code);
+    }
+}
+
+enum TaskStep {
+    A(StepA),
+    B(StepB),
+}
+
+impl TaskStep {
+    fn from_code(code: u32) -&gt; Option&lt;Self&gt; {
+        match code {
+            1 =&gt; Some(Self::A(StepA)),
+            2 =&gt; Some(Self::B(StepB)),
+            _ =&gt; None,
+        }
+    }
+}
+
+ fn process_task_step(task_record: TaskRecord) {
+    if let Some(step) = TaskStep::from_code(task_record.code) {
+        match step {
+            TaskStep::A(service) =&gt; service.do_task_step(&amp;task_record),
+            TaskStep::B(service) =&gt; service.do_task_step(&amp;task_record),
+        }
+    } else {
+        println!(&quot;Invalid task code: {}&quot;, task_record.code);
+    }
+}
+
+ fn retry_task_step(task_record: TaskRecord) {
+    if let Some(step) = TaskStep::from_code(task_record.code) {
+        match step {
+            TaskStep::A(service) =&gt; service.retry_task_step(&amp;task_record),
+            TaskStep::B(service) =&gt; service.retry_task_step(&amp;task_record),
+        }
+    } else {
+        println!(&quot;Invalid task code: {}&quot;, task_record.code);
+    }
+}
+
+pub fn main() {
+    let task_record1 = TaskRecord { code: 1 };
+    let task_record2 = TaskRecord { code: 2 };
+    let task_record3 = TaskRecord { code: 3 };
+
+    process_task_step(task_record1);
+    process_task_step(task_record2);
+    process_task_step(task_record3);
+
+    retry_task_step(task_record1);
+    retry_task_step(task_record2);
+    retry_task_step(task_record3);
+}
+报错还未解决
+</code></pre>
+<pre class="line-numbers"><code class="language-rust">struct TaskRecord {
+    code: u32,
+}
+
+trait TaskStepService {
+    fn do_task_step(&amp;self, task_record: &amp;TaskRecord) {
+        println!(&quot;default do_task_step implementation for code {}&quot;, task_record.code);
+    }
+    fn retry_task_step(&amp;self, task_record: &amp;TaskRecord) {
+        println!(&quot;default retry_task_step implementation for code {}&quot;, task_record.code);
+    }
+}
+
+struct TaskStepServiceImpl1;
+impl TaskStepService for TaskStepServiceImpl1 {
+    fn do_task_step(&amp;self, task_record: &amp;TaskRecord) {
+        println!(&quot;TaskStepServiceImpl1 do_task_step implementation for code {}&quot;, task_record.code);
+    }
+    fn retry_task_step(&amp;self, task_record: &amp;TaskRecord) {
+        println!(&quot;TaskStepServiceImpl1 retry_task_step implementation for code {}&quot;, task_record.code);
+    }
+}
+
+struct TaskStepServiceImpl2;
+impl TaskStepService for TaskStepServiceImpl2 {
+    fn do_task_step(&amp;self, task_record: &amp;TaskRecord) {
+        println!(&quot;TaskStepServiceImpl2 do_task_step implementation for code {}&quot;, task_record.code);
+    }
+    fn retry_task_step(&amp;self, task_record: &amp;TaskRecord) {
+        println!(&quot;TaskStepServiceImpl2 retry_task_step implementation for code {}&quot;, task_record.code);
+    }
+}
+
+
+fn main() {
+    let task_record = TaskRecord { code: 1 };
+
+    match task_record.code {
+        1 =&gt; {
+            let service = TaskStepServiceImpl1 {};
+            service.do_task_step(&amp;task_record);
+            service.retry_task_step(&amp;task_record);
+        },
+        2 =&gt; {
+            let service = TaskStepServiceImpl2 {};
+            service.do_task_step(&amp;task_record);
+            service.retry_task_step(&amp;task_record);
+        },
+        _ =&gt; println!(&quot;unsupported code {}&quot;, task_record.code),
+    }
+}
+
+</code></pre>
+<h2><a id="%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>多线程与定时任务</h2>
+<pre class="line-numbers"><code class="language-rust">
+use std::future::Future;
+use std::pin::Pin;
+use tokio::time::{sleep, Duration};
+
+pub async fn do_task() -&gt; Result&lt;(), Box&lt;dyn std::error::Error + Send + Sync&gt;&gt; {
+    loop {
+        println!(&quot;Running scheduled task...&quot;);
+        // 执行定时任务的代码...
+        println!(&quot;hello &quot;);
+
+        sleep(Duration::from_secs(2)).await;
+    }
+}
+
+pub fn spawn_task() -&gt; Pin&lt;Box&lt;dyn Future&lt;Output = ()&gt; + Send + Sync&gt;&gt; {
+    let fut = async move {
+        if let Err(err) = do_task().await {
+            eprintln!(&quot;Scheduled task failed: {:?}&quot;, err);
+        }
+    };
+    Box::pin(fut)
+}
+
+---
+
+
+mod job;
+
+use std::collections::HashMap;
+
+use std::time::Duration;
+use tokio::time::{interval, Instant, sleep};
+
+#[actix_web::main]
+async fn main() {
+    let task = job::do_task();
+    tokio::spawn(task);
+
+    sleep(Duration::from_secs(60)).await;
+}
+</code></pre>
+<h2><a id="channel" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>channel</h2>
+<pre class="line-numbers"><code class="language-rust">use std::thread;
+use std::sync::mpsc;
+
+fn main() {
+    let (tx, rx) = mpsc::channel();
+
+    thread::spawn(move || {
+        let val = String::from(&quot;hi&quot;);
+        tx.send(val).unwrap();
+    });
+
+    let received = rx.recv().unwrap();
+    println!(&quot;Got: {}&quot;, received);
+}
+
+</code></pre>
+<h2><a id="rayon" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>rayon</h2>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16819109466507.jpg" alt="" /><br />
+工作窃取。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16819110812309.jpg" alt="" /></p>
+<h2><a id="%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%EF%BC%8C%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>&lt;'_&gt; 是什么意思，什么作用</h2>
+<p>在 Rust 中，<code>&lt;'_&gt;</code> 用于定义匿名生命周期。</p>
+<p>生命周期是 Rust 中管理内存和引用的机制，它用于确保程序中的引用安全有效。通常，生命周期标记使用单引号 <code>'</code> 来表示。例如：</p>
+<pre class="line-numbers"><code class="language-rust">fn foo&lt;'a&gt;(x: &amp;'a i32) -&gt; &amp;'a i32 {
+    x
+}
+</code></pre>
+<p>在这个例子中，<code>&lt;'a&gt;</code> 表示 <code>foo()</code> 函数使用一个生命周期 <code>a</code>，该生命周期确保返回值 <code>&amp;'a i32</code> 的引用与参数 <code>x: &amp;'a i32</code> 的生命周期相同。</p>
+<p><code>&lt;'_&gt;</code> 是一种特殊的生命周期标记，它表示一个匿名生命周期。这意味着，Rust 编译器会自动确定匿名生命周期的实际生命周期，无需手动指定。</p>
+<p>例如，以下代码中的 <code>&lt;'_&gt;</code> 标记可以自动确定 <code>s</code> 和 <code>s2</code> 的实际生命周期，而无需指定具体的生命周期名称：</p>
+<pre class="line-numbers"><code class="language-rust">fn print_str(s: &amp;str) {
+    println!(&quot;{}&quot;, s);
+}
+
+fn main() {
+    let s = String::from(&quot;Hello, world!&quot;);
+    let s2: &amp;str = &amp;s;
+    print_str(s2);
+}
+</code></pre>
+<p>在这个例子中，我们定义了一个函数 <code>print_str()</code>，该函数接受一个字符串引用，并在控制台上打印出它。在 <code>main()</code> 函数中，我们首先定义了一个字符串 <code>s</code>，然后获取它的引用 <code>s2</code>，并将其传递给 <code>print_str()</code> 函数。 接下来我们将参数转换为 <code>&amp;str</code> 类型。在这个过程中，我们使用了 <code>&lt;'_&gt;</code> 标记来表示一个匿名生命周期，此时 Rust 编译器会自动确定 <code>s</code> 和 <code>s2</code> 的实际生命周期，从而使得该代码更简洁，更易于阅读和维护。</p>
+<p>总之， <code>&lt;'_&gt;</code> 适用于匿名生命周期，可以让代码更简洁，并且让 Rust 编译器自动确定实际生命周期。如果您不需要手动编写生命周期标记，并且可以让编译器自动确定生命周期，则可以使用 <code>&lt;'_&gt;</code> 来代替具体的生命周期名称。</p>
+<h2><a id="%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数指针</h2>
+<p>将普通函数传递至其他函数<br />
+函数在传递的过程中会被强制转换成 fn 类型，fn 就是函数指针。</p>
+<pre class="line-numbers"><code class="language-rust">fn add_one(x: i32) -&gt; i32 {
+    x + 1
+}
+
+fn do_twice(f: fn(i32) -&gt; i32, arg: i32) -&gt; i32 {
+    f(arg) + f(arg)
+}
+
+fn main() {
+    let answer = do_twice(add_one, 5);
+    println!(&quot;The answer is: {}&quot;, answer);
+}
+</code></pre>
+<p>fn 是一个类型而不是一个 trait。<br />
+函数指针实现了全部 3 中闭包 trait(Fn、FnMut、FnOnce)，所以可以把函数指针<br />
+用作参数传递给一个接收闭包的函数。<br />
+倾向于使用搭配闭包 trait 的泛型来编写函数，这样的函数可以同时处理闭包与普通函数。</p>
+<h2><a id="%E9%97%AD%E5%8C%85%E4%B8%8Efn%E3%80%81fnmut%E3%80%81fnonce" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>闭包与Fn、FnMut、FnOnce</h2>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let s = String::from(&quot;closure test&quot;);
+
+    let f1 = || println!(&quot;{}&quot;, s); // 不可变借用，这里 闭包就相当于 Fn
+
+    f1();
+
+    let mut s = String::from(&quot;closure test mut&quot;);
+    // 注意由于这里是使用可变借用，因此，闭包函数的接收者也必须声明为可变借用类型
+    let mut f2 = || {
+        s.push_str(&quot;, hello!&quot;);
+        println!(&quot;{}&quot;, s);
+    };// 可变借用 -&gt; FnMut
+
+    f2();
+
+    let s = String::from(&quot;closure test value&quot;);
+
+    let f3 = move || println!(&quot;{}&quot;, s); // move语句使用相当于把s的所有权移到的闭包内部，闭包外部不能再使用该值 -&gt; FnOnce
+
+    f3();
+}
+</code></pre>
+<p>闭包底层实现机制。<br />
+Fn 不可变引用<br />
+FnMut 可变引用<br />
+FnOnce （move）</p>
+<p>Fn 继承了 FnMut，FnMut 继承了 FnOnce。</p>
+<h2><a id="%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>宏</h2>
+<p>一组相关功能的集合称谓。<br />
+macro_rules! 构造的声明宏(declarative macro) 以及3中过程宏(procedural macro):</p>
+<ol>
+<li>用于结构体或枚举的自定义 #[derive] 宏，可以指定随 derive 属性自动添加的代码</li>
+<li>用于为任意条目添加自定义属性的属性宏</li>
+<li>看起来类似于函数的函数宏，可以接收并处理一段标记序列</li>
+</ol>
+<p>宏是一种用于编写其他代码的代码编写方式，元编程范式。相当于自定义注解？</p>
+<p>derive属性是一种宏，自动生成各种 trait 的实现。</p>
+<p>宏小册：<a href="https://zjp-cn.github.io/tlborm/introduction.html">https://zjp-cn.github.io/tlborm/introduction.html</a></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16843984175104.jpg" alt="" /><br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16843997515972.jpg" alt="" /></p>
+<h3><a id="macro-rules%E5%A3%B0%E6%98%8E%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>macro_rules! 声明宏</h3>
+<pre class="line-numbers"><code class="language-rust">macro_rules! my_macro {
+    ($($arg: expr), *) =&gt; {
+        // 宏的实现逻辑
+        println!(&quot;Hello, {}&quot;, $($arg), *);
+    }
+}
+
+fn main() {
+    my_macro!(&quot;World!&quot;);
+}
+
+</code></pre>
+<h3><a id="%E5%B1%9E%E6%80%A7%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>属性宏</h3>
+<p>允许创建新的属性，而不是为 derive 属性生成代码。<br />
+derive 只能被用于结构体和枚举，而属性则可以同时被用于其他条目，比如函数等。</p>
+<h3><a id="%E5%87%BD%E6%95%B0%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数宏</h3>
+<h2><a id="%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AAderive%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>自定义一个 derive 宏</h2>
+<p>实现一个宏，达到的效果是，在任意类型上标注 #[derive(HelloMacro)]，得到 hello_macro 函数的默认实现</p>
+<pre class="line-numbers"><code class="language-rust">use hello_macro::HelloMacro;
+use hello_macro_derive::HelloMacro;
+
+#[derive(HelloMacro)]
+struct Pancakes;
+
+fn main() {
+    Pancakes::hello_macro();
+}
+
+打印出 “Hello, Macro! My name is Pancakes!”
+</code></pre>
+<p>首先，创建一个新的代码包</p>
+<h2><a id="%E5%AE%9E%E7%8E%B0kafka%E7%9A%84%E5%B7%A5%E5%85%B7%E5%8C%85%EF%BC%8C%E5%8F%91%E5%B8%83%E5%88%B0-crate-io" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>实现 kafka 的工具包，发布到 crate.io</h2>
+<p><a href="media/16748079623338/Rust%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.pdf">Rust学习路线图.pdf</a></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用 ChatGPT 学习 Javassist]]></title>
+    <link href="http://blog.hitol.top/16761949639234.html"/>
+    <updated>2023-02-12T17:42:43+08:00</updated>
+    <id>http://blog.hitol.top/16761949639234.html</id>
+    <content type="html"><![CDATA[
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16767189601796.jpg" alt="" /></p>
+<h2><a id="q-javassist%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 是什么？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p>Javassist是一个开源的Java字节码操作库，它允许开发人员在运行时编辑和创建Java类。使用Javassist，开发人员可以通过修改现有类的字节码来动态地改变它们的行为，也可以使用Javassist的API来创建全新的Java类。Javassist提供了一个易于使用的API，使开发人员能够在不需要了解复杂的字节码结构的情况下轻松地创建和编辑Java类。Javassist还提供了一些高级功能，如动态代理、AOP（面向切面编程）和Java字节码的转换。由于它的灵活性和易用性，Javassist被广泛用于Java应用程序的动态编程和增强。</p>
+<h2><a id="q-javassist%E5%85%A5%E9%97%A8%E7%A4%BA%E4%BE%8B%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 入门示例？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<pre class="line-numbers"><code class="language-java">import javassist.*;
+
+public class JavassistExample {
+    public static void main(String[] args) throws Exception {
+        ClassPool pool = ClassPool.getDefault();
+        CtClass cc = pool.makeClass(&quot;MyClass&quot;);
+
+        // 添加属性
+        CtField field = new CtField(CtClass.intType, &quot;myField&quot;, cc);
+        cc.addField(field);
+
+        // 添加方法
+        CtMethod method = CtNewMethod.make(&quot;public void setMyField(int value) { this.myField = value; }&quot;, cc);
+        cc.addMethod(method);
+
+        // 输出类的字节码
+        cc.writeFile(&quot;output&quot;);
+    }
+}
+
+</code></pre>
+<p>这个示例创建了一个名为&quot;MyClass&quot;的新类，添加了一个名为&quot;myField&quot;的int类型属性和一个名为&quot;setMyField&quot;的公共void类型方法，该方法设置myField属性的值。最后，将该类的字节码写入名为&quot;output&quot;的文件夹中。</p>
+<p>通过运行该示例，将在output文件夹中生成一个MyClass.class文件，该文件包含上述定义的类的字节码。这个示例只是Javassist的入门示例，Javassist还提供了许多其他功能，如修改现有类、动态代理等。</p>
+<h2><a id="q%E9%9C%80%E8%A6%81%E6%B7%BB%E5%8A%A0%E4%BB%80%E4%B9%88-maven%E4%BE%9D%E8%B5%96%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:需要添加什么 maven 依赖？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.javassist&lt;/groupId&gt;
+    &lt;artifactId&gt;javassist&lt;/artifactId&gt;
+    &lt;version&gt;3.28.0-GA&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>最新版本是 3.29.1-GA</p>
+<p>添加完 maven 依赖后运行，确实在 output 文件夹下生成了 MyClass.class<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1816.57.14@2x.png" alt="CleanShot2023-02-1816.57.14@2x" /></p>
+<h2><a id="q%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:如何修改现有类？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p>使用Javassist修改现有类可以通过以下步骤完成：</p>
+<ol>
+<li>获取类池（ClassPool）对象。
+<pre class="line-numbers"><code class="language-java">ClassPool pool = ClassPool.getDefault();
+</code></pre>
+</li>
+<li>使用类池获取要修改的类的CtClass对象。
+<pre class="line-numbers"><code class="language-java">CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
+</code></pre>
+</li>
+<li>修改类的字节码，比如添加新的方法或属性，修改现有方法或属性等。下面是一个添加新方法的示例：
+<pre class="line-numbers"><code class="language-java">CtMethod newMethod = CtNewMethod.make(
+&quot;public void newMethod() { System.out.println(\&quot;This is a new method!\&quot;); }&quot;, cc);
+cc.addMethod(newMethod);
+</code></pre>
+</li>
+<li>将修改后的字节码写入class文件或者加载到当前JVM中。
+<pre class="line-numbers"><code class="language-java">cc.writeFile();
+</code></pre>
+或者
+<pre class="line-numbers"><code class="language-java">cc.toClass();
+</code></pre>
+<code>writeFile</code>方法会将修改后的字节码写入到磁盘上，<code>toClass</code>方法会将字节码加载到当前JVM中。</li>
+</ol>
+<p>下面是一个完整的示例，它会将现有类&quot;com.example.MyClass&quot;中的方法&quot;oldMethod&quot;修改为输出一条新的信息：</p>
+<pre class="line-numbers"><code class="language-java">import javassist.*;
+
+public class JavassistExample {
+    public static void main(String[] args) throws Exception {
+        ClassPool pool = ClassPool.getDefault();
+        CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
+
+        CtMethod oldMethod = cc.getDeclaredMethod(&quot;oldMethod&quot;);
+        oldMethod.setBody(&quot;System.out.println(\&quot;This is a modified old method!\&quot;);&quot;);
+
+        cc.writeFile();
+    }
+}
+</code></pre>
+<p>注意，为了执行这个示例，你需要将&quot;com.example.MyClass&quot;这个类的字节码文件放在类路径下。</p>
+<hr />
+<p>执行前，我的 TestClass类，里面 test 方法，输出1<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1817.07.50@2x.png" alt="CleanShot2023-02-1817.07.50@2x" /></p>
+<p>执行后<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1817.08.29@2x.png" alt="CleanShot2023-02-1817.08.29@2x" /></p>
+<p>执行后的这个是新生成的文件，并不是覆盖掉原来的文件。</p>
+<h2><a id="q-cc-toclass%E5%92%8C-cc-writefile%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:cc.toClass() 和 cc.writeFile() 的区别</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p><code>toClass()</code> 方法会将 <code>Javassist</code> 修改后的类直接转换为 <code>java.lang.Class</code> 对象，并将该对象加载到 JVM 中，因此你可以在代码中直接使用修改后的类。如果你调用了 <code>toClass()</code> 方法，<code>Javassist</code> 会尝试在 JVM 中加载修改后的类，如果加载成功，则返回一个 <code>java.lang.Class</code> 对象，否则会抛出一个异常。</p>
+<p><code>writeFile()</code> 方法会将 <code>Javassist</code> 修改后的类写入到磁盘上的一个 .class 文件中。这个文件可以用来替换原来的类文件，或者在以后的运行中使用，以避免每次运行时重新生成修改后的类。注意，<code>writeFile()</code> 方法只是将类保存到磁盘上，并没有将其加载到 JVM 中，因此你不能直接在代码中使用修改后的类，除非你手动加载它。</p>
+<p>通常来说，<code>toClass()</code> 方法比 <code>writeFile()</code> 更方便，因为它可以直接在 JVM 中加载修改后的类，而不需要手动加载它。但是，如果你需要在多个应用程序之间共享修改后的类，或者想要在以后的运行中使用这个类，那么 <code>writeFile()</code> 方法可能更有用。</p>
+<p>需要注意的是，<code>toClass()</code> 和 <code>writeFile()</code> 方法可以结合使用，以便在将修改后的类加载到 JVM 中之前，先将它们保存到磁盘上。这样做可以避免每次运行时重新生成修改后的类。</p>
+<h2><a id="q%E4%BD%BF%E7%94%A8-javassist%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%8C%E5%9C%A8%E5%85%B6%E4%B8%AD%E6%AF%8F%E4%B8%AA%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E5%89%8D%E5%90%8E%E8%BE%93%E5%87%BA%E5%BD%93%E5%89%8D%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4%EF%BC%8C%E4%BB%A5%E6%AD%A4%E6%9D%A5%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E7%9A%84%E6%97%B6%E9%97%B4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:使用Javassist修改现有类，在其中每个方法执行前后输出当前系统时间，以此来计算方法执行的时间</h2>
+<h2><a id="a%EF%BC%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A：</h2>
+<p>回答的步骤跟上一个问题的步骤是一样的，不过示例代码不同，而且有错误，最终修改完成后的示例：</p>
+<pre class="line-numbers"><code class="language-java">import javassist.*;
+
+
+public class JavassistExample {
+    public static void main(String[] args) throws Exception {
+        modifyClass();
+    }
+
+    public static void modifyClass() throws Exception {
+        ClassPool cp = ClassPool.getDefault();
+        CtClass cc = cp.get(&quot;com.example.MyClass&quot;);
+        System.out.println(&quot;modifyClass &quot; + cc.getName());
+        CtMethod[] methods = cc.getDeclaredMethods();
+        for (CtMethod method : methods) {
+            String methodName = &quot;modifyClass &quot; + cc.getName() + &quot;#&quot; + method.getName();
+            System.out.println(methodName);
+            method.addLocalVariable(&quot;startNanos&quot;, CtClass.longType);
+            method.insertBefore(&quot;{ startNanos = System.nanoTime(); }&quot;);
+            method.insertAfter(&quot;System.out.println(System.nanoTime() - startNanos);&quot;);
+        }
+        // 重新生成字节码并返回
+        cc.writeFile();
+        cc.toClass();
+    }
+}
+</code></pre>
+<h2><a id="%E8%BF%90%E8%A1%8C%E7%94%9F%E6%88%90%E7%9A%84%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行生成的代码</h2>
+<pre class="line-numbers"><code class="language-java">public class MyApp {
+    public static void main(String[] args) throws Exception {
+        // 在 Javassist 中修改 MyClass
+        JavassistExample.modifyClass();
+
+        // 已经加载到 JVM 内存中，这里使用的是修改后的类
+        MyClass cc = new MyClass();
+        cc.method1();
+    }
+}
+</code></pre>
+<h2><a id="%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改后的字节码</h2>
+<pre class="line-numbers"><code class="language-java">
+public class MyClass {
+    public MyClass() {
+    }
+
+    public void method1() {
+        long startNanos = System.nanoTime();
+        System.out.println(&quot;This is method 1&quot;);
+
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException var6) {
+            var6.printStackTrace();
+        }
+
+        Object var5 = null;
+        System.out.println(System.nanoTime() - startNanos);
+    }
+
+    public void method2(String name, Integer age) {
+        long startNanos = System.nanoTime();
+        System.out.println(&quot;This is method 2&quot;);
+        System.out.println(name);
+        System.out.println(age);
+
+        try {
+            Thread.sleep(2000L);
+        } catch (InterruptedException var8) {
+            var8.printStackTrace();
+        }
+
+        Object var7 = null;
+        System.out.println(System.nanoTime() - startNanos);
+    }
+}
+</code></pre>
+<h2><a id="q%EF%BC%9Ajavaagent%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q：javaagent 的使用原理</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p>Java Agent 是一种基于 JVM 的动态代理技术，它可以在应用程序启动时通过参数的方式将一个 Jar 包加载到 JVM 中，从而实现对 Java 应用程序的动态监控和控制。Java Agent 的原理是通过 Java Instrumentation API，它提供了对 Java 应用程序字节码的操作能力，可以在 Java 应用程序启动时通过 Agent 将 Java 类进行动态修改，从而实现对应用程序的监控和控制。</p>
+<p>在使用 Java Agent 时，需要编写一个代理程序，并将其打包成 Jar 文件。在代理程序中，需要实现 premain 方法，该方法会在应用程序启动时被自动调用。在 premain 方法中，可以通过 Instrumentation API 获取应用程序的类定义，并对其进行动态修改，从而实现对应用程序的增强和监控。</p>
+<p>具体而言，Java Agent 可以在 premain 方法中使用 Instrumentation API 的 addTransformer() 方法注册一个 ClassFileTransformer 对象。ClassFileTransformer 对象可以在应用程序加载类文件时对类字节码进行转换。在转换过程中，可以使用字节码操作库，比如 Javassist，ASM 或 ByteBuddy 等，来修改类字节码。通过这种方式，Java Agent 可以实现对应用程序类的增强和监控。</p>
+<p>在 Java Agent 中，还可以通过 Instrumentation API 提供的其他方法获取和修改类加载器、管理运行时代理、获取类定义信息等。这些功能可以用于实现更加复杂的增强和监控操作。</p>
+<p>总之，Java Agent 是一种非常强大的工具，可以用于实现各种应用程序的增强和监控，比如性能监控、安全审计、调试等。它通过动态修改应用程序的字节码，可以实现非侵入式的监控和增强，而且对应用程序的性能影响非常小。</p>
+<hr />
+<p>ClassFileTransformer 是 Java 中的一个接口，它是用于修改或增强字节码的核心接口之一。在 Java 应用程序启动时，通过 -javaagent 参数加载的 Java 代理会自动注册一个 ClassFileTransformer 实现，用于对 JVM 中加载的类进行字节码修改或增强操作。</p>
+<p>ClassFileTransformer 接口只有一个方法 transform，该方法接收三个参数：原始类名、类加载器、原始类字节码。该方法的返回值是一个字节数组，表示经过修改后的新的字节码。ClassFileTransformer 可以在类加载过程中的各个阶段进行字节码的修改，例如在类加载之前，类加载时，类被重新转换时等。</p>
+<hr />
+<h2><a id="javassist" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Javassist</h2>
+<p>Javassist是一个开源的分析、编辑和创建Java字节码的类库；</p>
+<p>相比ASM，Javassist提供了更加简单便捷的API，使用Javassist我们可以像写Java代码一样直接插入Java代码片段，让我们不再需要关注Java底层的字节码的和栈操作，仅需要学会如何使用Javassist的API即可实现字节码编辑。</p>
+<p>学习Javassist可以阅读官方的入门教程：<a href="http://www.javassist.org/tutorial/tutorial.html">Getting Started with Javassist</a>。</p>
+<h3><a id="api" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h3>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ClassPool</td>
+<td>ClassPool是一个存储CtClass的容器，如果调用get方法会搜索并创建一个表示该类的CtClass对象</td>
+</tr>
+<tr>
+<td>CtClass</td>
+<td>CtClass表示的是从ClassPool获取的类对象，可对该类就行读写编辑等操作</td>
+</tr>
+<tr>
+<td>CtMethod</td>
+<td>可读写的类方法对象</td>
+</tr>
+<tr>
+<td>CtConstructor</td>
+<td>可读写的类构造方法对象</td>
+</tr>
+<tr>
+<td>CtField</td>
+<td>可读写的类成员变量对象</td>
+</tr>
+</tbody>
+</table>
+<h3><a id="%E6%A0%87%E8%AF%86%E7%AC%A6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>标识符</h3>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$0, $1, $2, ...</code></td>
+<td>this和方法参数</td>
+</tr>
+<tr>
+<td><code>$args</code></td>
+<td>Object[]类型的参数数组</td>
+</tr>
+<tr>
+<td><code>$$</code></td>
+<td>所有的参数，如<code>m($$)</code>等价于<code>m($1,$2,...)</code></td>
+</tr>
+<tr>
+<td><code>$cflow(...)</code></td>
+<td>cflow变量</td>
+</tr>
+<tr>
+<td><code>$r</code></td>
+<td>返回类型，用于类型转换</td>
+</tr>
+<tr>
+<td><code>$w</code></td>
+<td>包装类型，用于类型转换</td>
+</tr>
+<tr>
+<td><code>$_</code></td>
+<td>方法返回值</td>
+</tr>
+<tr>
+<td><code>$sig</code></td>
+<td>方法签名，返回java.lang.Class[]数组类型</td>
+</tr>
+<tr>
+<td><code>$type</code></td>
+<td>返回值类型，java.lang.Class类型</td>
+</tr>
+<tr>
+<td><code>$class</code></td>
+<td>当前类，java.lang.Class类型</td>
+</tr>
+</tbody>
+</table>
+<h2><a id="agent" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Agent</h2>
+<p>JDK1.5开始，Java新增了Instrumentation(Java Agent API)和JVMTI(JVM Tool Interface)功能，允许JVM在加载某个class文件之前对其字节码进行修改，同时也支持对已加载的class(类字节码)进行重新加载(Retransform)。</p>
+<p>利用Java Agent这一特性衍生出了APM(Application Performance Management，应用性能管理)、RASP(Runtime application self-protection，运行时应用自我保护)、IAST(Interactive Application Security Testing，交互式应用程序安全测试)等相关产品，它们都无一例外的使用了Instrumentation/JVMTI的API来实现动态修改Java类字节码并插入监控或检测代码。</p>
+<p>Java Agent有两种运行模式：</p>
+<ol>
+<li>启动Java程序时添加-javaagent(Instrumentation API实现方式)或-agentpath/-agentlib(JVMTI的实现方式)参数，如java -javaagent:/data/XXX.jar LingXeTest。</li>
+<li>JDK1.6新增了attach(附加方式)方式，可以对运行中的Java进程附加Agent。<br />
+这两种运行方式的最大区别在于第一种方式只能在程序启动时指定Agent文件，而attach方式可以在Java程序运行后根据进程ID动态注入Agent到JVM。</li>
+</ol>
+<p>Java Agent和普通的Java类并没有任何区别，普通的Java程序中规定了main方法为程序入口，而Java Agent则将premain（Agent模式）和agentmain（Attach模式）作为了Agent程序的入口，两者所接受的参数是完全一致的，如下：</p>
+<pre class="line-numbers"><code class="language-java">public static void premain(String args, Instrumentation inst) {}
+public static void agentmain(String args, Instrumentation inst) {}
+</code></pre>
+<p>Java Agent还限制了我们必须以jar包的形式运行或加载，我们必须将编写好的Agent程序打包成一个jar文件。</p>
+<p>使用命令：</p>
+<pre class="line-numbers"><code class="language-plain_text">java -javaagent:/path/to/agent.jar -jar yourapp.jar
+</code></pre>
+<p>除此之外，Java Agent还强制要求了所有的jar文件中必须包含/META-INF/MANIFEST.MF文件，且该文件中必须定义好Premain-Class（Agent模式）或Agent-Class:（Agent模式）配置，可以通过 maven 插件实现:</p>
+<pre class="line-numbers"><code class="language-xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;
+    &lt;version&gt;3.2.0&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;archive&gt;
+            &lt;addMavenDescriptor&gt;true&lt;/addMavenDescriptor&gt;
+            &lt;index&gt;true&lt;/index&gt;
+            &lt;manifest&gt;
+                &lt;addDefaultSpecificationEntries&gt;true&lt;/addDefaultSpecificationEntries&gt;
+                &lt;addDefaultImplementationEntries&gt;true&lt;/addDefaultImplementationEntries&gt;
+            &lt;/manifest&gt;
+            &lt;manifestEntries&gt;
+                &lt;Premain-Class&gt;com.example.PreMain&lt;/Premain-Class&gt;
+                &lt;Specification-Version&gt;${project.version}&lt;/Specification-Version&gt;
+                &lt;Implementation-Version&gt;${project.version}&lt;/Implementation-Version&gt;
+            &lt;/manifestEntries&gt;
+        &lt;/archive&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;
+</code></pre>
+<h2><a id="%E5%B0%86%E7%9B%91%E6%8E%A7%E4%BF%A1%E6%81%AF%E8%BE%93%E5%87%BA%E5%88%B0%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>将监控信息输出到日志文件</h2>
+<p>上面的例子中已经实现了，在方法运行前后记录时间戳来监控方法执行时间。<br />
+下一步计划，将执行时间记录下来。<br />
+在下一步，记录到时序数据库中，加载到 Prometheus</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[rust 包管理与工作空间]]></title>
+    <link href="http://blog.hitol.top/16727524082529.html"/>
+    <updated>2023-01-03T21:26:48+08:00</updated>
+    <id>http://blog.hitol.top/16727524082529.html</id>
+    <content type="html"><![CDATA[
+<p>在编写较为复杂的项目时，合理的对代码进行组织与管理很重要。</p>
+<p>只有按照不同的特性来组织或分隔相关功能的代码，我们才能够清晰地找到实现指定功能的代码片段，或者确定哪些地方需要修改。</p>
+<p>Rust 提供了一系列的功能来帮助我们管理代码，包括决定哪些细节是暴露的，哪些细节是私有的，以及不同的作用域内存在哪些名称。这些功能有时被称为模块系统，他们包括</p>
+<ul>
+<li>
+<p>包（package）：一个用于构建、测试并分享单元包的 Cargo 功能、</p>
+</li>
+<li>
+<p>单元包（crate）：一个用于生成库或可执行文件的树形模块结构<br />
+对于 Rust 而言，包是一个独立的可编译单元，它编译后会生成一个可执行文件或者一个库。</p>
+</li>
+<li>
+<p>模块（module）及 use 关键字：他们被用于控制文件结构、作用域及路径的私有性。</p>
+</li>
+<li>
+<p>路径（path）：一种用于命名条目的方法，这些条目包括结构体、函数和模块等。</p>
+</li>
+</ul>
+<p>rust 中包一般指的是 crate。</p>
+<h2><a id="%E5%8C%85%E4%B8%8E%E5%8D%95%E5%85%83%E5%8C%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>包与单元包</h2>
+<p>包（package），可以理解为项目、工程。<br />
+由于 Package 就是一个项目，因此它包含有独立的 Cargo.toml 文件，以及因为功能性被组织在一起的一个或多个包。一个 Package 只能包含一个库(library)类型的包，但是可以包含多个二进制可执行类型的包。</p>
+<ul>
+<li>一个包中只能拥有最多一个库单元包。</li>
+<li>包可以拥有任意多的二进制单元包。</li>
+<li>包内必须存在至少一个单元包（库单元包或二进制单元包）。</li>
+</ul>
+<p>Cargo 会默认将 src/main.rs 视作一个二进制单元包的根节点而无需指定，这个二进制单元包与包拥有相同的名称。</p>
+<p>假设包的目录中包含 src/lib.rs，Cargo 也会自动将其视作与包同名的库单元包的根节点。</p>
+<blockquote>
+<p>main.rs 所在包是二进制单元包，lib.rs 所在包是库单元包。</p>
+</blockquote>
+<ul>
+<li>创建二进制包</li>
+</ul>
+<pre class="line-numbers"><code class="language-plain_text">cargo new my-project
+</code></pre>
+<ul>
+<li>创建 lib 包</li>
+</ul>
+<pre class="line-numbers"><code class="language-plain_text">cargo new my-lib --lib
+</code></pre>
+<p>库单元包（lib）只能被其他二进制单元包引用而不能独立运行。</p>
+<h2><a id="%E5%85%B8%E5%9E%8B%E7%9A%84%E5%8C%85%E7%BB%93%E6%9E%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>典型的包结构</h2>
+<pre class="line-numbers"><code class="language-plain_text">.
+├── Cargo.toml
+├── Cargo.lock
+├── src
+│   ├── main.rs
+│   ├── lib.rs
+│   └── bin
+│       └── main1.rs
+│       └── main2.rs
+├── tests
+│   └── some_integration_tests.rs
+├── benches
+│   └── simple_bench.rs
+└── examples
+    └── simple_example.rs
+
+</code></pre>
+<ul>
+<li>唯一库包：src/lib.rs</li>
+<li>默认二进制包：src/main.rs，编译后生成的可执行文件与 Package 同名</li>
+<li>其余二进制包：src/bin/main1.rs 和 src/bin/main2.rs，它们会分别生成一个文件同名的二进制可执行文件</li>
+<li>集成测试文件：tests 目录下</li>
+<li>基准性能测试 benchmark 文件：benches 目录下</li>
+<li>项目示例：examples 目录下</li>
+</ul>
+<h2><a id="%E4%BD%BF%E7%94%A8%E5%A4%96%E9%83%A8%E5%8C%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>使用外部包</h2>
+<p>Cargo.toml 文件中的 [dependencies]<br />
+<img src="media/16727524082529/2023-01-05-07.36.08.png" alt="2023-01-05-07.36.08" /></p>
+<h2><a id="workspace" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>workspace</h2>
+<p>如何使用工作空间来管理代码目录结构，通过一个例子来说明一下。<br />
+在这个例子中，创建了一个 add 工作空间，这个空间中有一个二进制包 adder，有一个 lib 包 add-one，adder 依赖 add-one。</p>
+<p>下面是操作步骤</p>
+<ol>
+<li>
+<p>创建一个工作空间目录，就是创建一个空的文件夹。</p>
+<pre class="line-numbers"><code class="language-bash">mkdir add
+</code></pre>
+</li>
+<li>
+<p>新创建的目录中添加 Cargo.toml</p>
+<pre class="line-numbers"><code class="language-bash">cd add
+touch Cargo.toml
+</code></pre>
+</li>
+<li>
+<p>编辑 Cargo.toml</p>
+<pre class="line-numbers"><code class="language-toml">[workspace]
+members = [
+    &quot;adder&quot;,
+    &quot;add-one&quot;
+]
+</code></pre>
+</li>
+<li>
+<p>在 add 目录下，创建 adder 二进制包</p>
+<pre class="line-numbers"><code class="language-plain_text">cargo new adder
+</code></pre>
+<p>输出</p>
+<pre class="line-numbers"><code class="language-plain_text">Created binary (application) `adder` project
+</code></pre>
+<p>现在的目录结构:</p>
+<pre class="line-numbers"><code class="language-plain_text">├── Cargo.lock
+├── Cargo.toml
+├── adder
+│   ├── Cargo.toml
+│   └── src
+│       └── main.rs
+└── target
+</code></pre>
+</li>
+<li>
+<p>创建新的 lib 包 add-one</p>
+<pre class="line-numbers"><code class="language-plain_text">cargo new add-one --lib
+</code></pre>
+<p>输出</p>
+<pre class="line-numbers"><code class="language-plain_text">Created library `add-one` project
+</code></pre>
+<p>此时的目录结构:</p>
+<pre class="line-numbers"><code class="language-plain_text">├── Cargo.lock
+├── Cargo.toml
+├── add-one
+│   ├── Cargo.toml
+│   └── src
+│       └── lib.rs
+├── adder
+│   ├── Cargo.toml
+│   └── src
+│       └── main.rs
+└── target
+</code></pre>
+</li>
+<li>
+<p>add-one/src/lib.rs</p>
+<p>lib 文件中自动生成了代码，一个 add 方法，一个 test 方法</p>
+<pre class="line-numbers"><code class="language-rust">pub fn add(left: usize, right: usize) -&gt; usize {
+    left + right
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        let result = add(2, 2);
+        assert_eq!(result, 4);
+    }
+}
+</code></pre>
+</li>
+<li>
+<p>让二进制包 adder 依赖 add-one 这个 lib<br />
+需要在 adder 的 Cargo.toml 文件中添加 add-one 的路径作为依赖。</p>
+<pre class="line-numbers"><code class="language-plain_text">[dependencies]
+add-one = {path = &quot;../add-one&quot;}
+</code></pre>
+</li>
+<li>
+<p>在 adder 包中使用 add-one 中的 add 方法<br />
+adder/src/main.rs</p>
+<pre class="line-numbers"><code class="language-rust">use add_one;
+fn main() {
+    println!(&quot;Hello, world!&quot;);
+    let x = add_one::add(1, 2);
+    assert_eq!(x,3);
+    println!(&quot;Hello, world!&quot;);
+}
+</code></pre>
+</li>
+<li>
+<p>在 add 目录下构建整个工作空间</p>
+</li>
+<li>
+<p>为了能够在工作空间的目录下运行二进制包，在执行 cargo run 命令时需要指定 -p 参数</p>
+<pre class="line-numbers"><code class="language-plain_text">cargo run -p adder
+</code></pre>
+</li>
+</ol>
+<p>以上10个步骤就是使用工作空间的操作步骤了。<br />
+lib 包相当于工具包，一般用来实现核心功能，同时还可以给别的模块提供依赖，<br />
+二进制包相当于启动包，可以运行。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[rust actix-diesel-mysql demo]]></title>
+    <link href="http://blog.hitol.top/16669473309292.html"/>
+    <updated>2022-10-28T16:55:30+08:00</updated>
+    <id>http://blog.hitol.top/16669473309292.html</id>
+    <content type="html"><![CDATA[
+<p>rust 使用 actix-web、diesel、mysql 的 demo。</p>
+<ol>
+<li>
+<p>创建工程</p>
+<pre class="line-numbers"><code class="language-plain_text">cargo new rust_diesel_mysql_demo
+</code></pre>
+</li>
+<li>
+<p>添加 diesel 依赖</p>
+<pre class="line-numbers"><code class="language-plain_text">diesel = { version = &quot;2.0.0&quot;, features = [&quot;mysql&quot;] }
+dotenvy = &quot;0.15&quot;
+</code></pre>
+</li>
+<li>
+<p>mysql 连接信息写入到 env 文件</p>
+<pre class="line-numbers"><code class="language-plain_text">echo DATABASE_URL=mysql://root:123456@localhost:3306/diesel_demo &gt;.env
+</code></pre>
+</li>
+<li>
+<p><code>cargo install diesel_cli --no-default-features --features mysql</code></p>
+</li>
+<li>
+<p><code>diesel setup</code></p>
+<ol>
+<li>生成 migrations 存放初始化 sql 文件的目录。</li>
+<li>生成 diesel.toml，存放生成文件的目录
+<pre class="line-numbers"><code class="language-plain_text">[print_schema]
+file = &quot;src/schema.rs&quot;
+
+[migrations_directory]
+dir = &quot;migrations&quot;
+</code></pre>
+</li>
+</ol>
+</li>
+<li>
+<p>diesel migration generate create_posts<br />
+生成初始化 sql 文件。</p>
+<pre class="line-numbers"><code class="language-plain_text">Creating migrations/2022-11-22-085601_create_posts/up.sql
+Creating migrations/2022-11-22-085601_create_posts/down.sql
+</code></pre>
+<p>将初始化 sql 写到 up.sql 中。</p>
+<pre class="line-numbers"><code class="language-sql">CREATE TABLE `posts` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `title` varchar(256) NOT NULL COMMENT '标题',
+  `body` text NOT NULL COMMENT '内容',
+  `published` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否发布',
+  PRIMARY KEY (`id`)
+) ;
+</code></pre>
+</li>
+<li>
+<p>diesel migration run</p>
+<ol>
+<li>读取上一步生成的 migrations 文件夹的 up.sql，生成对应的实体，生成到 print_schema 指定的文件</li>
+<li>如果上一步没有执行，migrations 里是空的，默认会生成数据库里所有表的实体</li>
+</ol>
+</li>
+</ol>
+<hr />
+<p>以上就是使用 diesel 的准备工作，接下来就是编码工作</p>
+<ol>
+<li>
+<p>在 src 目录下创建文件夹 api、database、models、service</p>
+<pre class="line-numbers"><code class="language-plain_text">├── src
+│   ├── api
+│   │   ├── mod.rs
+│   │   └── test_api.rs
+│   ├── database
+│   │   ├── mod.rs
+│   │   ├── mysql.rs
+│   │   └── schema.rs
+│   ├── main.rs
+│   ├── models
+│   │   ├── mod.rs
+│   │   └── models.rs
+│   ├── service
+│   │   ├── mod.rs
+│   │   └── test_service.rs
+│   └── settings.rs
+</code></pre>
+<ol>
+<li>rust 的目录结构还在摸索中，这里还是 mvc 的方式</li>
+<li>api 提供服务的接口，类似于 controller</li>
+<li>database 数据库相关，初始化数据库连接以及存放生成的 schema</li>
+<li>models 代码运行过程中的 struct</li>
+<li>service 服务逻辑处理</li>
+</ol>
+</li>
+</ol>
+<p>每个文件夹里都有个 mod.rs，里边有声明 mod 的语句，而声明的 mod 在同级别的目录下有对应名字的文件存在。<br />
+例如 database 文件夹里的 mod.rs:</p>
+<pre class="line-numbers"><code class="language-plain_text">pub mod mysql;
+pub mod schema;
+</code></pre>
+<p>database 文件夹里还有 mysql.rs、schema.rs 两个文件。</p>
+<p>这个好像是 rust 的一个规则。当一个目录下有一个名为 mod.rs 的源文件时，模块的文件名也可以和这个目录互相映射。<br />
+不过这个 mod.rs 文件有点太多了。。。</p>
+<h2><a id="diesel-crud" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>diesel crud</h2>
+<p><a href="https://docs.diesel.rs/diesel/query_dsl/trait.QueryDsl.html">https://docs.diesel.rs/diesel/query_dsl/trait.QueryDsl.html</a></p>
+<p>insert</p>
+<pre class="line-numbers"><code class="language-rust">diesel::insert_into(posts::table)
+        .values(&amp;new_post)
+        .execute(connection)
+        .expect(&quot;Error saving new post&quot;);
+</code></pre>
+<p>select<br />
+一个 selectById 都能有好几中写法</p>
+<pre class="line-numbers"><code class="language-rust">posts::table.filter(posts::id.eq(id)).first(connection).unwrap()
+posts::dsl::posts.find(id).first(connection).unwrap()
+posts::table.find(id).first(connection).unwrap()
+</code></pre>
+<p>delete</p>
+<pre class="line-numbers"><code class="language-rust">diesel::delete(posts::table).filter(posts::id.eq(id))
+    .execute(connection).unwrap();
+</code></pre>
+<p>update</p>
+<pre class="line-numbers"><code class="language-rust">diesel::update(posts::table).filter(posts::id.eq(id))
+    .set(posts::published.eq(true))
+    .execute(connection).unwrap();
+</code></pre>
+<p>github 地址：<br />
+<a href="https://github.com/hitolz/rust_actix_diesel_mysql_demo">https://github.com/hitolz/rust_actix_diesel_mysql_demo</a></p>
+<hr />
+<p><a href="https://diesel.rs/guides/getting-started">https://diesel.rs/guides/getting-started</a><br />
+<a href="https://www.rectcircle.cn/posts/rust-diesel/">https://www.rectcircle.cn/posts/rust-diesel/</a></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[actix-web]]></title>
+    <link href="http://blog.hitol.top/16689222220789.html"/>
+    <updated>2022-11-20T13:30:22+08:00</updated>
+    <id>http://blog.hitol.top/16689222220789.html</id>
+    <content type="html"><![CDATA[
+<p>actix-web 是 rust 中的一个 web 框架，本篇文章简单介绍下 actix-web 的使用。</p>
+<h2><a id="getting-started" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+<p><a href="https://actix.rs/docs/getting-started">https://actix.rs/docs/getting-started</a></p>
+<ol>
+<li>创建rust 工程</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">cargo new hello-world
+</code></pre>
+<ol start="2">
+<li>Cargo.toml 添加依赖</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">[dependencies]
+actix-web=&quot;4&quot;
+</code></pre>
+<ol start="3">
+<li>使用 actix-web<br />
+在 src/main.rs 中编写如下代码</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+
+#[get(&quot;/&quot;)]
+async fn hello() -&gt; impl Responder {
+    HttpResponse::Ok().body(&quot;Hello world!&quot;)
+}
+
+#[post(&quot;/echo&quot;)]
+async fn echo(req_body: String) -&gt; impl Responder {
+    HttpResponse::Ok().body(req_body)
+}
+
+async fn manual_hello() -&gt; impl Responder {
+    HttpResponse::Ok().body(&quot;Hey there!&quot;)
+}
+
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new( || {
+        App::new()
+            .service(hello)
+            .service(echo)
+            .route(&quot;/hey&quot;, web::get().to(manual_hello))
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>HttpServer 绑定到 ip、端口，同时，提供了两个 get 方法(/,/hey)，一个 post 方法(/echo)，通过浏览器访问 localhost:8099 即可访问。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-13.36.34.png" alt="2022-11-20-13.36.34" /></p>
+<h2><a id="scope" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>scope</h2>
+<p>scope 就相当于请求路径的前缀</p>
+<pre class="line-numbers"><code class="language-rust">#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new().service(
+            web::scope(&quot;/app&quot;)
+                .route(&quot;/hey&quot;, web::get().to(manual_hello)),
+        )
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>这样的话在请求 localhost:8099/hey 就请求不到了，这样要请求的路径是 localhost:8099/app/hey</p>
+<h2><a id="state" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>state</h2>
+<p>相当于全局变量、多个线程之间共享的。</p>
+<pre class="line-numbers"><code class="language-rust">use std::sync::Mutex;
+
+use actix_web::{App, HttpServer, web};
+
+struct AppStateWithCounter {
+    counter: Mutex&lt;i32&gt;, // &lt;- Mutex is necessary to mutate safely across threads
+}
+
+async fn index(data: web::Data&lt;AppStateWithCounter&gt;) -&gt; String {
+    let mut counter = data.counter.lock().unwrap(); // &lt;- get counter's MutexGuard
+    *counter += 1; // &lt;- access counter inside MutexGuard
+
+    format!(&quot;Request number: {counter}&quot;) // &lt;- response with count
+}
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    // Note: web::Data created _outside_ HttpServer::new closure
+    let counter = web::Data::new(AppStateWithCounter {
+        counter: Mutex::new(0),
+    });
+
+    HttpServer::new(move || {
+        // move counter into the closure
+        App::new()
+            .app_data(counter.clone()) // &lt;- register the created data
+            .route(&quot;/&quot;, web::get().to(index))
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>浏览器请求 localhost:8099,每次刷新都会导致 counter+1；</p>
+<h2><a id="%E8%BF%94%E5%9B%9Ejson" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>返回 json</h2>
+<p>cargo.toml添加依赖</p>
+<pre class="line-numbers"><code class="language-rust">serde = { version = &quot;1.0&quot;, features = [&quot;derive&quot;] }
+serde_json = { version = &quot;1.0.2&quot;, optional = true }
+</code></pre>
+<p>main.rs</p>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web};
+use actix_web::web::Json;
+use serde::Serialize;
+
+#[derive(Debug, Serialize)]
+pub struct Response&lt;T: Serialize&gt; {
+    pub ok: bool,
+    pub code: Option&lt;i32&gt;,
+    pub data: Option&lt;T&gt;,
+    pub error: Option&lt;String&gt;,
+}
+
+impl&lt;T: Serialize&gt; Response&lt;T&gt; {
+    pub fn success(data: Option&lt;T&gt;) -&gt; Response&lt;T&gt; {
+        Response {
+            ok: true,
+            code: Some(0),
+            data,
+            error: None,
+        }
+    }
+
+    pub fn error(err: Option&lt;String&gt;) -&gt; Response&lt;T&gt; {
+        Response {
+            ok: false,
+            code: Some(-1),
+            data: None,
+            error: err,
+        }
+    }
+}
+
+
+#[get(&quot;/&quot;)]
+async fn hello() -&gt; impl Responder {
+    let response = Response::success(Option::from(&quot;Hello&quot;));
+    println!(&quot;{:?}&quot;, response);
+    Json(response)
+}
+
+
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .service(hello)
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-14.58.01.png" alt="2022-11-20-14.58.01" /></p>
+<hr />
+<p><a href="https://juejin.cn/post/7108743876659118117">https://juejin.cn/post/7108743876659118117</a><br />
+<a href="https://web.veaba.me/rust/actix-web/#application">https://web.veaba.me/rust/actix-web/#application</a></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[rust 所有权]]></title>
+    <link href="http://blog.hitol.top/16672061401168.html"/>
+    <updated>2022-10-31T16:49:00+08:00</updated>
+    <id>http://blog.hitol.top/16672061401168.html</id>
+    <content type="html"><![CDATA[
+<blockquote>
+<p>所有权可以说是Rust中最为独特的一个功能了。正是所有权概念和相关工具的引入，Rust才能够在没有垃圾回收机制的前提下保障内存安全。因此，正确地了解所有权概念及其在Rust中的实现方式，对于所有Rust开发者来讲都是十分重要的。在本章中，我们会详细地讨论所有权及其相关功能：借用、切片，以及Rust在内存中布局数据的方式。</p>
+</blockquote>
+<p>所有权就是指一个东西归属谁。Rust 中一个变量对应一个值，变量就称为这个值的所有者。</p>
+<pre class="line-numbers"><code class="language-rust">lex x = 5;
+</code></pre>
+<p>这句话的意思就是，5这个数字所在的内存块的所有者是 x。</p>
+<h2><a id="%E6%89%80%E6%9C%89%E6%9D%83%E8%A7%84%E5%88%99" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>所有权规则</h2>
+<ol>
+<li>Rust 中的每一个值都有一个对应的变量作为它的所有者</li>
+<li>在同一时间内，值有且仅有一个所有者</li>
+<li>当所有者离开自己的作用域时，它持有的值就会被释放掉</li>
+</ol>
+<h2><a id="%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BA%92%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%9A%E7%A7%BB%E5%8A%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>变量和数据交互的方式：移动</h2>
+<p>把一个变量赋值给另一个变量</p>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let x = 5;
+    let y = x;
+    println!(&quot;x = {}, y = {}&quot;, x, y);
+
+
+    let s1 = String::from(&quot;hello&quot;);
+    let s2 = s1;
+    println!(&quot;s1 = {}, s2 = {}&quot;, s1, s2);
+}
+</code></pre>
+<p>这段代码的作用就是 把一个变量赋值给另一个变量。</p>
+<p>整数是已知固定大小的简单值，x y 两个值 5 会同时被推入到当前的栈中。</p>
+<p>然而，将 s1 赋值给 s2 时，便复制了一次 String 的数据，这意味着我们复制了它存储在栈上的指针、长度及容量字段，没有复制指针指向的堆数据。此时的内存布局应该是这样：</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-10-31-16.48.47.png" alt="2022-10-31-16.48.47" /></p>
+<p>为了确保内存安全，避免复制分配的内存，Rust 在这种场景下回简单的将 s1 废弃，不再视其为一个有效的变量。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/2022-10-31-17.03.02.png" alt="2022-10-31-17.03.02" /></p>
+<p>也就解释了这段代码执行为什么报错</p>
+<pre class="line-numbers"><code class="language-plain_text">error[E0382]: borrow of moved value: `s1`
+  --&gt; src/main.rs:11:34
+   |
+8  |     let s1 = String::from(&quot;hello&quot;);
+   |         -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait
+9  |     let s2 = s1;
+   |              -- value moved here
+10 |
+11 |     println!(&quot;s1 = {}, s2 = {}&quot;, s1, s2);
+   |                                  ^^ value borrowed here after move
+   |
+   = note: this error originates in the macro `$crate::format_args_nl` which comes from the expansion of the macro `println` (in Nightly builds, run with -Z macro-backtrace for more info)
+</code></pre>
+<p>总的来说 移动(move) 这种变量和数据交互方式，仅仅是将栈上的数据移动了，堆数据还是同一个，并且将移动前的变量 s1 设置为失效，意味着 s1 和堆数据之间的绑定关系已经不存在了(相当于一个野指针?)。所以移动后在访问 s1 是不被允许的。</p>
+<h2><a id="%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BA%92%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%9A%E5%85%8B%E9%9A%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>变量和数据交互的方式：克隆</h2>
+<pre class="line-numbers"><code class="language-rust">let mut s1 = String::from(&quot;hello&quot;);
+// let s2 = s1;
+let s2 = s1.clone();
+
+s1.push_str(&quot;, world&quot;);
+println!(&quot;s1 = {}, s2 = {}&quot;, s1, s2);
+</code></pre>
+<p>克隆 = 深度 copy 堆上的数据。s1、s2 是两个独立的变量，指向的堆数据也不是同一个，所以在 clone 后对 s1 进行修改，s2 还是不变的。</p>
+<p>trait ：Copy 、Drop</p>
+<p>当一种类型拥有了 Copy 这种 trait，那么它的变量就可以在赋值给其他变量之后保持可用性。</p>
+<p>如果一种类型实现了 Drop，那么 Rust 就不允许它再实现 Copy。</p>
+<h2><a id="%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%8E%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>所有权与函数</h2>
+<p>将值传递给函数在语义上类似于对变量进行赋值，会触发移动或者复制，就像赋值语句一样。</p>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let x = 5;
+    show(x);
+    println!(&quot;x = {}&quot;, x);
+
+    let s1 = String::from(&quot;hello&quot;);
+    show_str(s1);
+    println!(&quot;函数外部 s1 = {}&quot;, s1)
+}
+
+fn show(x: i32) {
+    println!(&quot;函数内部 x = {}&quot;, x)
+}
+
+fn show_str(s: String) {
+    println!(&quot;函数内部 s1 = {}&quot;, s)
+}
+
+</code></pre>
+<p>string 类型变量当做参数传递给函数后，变量的所有权会移动到函数的作用域内，main 函数中就不在持有当前变量的所有权了，所以当调用 show_str 之后在访问 s1就会报错。</p>
+<p>从另一个方面来理解，函数执行结束后会销毁变量对应的内存空间，然后在 main 函数中访问一个已经移除调的内存空间报错也是合情合理的。</p>
+<blockquote>
+<p>赋值并不是唯一涉及移动的操作。值在作为参数传递或从函数返回时也会被移动。</p>
+</blockquote>
+<pre class="line-numbers"><code class="language-plain_text">error[E0382]: borrow of moved value: `s1`
+ --&gt; src/main.rs:8:30
+  |
+6 |     let s1 = String::from(&quot;hello&quot;);
+  |         -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait
+7 |     show_str(s1);
+  |              -- value moved here
+8 |     println!(&quot;函数内部 s1 = {}&quot;, s1)
+  |                                  ^^ value borrowed here after move
+  |
+  = note: this error originates in the macro `$crate::format_args_nl` which comes from the expansion of the macro `println` (in Nightly builds, run with -Z macro-backtrace for more info)
+</code></pre>
+<h2><a id="%E5%BC%95%E7%94%A8%E4%B8%8E%E5%80%9F%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>引用与借用</h2>
+<p>如果我们想在函数结束后还想要使用变量，可以将变量的引用传递到参数中。</p>
+<p>引用允许在不获取所有权的情况下使用值。</p>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let x = 5;
+    show(x);
+    println!(&quot;x = {}&quot;, x);
+
+    let s1 = String::from(&quot;hello&quot;);
+    show_str(&amp;s1);
+    println!(&quot;函数外部 s1 = {}&quot;, s1)
+}
+
+fn show(x: i32) {
+    println!(&quot;函数内部 x = {}&quot;, x)
+}
+
+fn show_str(s: &amp;String) {
+    println!(&quot;函数内部 s1 = {}&quot;, s)
+}
+
+</code></pre>
+<p>修改点</p>
+<ol>
+<li>show_str(&amp;s1);传递参数，传的是 s1 的引用</li>
+<li>fn show_str(s: &amp;String) 修改为 String 的引用类型</li>
+</ol>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-10-31-17.38.00.png" alt="2022-10-31-17.38.00" /></p>
+<p>&amp;s1，指在不转移所有权的前提下，创建一个指向 s1 值的引用，引用不持有 s1 的所有权，所以在函数结束时，原 s1 仍然可用。<br />
+函数签名中的 &amp; 用来表名参数 s 的类型是一个引用。s 并不持有指向值的所有权，在函数结束时不会销毁指向值。</p>
+<p><strong>通过引用传递参数给函数的方法也被称为借用。</strong></p>
+<h2><a id="%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>可变引用</h2>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let mut s1 = String::from(&quot;hello&quot;);
+    show_str(&amp;mut s1);
+    println!(&quot;函数外部 s1 = {}&quot;, s1)
+}
+
+fn show_str(s: &amp;mut String) {
+    println!(&quot;函数内部 s1 = {}&quot;, s);
+    s.push_str(&quot;, world&quot;);
+}
+</code></pre>
+<p>mut 表示可变的，变量使用 mut，引用使用 &amp;mut。<br />
+通过 mut 关键字将变量或者引用声明为可变的。<br />
+可以在函数内部修改其引用变量的值。<br />
+一个变量可以有多个不可变引用，但是只能有一个<strong>可变引用</strong>。<br />
+一个变量不能同时有不可变引用和可变引用。</p>
+<h2><a id="%E6%82%AC%E5%9E%82%E5%BC%95%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>悬垂引用</h2>
+<p>这类指针指向曾经存在某处内存地址，但该内存已经被释放掉甚至被重新分配另作他用了。</p>
+<p>这不就是野指针？</p>
+<p>rust 语言中 ，编译器会 确保引用永远不会进入这种悬垂状态。</p>
+<p>假如当前持有某一个数据的引用，编译器保证这个数据不会在引用被销毁前离开自己的作用域。</p>
+<p>创造一个悬垂引用的例子：</p>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let x = dangle();
+    println!(&quot;x = {}&quot;, x)
+}
+
+fn dangle() -&gt; &amp;String {
+    let s = String::from(&quot;hello&quot;);
+    return &amp;s;
+}
+</code></pre>
+<p>dangle 函数，返回 String 的引用，函数内部，声明了一个字符串 s，返回给调用者 s 的引用，看着貌似没什么问题。</p>
+<p>由于变量 s 创建在函数内，所以它会在函数执行完毕时随之释放，但是我们的代码依旧返回指向 s 的引用，这个引用指向的是一个无效的内存地址。</p>
+<pre class="line-numbers"><code class="language-plain_text">error[E0106]: missing lifetime specifier
+ --&gt; src/main.rs:6:16
+  |
+6 | fn dangle() -&gt; &amp;String {
+  |                ^ expected named lifetime parameter
+  |
+  = help: this function's return type contains a borrowed value, but there is no value for it to be borrowed from
+help: consider using the `'static` lifetime
+  |
+6 | fn dangle() -&gt; &amp;'static String {
+  |                 +++++++
+
+</code></pre>
+<h2><a id="%E5%88%87%E7%89%87" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>切片</h2>
+<p>切片也是不持有所有权的数据类型。<br />
+切片：集合中某一段连续的元素序列，而不是整个集合。</p>
+<p>字符串字面量就是切片。</p>
+<h2><a id="%E6%80%BB%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>总结</h2>
+<p>所有权是 Rust 区别于其他编程语言的一个重要部分。<br />
+变量称为其对应的内存块的所有者，变量拥有所有权。</p>
+<p>所有权发生移动的几个方式</p>
+<ol>
+<li>变量赋值给其他变量</li>
+<li>变量当做参数传递到函数</li>
+<li>函数返回值赋值给变量</li>
+</ol>
+<p>作用域可以简单理解为{}，大括号内部称为一个作用域。<br />
+当变量离开作用域时，变量会自动释放其所有权。</p>
+<p>所有权只会发生在堆上分配的数据，栈上分配的数据没有所有权的概念。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Java 太卷了转 GO（二）]]></title>
+    <link href="http://blog.hitol.top/16626878291486.html"/>
+    <updated>2022-09-09T09:43:49+08:00</updated>
+    <id>http://blog.hitol.top/16626878291486.html</id>
+    <content type="html"><![CDATA[
+<p>上一篇文章简单的学习了 GO 的基础语法，本篇文章用 GO 的框架开发一个短链应用。</p>
+<p>短链应用功能：</p>
+<ol>
+<li>创建短链</li>
+<li>根据短链 code 重定向到原始链接</li>
+</ol>
+<p>主要用到的框架：</p>
+<ol>
+<li>ORM 框架 gorm<br />
+<a href="https://gorm.io/zh_CN/docs/index.html">https://gorm.io/zh_CN/docs/index.html</a></li>
+<li>Web 框架 gin<br />
+<a href="https://gin-gonic.com/zh-cn/docs/">https://gin-gonic.com/zh-cn/docs/</a></li>
+</ol>
+<h2><a id="gin" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>gin</h2>
+<p>最快的 http 路由器和框架。</p>
+<pre class="line-numbers"><code class="language-go">package main
+
+import &quot;github.com/gin-gonic/gin&quot;
+
+func main() {
+	r := gin.Default()
+	r.GET(&quot;/ping&quot;, func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			&quot;message&quot;: &quot;pong&quot;,
+		})
+	})
+	r.Run() // 监听并在 0.0.0.0:8080 上启动服务
+}
+</code></pre>
+<p>一个最简单的例子，启动后浏览器访问 <a href="http://localhost:8080/ping">http://localhost:8080/ping</a></p>
+<p>使用路由：</p>
+<pre class="line-numbers"><code class="language-go">func main() {
+	engine := gin.Default()
+	engine.Group(&quot;/&quot;)
+
+	engine.GET(&quot;/ping&quot;, func(context *gin.Context) {
+		context.JSON(200, gin.H{
+			&quot;message&quot;: &quot;pong&quot;,
+		})
+	})
+	engine.Run()
+}
+</code></pre>
+<p>将接口放在程序入口 main 方法中不太合适，通常会创建多个 handler，类似于 java 中的 controller。</p>
+<h2><a id="gorm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>gorm</h2>
+<p>连接数据库</p>
+<pre class="line-numbers"><code class="language-go">// 数据库连接：&quot;用户名:密码@tcp(IP:端口)/数据库?charset=utf8&quot;
+sqlcon := &quot;root:123456@tcp(127.0.0.1:3306)/amc?charset=utf8&amp;parseTime=True&amp;loc=Local&quot;
+
+
+DB, err := gorm.Open(mysql.Open(sqlcon), &amp;gorm.Config{
+	DisableForeignKeyConstraintWhenMigrating: true, //禁用物理外键
+})
+if err != nil {
+	log.Fatal(&quot;连接失败！&quot;)
+	return nil
+}
+// 连接池设置
+sqlDB, err := DB.DB()
+// 设置数据库最大连接数
+sqlDB.SetMaxOpenConns(500)
+// 设置数据库最大闲置数
+sqlDB.SetMaxIdleConns(20)
+// 全局禁用表名复数
+//sqlDB.SingularTable(true)
+// 调试模式，可以打印sql语句
+//sqlDB.LogMode(true)
+</code></pre>
+<h3><a id="crud" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CRUD</h3>
+<h4><a id="insert" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>insert</h4>
+<p>保存单条数据</p>
+<pre class="line-numbers"><code class="language-go">createConfig := dao.ShortLinkConfig{
+	Enable:      1,
+	OriginUrl:   &quot;http://localhost:8080&quot;,
+	ShortCode:   &quot;test&quot;,
+	CreatedTime: time.Now(),
+	UpdatedTime: time.Now(),
+}
+mysql.Db.Save(&amp;createConfig)
+</code></pre>
+<p>保存多条数据</p>
+<pre class="line-numbers"><code class="language-go">shortLinkConfigs := []dao.ShortLinkConfig{
+	{
+		Enable:      1,
+		OriginUrl:   &quot;http://localhost:8080&quot;,
+		ShortCode:   &quot;test1&quot;,
+		CreatedTime: time.Now(),
+		UpdatedTime: time.Now()},
+	{
+		Enable:      1,
+		OriginUrl:   &quot;http://localhost:8080&quot;,
+		ShortCode:   &quot;test2&quot;,
+		CreatedTime: time.Now(),
+		UpdatedTime: time.Now(),
+	},
+	{
+		Enable:      1,
+		OriginUrl:   &quot;http://localhost:8080&quot;,
+		ShortCode:   &quot;test3&quot;,
+		CreatedTime: time.Now(),
+		UpdatedTime: time.Now(),
+	},
+}
+// 批量数据一次性插入
+//mysql.Db.Create(&amp;shortLinkConfigs)
+// 分批次插入
+mysql.Db.CreateInBatches(&amp;shortLinkConfigs, 1000)
+</code></pre>
+<h4><a id="select" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>select</h4>
+<pre class="line-numbers"><code class="language-go">config := dao.ShortLinkConfig{
+	Enable: 1,
+}
+
+var shortLinkConfig = dao.ShortLinkConfig{}
+
+//获取第一条记录，主键升序 select * from table ORDER BY id asc LIMIT 1
+mysql.Db.Where(&amp;config).First(&amp;shortLinkConfig)
+log.Printf(&quot;first config = %v&quot;, shortLinkConfig)
+
+shortLinkConfig = dao.ShortLinkConfig{}
+//获取最后一条记录，主键降序 select * from table ORDER BY id desc LIMIT 1
+mysql.Db.Where(&amp;config).Last(&amp;shortLinkConfig)
+log.Printf(&quot;last config = %v&quot;, shortLinkConfig)
+
+shortLinkConfig = dao.ShortLinkConfig{}
+// 获取一条记录，没有指定字段排序
+mysql.Db.Where(&amp;config).Take(&amp;shortLinkConfig)
+log.Printf(&quot;config = %v&quot;, shortLinkConfig)
+
+shortLinkConfig = dao.ShortLinkConfig{}
+mysql.Db.First(&amp;shortLinkConfig, 9)
+log.Printf(&quot;id = 9,config = %v&quot;, shortLinkConfig)
+
+// 查询多条记录
+shortLinkConfigs := make([]dao.ShortLinkConfig, 3)
+mysql.Db.Find(&amp;shortLinkConfigs, []int{8, 9, 10})
+for i, linkConfig := range shortLinkConfigs {
+	log.Printf(&quot;i = %d,config = %v&quot;, i, linkConfig)
+}
+
+// 指定字段查询
+shortCode := &quot;acegf&quot;
+shortLinkConfig = dao.ShortLinkConfig{}
+mysql.Db.Where(&quot;short_code = ? and enable = 1&quot;, shortCode).First(&amp;shortLinkConfig)
+log.Printf(&quot;short_code = %s,config = %v&quot;, shortCode, shortLinkConfig)
+
+// 指定字段查询 struct,这种方式要求 struct 中的字段不能为零值，0、false 这种是不会创建查询条件的。
+shortLinkConfig = dao.ShortLinkConfig{}
+mysql.Db.Where(&amp;dao.ShortLinkConfig{ShortCode: shortCode, Enable: 0}).First(&amp;shortLinkConfig)
+log.Printf(&quot;short_code = %s,enable = 0,config = %v&quot;, shortCode, shortLinkConfig)
+
+// 指定字段查询 map
+shortLinkConfigs = make([]dao.ShortLinkConfig, 10)
+mysql.Db.Where(map[string]interface{}{&quot;enable&quot;: 1, &quot;short_code&quot;: shortCode}).Find(&amp;shortLinkConfigs)
+for i, linkConfig := range shortLinkConfigs {
+	log.Printf(&quot; --- i = %d,config = %v&quot;, i, linkConfig)
+}
+
+</code></pre>
+<h4><a id="update" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>update</h4>
+<p>Save</p>
+<pre class="line-numbers"><code class="language-go">shortCode := &quot;test3&quot;
+shortLinkConfig := dao.ShortLinkConfig{}
+mysql.Db.Where(&quot;short_code = ? and enable = 1&quot;, shortCode).First(&amp;shortLinkConfig)
+log.Printf(&quot;short_code = %s,config = %v&quot;, shortCode, shortLinkConfig)
+
+shortLinkConfig.ShortCode = &quot;test5&quot;
+mysql.Db.Save(&amp;shortLinkConfig)
+</code></pre>
+<p>Update 更新单个列</p>
+<pre class="line-numbers"><code class="language-go">// update short_link_config set short_code = &quot;123&quot; where short_code = &quot;test5&quot; and enable = 1
+mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&quot;short_code = ? and enable = 1&quot;, shortCode).Update(&quot;short_code&quot;, &quot;123&quot;)
+</code></pre>
+<p>更新多列,struct 方式,只会更新非零值</p>
+<pre class="line-numbers"><code class="language-go">mysql.Db.Where(&amp;dao.ShortLinkConfig{
+	Enable: 1,
+}).Updates(dao.ShortLinkConfig{
+	Enable:    0,
+	OriginUrl: &quot;http://www.123.com&quot;,
+})
+</code></pre>
+<p>更新多列，map 方式</p>
+<pre class="line-numbers"><code class="language-go">mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&amp;dao.ShortLinkConfig{Enable: 1}).Updates(map[string]interface{}{&quot;origin_url&quot;: &quot;http://www.baidu.com&quot;})
+</code></pre>
+<h4><a id="delete" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>delete</h4>
+<p>根据主键删除</p>
+<pre class="line-numbers"><code class="language-go">// delete from short_link_config where id = 10
+mysql.Db.Delete(&amp;dao.ShortLinkConfig{}, 10)
+</code></pre>
+<hr />
+<p>短链应用：<br />
+github: <a href="https://github.com/hitolz/shortLink">https://github.com/hitolz/shortLink</a></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Java 太卷了转 GO（一）]]></title>
+    <link href="http://blog.hitol.top/16625340324703.html"/>
+    <updated>2022-09-07T15:00:32+08:00</updated>
+    <id>http://blog.hitol.top/16625340324703.html</id>
+    <content type="html"><![CDATA[
+<div class="mweb_toc"><ul>
+<li><a href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%A3%B0%E6%98%8E">变量的声明</a></li>
+<li><a href="#%E5%B8%B8%E9%87%8F">常量</a>
+<ul>
+<li><a href="#%E6%9E%9A%E4%B8%BE">枚举</a></li>
+<li><a href="#iota">iota</a></li>
+</ul>
+</li>
+<li><a href="#%E5%87%BD%E6%95%B0">函数</a>
+<ul>
+<li><a href="#main%E5%87%BD%E6%95%B0">main 函数</a></li>
+<li><a href="#init%E5%87%BD%E6%95%B0">init 函数</a></li>
+<li><a href="#%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F">执行顺序</a></li>
+<li><a href="#%E5%80%BC%E4%BC%A0%E9%80%92">值传递</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92%EF%BC%88%E6%8C%87%E9%92%88%E4%BC%A0%E9%80%92%EF%BC%89">引用传递（指针传递）</a></li>
+</ul>
+</li>
+<li><a href="#defer">defer</a></li>
+<li><a href="#%E6%95%B0%E7%BB%84">数组</a>
+<ul>
+<li><a href="#%E5%88%87%E7%89%87">切片</a></li>
+<li><a href="#append%E5%92%8C-copy%E5%87%BD%E6%95%B0">append 和 copy 函数</a></li>
+</ul>
+</li>
+<li><a href="#map">map</a></li>
+<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93">结构体</a></li>
+<li><a href="#%E7%BB%A7%E6%89%BF">继承</a>
+<ul>
+<li><a href="#method">method</a></li>
+<li><a href="#method%E7%BB%A7%E6%89%BF">method 继承</a></li>
+</ul>
+</li>
+<li><a href="#interface">interface</a></li>
+</ul>
+</div>
+<p>GO 的一些基础用法，帮助 Java 程序员快速转 GO。</p>
+<h2><a id="%E5%8F%98%E9%87%8F%E7%9A%84%E5%A3%B0%E6%98%8E" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>变量的声明</h2>
+<ol>
+<li>第一种，指定变量类型，声明后若不赋值，使用默认值0。</li>
+</ol>
+<pre class="line-numbers"><code class="language-go">var a int
+var a int = 10
+</code></pre>
+<ol start="2">
+<li>根据值自行判定变量类型。</li>
+</ol>
+<pre class="line-numbers"><code class="language-go">var a = 10
+</code></pre>
+<ol start="3">
+<li>第三种，省略var, 注意 :=左侧的变量不应该是已经声明过的，否则会导致编译错误。</li>
+</ol>
+<pre class="line-numbers"><code class="language-go">a := 10
+</code></pre>
+<h2><a id="%E5%B8%B8%E9%87%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>常量</h2>
+<pre class="line-numbers"><code class="language-go">const b int = 10
+const b = 10
+</code></pre>
+<h3><a id="%E6%9E%9A%E4%B8%BE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>枚举</h3>
+<p>常量可以用作枚举</p>
+<pre class="line-numbers"><code class="language-go">const (
+    Unknown = 0
+    Female = 1
+    Male = 2
+)
+</code></pre>
+<h3><a id="iota" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>iota</h3>
+<p>它简化了常量用于增长数字的定义</p>
+<pre class="line-numbers"><code class="language-go">const (
+    CategoryBooks = iota // 0
+    CategoryHealth       // 1
+    CategoryClothing     // 2
+)
+</code></pre>
+<h2><a id="%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数</h2>
+<pre class="line-numbers"><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+
+	var a int = 10
+	var b int = 20
+
+	fmt.Println(&quot;1--&quot;, a, b)
+
+	swap(a, b)
+	fmt.Println(&quot;2--&quot;, a, b)
+}
+
+func swap(a int, b int) {
+	var c int = a
+	a = b
+	b = c
+}
+</code></pre>
+<h3><a id="main%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>main 函数</h3>
+<p>main 函数只能出现在 package main 中。是程序的入口。</p>
+<h3><a id="init%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>init 函数</h3>
+<p>init 函数可在package main中，可在其他package中，可在同一个package中出现多次。</p>
+<h3><a id="%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>执行顺序</h3>
+<p>golang里面有两个保留的函数：init函数（能够应用于所有的package）和main函数（只能应用于package main）。这两个函数在定义时不能有任何的参数和返回值。</p>
+<p>go程序会自动调用init()和main()，所以你不需要在任何地方调用这两个函数。每个package中的init函数都是可选的，但package main就必须包含一个main函数。</p>
+<p>如果main包还导入了其它的包，那么就会在编译时将它们依次导入。有时一个包会被多个包同时导入，那么它只会被导入一次（例如很多包可能都会用到fmt包，但它只会被导入一次，因为没有必要导入多次）。</p>
+<p>当一个包被导入时，如果该包还导入了其它的包，那么会先将其它包导入进来，然后再对这些包中的包级常量和变量进行初始化，接着执行init函数（如果有的话），依次类推。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16634751307970.jpg" alt="" /></p>
+<h3><a id="%E5%80%BC%E4%BC%A0%E9%80%92" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>值传递</h3>
+<p>值传递是指在调用函数时将实际参数复制一份传递到函数中，这样在函数中如果对参数进行修改，将不会影响到实际参数。</p>
+<p>默认情况下，Go 语言使用的是值传递，即在调用过程中不会影响到实际参数。</p>
+<p>swap 函数就是值传递的，交换两个数的操作，但是不会生效。</p>
+<h3><a id="%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92%EF%BC%88%E6%8C%87%E9%92%88%E4%BC%A0%E9%80%92%EF%BC%89" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>引用传递（指针传递）</h3>
+<p>&amp;： 取地址<br />
+*： 解引用</p>
+<pre class="line-numbers"><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+
+	var a int = 10
+	var b int = 20
+
+	fmt.Println(&quot;1--&quot;, a, b)
+
+	swap2(&amp;a, &amp;b)
+	fmt.Println(&quot;2--&quot;, a, b)
+}
+
+func swap2(a *int, b *int) {
+	var c = *a
+	*a = *b
+	*b = c
+}
+
+</code></pre>
+<h2><a id="defer" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>defer</h2>
+<p>defer 相当于 java 中 finally</p>
+<h2><a id="%E6%95%B0%E7%BB%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数组</h2>
+<p>var variable_name [SIZE] variable_type</p>
+<pre class="line-numbers"><code class="language-go">var nums [10]int;
+</code></pre>
+<p>如果数组长度不确定，可以使用 ... 代替数组的长度</p>
+<pre class="line-numbers"><code class="language-go">balance := [...]float32{1000.0, 2.0, 3.4, 7.0, 50.0}
+</code></pre>
+<h3><a id="%E5%88%87%E7%89%87" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>切片</h3>
+<p>var identifier []type<br />
+未指定大小的数组来定义切片,切片不需要说明长度。</p>
+<pre class="line-numbers"><code class="language-go">var slice1 []type = make([]type, len)
+
+// 也可以简写为
+
+slice1 := make([]type, len)
+
+// 直接初始化
+s :=[] int {1,2,3 }
+
+// 直接初始化切片，[]表示是切片类型，{1,2,3}初始化值依次是1,2,3.其cap=len=3
+</code></pre>
+<p>len()长度,<br />
+cap()容量，当长度等于容量时扩容为当前长度的2倍。</p>
+<h3><a id="append%E5%92%8C-copy%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>append 和 copy 函数</h3>
+<p>append 用于向切片中追加一个元素，</p>
+<pre class="line-numbers"><code class="language-go">package main
+
+
+import &quot;fmt&quot;
+
+
+func main() {
+   var numbers []int
+   printSlice(numbers)
+
+
+   /* 允许追加空切片 */
+   numbers = append(numbers, 0)
+   printSlice(numbers)
+
+
+   /* 向切片添加一个元素 */
+   numbers = append(numbers, 1)
+   printSlice(numbers)
+
+
+   /* 同时添加多个元素 */
+   numbers = append(numbers, 2,3,4)
+   printSlice(numbers)
+
+
+   /* 创建切片 numbers1 是之前切片的两倍容量*/
+   numbers1 := make([]int, len(numbers), (cap(numbers))*2)
+
+
+   /* 拷贝 numbers 的内容到 numbers1 */
+   copy(numbers1,numbers)
+   printSlice(numbers1)   
+}
+
+
+func printSlice(x []int){
+   fmt.Printf(&quot;len=%d cap=%d slice=%v\n&quot;,len(x),cap(x),x)
+}
+</code></pre>
+<h2><a id="map" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>map</h2>
+<p>Map 是一种无序的键值对的集合。Map 最重要的一点是通过 key 来快速检索数据，key 类似于索引，指向数据的值。</p>
+<p>Map 是一种集合，所以我们可以像迭代数组和切片那样迭代它。不过，Map 是无序的，我们无法决定它的返回顺序，这是因为 Map 是使用 hash 表来实现的。</p>
+<pre class="line-numbers"><code class="language-go">/* 声明变量，默认 map 是 nil */
+var map_variable map[key_data_type]value_data_type
+
+/* 使用 make 函数 */
+map_variable := make(map[key_data_type]value_data_type)
+</code></pre>
+<h2><a id="%E7%BB%93%E6%9E%84%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体</h2>
+<pre class="line-numbers"><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+// 类名大写，其他包也可以引用到。小写就不行
+type Books struct {
+	title  string
+	author string
+}
+
+// 普通函数，参数是结构体
+func printBook(book Books) {
+	fmt.Printf(&quot;book = %v\n&quot;, book)
+}
+
+// 普通函数，参数是结构体，值传递，修改不会在 main 函数中生效
+func SetTitle(book Books) {
+	book.title = &quot;Python&quot;
+}
+// 使用指针传递参数可以修改其属性值
+func SetTitle2(book *Books) {
+	book.title = &quot;Python&quot;
+}
+
+// 这个函数相当于结构体的函数，可以 book.SetAuthor() 调用。
+// 注意是个指针传递，可以写成值传递，但修改没有效果
+func (t *Books) SetAuthor() {
+	t.author = &quot;lisi&quot;
+}
+
+func main() {
+	book := Books{&quot;GO&quot;, &quot;test&quot;}
+	fmt.Println(book)
+	book.title = &quot;C&quot;
+	fmt.Println(book)
+
+	java := Books{title: &quot;Java&quot;, author: &quot;22&quot;}
+	printBook(java)
+	SetTitle(java)
+	printBook(java)
+
+	SetTitle2(&amp;java)
+	java.SetAuthor()
+	printBook(java)
+}
+
+</code></pre>
+<h2><a id="%E7%BB%A7%E6%89%BF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>继承</h2>
+<h3><a id="method" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>method</h3>
+<p>method 附属在一个给定类型上，语法和函数的语法几乎一样，只是在 func 后面增加了一个 receiver(也就是 method 所依从的主体)</p>
+<p>method 给用户定义的类型添加新的行为。</p>
+<p>method 的接收者可以是普通类型，也可以是指针类型，是普通类型的时候接收的值的副本，也就是值传递，是指针类型的时候接收的是内存地址，就是引用传递。</p>
+<pre class="line-numbers"><code class="language-go">func (r receiverType) funcName(parameters) (results)
+</code></pre>
+<p>虽然 method 的名字一模一样，但是如果接收者不一样，那么 method 就不一样</p>
+<h3><a id="method%E7%BB%A7%E6%89%BF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>method 继承</h3>
+<p>如果匿名字段实现了一个 method，那么包含这个匿名字段的 struct 也能调用该 method</p>
+<pre class="line-numbers"><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+)
+
+type Human struct {
+	name string
+	sex  string
+}
+
+func (t *Human) Eat() {
+	fmt.Println(&quot;eat&quot;)
+}
+
+func (t *Human) Walk() {
+	fmt.Println(&quot;walk&quot;)
+}
+
+type SuperHuman struct {
+	// 匿名字段，使得 SuperHuman 的对象也拥有 Human 的 method
+	Human
+	level int
+}
+
+// 重写 SuperHuman 的 Walk 方法。
+func (t *SuperHuman) Walk() {
+	fmt.Println(&quot;fly&quot;)
+}
+
+func main() {
+	man := Human{
+		name: &quot;zhangsan&quot;,
+		sex:  &quot;男&quot;,
+	}
+	man.Eat()
+	man.Walk()
+
+	// 创建子类对象
+	//superMan := SuperHuman{
+	//	Human{&quot;lisi&quot;, &quot;男&quot;}, 100,
+	//}
+	var superMan SuperHuman
+	superMan.level = 100
+	superMan.name = &quot;lisi&quot;
+	superMan.sex = &quot;男&quot;
+
+	superMan.Eat()
+	superMan.Walk()
+}
+
+</code></pre>
+<h2><a id="interface" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>interface</h2>
+<p>interface 本质上是个指针。<br />
+interface 定义了一组 method，如果某个对象实现了某个接口的所有方法，则此对象就实现了这个接口</p>
+<p>interface 是一组抽象方法的集合，必须由其他非 interface 类型实现，而不能自我实现，</p>
+<pre class="line-numbers"><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+// 定义一个 interface，有两个方法 eat、run
+type Anaimal interface {
+	eat()
+	run()
+}
+
+// ======
+// 定义子类，实现 interface 中的 2个方法，必须要完全实现 interface 中的所有方法，才算是继承
+type Dog struct {
+}
+
+func (dog Dog) eat() {
+	fmt.Println(&quot;dog eat&quot;)
+}
+
+func (dog Dog) run() {
+	fmt.Println(&quot;dog run&quot;)
+}
+
+// ======
+
+type Cat struct {
+}
+
+func (cat Cat) eat() {
+	fmt.Println(&quot;cat eat&quot;)
+}
+
+func (cat Cat) run() {
+	fmt.Println(&quot;cat run&quot;)
+}
+
+// ======
+
+func main() {
+	var anaimal Anaimal
+	anaimal = new(Dog)
+	anaimal.eat()
+	anaimal.run()
+
+	anaimal = new(Cat)
+	anaimal.eat()
+	anaimal.run()
+}
+</code></pre>
+<p>以上这些就是 GO 的一些基础知识。学会了这些下面就能简单进行开发了。</p>
+<p>下一篇文章介绍下 GO 的框架，ORM 框架，Web 框架，以及用这些开发一个小应用。</p>
+<hr />
+<p>参考网站<br />
+<a href="https://learnku.com/go/wikis">https://learnku.com/go/wikis</a><br />
+<a href="https://learnku.com/docs/the-little-go-book">https://learnku.com/docs/the-little-go-book</a><br />
+<a href="https://learnku.com/docs/the-way-to-go">https://learnku.com/docs/the-way-to-go</a><br />
+<a href="https://www.yuque.com/aceld/mo95lb/dsk886">https://www.yuque.com/aceld/mo95lb/dsk886</a><br />
+<a href="https://www.runoob.com/go/go-map.html">https://www.runoob.com/go/go-map.html</a></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[centos7 安装 NFS]]></title>
+    <link href="http://blog.hitol.top/16587443411197.html"/>
+    <updated>2022-07-25T18:19:01+08:00</updated>
+    <id>http://blog.hitol.top/16587443411197.html</id>
+    <content type="html"><![CDATA[
+<p>所有机器都安装 nfs-utils。只安装 nfs-utils 即可，rpcbind 属于它的依赖，也会安装上。</p>
+<pre class="line-numbers"><code class="language-plain_text">sudo yum install nfs-utils
+</code></pre>
+<h2><a id="%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务端配置</h2>
+<h3><a id="%E8%AE%BE%E7%BD%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设置服务开机自启</h3>
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl enable rpcbind
+sudo systemctl enable nfs
+</code></pre>
+<h3><a id="%E5%90%AF%E5%8A%A8nfs%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动 NFS 服务</h3>
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl start rpcbind
+sudo systemctl start nfs
+</code></pre>
+<h3><a id="%E9%85%8D%E7%BD%AE%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置共享目录</h3>
+<p>服务启动后，配置一个共享目录，这里使用的是 /data 目录作为共享目录</p>
+<pre class="line-numbers"><code class="language-plain_text">sudo mkdir /data
+sudo chmod 755 /data
+</code></pre>
+<p>在 /etc/exports 文件中添加配置。</p>
+<pre class="line-numbers"><code class="language-plain_text">/data/     192.168.0.0/24(rw,sync,no_root_squash,no_all_squash)
+</code></pre>
+<ol>
+<li>/data: 共享目录位置。</li>
+<li>192.168.0.0/24: 客户端 IP 范围，* 代表所有，即没有限制。</li>
+<li>rw: 权限设置，可读可写。</li>
+<li>sync: 同步共享目录。</li>
+<li>no_root_squash: 可以使用 root 授权。</li>
+<li>no_all_squash: 可以使用普通用户授权。</li>
+</ol>
+<h3><a id="%E9%87%8D%E5%90%AFnfs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重启 NFS</h3>
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl restart nfs
+</code></pre>
+<p>检查本地目录</p>
+<pre class="line-numbers"><code class="language-plain_text">showmount -e localhost
+
+-- 输出
+Export list for localhost:
+/data 192.168.0.130/24
+</code></pre>
+<h2><a id="linux%E5%AE%A2%E6%88%B7%E7%AB%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Linux 客户端</h2>
+<h3><a id="%E8%AE%BE%E7%BD%AErpcbind%E6%9C%8D%E5%8A%A1%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设置 rpcbind 服务开机自启</h3>
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl enable rpcbind
+</code></pre>
+<h3><a id="%E5%90%AF%E5%8A%A8nfs%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动 NFS 服务</h3>
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl start rpcbind
+</code></pre>
+<h3><a id="%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>查看服务端共享目录</h3>
+<pre class="line-numbers"><code class="language-plain_text">showmount -e 192.168.0.130
+
+-- 输出
+Export list for 192.168.0.130:
+/data 192.168.0.130/24
+
+</code></pre>
+<h3><a id="%E6%8C%82%E8%BD%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>挂载</h3>
+<p>在客户端创建目录</p>
+<pre class="line-numbers"><code class="language-plain_text">sudo mkdir /data
+</code></pre>
+<p>挂载</p>
+<pre class="line-numbers"><code class="language-plain_text">sudo mount -t nfs 192.168.0.130:/data /data
+</code></pre>
+<h2><a id="%E6%B5%8B%E8%AF%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>测试</h2>
+<p>在随意一台机器上 /data 添加目录或者文件，在另一台机器上 /data 里查看</p>
+<h2><a id="%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>客户端自动挂载</h2>
+<p>编辑客户端文件 /etc/fstab<br />
+在最后一行添加</p>
+<pre class="line-numbers"><code class="language-plain_text">192.168.0.130:/data     /data                   nfs     defaults        0 0
+</code></pre>
+<p>由于修改了 /etc/fstab，需要重新加载 systemctl</p>
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl daemon-reload
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Redis 过期键删除策略]]></title>
+    <link href="http://blog.hitol.top/16505304277569.html"/>
+    <updated>2022-04-21T16:40:27+08:00</updated>
+    <id>http://blog.hitol.top/16505304277569.html</id>
+    <content type="html"><![CDATA[
+<p>redis 数据库键的过期时间都保存在过期字典中，过期字典的键是一个指针，指向键空间下的一个对象（也就是某个数据库键），过期字典的值是一个 long long 类型的整数，这个整数保存了数据库键的过期时间，一个毫秒精确度的 UNIX 时间戳。</p>
+<p>过期键的判定</p>
+<ol>
+<li>检查给定键是否存在与过期字典中，如果存在，取得键的过期时间</li>
+<li>检查当前 UNIX 时间戳是否大于键的过期时间，如果是的话，那么键已经过期</li>
+</ol>
+<p>如果一个键过期了，redis 什么时候删除它呢？</p>
+<h2><a id="%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>删除策略</h2>
+<h3><a id="%E5%AE%9A%E6%97%B6%E5%88%A0%E9%99%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定时删除</h3>
+<p>在设置键的过期时间的同时，创建一个定时器，让定时器在键的过期时间来临时，立即对键进行删除</p>
+<p>定时删除策略对内存是最友好的，通过定时器可以保证过期的键尽快的被删除，释放内存<br />
+对 CPU 是最不友好的，在过期键比较多的情况下，删除过期键这一行为会占用非常多的 CPU。会对服务器的响应时间和吞吐量造成影响。</p>
+<h3><a id="%E6%83%B0%E6%80%A7%E5%88%A0%E9%99%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>惰性删除</h3>
+<p>每次从数据库中获取键时判断它是不是过期了，如果是过期的就删掉该键。</p>
+<p>对 CPU 时间来说是最友好的，<br />
+对内存是最不友好的，如果一个键已经过期，一直没有访问的话那么这个键一直不会被删掉，其对应的内存一直不会被释放。某种程度上可以说是内存泄露。</p>
+<h3><a id="%E5%AE%9A%E6%9C%9F%E5%88%A0%E9%99%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定期删除</h3>
+<p>每隔一段时间，程序就对数据库进行一次检查，删除过期的键。</p>
+<p>定期删除策略是前面两种策略的一种整合和折中。</p>
+<p>定期删除策略每隔一段时间执行一次删除过期键的操作，并通过限制操作的时长和频率来减少操作对 CPU 带来的影响</p>
+<p>有效的减少了内存的浪费。</p>
+<p>定期删除策略的难点是确定删除操作的时长的频率</p>
+<h2><a id="rdb%E3%80%81aof%E5%92%8C%E5%A4%8D%E5%88%B6%E5%8A%9F%E8%83%BD%E5%AF%B9%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%A4%84%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RDB、AOF 和复制功能对过期键的处理</h2>
+<h3><a id="%E7%94%9F%E6%88%90rdb%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>生成 RDB 文件</h3>
+<p>在执行 SAVE 或者 BGSAVE 命令创建一个新的 RDB 文件时，程序会对数据库中的键进行检查，已过期的键不会保存到 RDB 文件中。</p>
+<h3><a id="%E8%BD%BD%E5%85%A5rdb%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>载入 RDB 文件</h3>
+<p>在启动 Redis 时，如果启用了 RDB 功能，那么服务器将对 RDB 文件进行载入：</p>
+<ol>
+<li>如果是 master，过期键不会载入</li>
+<li>如果是 slave，载入全部的，但主从服务器在进行数据同步时，从服务器上的数据会全部清空，</li>
+</ol>
+<h3><a id="aof%E8%BF%BD%E5%8A%A0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>AOF 追加</h3>
+<p>如果一个键在 AOF 中已经存在，当它过期时会往 AOF 文件中追加一条删除命令来记录该键已被删除</p>
+<h3><a id="aof%E9%87%8D%E5%86%99" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>AOF 重写</h3>
+<p>在执行 AOF 重写的过程中，程序会对数据库键进行检查，已经删除的键不会出现在重写后的文件中。</p>
+<h3><a id="%E5%A4%8D%E5%88%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>复制</h3>
+<p>从服务器的删除操作由主服务器控制<br />
+当键在主服务器上被删除时，主服务器会显示的发一条 DEL 指令到从服务器，告知从服务器删除这个过期键</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用 kubeadm 搭建 Kubernetes 集群]]></title>
+    <link href="http://blog.hitol.top/16466651837804.html"/>
+    <updated>2022-03-07T22:59:43+08:00</updated>
+    <id>http://blog.hitol.top/16466651837804.html</id>
+    <content type="html"><![CDATA[
+<p>minikube 也是使用 kubeadm</p>
+<ul>
+<li>安装软件 kubelete、kubeadm、kubectl
+<ul>
+<li>都将是以容器的方式运行在 Docker 中</li>
+</ul>
+</li>
+<li>初始化集群</li>
+<li>添加 node 到集群中</li>
+<li>证书自动生成</li>
+<li>集群管理系统是以容器方式存在，容器运行在 Master</li>
+<li>容器镜像是谷歌提供，科学上网
+<ul>
+<li>阿里云下载容器镜像，需要重新打标记</li>
+</ul>
+</li>
+</ul>
+<h2><a id="%E4%B8%BB%E6%9C%BA%E8%A6%81%E6%B1%82" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>主机要求</h2>
+<p>三台机器，一台 master，2台 worker<br />
+Centos7、2 cpu、 2G 内存</p>
+<h2><a id="%E4%B8%BB%E6%9C%BA%E5%87%86%E5%A4%87" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>主机准备</h2>
+<p>操作系统安装，centos 最小化安装，硬盘分区(/boot、/)</p>
+<h2><a id="%E8%AE%BE%E7%BD%AEhostname" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设置 hostname</h2>
+<p><code>hostnamectl set-hostname master</code><br />
+<code>hostnamectl set-hostname worker1</code><br />
+<code>hostnamectl set-hostname worker2</code></p>
+<h2><a id="%E9%85%8D%E7%BD%AEip-etchosts" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 IP /etc/hosts</h2>
+<pre class="line-numbers"><code class="language-plain_text">192.168.0.130 master
+192.168.0.122 worker1
+192.168.0.123 worker2
+</code></pre>
+<h2><a id="%E5%85%B3%E9%97%ADfirewalld" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>关闭 firewalld</h2>
+<pre class="line-numbers"><code class="language-plain_text">systemctl stop firewalld
+systemctl disable firewalld
+
+&lt;!--确认是否运行--&gt;
+firewall-cmd --state
+</code></pre>
+<h2><a id="selinux" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>SELINUX</h2>
+<pre class="line-numbers"><code class="language-plain_text"> cat /etc/selinux/config
+
+
+sed -ri 's/SELINUX=enforcing/SELINUX=disable/' /etc/selinux/config
+</code></pre>
+<h2><a id="%E6%97%B6%E9%97%B4%E5%90%8C%E6%AD%A5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>时间同步</h2>
+<pre class="line-numbers"><code class="language-plain_text">yum install ntpdate
+ntpdate time1.aliyun.com
+
+crontab -e 
+0 */1 * * * ntpdate time1.aliyun.com
+</code></pre>
+<h2><a id="%E5%85%B3%E9%97%ADswap%E5%88%86%E5%8C%BA" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>关闭 swap 分区</h2>
+<pre class="line-numbers"><code class="language-plain_text">vim /etc/fstab
+
+Swap 前加 # 注释掉
+
+free -m 查看有 swap 分区
+reboot
+重启之后没有
+</code></pre>
+<h2><a id="%E9%85%8D%E7%BD%AE%E7%BD%91%E6%A1%A5%E8%BF%87%E6%BB%A4%E5%8A%9F%E8%83%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置网桥过滤功能</h2>
+<pre class="line-numbers"><code class="language-plain_text">touch /etc/sysctl.d/k8s.conf
+添加以下内容
+
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+vm.swappiness = 0
+</code></pre>
+<p>加载过滤模块 br_netfilter</p>
+<pre class="line-numbers"><code class="language-plain_text">modprobe br_netfilter
+
+查看是否
+lsmod | grep br_netfilter
+</code></pre>
+<p>加载网桥过滤配置文件</p>
+<pre class="line-numbers"><code class="language-plain_text">sysctl -p /etc/sysctl.d/k8s.conf
+</code></pre>
+<h2><a id="%E5%BC%80%E5%90%AFipvs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>开启 ipvs</h2>
+<p>service 需要使用到 iptable 或者 ipvs<br />
+ipvs 比 iptables 转化效率高。</p>
+<p>安装 ipset、ipvsadm</p>
+<pre class="line-numbers"><code class="language-bash">yum -y install ipset ipvsadm
+</code></pre>
+<p>在所有节点执行</p>
+<pre class="line-numbers"><code class="language-bash">cat &gt; /etc/sysconfig/modules/ipvs.modules &lt;&lt;EOF
+#!/bin/bash
+modprobe -- ip_vs
+modprobe -- ip_vs_rr
+modprobe -- ip_vs_wrr
+modprobe -- ip_vs_sh
+modprobe -- nf_conntrack_ipv4
+EOF
+</code></pre>
+<pre class="line-numbers"><code class="language-bash">chmod 755 /etc/sysconfig/modules/ipvs.modules &amp;&amp; bash /etc/sysconfig/modules/ipvs.modules &amp;&amp; lsmod | grep -e ip_vs -e nf_conntrack_ipv4
+</code></pre>
+<p>检查是否加载</p>
+<pre class="line-numbers"><code class="language-bash">lsmod | grep -e ipvs -e nf_conntrack_ipv4
+</code></pre>
+<h2><a id="%E5%AE%89%E8%A3%85docker" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>安装 docker</h2>
+<p>centos 安装 docker 脚本</p>
+<pre class="line-numbers"><code class="language-plain_text">curl -sSL https://get.daocloud.io/docker | sh
+</code></pre>
+<h3><a id="%E5%BC%80%E5%90%AF%E5%90%AF%E5%8A%A8docker" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>开启启动 docker</h3>
+<pre class="line-numbers"><code class="language-plain_text">systemctl enable docker
+</code></pre>
+<!--### 修改 docker 镜像源地址
+sudo vim /etc/docker/daemon.json
+
+```
+{
+  "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]
+}
+```-->
+<h3><a id="%E4%BF%AE%E6%94%B9docker%E7%9A%84-cgroup-driver" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改 docker 的 cgroup driver</h3>
+<p>sudo vim /etc/docker/daemon.json</p>
+<pre class="line-numbers"><code class="language-plain_text">{
+&quot;exec-opts&quot;: [&quot;native.cgroupdriver=systemd&quot;]
+}
+</code></pre>
+<h2><a id="%E5%AE%89%E8%A3%85kubeadm%E3%80%81kubectl%E3%80%81kubelet" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>安装 kubeadm、kubectl、kubelet</h2>
+<p>需要在每台机器上安装以下的软件包：</p>
+<p>kubeadm：用来初始化集群的指令。</p>
+<p>kubelet：在集群中的每个节点上用来启动 Pod 和容器等。</p>
+<p>kubectl：用来与集群通信的命令行工具。</p>
+<p>新建 /etc/yum.repos.d/kubernetes.repo，内容为：</p>
+<pre class="line-numbers"><code class="language-plain_text">[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+enabled=1
+gpgcheck=0
+
+</code></pre>
+<p>安装最新版本</p>
+<pre class="line-numbers"><code class="language-plain_text">yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+</code></pre>
+<p>安装指定版本</p>
+<pre class="line-numbers"><code class="language-plain_text">yum install -y kubelet-1.23.5 kubeadm-1.23.5 kubectl-1.23.5
+</code></pre>
+<h2><a id="%E9%85%8D%E7%BD%AEkubelet" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 kubelet</h2>
+<p>为了实现 docker 使用的 cgroupdriver 与 kubelet 使用的 cgroup 一致，修改如下文件内容</p>
+<pre class="line-numbers"><code class="language-plain_text">vim /etc/sysconfig/kubelet
+添加以下内容
+KUBELET_EXTRA_ARGS=&quot;--cgroup-driver=systemd&quot;
+</code></pre>
+<h2><a id="%E4%B8%8B%E8%BD%BD%E6%89%80%E9%9C%80%E9%95%9C%E5%83%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>下载所需镜像</h2>
+<pre class="line-numbers"><code class="language-plain_text">k8s.gcr.io/kube-apiserver:v1.23.5
+k8s.gcr.io/kube-controller-manager:v1.23.5
+k8s.gcr.io/kube-scheduler:v1.23.5
+k8s.gcr.io/kube-proxy:v1.23.5
+k8s.gcr.io/pause:3.6
+k8s.gcr.io/etcd:3.5.1-0
+k8s.gcr.io/coredns/coredns:v1.8.6
+</code></pre>
+<ol>
+<li>
+<p>docker pull 下载<br />
+docker pull 下载所有镜像，需要科学上网。<br />
+在有科学上网的电脑上下载镜像，通过 docker save -o 、 docker load -i 将镜像复制到所有虚拟机中。</p>
+</li>
+<li>
+<p>通过脚本下载</p>
+</li>
+</ol>
+<pre class="line-numbers"><code class="language-bash">#!/bin/bash
+url=registry.cn-hangzhou.aliyuncs.com/google_containers
+version=v1.23.5
+images=(`kubeadm config images list --kubernetes-version=$version|awk -F '/' '{print $2}'`)
+for imagename in ${images[@]} ; do
+  docker pull $url/$imagename
+  docker tag $url/$imagename k8s.gcr.io/$imagename
+  docker rmi -f $url/$imagename
+done
+</code></pre>
+<h2><a id="kubeadm%E5%88%9D%E5%A7%8B%E5%8C%96%E9%9B%86%E7%BE%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>kubeadm 初始化集群</h2>
+<pre class="line-numbers"><code class="language-plain_text">kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.0.130 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+</code></pre>
+<p>然后成功后有以下输出内容：</p>
+<pre class="line-numbers"><code class="language-plain_text">Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run &quot;kubectl apply -f [podnetwork].yaml&quot; with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.0.118:6443 --token tprabz.gefub6pvv1x2qalv \
+        --discovery-token-ca-cert-hash sha256:b617b1efda2e97a3f98c624a20090c0dc711bfe2e432a31631cbe87f215c103d 
+
+</code></pre>
+<p>依次执行</p>
+<pre class="line-numbers"><code class="language-plain_text">mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+</code></pre>
+<p>这时候 kubectl get nodes 只有 master，并且还没启动，原因是缺了网络插件，可以使用 flannel 网络插件，比较简单。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot%202022-07-02%20at%2023.59.29@2x.png" alt="CleanShot 2022-07-02 at 23.59.29@2x" /></p>
+<p>Flannel is an overlay network provider that can be used with Kubernetes.</p>
+<pre class="line-numbers"><code class="language-plain_text">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+</code></pre>
+<p>或者使用 yml 文件</p>
+<details>
+<summary>kube-flannel.yml</summary>
+<pre class="line-numbers"><code class="language-yml">---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: psp.flannel.unprivileged
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+    apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+spec:
+  privileged: false
+  volumes:
+  - configMap
+  - secret
+  - emptyDir
+  - hostPath
+  allowedHostPaths:
+  - pathPrefix: &quot;/etc/cni/net.d&quot;
+  - pathPrefix: &quot;/etc/kube-flannel&quot;
+  - pathPrefix: &quot;/run/flannel&quot;
+  readOnlyRootFilesystem: false
+  # Users and groups
+  runAsUser:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  # Privilege Escalation
+  allowPrivilegeEscalation: false
+  defaultAllowPrivilegeEscalation: false
+  # Capabilities
+  allowedCapabilities: ['NET_ADMIN', 'NET_RAW']
+  defaultAddCapabilities: []
+  requiredDropCapabilities: []
+  # Host namespaces
+  hostPID: false
+  hostIPC: false
+  hostNetwork: true
+  hostPorts:
+  - min: 0
+    max: 65535
+  # SELinux
+  seLinux:
+    # SELinux is unused in CaaSP
+    rule: 'RunAsAny'
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: flannel
+rules:
+- apiGroups: ['extensions']
+  resources: ['podsecuritypolicies']
+  verbs: ['use']
+  resourceNames: ['psp.flannel.unprivileged']
+- apiGroups:
+  - &quot;&quot;
+  resources:
+  - pods
+  verbs:
+  - get
+- apiGroups:
+  - &quot;&quot;
+  resources:
+  - nodes
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - &quot;&quot;
+  resources:
+  - nodes/status
+  verbs:
+  - patch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: flannel
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: flannel
+subjects:
+- kind: ServiceAccount
+  name: flannel
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: flannel
+  namespace: kube-system
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: kube-flannel-cfg
+  namespace: kube-system
+  labels:
+    tier: node
+    app: flannel
+data:
+  cni-conf.json: |
+    {
+      &quot;name&quot;: &quot;cbr0&quot;,
+      &quot;cniVersion&quot;: &quot;0.3.1&quot;,
+      &quot;plugins&quot;: [
+        {
+          &quot;type&quot;: &quot;flannel&quot;,
+          &quot;delegate&quot;: {
+            &quot;hairpinMode&quot;: true,
+            &quot;isDefaultGateway&quot;: true
+          }
+        },
+        {
+          &quot;type&quot;: &quot;portmap&quot;,
+          &quot;capabilities&quot;: {
+            &quot;portMappings&quot;: true
+          }
+        }
+      ]
+    }
+  net-conf.json: |
+    {
+      &quot;Network&quot;: &quot;10.244.0.0/16&quot;,
+      &quot;Backend&quot;: {
+        &quot;Type&quot;: &quot;vxlan&quot;
+      }
+    }
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kube-flannel-ds
+  namespace: kube-system
+  labels:
+    tier: node
+    app: flannel
+spec:
+  selector:
+    matchLabels:
+      app: flannel
+  template:
+    metadata:
+      labels:
+        tier: node
+        app: flannel
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
+      hostNetwork: true
+      priorityClassName: system-node-critical
+      tolerations:
+      - operator: Exists
+        effect: NoSchedule
+      serviceAccountName: flannel
+      initContainers:
+      - name: install-cni-plugin
+       #image: flannelcni/flannel-cni-plugin:v1.0.1 for ppc64le and mips64le (dockerhub limitations may apply)
+        image: rancher/mirrored-flannelcni-flannel-cni-plugin:v1.0.1
+        command:
+        - cp
+        args:
+        - -f
+        - /flannel
+        - /opt/cni/bin/flannel
+        volumeMounts:
+        - name: cni-plugin
+          mountPath: /opt/cni/bin
+      - name: install-cni
+       #image: flannelcni/flannel:v0.17.0 for ppc64le and mips64le (dockerhub limitations may apply)
+        image: rancher/mirrored-flannelcni-flannel:v0.17.0
+        command:
+        - cp
+        args:
+        - -f
+        - /etc/kube-flannel/cni-conf.json
+        - /etc/cni/net.d/10-flannel.conflist
+        volumeMounts:
+        - name: cni
+          mountPath: /etc/cni/net.d
+        - name: flannel-cfg
+          mountPath: /etc/kube-flannel/
+      containers:
+      - name: kube-flannel
+       #image: flannelcni/flannel:v0.17.0 for ppc64le and mips64le (dockerhub limitations may apply)
+        image: rancher/mirrored-flannelcni-flannel:v0.17.0
+        command:
+        - /opt/bin/flanneld
+        args:
+        - --ip-masq
+        - --kube-subnet-mgr
+        resources:
+          requests:
+            cpu: &quot;100m&quot;
+            memory: &quot;50Mi&quot;
+          limits:
+            cpu: &quot;100m&quot;
+            memory: &quot;50Mi&quot;
+        securityContext:
+          privileged: false
+          capabilities:
+            add: [&quot;NET_ADMIN&quot;, &quot;NET_RAW&quot;]
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        volumeMounts:
+        - name: run
+          mountPath: /run/flannel
+        - name: flannel-cfg
+          mountPath: /etc/kube-flannel/
+        - name: xtables-lock
+          mountPath: /run/xtables.lock
+      volumes:
+      - name: run
+        hostPath:
+          path: /run/flannel
+      - name: cni-plugin
+        hostPath:
+          path: /opt/cni/bin
+      - name: cni
+        hostPath:
+          path: /etc/cni/net.d
+      - name: flannel-cfg
+        configMap:
+          name: kube-flannel-cfg
+      - name: xtables-lock
+        hostPath:
+          path: /run/xtables.lock
+          type: FileOrCreate
+</code></pre>
+</details>
+<p>kubectl apply -f kube-flannel.yml</p>
+<p>worker 节点中执行下面命令添加到集群中。</p>
+<pre class="line-numbers"><code class="language-plain_text">kubeadm join 192.168.0.118:6443 --token tprabz.gefub6pvv1x2qalv \
+        --discovery-token-ca-cert-hash sha256:b617b1efda2e97a3f98c624a20090c0dc711bfe2e432a31631cbe87f215c103d 
+</code></pre>
+<p>如果忘记了 join 需要的 token，重新再 master 机器上生成一个</p>
+<pre class="line-numbers"><code class="language-plain_text">kubeadm token create --print-join-command
+</code></pre>
+<p>然后将输出内容，在 worker 节点上运行就行。</p>
+<p>不出意外，集群搭建完成。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot%202022-07-03%20at%2000.08.44@2x.png" alt="CleanShot 2022-07-03 at 00.08.44@2x" /></p>
+<p>将上面的操作整理成脚本</p>
+<details>
+<summary>k8s_install.sh</summary>
+<pre class="line-numbers"><code class="language-shell">#!/bin/bash
+# 第一个参数是 ip
+# 第二个参数是 master or worker
+
+# yum -y update
+
+if [ $# -lt 2 ]; then 
+	echo &quot;执行命令参数缺失 eg: ./$0 ip master&quot;
+	exit;
+fi
+
+
+echo &quot;$1 $2&quot; &gt;&gt; /etc/hosts
+
+hostnamectl set-hostname $2
+
+# 关闭firewalld
+echo &quot;关闭firewalld&quot;
+systemctl stop firewalld
+systemctl disable firewalld
+
+sleep 3
+firewall-cmd --state
+
+echo &quot;SELINUX&quot;
+sed -ri 's/SELINUX=enforcing/SELINUX=disable/' /etc/selinux/config
+
+echo &quot;时间同步&quot;
+yum -y install ntpdate
+ntpdate time1.aliyun.com
+echo &quot;0 */1 * * * ntpdate time1.aliyun.com&quot; &gt; /var/spool/cron/root
+
+
+modprobe br_netfilter
+
+
+echo &quot;关闭 swap 分区，Swap 前加 # 注释掉&quot;
+read -p &quot;按任意键继续...&quot;
+
+vim /etc/fstab
+
+echo &quot;配置网桥过滤功能&quot;
+cat &gt;  /etc/sysctl.d/k8s.conf &lt;&lt;EOF 
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+vm.swappiness = 0
+EOF
+
+sysctl -p /etc/sysctl.d/k8s.conf
+
+
+echo &quot;安装 ipset、ipvsadm&quot;
+yum -y install ipset ipvsadm
+
+cat &gt; /etc/sysconfig/modules/ipvs.modules &lt;&lt;EOF
+#!/bin/bash
+modprobe -- ip_vs
+modprobe -- ip_vs_rr
+modprobe -- ip_vs_wrr
+modprobe -- ip_vs_sh
+modprobe -- nf_conntrack_ipv4
+EOF
+chmod 755 /etc/sysconfig/modules/ipvs.modules &amp;&amp; bash /etc/sysconfig/modules/ipvs.modules &amp;&amp; lsmod | grep -e ip_vs -e nf_conntrack_ipv4
+
+
+echo &quot;安装 docker&quot;
+curl -sSL https://get.daocloud.io/docker | sh
+
+cat &gt;  /etc/docker/daemon.json &lt;&lt;EOF
+{
+&quot;exec-opts&quot;: [&quot;native.cgroupdriver=systemd&quot;]
+}
+EOF
+
+systemctl daemon-reload
+systemctl restart docker
+systemctl enable docker
+
+echo &quot;安装 Kubernetes v1.23.5&quot;
+
+cat &gt; /etc/yum.repos.d/kubernetes.repo &lt;&lt;EOF
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+enabled=1
+gpgcheck=0
+EOF
+
+yum install -y kubelet-1.23.5 kubeadm-1.23.5 kubectl-1.23.5
+
+rm -rf /etc/sysconfig/kubelet
+touch /etc/sysconfig/kubelet
+
+
+cat &gt; /etc/sysconfig/kubelet &lt;&lt;EOF
+KUBELET_EXTRA_ARGS=&quot;--cgroup-driver=systemd&quot;
+EOF
+
+
+systemctl enable kubelet.service
+
+reboot
+
+# echo &quot;下载镜像&quot;
+# sh image.sh
+
+# echo &quot;初始化 Kubernetes&quot;
+# if [ $2 == 'master' ] ; then
+# 	echo &quot;初始化开始&quot;
+# 	kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=$1 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+# fi
+
+# sh after_install.sh
+</code></pre>
+</details>
+<details>
+<summary>image.sh</summary>
+<pre class="line-numbers"><code class="language-shell">#!/bin/bash
+url=registry.cn-hangzhou.aliyuncs.com/google_containers
+version=v1.23.5
+images=(`kubeadm config images list --kubernetes-version=$version|awk -F '/' '{print $2}'`)
+for imagename in ${images[@]} ; do
+  docker pull $url/$imagename
+  docker tag $url/$imagename k8s.gcr.io/$imagename
+  docker rmi -f $url/$imagename
+done
+</code></pre>
+</details>
+<p>安装</p>
+<pre class="line-numbers"><code class="language-plain_text">kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.0.130 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+</code></pre>
+<details>
+<summary>after_install.sh</summary>
+<pre class="line-numbers"><code class="language-shell">mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl apply -f kube-flannel.yml
+</code></pre>
+</details>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[k8s 部署 redis 集群]]></title>
+    <link href="http://blog.hitol.top/16459468152713.html"/>
+    <updated>2022-02-27T15:26:55+08:00</updated>
+    <id>http://blog.hitol.top/16459468152713.html</id>
+    <content type="html"><![CDATA[
+<h2><a id="redis-master" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-master</h2>
+<p>redis-master.yml</p>
+<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-master
+  labels:
+    name: redis-master
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: redis-master
+  template:
+    metadata:
+      labels:
+        name: redis-master
+    spec:
+      containers:
+      - name: master
+        image: redis
+        ports:
+        - containerPort: 6379
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master
+  labels:
+    name: redis-master
+
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    name: redis-master
+</code></pre>
+<h2><a id="redis-slave" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-slave</h2>
+<p>Dockerfile</p>
+<pre class="line-numbers"><code class="language-plain_text">FROM redis
+
+COPY run.sh /
+RUN chmod +x /run.sh
+CMD /run.sh
+</code></pre>
+<p>run.sh</p>
+<pre class="line-numbers"><code class="language-shell">if [[ ${GET_HOSTS_FROM:-dns} == &quot;env&quot; ]]; then
+  redis-server --slaveof ${REDIS_MASTER_SERVICE_HOST} 6379
+else
+  redis-server --slaveof redis-master 6379
+fi
+</code></pre>
+<p>docker build 生成镜像</p>
+<p>redis-slave.yml</p>
+<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-slave
+  labels:
+    name: redis-slave
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: redis-slave
+  template:
+    metadata:
+      labels:
+        name: redis-slave
+    spec:
+      containers:
+      - name: worker
+        image: hitol/redis-slave
+        env:
+        - name: GET_HOSTS_FROM
+          value: env
+        ports:
+        - containerPort: 6379
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-slave
+  labels:
+    name: redis-slave
+
+spec:
+  ports:
+  - port: 6379
+  selector:
+    name: redis-slave
+</code></pre>
+<h2><a id="%E9%AA%8C%E8%AF%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>验证</h2>
+<p><code>kubectl exec -it redis-master-4m5ds redis-cli</code> 往 redis 里写几条数据，然后切换到 slave pod 里看有没有。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[时间格式转换问题]]></title>
+    <link href="http://blog.hitol.top/16407431442346.html"/>
+    <updated>2021-12-29T09:59:04+08:00</updated>
+    <id>http://blog.hitol.top/16407431442346.html</id>
+    <content type="html"><![CDATA[
+<div class="mweb_toc"><ul>
+<li><a href="#%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4">各种标准时间</a>
+<ul>
+<li><a href="#%E6%A0%BC%E6%9E%97%E5%A8%81%E6%B2%BB%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4gmt">格林威治标准时间GMT</a></li>
+<li><a href="#%E5%8D%8F%E8%B0%83%E4%B8%96%E7%95%8C%E6%97%B6%E9%97%B4utc">协调世界时间UTC</a></li>
+<li><a href="#iso8601">ISO8601</a></li>
+<li><a href="#cst">CST</a></li>
+</ul>
+</li>
+<li><a href="#%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyymmdd%E4%B8%8E-yyyymmdd%E7%9A%84%E5%8C%BA%E5%88%AB">日期格式化 YYYYMMdd 与 yyyyMMdd 的区别</a></li>
+<li><a href="#%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyy-mm-dd-hh-mm-ss%E4%B8%8E-yyyy-mm-dd-hh-mm-ss%E7%9A%84%E5%8C%BA%E5%88%AB">日期格式化 yyyy-MM-dd HH:mm:SS 与 yyyy-MM-dd HH:mm:ss 的区别</a></li>
+</ul>
+</div>
+<p>在配置文件中全局的配置</p>
+<pre class="line-numbers"><code class="language-properties">spring.jackson.date-format=yyyy-MM-dd HH:mm:ss
+spring.jackson.time-zone=GMT+8
+</code></pre>
+<p>所有使用到时间格式的地方都会转换为这种格式的</p>
+<h2><a id="%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>各种标准时间</h2>
+<p><a href="https://ahuigo.github.io/b/c/shell-time#/">https://ahuigo.github.io/b/c/shell-time#/</a></p>
+<h3><a id="%E6%A0%BC%E6%9E%97%E5%A8%81%E6%B2%BB%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4gmt" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>格林威治标准时间GMT</h3>
+<p>含义：「格林威治标准时间」(Greenwich Mean Time，简称G.M.T.)以伦敦格林威治的子午线为基线，以地球自转为标准，全球都以此标准设定时间。<br />
+以下几个时间相同，但用于不同的时区/地区。</p>
+<pre class="line-numbers"><code class="language-plain_text">Wed Aug 14 08:21:05 GMT 2013 //标准GMT时间
+Wed Aug 14 16:21:05 GMT+8 2013 //东8区，即我们的北京时间
+Wed Aug 14 03:21:05 GMT-5 2013 //西5区，美国和加拿大时间
+</code></pre>
+<h3><a id="%E5%8D%8F%E8%B0%83%E4%B8%96%E7%95%8C%E6%97%B6%E9%97%B4utc" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>协调世界时间UTC</h3>
+<p>由于地球每天的自转是有些不规则的，而且正在缓慢减速，因此格林威治时间已经不再被作为标准时间使用。现在的标准时间，是由原子钟报时的协调世界时（UTC: Coordinated Universal Time）。UTC比GMT更精确严谨。</p>
+<pre class="line-numbers"><code class="language-plain_text">Wed Aug 14 08:21:05 UTC 2013 //标准UTC时间
+Wed Aug 14 16:21:05 UTC+8 2013 //东8区，即我们的北京时间
+Wed Aug 14 03:21:05 UTC-5 2013 //西5区，美国和加拿大时间
+</code></pre>
+<p>常识：<br />
+国际原子时的误差为每日数纳秒<br />
+对我们日常所使用的时间工具而言，UTC和GMT时间没有区别。</p>
+<h3><a id="iso8601" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ISO8601</h3>
+<p>moment.defaultFormat is the ISO8601 format YYYY-MM-DDTHH:mm:ssZ<br />
+ISO8601:</p>
+<pre class="line-numbers"><code class="language-plain_text">new Date(&quot;2016-01-01 11:13:00Z&quot;);      +0区
+new Date(&quot;2016-01-01T11:13:00Z&quot;);      +0区
+new Date(&quot;2016-01-01 11:13:00+08&quot;);     +8区
+new Date(&quot;2016-01-01 11:13:00+0800&quot;); +8区
+new Date(&quot;2016-01-01T11:13:00+08:00&quot;); +8区
+new Date(&quot;2016-01-01T11:13:00.333+08:00&quot;); +8区
+
+new Date(&quot;2016-01-01&quot;);                 +0区(默认)
+new Date(&quot;2016-01-01 11:13:00&quot;);        +8区(默认)
+new Date(&quot;October 13, 1975 11:13:00&quot;);  +8区(默认)
+</code></pre>
+<h3><a id="cst" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CST</h3>
+<p>CST是时区缩写，可以指下列的时区：</p>
+<p>澳洲中部时间，Central Standard Time (Australia)<br />
+中部标准时区（北美洲），Central Standard Time (North America)<br />
+北京时间，China Standard Time<br />
+古巴标准时间，Cuba Standard Time，参见北美东部时区<br />
+建议不要使用CST时间，对于以下时间，你可能不知道它到底是北京时间，还是其它时间：</p>
+<pre class="line-numbers"><code class="language-plain_text">Wed Aug 14 08:21:05 CST 2013 //北京、北美中部、古巴、澳洲中部？Who knows?
+</code></pre>
+<p>CST 转北京时间<br />
+在需要转换日期格式的字段上添加注解<code>com.fasterxml.jackson.annotation.JsonFormat</code></p>
+<pre class="line-numbers"><code class="language-plain_text">@JsonFormat(pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;,timezone = &quot;GMT+8&quot;)
+</code></pre>
+<h2><a id="%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyymmdd%E4%B8%8E-yyyymmdd%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>日期格式化 YYYYMMdd 与 yyyyMMdd 的区别</h2>
+<p>大写的 YYYY 表示这一天所在的周 所在的年份，也就是说如果当前周跨年了，这个获取到的就有问题。</p>
+<h2><a id="%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyy-mm-dd-hh-mm-ss%E4%B8%8E-yyyy-mm-dd-hh-mm-ss%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>日期格式化 yyyy-MM-dd HH:mm:SS 与 yyyy-MM-dd HH:mm:ss 的区别</h2>
+<p>HH 表示按 24 小时格式返回</p>
+<p>SS 表示毫秒？<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot%202022-01-10%20at%2018.04.39@2x.png" alt="CleanShot 2022-01-10 at 18.04.39@2x" /></p>
+<p>用小写的 ss 表示秒。</p>
+<pre class="line-numbers"><code class="language-sql">select d.queue,
+       count(*) as total
+from gbl_loan a
+         join gbl_loan_type_dictionary b on a.loan_source = b.id and a.channel_id = b.channel_id
+         join gbl_collection_case c on c.loan_id = a.id
+         join gbl_assignment d on c.id = d.collection_id
+where a.loan_source = #{loanSourceId}
+  and a.active = 1
+  and c.active = 1
+  and b.tenant = #{tenant}
+  and d.queue = #{queue}
+  and d.agentId is not null
+&lt;![CDATA[
+  and a.created_time &gt; #{reportStartDate}
+  and a.created_time &lt; #{reportEndDate}
+]]&gt;
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Spring.factories]]></title>
+    <link href="http://blog.hitol.top/16400068828317.html"/>
+    <updated>2021-12-20T21:28:02+08:00</updated>
+    <id>http://blog.hitol.top/16400068828317.html</id>
+    <content type="html"><![CDATA[
+<p>Spring 在启动加载 bean 的时候会加载所有 jar 包中的 <code>/resources/META-INF/spring.factories</code> 文件中配置的 bean。<br />
+所以我们在提供给别人工具包的时候可以在 spring.factories 文件中定义一些 bean 自动加载到使用方的 Spring 容器中。<br />
+spring.factories 中一般都是一些配置 bean，也就是使用了 @Configuration 这个注解的 bean，在这个配置 bean 中初始化一些我们的工具包需要的 bean 就比较方便了。</p>
+<p>在<code>src/main/resources/META-INF</code>下新建 spring.factories 文件<br />
+类似这种的配置：</p>
+<pre class="line-numbers"><code class="language-properties">org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.wacai.gbl.config.LinkupSmsAutoConfiguration
+</code></pre>
+<h2><a id="%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E6%B3%A8%E8%A7%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>一些常用的注解</h2>
+<h3><a id="configuration" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Configuration</h3>
+<p>开启配置</p>
+<h3><a id="enableconfigurationproperties-xxxproperties-class-xxxproperties-class" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@EnableConfigurationProperties(xxxProperties.class,xxxProperties.class)</h3>
+<p>读取哪些配置文件<br />
+xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&quot;)</code> 读取配置文件中前缀相同的配置</p>
+<h3><a id="bean" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Bean</h3>
+<p>与下面的配置配合使用</p>
+<h3><a id="conditionalonexpression" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@ConditionalOnExpression(&quot;${} || ${}&quot;)</h3>
+<p>可以配置多个条件，满足条件的就会初始化 bean</p>
+<h3><a id="conditionalonproperty-value-xx-xx-xx-havingvalue-matchifmissing-false" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@ConditionalOnProperty(value = &quot;xx.xx.xx&quot;,havingValue = &quot;&quot;,matchIfMissing = false)</h3>
+<p>读取配置文件中的 xx.xx.xx，havingValue 的值与配置文件中的值相等则会初始化</p>
+<h3><a id="primary" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Primary</h3>
+<p>默认，首选的。 </p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[带有参数的Spring RestTemplate GET]]></title>
+    <link href="http://blog.hitol.top/16394497226152.html"/>
+    <updated>2021-12-14T10:42:02+08:00</updated>
+    <id>http://blog.hitol.top/16394497226152.html</id>
+    <content type="html"><![CDATA[
+<p>使用 RestTemplate 发送 get 请求携带参数，发现有问题，对面收不到我的请求参数，</p>
+<p>一种方式是使用占位符将请求的 url 转换一下，类似于这样 <code>String url = &quot;http://api.xxx.xxx?name={name}&amp;age={age}&quot;;</code> 将请求参数拼接在链接后面，这种方式比较麻烦，后面有修改的话改动较多。</p>
+<p>还有一种方式，	使用 UriComponentsBuilder 拼接请求参数</p>
+<pre class="line-numbers"><code class="language-java">UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParams(params);
+builder.queryParam(key,value)
+</code></pre>
+<p>一个工具类的 get 请求代码</p>
+<pre class="line-numbers"><code class="language-java">// 拼接字符串
+private String buildUrl(String subUrl) {
+	return String.format(&quot;%s%s&quot;, volcanoUrl, subUrl);
+}
+
+
+// 发送 get 请求
+public static &lt;T&gt; T getForEntity(String url, Class&lt;T&gt; responseType, MultiValueMap&lt;String, String&gt; headers,
+		MultiValueMap&lt;String, String&gt; params, Object requestObj) {
+	log.info(&quot;开始请求远程数据,url:{},paramMap:{},headers:{},requestObj:{}&quot;, url, params, headers,requestObj);
+	HttpEntity&lt;?&gt; requestEntity = new HttpEntity&lt;&gt;(headers);
+	if (params == null) {
+		params = new LinkedMultiValueMap&lt;&gt;();
+	}
+	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParams(params);
+	if (requestObj != null) {
+		for (Entry&lt;String, String&gt; entry : objectToMap(requestObj).entrySet()) {
+			builder.queryParam(entry.getKey(), Lists.newArrayList(entry.getValue()));
+		}
+	}
+	ResponseEntity&lt;CommonResponse&lt;T&gt;&gt; responseEntity = restTemplate.exchange(builder.build().toUri(),
+			HttpMethod.GET, requestEntity, getCommonResponseReference(responseType));
+	if (responseEntity != null &amp;&amp; responseEntity.getStatusCode() == HttpStatus.OK) {
+		CommonResponse&lt;T&gt; resp = responseEntity.getBody();
+		if (resp.isSuccess()) {
+			return resp.getData();
+		} else {
+			throw new BizException(&quot;数据请求失败,对方返回失败,&quot; + resp.getError());
+		}
+	}
+	throw new BizException(&quot;数据请求失败,网络异常,&quot; + JSON.toJSONString(responseEntity));
+}
+
+
+
+// obj 转 map
+public static Map&lt;String, String&gt; objectToMap(Object obj) {
+	if (obj == null) {
+		return null;
+	}
+	Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();
+
+	List&lt;Field&gt; allFields = new ArrayList&lt;&gt;();
+	Class currentClass = obj.getClass();
+
+	while (currentClass != null) {
+		allFields.addAll(Arrays.asList(currentClass.getDeclaredFields()));
+		currentClass = currentClass.getSuperclass();
+	}
+
+	for (Field field : allFields) {
+		field.setAccessible(true);
+		if (Objects.isNull(field.get(obj))) {
+			continue;
+		}
+		if (field.isSynthetic()) {
+			continue;
+		}
+		Object object = field.get(obj);
+		if (object instanceof Map) {
+			map.put(field.getName(), JSON.toJSONString(object));
+		} else {
+			map.put(field.getName(), String.valueOf(field.get(obj)));
+		}
+	}
+	return map;
+}
+
+
+
+private static &lt;T&gt; ParameterizedTypeReference&lt;CommonResponse&lt;T&gt;&gt; getCommonResponseReference(Class&lt;T&gt; clazz) {
+	JavaType javaType = objectMapper.getTypeFactory().constructParametricType(CommonResponse.class, clazz);
+	return ParameterizedTypeReference.forType(javaType);
+}
+
+
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Graphql]]></title>
+    <link href="http://blog.hitol.top/16356861657170.html"/>
+    <updated>2021-10-31T21:16:05+08:00</updated>
+    <id>http://blog.hitol.top/16356861657170.html</id>
+    <content type="html"><![CDATA[
+<h2><a id="%E7%AE%80%E4%BB%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>简介</h2>
+<p>Graphql 是一种类似于 REST 的一种 API 标准。<br />
+不是一种数据库技术。</p>
+<p>总的来说就是，后端可以根据前端需要的字段返回对应的信息，不需要修改原有接口。</p>
+<pre class="line-numbers"><code class="language-plain_text">--- 1.前端请求字段
+{
+  hero {
+    name
+  }
+}
+
+--- 2.后端返回结果
+{
+  &quot;data&quot;: {
+    &quot;hero&quot;: {
+      &quot;name&quot;: &quot;R2-D2&quot;
+    }
+  }
+}
+
+
+--- 1.前端请求字段
+{
+  hero {
+    name
+    # Queries can have comments!
+    friends {
+      name
+    }
+  }
+}
+
+--- 2.后端返回结果
+{
+  &quot;data&quot;: {
+    &quot;hero&quot;: {
+      &quot;name&quot;: &quot;R2-D2&quot;,
+      &quot;friends&quot;: [
+        {
+          &quot;name&quot;: &quot;Luke Skywalker&quot;
+        },
+        {
+          &quot;name&quot;: &quot;Han Solo&quot;
+        },
+        {
+          &quot;name&quot;: &quot;Leia Organa&quot;
+        }
+      ]
+    }
+  }
+}
+</code></pre>
+<h2><a id="demo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>demo</h2>
+<p><a href="https://gitee.com/hitol/graphql-demo.git">https://gitee.com/hitol/graphql-demo.git</a></p>
+<h3><a id="dependencies" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>dependencies</h3>
+<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
+    &lt;artifactId&gt;graphql-java&lt;/artifactId&gt;
+    &lt;version&gt;11.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
+    &lt;artifactId&gt;graphiql-spring-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;3.10.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
+    &lt;artifactId&gt;graphql-java-spring-boot-starter-webmvc&lt;/artifactId&gt;
+    &lt;version&gt;1.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;com.google.guava&lt;/groupId&gt;
+    &lt;artifactId&gt;guava&lt;/artifactId&gt;
+    &lt;version&gt;26.0-jre&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h3><a id="schema" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Schema</h3>
+<p>在 resources 文件夹下新建一个 schema.graphqls 文件，其内容如下</p>
+<pre class="line-numbers"><code class="language-graphql">type Query {
+  bookById(id: ID): Book 
+}
+
+type Book {
+  id: ID
+  name: String
+  pageCount: Int
+  author: Author
+}
+
+type Author {
+  id: ID
+  firstName: String
+  lastName: String
+}
+
+</code></pre>
+<h2><a id="graphql%E5%8A%A0%E8%BD%BD%E5%88%B0-spring" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Graphql 加载到 Spring</h2>
+<pre class="line-numbers"><code class="language-java">
+@Component
+public class GraphQLProvider {
+
+
+    @Autowired
+    GraphQLDataFetchers graphQLDataFetchers;
+
+    private GraphQL graphQL;
+
+    @PostConstruct
+    public void init() throws IOException {
+        URL url = Resources.getResource(&quot;schema.graphqls&quot;);
+        String sdl = Resources.toString(url, Charsets.UTF_8);
+        GraphQLSchema graphQLSchema = buildSchema(sdl);
+        this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
+    }
+
+    private GraphQLSchema buildSchema(String sdl) {
+        TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);
+        RuntimeWiring runtimeWiring = buildWiring();
+        SchemaGenerator schemaGenerator = new SchemaGenerator();
+        return schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
+    }
+
+    private RuntimeWiring buildWiring() {
+        return RuntimeWiring.newRuntimeWiring()
+                .type(newTypeWiring(&quot;Query&quot;)
+                        .dataFetcher(&quot;bookById&quot;, graphQLDataFetchers.getBookByIdDataFetcher()))
+                .type(newTypeWiring(&quot;Book&quot;)
+                        .dataFetcher(&quot;author&quot;, graphQLDataFetchers.getAuthorDataFetcher()))
+                .build();
+    }
+
+    @Bean
+    public GraphQL graphQL() {
+        return graphQL;
+    }
+
+}
+</code></pre>
+<p>其中对于文件的解析 最重要的方法就是 buildWiring</p>
+<p>这一块其实就是后端提供的关于 graphql 的接口。</p>
+<p>使用了一个插件，方便调试 graphiql</p>
+<p>项目启动之后浏览器中访问，<a href="http://localhost:8080/graphiql">http://localhost:8080/graphiql</a><br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16356860055184.jpg" alt="" /></p>
+<hr />
+<p><a href="http://graphql.js.cool/learn/">http://graphql.js.cool/learn/</a></p>
+<p><a href="https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/">https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/</a></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[mongoDB]]></title>
+    <link href="http://blog.hitol.top/16345641979115.html"/>
+    <updated>2021-10-18T21:36:37+08:00</updated>
+    <id>http://blog.hitol.top/16345641979115.html</id>
+    <content type="html"><![CDATA[
+<div class="mweb_toc"><ul>
+<li><a href="#%E6%A6%82%E5%BF%B5">概念</a>
+<ul>
+<li><a href="#%E6%95%B0%E6%8D%AE%E5%BA%93">数据库</a></li>
+<li><a href="#%E9%9B%86%E5%90%88">集合</a></li>
+<li><a href="#%E6%96%87%E6%A1%A3">文档</a></li>
+</ul>
+</li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B">数据类型</a></li>
+<li><a href="#%E6%93%8D%E4%BD%9C">操作</a>
+<ul>
+<li><a href="#%E6%9F%A5%E8%AF%A2%E6%96%87%E6%A1%A3">查询文档</a></li>
+<li><a href="#%E6%8F%92%E5%85%A5%E6%96%87%E6%A1%A3">插入文档</a></li>
+<li><a href="#%E6%9B%B4%E6%96%B0%E6%96%87%E6%A1%A3">更新文档</a></li>
+</ul>
+</li>
+<li><a href="#%E5%88%A0%E9%99%A4%E6%96%87%E6%A1%A3">删除文档</a></li>
+<li><a href="#gridfs">GridFS</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85">安装</a>
+<ul>
+<li><a href="#mac%E5%AE%89%E8%A3%85">mac 安装</a></li>
+<li><a href="#docker%E5%AE%89%E8%A3%85">Docker 安装</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2><a id="%E6%A6%82%E5%BF%B5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>概念</h2>
+<table>
+<thead>
+<tr>
+<th>SQL术语/概念</th>
+<th>MongoDB术语/概念</th>
+<th>解释/说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>database</td>
+<td>database</td>
+<td>数据库</td>
+</tr>
+<tr>
+<td>table</td>
+<td>collection</td>
+<td>数据库表/集合</td>
+</tr>
+<tr>
+<td>row</td>
+<td>document</td>
+<td>数据记录行/文档</td>
+</tr>
+<tr>
+<td>column</td>
+<td>field</td>
+<td>数据字段/域</td>
+</tr>
+<tr>
+<td>index</td>
+<td>index</td>
+<td>索引</td>
+</tr>
+<tr>
+<td>table joins</td>
+<td></td>
+<td>表连接,MongoDB不支持</td>
+</tr>
+<tr>
+<td>primary key</td>
+<td>primary key</td>
+<td>主键,MongoDB自动将_id字段设置为主键</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://hitol.blog.cdn.updev.cn/2021-10-18-16341942000243.jpg" alt="" /></p>
+<h3><a id="%E6%95%B0%E6%8D%AE%E5%BA%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数据库</h3>
+<p>数据库的概念跟关系型数据库(如 MySQL)中是一样的。<br />
+一个 mongoDB 中可以建立多个数据库。<br />
+默认数据库为 db。</p>
+<p>命令</p>
+<pre class="line-numbers"><code class="language-plain_text">show dbs # 查看所有数据库
+
+db # 查看当前连接的数据库
+
+use xx # 连接到 xx 数据库,如果数据库不存在，则创建数据库
+</code></pre>
+<h3><a id="%E9%9B%86%E5%90%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>集合</h3>
+<p>集合类似于关系型数据库中的 table。<br />
+集合存在于数据库中，没有固定结构，这意味着可以在集合中插入不同的文档，但是一般情况下文档都有一定的关联性。</p>
+<h3><a id="%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>文档</h3>
+<p>文档类似于关系型数据库中的 行。<br />
+文档是一组 键值对</p>
+<h2><a id="%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数据类型</h2>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>String</td>
+<td>字符串。存储数据常用的数据类型。在 MongoDB 中，UTF-8 编码的字符串才是合法的。</td>
+</tr>
+<tr>
+<td>Integer</td>
+<td>整型数值。用于存储数值。根据你所采用的服务器，可分为 32 位或 64 位。</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>布尔值。用于存储布尔值（真/假）</td>
+</tr>
+<tr>
+<td>Double</td>
+<td>双精度浮点值。用于存储浮点值。</td>
+</tr>
+<tr>
+<td>Min/Max keys</td>
+<td>将一个值与 BSON（二进制的 JSON）元素的最低值和最高值相对比</td>
+</tr>
+<tr>
+<td>Array</td>
+<td>用于将数组或列表或多个值存储为一个键</td>
+</tr>
+<tr>
+<td>Timestamp</td>
+<td>时间戳。记录文档修改或添加的具体时间。</td>
+</tr>
+<tr>
+<td>Object</td>
+<td>用于内嵌文档</td>
+</tr>
+<tr>
+<td>Null</td>
+<td>用于创建空值</td>
+</tr>
+<tr>
+<td>Symbol</td>
+<td>符号。该数据类型基本上等同于字符串类型，但不同的是，它一般用于采用特殊符号类型的语言。</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>日期时间。用 UNIX 时间格式来存储当前日期或时间。你可以指定自己的日期时间：创建 Date 对象，传入年月日信息。</td>
+</tr>
+<tr>
+<td>Object ID</td>
+<td>对象 ID。用于创建文档的 ID。</td>
+</tr>
+<tr>
+<td>Binary Data</td>
+<td>二进制数据。用于存储二进制数据。</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>代码类型。用于在文档中存储 JavaScript 代码。</td>
+</tr>
+<tr>
+<td>Regular expression</td>
+<td>正则表达式类型。用于存储正则表达式。</td>
+</tr>
+</tbody>
+</table>
+<h2><a id="%E6%93%8D%E4%BD%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>操作</h2>
+<h3><a id="%E6%9F%A5%E8%AF%A2%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>查询文档</h3>
+<p>语法：</p>
+<pre class="line-numbers"><code class="language-plain_text">db.collection.find(query, projection)
+query ：可选，使用查询操作符指定查询条件
+projection ：可选，使用投影操作符指定返回的键。查询时返回文档中所有键值， 只需省略该参数即可（默认省略）。
+
+</code></pre>
+<p>例子：</p>
+<pre class="line-numbers"><code class="language-plain_text">查询所有: 
+db.chat_calls.find()
+
+按条件查询:
+db.chat_calls.find({&quot;machine_id&quot;:&quot;GV2_T1&quot;,&quot;call_uuid&quot;:&quot;01QJI91IMKENL3L8A0Q11B5AES00007V&quot;})
+
+只返回具体字段:
+db.chat_calls.find({&quot;machine_id&quot;:&quot;GV2_T1&quot;,&quot;call_uuid&quot;:&quot;01QJI91IMKENL3L8A0Q11B5AES00007V&quot;}, { _id:0,machine_id:1})
+
+</code></pre>
+<h3><a id="%E6%8F%92%E5%85%A5%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>插入文档</h3>
+<p>语法:</p>
+<pre class="line-numbers"><code class="language-plain_text">db.COLLECTION_NAME.insert(document)
+或
+db.COLLECTION_NAME.save(document)
+</code></pre>
+<p>例子:</p>
+<pre class="line-numbers"><code class="language-plain_text">db.chat_calls.insert(
+{&quot;machine_id&quot;:&quot;test&quot;,&quot;call_uuid&quot;:&quot;test&quot;})
+</code></pre>
+<h3><a id="%E6%9B%B4%E6%96%B0%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>更新文档</h3>
+<p>语法:</p>
+<pre class="line-numbers"><code class="language-plain_text">db.collection.update(
+   &lt;query&gt;,
+   &lt;update&gt;,
+   {
+     upsert: &lt;boolean&gt;,
+     multi: &lt;boolean&gt;,
+     writeConcern: &lt;document&gt;
+   }
+)
+
+query : update的查询条件，类似sql update查询内where后面的。
+update : update的对象和一些更新的操作符（如$,$inc...）等，也可以理解为sql update查询内set后面的
+upsert : 可选，这个参数的意思是，如果不存在update的记录，是否插入objNew,true为插入，默认是false，不插入。
+multi : 可选，mongodb 默认是false,只更新找到的第一条记录，如果这个参数为true,就把按条件查出来多条记录全部更新。
+writeConcern :可选，抛出异常的级别。
+</code></pre>
+<p>例子:</p>
+<pre class="line-numbers"><code class="language-plain_text">db.chat_calls.update(
+	{&quot;machine_id&quot;:&quot;test&quot;,&quot;call_uuid&quot;:&quot;test&quot;}, 
+	{
+		$set:{&quot;machine_id&quot;:&quot;test111&quot;}
+	}
+)
+运算符 $set,将 machine_id 修改为 test111
+</code></pre>
+<p>save() 方法，通过 _id 主键存在则更新，如果不存在则新增。</p>
+<pre class="line-numbers"><code class="language-plain_text">db.collection.save(
+   &lt;document&gt;,
+   {
+     writeConcern: &lt;document&gt;
+   }
+)
+</code></pre>
+<h2><a id="%E5%88%A0%E9%99%A4%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>删除文档</h2>
+<p>db.collection.deleteOne()<br />
+db.collection.deleteMany()</p>
+<p>语法：</p>
+<pre class="line-numbers"><code class="language-plain_text">db.collection.deleteOne(
+   &lt;filter&gt;,
+   {
+      writeConcern: &lt;document&gt;,
+      collation: &lt;document&gt;,
+      hint: &lt;document|string&gt;       
+   }
+)
+
+
+db.collection.deleteMany(
+   &lt;filter&gt;,
+   {
+      writeConcern: &lt;document&gt;,
+      collation: &lt;document&gt;
+   }
+)
+
+</code></pre>
+<p>例子:</p>
+<pre class="line-numbers"><code class="language-plain_text">db.chat_calls.deleteOne({&quot;machine_id&quot;:&quot;test&quot;})
+</code></pre>
+<h1><a id="gridfs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>GridFS</h1>
+<p>GridFS 用于存储和恢复那些超过16M（BSON文件限制）的文件(如：图片、音频、视频等)。</p>
+<p>GridFS 也是文件存储的一种方式，但是它是存储在MonoDB的集合中。</p>
+<p>GridFS 可以更好的存储大于16M的文件。</p>
+<p>GridFS 会将大文件对象分割成多个小的chunk(文件片段),一般为256k/个,每个chunk将作为MongoDB的一个文档(document)被存储在chunks集合中。</p>
+<p>GridFS 用两个集合来存储一个文件：fs.files与fs.chunks。</p>
+<pre class="line-numbers"><code class="language-plain_text">gridfs = GridFS(db_client.get_database(db_name), collection=collection)
+</code></pre>
+<h1><a id="%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>安装</h1>
+<h2><a id="mac%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>mac 安装</h2>
+<p>brew tap mongodb/brew<br />
+brew install mongodb-community</p>
+<p>检验安装完成</p>
+<p>mongod -version</p>
+<p>作为mac os 的服务启动<br />
+brew services start mongodb-community</p>
+<h2><a id="docker%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Docker 安装</h2>
+<p>docker pull mongo<br />
+docker run -di --name=my_mongo -p 27017:27017 mongo</p>
+<hr />
+<p><a href="https://docs.mongoing.com/">https://docs.mongoing.com/</a></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[武侠，古龙。]]></title>
+    <link href="http://blog.hitol.top/16323051276549.html"/>
+    <updated>2021-09-22T18:05:27+08:00</updated>
+    <id>http://blog.hitol.top/16323051276549.html</id>
+    <content type="html"><![CDATA[
+<p>黄昏，街边，小卖部。<br />
+人，男人，两个男人，一老一少，隔着柜台伫立着。<br />
+“是你？”<br />
+“是我。”<br />
+“你来了。”<br />
+“我来了。”<br />
+“你不该来。”<br />
+“我已经来了。”<br />
+“你毕竟还是来了。”<br />
+“我毕竟还是来了。”<br />
+沉默，良久的沉默。仿佛泥塑木雕的两人，对峙着，那夕阳却越发斜了。</p>
+<p>“你来干什么？”老者最终打破沉默。<br />
+“打酱油。”干脆利落，一字一顿，没有半点迟疑。<br />
+老者沉吟少顷，缓缓道：“打多少钱一斤的？”<br />
+“一块。”<br />
+依然干脆利落，不带一丝犹豫。</p>
+<p>那人的脸色已变了，道：“你知道我这里从不卖一块钱一斤的酱油。”</p>
+<p>“我只要一块钱一斤的酱油。”</p>
+<p>“可当真？”</p>
+<p>“当真！”<br />
+卖酱油的盯着眼前的这个人，他非常年轻，<br />
+但是他的眼睛，任何人看了都不会忘记，<br />
+那是夜一样的宁静，海一般的深邃。<br />
+他知道眼前的少年决非常人，<br />
+但他也知道，一块钱一斤的酱油，<br />
+他是决不会卖的。<br />
+周围还是那么寂静，<br />
+死一样的寂静。<br />
+夕阳已渐渐要落下去了，<br />
+他看了看远处的夕阳，<br />
+觉得说不出的恐惧。</p>
+<p>他苦笑道：“你一定要买一块钱一斤的么？”<br />
+“一定！”<br />
+“若我不卖给你呢？”<br />
+“你大可试试！”<br />
+沉默，死一样的沉默。<br />
+许久，他抬眼望着少年，咬牙道：“好，我就卖你一斤酱油，一块钱，只是你莫要对外人提起！”</p>
+<p>他接过少年手中的酱油瓶和一块钱。<br />
+瓶子是冷的，一如老者的内心；钱币却微微发烫，一如少年的手心。<br />
+片刻过后，少年接过了他递回的酱油瓶，转身向门口走去。<br />
+这一仗，他胜了，胜得彻彻底底。<br />
+少年脸上掠过一丝得意。<br />
+卖酱油的人却从背后叫住了他：“你以为你真的胜过我了么？”<br />
+少年的身子微微一震，脚步已顿。<br />
+“很明显，我已经以这么低的价钱打到了酱油。”<br />
+“不错。”<br />
+“那我岂非已胜过了你。”<br />
+“只可惜你算漏了一点。”<br />
+少年忽然转过身来，脸上的肌肉微微抽搐，<br />
+他似乎意识到了什么，但已经晚了。<br />
+卖酱油的人只轻轻一笑，道：“我的酱油本是卖八毛钱一斤的。”<br />
+少年脸上恢复淡然的表情，转过身去，“我这一元是假钞”</p>
+<p>少年的身子逐渐远去.....</p>
+<hr />
+<p>看完权当一乐。<br />
+很早之前在知乎看的，今天看笔记翻到了。侵删。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[MVCC]]></title>
+    <link href="http://blog.hitol.top/16291932023474.html"/>
+    <updated>2021-08-17T17:40:02+08:00</updated>
+    <id>http://blog.hitol.top/16291932023474.html</id>
+    <content type="html"><![CDATA[
+<div class="mweb_toc"><ul>
+<li><a href="#%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86">重点知识</a></li>
+<li><a href="#%E4%BE%8B%E5%AD%90">例子</a>
+<ul>
+<li><a href="#%E5%B0%9D%E8%AF%95%E5%9B%9E%E7%AD%94%E4%B8%8B">尝试回答下</a></li>
+<li><a href="#%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90">详细分析</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1a%E7%9A%84%E7%BB%93%E6%9E%9C">如何得到事务 A 的结果</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1b%E7%9A%84%E7%BB%93%E6%9E%9C">如何得到事务 B 的结果</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E7%9A%84%E8%83%BD%E5%8A%9B%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84">事务的可重复读的能力是怎么实现的</a></li>
+</ul>
+</div>
+<h2><a id="%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重点知识</h2>
+<p>MVCC 指行多版本控制。提高数据库并发，也是事务隔离的实现机制。</p>
+<p>使用 MVCC 可以做到在对同一行数据进行读写操作的时候不用加锁。这个读指的是 快照读。</p>
+<p>MVCC 是一个概念，这个概念的实现就是 快照读。<br />
+快照读操作只读取该事务开始前的数据库快照。</p>
+<p>按照可重复读的定义，一个事务启动的时候，能够看到所有已经提交的事务结果。但是之后，这个事务执行期间，其他事务的更新对它不可见。</p>
+<p>事务启动时有一个 事务 id，叫做 transaction id。是在事务开始时候向 InnoDB 申请的，严格按照申请顺序递增的。</p>
+<p>每次事务更新数据的时候都会把 transaction id 赋值给这个数据版本的事务 id，记为 row trx_id。<br />
+一行数据可能有多个版本，每个版本都有一个 row trx_id。</p>
+<p>在实现上， InnoDB为每个事务构造了一个数组，用来保存这个事务启动瞬间，当前正在“活跃”的所有事务ID。“活跃”指的就是，启动了但还没提交。</p>
+<h2><a id="%E4%BE%8B%E5%AD%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>例子</h2>
+<pre class="line-numbers"><code class="language-sql">mysql&gt; CREATE TABLE `t` (
+  `id` int(11) NOT NULL,
+  `k` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+insert into t(id, k) values(1,1);
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/2021-08-18-16291936408457.jpg" alt="事务A、B、C的执行流程" /></p>
+<p>问：MySQL InnoDB 默认隔离级别下，事务 A、B、C 里，K 的值分别是多少？</p>
+<h3><a id="%E5%B0%9D%E8%AF%95%E5%9B%9E%E7%AD%94%E4%B8%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>尝试回答下</h3>
+<p>事务 C 没有指定手动提交事务，所以是自动提交的，并且 C 事务先执行的，所以 K 是 2。<br />
+事务 B 在执行，由于 B 执行了 update，会以当前读的方式获取最新数据，所以 C 提交后的事务，B 是可以看到的，所以，K 是 3。</p>
+<p>事务 A 最后执行，由于是 RR 级别，可重复读，并且是当前读，所以与事务开始的时候保持一致，所以 K 是 1 。</p>
+<h3><a id="%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>详细分析</h3>
+<p>这里，我们不妨做如下假设：</p>
+<ol>
+<li>事务A开始前，系统里面只有一个活跃事务 ID 是99；</li>
+<li>事务 A、B、C的版本号分别是100、101、102，且当前系统里只有这四个事务；</li>
+</ol>
+<p>这样，事务A的视图数组就是[99,100], 事务B的视图数组是[99,100,101], 事务C的视图数组是[99,100,101,102]。</p>
+<h3><a id="%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1a%E7%9A%84%E7%BB%93%E6%9E%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何得到事务 A 的结果</h3>
+<p>简化下，只画出跟事务A查询逻辑有关的操作：<br />
+<img src="http://hitol.blog.cdn.updev.cn/2021-08-18-16291942450909.jpg" alt="事务A查询数据逻辑图" /></p>
+<p>一个数据版本，对于一个事务视图来说，除了自己的更新总是可见以外，有三种情况：</p>
+<ol>
+<li>版本未提交，不可见；</li>
+<li>版本已提交，但是是在视图创建后提交的，不可见；</li>
+<li>版本已提交，而且是在视图创建前提交的，可见。</li>
+</ol>
+<p>现在，我们用这个规则来判断图中的查询结果，事务A的查询语句的视图数组是在事务A启动的时候生成的，这时候：</p>
+<ol>
+<li>(1,3)还没提交，属于情况1，不可见；</li>
+<li>(1,2)虽然提交了，但是是在视图数组创建之后提交的，属于情况2，不可见；</li>
+<li>(1,1)是在视图数组创建之前提交的，可见。</li>
+</ol>
+<h3><a id="%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1b%E7%9A%84%E7%BB%93%E6%9E%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何得到事务 B 的结果</h3>
+<p>一条规则：更新数据都是先读后写的，而这个读，只能读当前的值，称为“当前读”<br />
+因此，在更新的时候，当前读拿到的数据是(1,2)，更新后生成了新版本的数据(1,3)，这个新版本的row trx_id是101。</p>
+<p>所以，在执行事务B查询语句的时候，一看自己的版本号是101，最新数据的版本号也是101，是自己的更新，可以直接使用，所以查询得到的k的值是3。</p>
+<h2><a id="%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E7%9A%84%E8%83%BD%E5%8A%9B%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>事务的可重复读的能力是怎么实现的</h2>
+<p>可重复读的核心就是一致性读（consistent read）；<br />
+而事务更新数据的时候，只能用当前读。<br />
+如果当前的记录的行锁被其他事务占用的话，就需要进入锁等待。</p>
+<p>而读提交的逻辑和可重复读的逻辑类似，它们最主要的区别是：</p>
+<ol>
+<li>在可重复读隔离级别下，只需要在事务开始的时候创建一致性视图，之后事务里的其他查询都共用这个一致性视图；</li>
+<li>在读提交隔离级别下，每一个语句执行前都会重新算出一个新的视图。</li>
+</ol>
+<p>这里需要说明一下，“start transaction with consistent snapshot; ”的意思是从这个语句开始，创建一个持续整个事务的一致性快照。所以，在读提交隔离级别下，这个用法就没意义了，等效于普通的start transaction。</p>
+<hr />
+<p>undo 链<br />
+read view 视图</p>
+<p>-- 《MySQL 实战 45 讲》，03、08讲。<br />
+<a href="https://juejin.cn/post/6871046354018238472#heading-3">https://juejin.cn/post/6871046354018238472#heading-3</a></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[AQS]]></title>
+    <link href="http://blog.hitol.top/16272819939818.html"/>
+    <updated>2021-07-26T14:46:33+08:00</updated>
+    <id>http://blog.hitol.top/16272819939818.html</id>
+    <content type="html"><![CDATA[
+<div class="mweb_toc"><ul>
+<li><a href="#reentrantlock">ReentrantLock</a>
+<ul>
+<li><a href="#%E5%8A%A0%E9%94%81%E8%BF%87%E7%A8%8B">加锁过程</a></li>
+<li><a href="#reentrantlock-unlock%E8%A7%A3%E9%94%81%E8%BF%87%E7%A8%8B">ReentrantLock  unlock 解锁过程</a></li>
+<li><a href="#%E9%9D%9E%E5%85%AC%E5%B9%B3%E9%94%81">非公平锁</a></li>
+</ul>
+</li>
+<li><a href="#locksupport">LockSupport</a></li>
+</ul>
+</div>
+<p>Java 并发编程核心在于 juc 包，而其中大多数同步器实现都是围绕着共同的基础行为，比如等待队列、条件队列、独占获取、共享获取等，而这个行为的抽象就是 AQS。</p>
+<p>AQS 定义了一套多线程访问共享资源的同步器框架，是一个依赖状态(volatile int state)的同步器。</p>
+<blockquote>
+<p>Provides a framework for implementing blocking locks and related synchronizers (semaphores, events, etc) that rely on first-in-first-out (FIFO) wait queues. This class is designed to be a useful basis for most kinds of synchronizers that rely on a single atomic int value to represent state.</p>
+</blockquote>
+<p>AQS 特性：</p>
+<ul>
+<li>阻塞等待队列</li>
+<li>共享、独占</li>
+<li>公平、非公平</li>
+<li>可重入</li>
+<li>允许中断</li>
+</ul>
+<p><img src="http://hitol.blog.cdn.updev.cn/2021-07-26-16272819971708.jpg" alt="" /></p>
+<p>一般都是通过定义内部类 Sync 继承 AQS<br />
+将同步器所有调用都映射到 Sync 对应的方法</p>
+<p>AQS 内部维护属性 volatile int state 表示资源的可用状态</p>
+<p>state 三种访问方式<br />
+getState、setState、compareAndSetState</p>
+<p>AQS 定义两种资源共享方式</p>
+<ul>
+<li>Exclusive，独占，只有一个线程能执行，如 ReentrantLock</li>
+<li>Share，共享，多个线程可以同时执行，入 Semaphore、CountDownLatch</li>
+</ul>
+<p>AQS 定义两种队列</p>
+<ul>
+<li>同步等待队列</li>
+<li>条件等待队列</li>
+</ul>
+<p>AQS，重点<br />
+自旋、加锁(CAS)、LockSupport、队列</p>
+<p>下面通过 ReentrantLock 看下 AQS 的实现。</p>
+<h2><a id="reentrantlock" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ReentrantLock</h2>
+<p>ReentrantLock 内部 定义一个内部类 Sync，Sync 继承自 AQS，Sync 还有两个子类，FairSync、NonfairSync 区别公平锁与非公平锁。<br />
+new ReentrantLock(true) 为公平锁<br />
+构造函数：</p>
+<pre class="line-numbers"><code class="language-java">// 默认非公平锁
+public ReentrantLock() {
+    sync = new NonfairSync();
+}
+
+public ReentrantLock(boolean fair) {
+    sync = fair ? new FairSync() : new NonfairSync();
+}
+</code></pre>
+<p>公平锁，按照线程过来的顺序依次去获取锁，FIFO<br />
+非公平锁，可以插队</p>
+<h3><a id="%E5%8A%A0%E9%94%81%E8%BF%87%E7%A8%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>加锁过程</h3>
+<p>假设现在 ReentrantLock 是 FairSync 公平锁</p>
+<pre class="line-numbers"><code class="language-java">static final class FairSync extends Sync {
+    private static final long serialVersionUID = -3000897897090466540L;
+    // new ReentrantLock().lock() 会调用到这里
+    final void lock() {
+        acquire(1);
+    }
+    
+
+// acquire 在 AQS 的代码
+// public final void acquire(int arg) {
+//	if (!tryAcquire(arg) &amp;&amp; acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+//    	selfInterrupt();
+//}
+
+    
+    protected final boolean tryAcquire(int acquires) {
+        final Thread current = Thread.currentThread();
+        // 先获取 state 的值
+        int c = getState();
+        // 这一步是 第一次加锁
+        // 如果 state 的值为 0，并且队列中没有等待的线程，并且 CAS 设置 state 值为1成功，执行 setExclusiveOwnerThread ，设置当前线程为 current，表示当前线程获得了锁
+        if (c == 0) {
+            if (!hasQueuedPredecessors() &amp;&amp;
+                compareAndSetState(0, acquires)) {
+                setExclusiveOwnerThread(current);
+                return true;
+            }
+        }
+        // 这一步是为了重入锁
+        // 如果 state 不是0，并且 AQS 中的当前执行线程就是当前线程，
+        // state + 1
+        else if (current == getExclusiveOwnerThread()) {
+            int nextc = c + acquires;
+            if (nextc &lt; 0)
+                throw new Error(&quot;Maximum lock count exceeded&quot;);
+            setState(nextc);
+            return true;
+        }
+        // false 就是没有获得到锁，没有获取锁，会在执行 acquireQueued(addWaiter(Node.EXCLUSIVE), arg) 这个逻辑
+        return false;
+    }
+}
+</code></pre>
+<p>当调用 ReentrantLock 的 lock 方法时会调用到 FairSync 类的 lock 方法。</p>
+<p>acquire(1) 这个方法主要是加锁，然后设置 state 为 1，会先调用本类实现的 tryAcquire 方法 尝试去加锁，这个方法里面分为了第一次为当前线程加锁，和当前线程的重入锁两种情况，</p>
+<p>如果是 state 为 0 ，hasQueuedPredecessors 方法，判断队列是否为空，或者当前线程是否是队列里第一个线程，<br />
+如果队列为空，然后 CAS 比较并交换 state 的值为 1，这两步都成功了，则当前线程获取了锁，设置 AQS 内部的当前线程变量为 current。</p>
+<p>如果 state 不是 0，判断 AQS 中的内部线程变量与 current 是否相等，是不是同一个线程来获取锁，是同一个线程，state + 1。可重入锁</p>
+<p>如果当前线程没有获取锁，会执行 acquireQueued(addWaiter(Node.EXCLUSIVE), arg) 操作，将线程先添加队列，然后阻塞当前线程</p>
+<p>Node.EXCLUSIVE 表示独占锁，addWaiter 这一步就是往队列里添加当前线程，添加到队列的尾部，Node 里有对当前线程的引用</p>
+<pre class="line-numbers"><code class="language-java">private Node addWaiter(Node mode) {
+	// 新建 Node，绑定当前线程 与 独占模式
+    Node node = new Node(Thread.currentThread(), mode);
+    Node pred = tail;
+    // tail 为null，表示队列为空 ？？tail 初始值是不是 null
+    // 不为 null，表示队列不为空，将 node 添加到队尾
+    if (pred != null) {
+        node.prev = pred;
+        if (compareAndSetTail(pred, node)) {
+            pred.next = node;
+            return node;
+        }
+    }
+    // 自旋，保证当前node 添加成功
+    enq(node);
+    return node;
+}
+
+private Node enq(final Node node) {
+	// 自旋 与 CAS 保证入队的线程 是一个一个入队的，原子性、同步
+	// 并且双向队列指针指向正确，此处也有并发情况，如果不是同步进行的有可能队列乱掉
+    for (;;) {
+        Node t = tail;
+        // 队列为空，表明是第一个线程进来，创建一个头结点，CAS 确保并发情况下只有一个线程能创建成功
+        // 设置头结点，尾结点等于头结点,相当于 初始化 队列，
+        // 但是没有对当前 node 操作，也就是说当前这个 node 还没有入队
+        if (t == null) { // Must initialize
+            if (compareAndSetHead(new Node()))
+                tail = head;
+        } else {
+        //队列不为空，添加到队尾
+            node.prev = t;
+            if (compareAndSetTail(t, node)) {
+                t.next = node;
+                return t;
+            }
+        }
+    }
+}
+</code></pre>
+<p>addWaiter 方法中，第一个线程获取lock 的时候，tail应该是 null ，然后 enq 执行的时候，如果 tail 是 null，只是进行了初始化，并没有将 node 设置到队尾，在下一次循环的时候添加到队尾，这样就 head 就是头结点，然后第一个线程对应的 node 其实是第二个节点？？？</p>
+<p>arg 就是 state，acquireQueued 这一步是为了阻塞队列中的线程，</p>
+<pre class="line-numbers"><code class="language-java">final boolean acquireQueued(final Node node, int arg) {
+    boolean failed = true;
+    try {
+        boolean interrupted = false;
+        for (;;) {
+            // 当前 node 的前一个 node
+            final Node p = node.predecessor();
+            // 如果 p 是头结点，说明队列中只有一个node ，
+            // 则再去重试获取锁，如果获取成功了，当前线程就不用阻塞，直接执行
+            // 下一步 selfInterrupt 就不用执行，一定程度上提高了并发
+            if (p == head &amp;&amp; tryAcquire(arg)) {
+                setHead(node);
+                p.next = null; // help GC
+                failed = false;
+                return interrupted;
+            }
+            // 判断 前置节点 p 的 waitStatus
+            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;
+                parkAndCheckInterrupt())
+                
+                interrupted = true;
+        }
+    } finally {
+        if (failed)
+            cancelAcquire(node);
+    }
+}
+
+
+private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
+// 前置节点的 ws，等于这个 Node.SIGNAL 的时候，才可以阻塞当前调用线程
+// 当前节点能否被 park 取决于其前置节点的 waitStatus
+    int ws = pred.waitStatus;
+    if (ws == Node.SIGNAL)
+        return true;
+    if (ws &gt; 0) {
+    // 大于0 的就只有 CANCELLED，删除大于 0 的node
+        do {
+            node.prev = pred = pred.prev;
+        } while (pred.waitStatus &gt; 0);
+        pred.next = node;
+    } else {
+        // 设置前置节点的状态为 Node.SIGNAL
+        compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
+    }
+    return false;
+}
+
+
+private final boolean parkAndCheckInterrupt() {
+    // 阻塞当前调用线程
+    LockSupport.park(this);
+    // 返回线程中断状态，清除中断状态
+    return Thread.interrupted();
+}
+
+// 中断当前调用线程，上面的 parkAndCheckInterrupt 方法清理掉了线程的中断信号状态
+static void selfInterrupt() {
+    // 中断线程
+    Thread.currentThread().interrupt();
+}
+</code></pre>
+<p>Node 的 waitStatus<br />
+CANCELLED = 1，表示已经失效的，需要删除<br />
+SIGNAL = -1，表示可以被阻塞<br />
+CONDITION = -2<br />
+PROPAGATE = -3</p>
+<p>shouldParkAfterFailedAcquire<br />
+当前节点对应的线程是否要 park，取决于其前置节点的 waitStatus 的值，当是 -1 的时候返回 true，表示当前节点对应的线程可以被阻塞，<br />
+如果是初始化状态，waitStatus = 0，则设置其前置节点的 waitStatus 为 -1。</p>
+<h3><a id="reentrantlock-unlock%E8%A7%A3%E9%94%81%E8%BF%87%E7%A8%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ReentrantLock  unlock 解锁过程</h3>
+<p>unlock 会调用 release 方法。唤醒队列头部线程<br />
+线程中断唤醒</p>
+<pre class="line-numbers"><code class="language-java">
+public final boolean release(int arg) {
+    // 尝试释放锁，修改 state 值为 原值减去 arg 的值
+    if (tryRelease(arg)) {
+        Node h = head;
+        // 头结点不为 null，并且头结点的 waitStatus 为 -1 时，才去 unpark 当前线程，然后把头结点的 waitStatus 改为 0
+        if (h != null &amp;&amp; h.waitStatus != 0)
+            unparkSuccessor(h);
+        return true;
+    }
+    return false;
+}
+
+
+protected final boolean tryRelease(int releases) {
+    int c = getState() - releases;
+    if (Thread.currentThread() != getExclusiveOwnerThread())
+        throw new IllegalMonitorStateException();
+    boolean free = false;
+    if (c == 0) {
+        free = true;
+        setExclusiveOwnerThread(null);
+    }
+    setState(c);
+    return free;
+}
+
+// node 为头结点，头结点的 waitStatus = -1 时，执行该方法
+// 将 头结点的 waitStatus 通过 CAS 方式 修改为 0
+// unpark 头结点后面第一个 waitStatus &lt;= 0  的节点对应的线程
+private void unparkSuccessor(Node node) {
+    int ws = node.waitStatus;
+    if (ws &lt; 0)
+        compareAndSetWaitStatus(node, ws, 0);
+    Node s = node.next;
+    if (s == null || s.waitStatus &gt; 0) {
+        s = null;
+        for (Node t = tail; t != null &amp;&amp; t != node; t = t.prev)
+            if (t.waitStatus &lt;= 0)
+                s = t;
+    }
+    if (s != null)
+        LockSupport.unpark(s.thread);
+}
+
+</code></pre>
+<p>上面加锁的过程，不惜循环两次，把头结点的 waitStatus 由 初始值 0 改为了 -1，<br />
+解锁的过程又把头结点的 waitStatus 由 -1 改为 0</p>
+<h3><a id="%E9%9D%9E%E5%85%AC%E5%B9%B3%E9%94%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>非公平锁</h3>
+<pre class="line-numbers"><code class="language-java">static final class NonfairSync extends Sync {
+
+    private static final long serialVersionUID = 7316153563782823691L;
+
+    /**
+     * Performs lock.  Try immediate barge, backing up to normal
+     * acquire on failure.
+     */
+    final void lock() {
+        // 这里是插队，新来的线程是否能够立即获取到锁，
+        // 如果获取到则执行新来的线程，获取不到则添加到队列尾部
+        if (compareAndSetState(0, 1))
+            setExclusiveOwnerThread(Thread.currentThread());
+        else
+            acquire(1);
+    }
+
+    protected final boolean tryAcquire(int acquires) {
+        return nonfairTryAcquire(acquires);
+    }
+}
+
+
+final boolean nonfairTryAcquire(int acquires) {
+    final Thread current = Thread.currentThread();
+    int c = getState();
+    if (c == 0) {
+        // 与公平锁的区别 少了一步判断 !hasQueuedPredecessors()
+        if (compareAndSetState(0, acquires)) {
+            setExclusiveOwnerThread(current);
+            return true;
+        }
+    }
+    else if (current == getExclusiveOwnerThread()) {
+        int nextc = c + acquires;
+        if (nextc &lt; 0) // overflow
+            throw new Error(&quot;Maximum lock count exceeded&quot;);
+        setState(nextc);
+        return true;
+    }
+    return false;
+}
+</code></pre>
+<h2><a id="locksupport" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>LockSupport</h2>
+<p>当线程调用 LockSupport.park 方法后，线程会阻塞在这，有两种方式唤醒，<br />
+一种是 外部唤醒，unpark<br />
+另一种是线程中断</p>
+<pre class="line-numbers"><code class="language-java">Thread t0 = new Thread(new Runnable() {
+	@Override
+	public void run() {
+		Thread thread = Thread.currentThread();
+		String name = thread.getName();
+		System.out.println( name + &quot; 开始执行&quot;);
+		for (;;){
+			System.out.println(&quot;准备 park 当前线程 &quot; + name);
+			LockSupport.park();
+			System.out.println(&quot;当前线程 &quot; + name + &quot; 已被唤醒&quot;);
+			if (thread.isInterrupted()){
+				System.out.println(&quot;线程已被中断&quot;);
+				return;
+			}
+		}
+	}
+});
+
+t0.start();
+TimeUnit.SECONDS.sleep(2);
+System.out.println(&quot;准备唤醒 &quot; + t0.getName());
+LockSupport.unpark(t0);
+
+TimeUnit.SECONDS.sleep(2);
+t0.interrupt();
+
+--- 运行结果
+Thread-0 开始执行
+准备 park 当前线程 Thread-0
+准备唤醒 Thread-0
+当前线程 Thread-0 已被唤醒
+准备 park 当前线程 Thread-0
+当前线程 Thread-0 已被唤醒
+线程已被中断
+
+</code></pre>
+<p>interrupt() 方法中断线程，但并不是立即停止线程，而是等待线程运行结束后中断</p>
+<hr />
+<!--
+上面说完了 ReentrantLock，其实 AQS 还有两个比较重要的实现，CountDownLatch 和 Semaphore。
+
+Semaphore 通常叫它信号量， 可以用来控制同时访问特定资源的线程数量。常用于限流。 比如：数据库连接池-->
+
+]]></content>
+  </entry>
+  
+</feed>

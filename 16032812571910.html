@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -162,7 +162,7 @@
 <h2><a id="refresh%E6%96%B9%E6%B3%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>refresh方法</h2>
 <p>IoC 初始化过程中核心方法 refresh ：</p>
 <p>org.springframework.context.support.AbstractApplicationContext#refresh ：</p>
-<pre><code class="language-plain_text">public void refresh() throws BeansException, IllegalStateException {
+<pre class="line-numbers"><code class="language-plain_text">public void refresh() throws BeansException, IllegalStateException {
 	synchronized (this.startupShutdownMonitor) {
 		// Prepare this context for refreshing.
 		// 刷新上下文
@@ -256,7 +256,7 @@
 <p>BeanFactory 中最重要的方法就是 getBean，这个方法既可以获取 bean、也可以生产 bean，获取 bean 是从缓存中去拿，如果缓存中没有在去生产 bean 。</p>
 <h2><a id="%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>三级缓存解决循环依赖</h2>
 <p>假设这么一个场景</p>
-<pre><code class="language-java">class A{
+<pre class="line-numbers"><code class="language-java">class A{
 	@Autowired
 	private B b;
 
@@ -268,7 +268,7 @@ class B{
 }
 </code></pre>
 <p>A 依赖 B，B 又依赖 A，但是 Spring 却没有出现 循环依赖，其解决方式是通过 三个缓存 map 。</p>
-<pre><code class="language-java">一级缓存，存的是实例化、初始化完成的 bean，最终的 bean，可以直接拿来用的
+<pre class="line-numbers"><code class="language-java">一级缓存，存的是实例化、初始化完成的 bean，最终的 bean，可以直接拿来用的
 private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap&lt;&gt;(256);
 
 二级缓存，存放的是完成实例化，但是还未进行初始化的 bean
@@ -313,7 +313,7 @@ private final Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories = new
       <p class="text-right" style="padding:15px 0px;">
       
           <a  href="16652372971274.html" 
-          title="Next Post: .gitignore 更新后如何生效">.gitignore 更新后如何生效 &raquo;</a>
+          title="Next Post: git 操作">git 操作 &raquo;</a>
       
       </p>
         </div>
@@ -408,6 +408,12 @@ private final Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories = new
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -427,12 +433,6 @@ private final Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories = new
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

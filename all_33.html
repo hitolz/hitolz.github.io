@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -126,188 +126,76 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16054964627964.html">
+                <a class="clearlink" href="16061834685059.html">
                 
-                  <h1>计算机网络--物理层</h1>
+                  <h1>Java写一个死锁</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<div class="mweb_toc"><ul>
-<li><a href="#1%E3%80%81%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">1、基本概念</a></li>
-<li><a href="#2%E3%80%81%E6%95%B0%E6%8D%AE%E9%80%9A%E4%BF%A1%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86">2、数据通信的基础知识</a>
-<ul>
-<li><a href="#2-1%E6%95%B0%E6%8D%AE%E9%80%9A%E4%BF%A1%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A8%A1%E5%9E%8B">2.1 数据通信系统的模型</a></li>
-<li><a href="#2-2%E6%9C%89%E5%85%B3%E4%BF%A1%E9%81%93%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">2.2 有关信道的基本概念</a></li>
-<li><a href="#2-3%E4%BF%A1%E9%81%93%E7%9A%84%E6%9E%81%E9%99%90%E5%AE%B9%E9%87%8F">2.3 信道的极限容量</a></li>
-</ul>
-</li>
-<li><a href="#3%E3%80%81%E7%89%A9%E7%90%86%E5%B1%82%E4%B8%8B%E9%9D%A2%E7%9A%84%E4%BC%A0%E8%BE%93%E5%AA%92%E4%BD%93">3、物理层下面的传输媒体</a>
-<ul>
-<li><a href="#3-1%E5%AF%BC%E5%BC%95%E5%9E%8B%E4%BC%A0%E8%BE%93%E5%AA%92%E4%BD%93">3.1 导引型传输媒体</a>
-<ul>
-<li><a href="#%E5%8F%8C%E7%BB%9E%E7%BA%BF">双绞线</a></li>
-<li><a href="#%E5%90%8C%E8%BD%B4%E7%94%B5%E7%BC%86">同轴电缆</a></li>
-<li><a href="#%E5%85%89%E7%BC%86">光缆</a></li>
-</ul>
-</li>
-<li><a href="#3-2%E9%9D%9E%E5%AF%BC%E5%BC%95%E5%9E%8B%E4%BC%A0%E8%BE%93%E5%AA%92%E4%BD%93">3.2 非导引型传输媒体</a></li>
-</ul>
-</li>
-<li><a href="#4%E3%80%81%E4%BF%A1%E9%81%93%E7%9A%84%E5%A4%8D%E7%94%A8%E6%8A%80%E6%9C%AF">4、信道的复用技术</a>
-<ul>
-<li><a href="#4-1%E9%A2%91%E5%88%86%E5%A4%8D%E7%94%A8%E3%80%81%E6%97%B6%E5%88%86%E5%A4%8D%E7%94%A8%E3%80%81%E7%BB%9F%E8%AE%A1%E6%97%B6%E5%88%86%E5%A4%8D%E7%94%A8">4.1 频分复用、时分复用、统计时分复用</a></li>
-<li><a href="#4-2%E6%B3%A2%E5%88%86%E5%A4%8D%E7%94%A8">4.2 波分复用</a></li>
-<li><a href="#4-3%E7%A0%81%E5%88%86%E5%A4%8D%E7%94%A8">4.3 码分复用</a></li>
-</ul>
-</li>
-<li><a href="#5%E3%80%81%E6%95%B0%E5%AD%97%E4%BC%A0%E8%BE%93%E7%B3%BB%E7%BB%9F">5、数字传输系统</a></li>
-<li><a href="#6%E3%80%81%E5%AE%BD%E5%B8%A6%E5%B0%B1%E6%8E%A5%E5%85%A5%E6%8A%80%E6%9C%AF">6、宽带就接入技术</a></li>
-</ul>
-</div>
-<p><img src="http://hitol.blog.cdn.updev.cn/16038522760929.jpg" alt="" /></p>
-<h2><a id="1%E3%80%81%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1、基本概念</h2>
-<p>物理层的作用是要尽可能地屏蔽调传输媒体和通信手段的差异，使物理层上面的数据链路层感觉不到这些差异，这样就可以使数据链路层只需要考虑如何完成本层的协议和服务，而不必考虑网络具体的传输媒体和通信手段是什么。</p>
-<p>物理层的主要任务描述为 确定与传输媒体的接口有关的一些特性：</p>
-<ul>
+                        	<pre class="line-numbers"><code class="language-plain_text">public class DeadLockDemo {
+
+	private static String A = &quot;A&quot;;
+	private static String B = &quot;B&quot;;
+
+
+	private void deadLock(){
+		Thread  t1 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (A){
+					try {
+						Thread.currentThread().sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					synchronized (B){
+						System.out.println(&quot;t1&quot;);
+					}
+				}
+			}
+		});
+
+		Thread  t2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (B){
+					synchronized (A){
+						System.out.println(&quot;t2&quot;);
+					}
+				}
+			}
+		});
+
+		t1.start();
+		t2.start();
+	}
+
+	public static void main(String[] args) {
+		new DeadLockDemo().deadLock();
+	}
+}
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/16061836722063.jpg" alt="" /></p>
+<p>操作系统中，死锁发生的四个条件：</p>
+<ol>
 <li>
-<p>机械特性<br />
-指明接口所用接线器的形状和尺寸、引脚数目和排列、固定和锁定装置等。</p>
-</li>
-<li>
-<p>电气特性<br />
-指明在接口电缆的各条线上出现的电压的范围。</p>
-</li>
-<li>
-<p>功能特性<br />
-指明某条线上出现的某一电平的电压的意义。</p>
-</li>
-<li>
-<p>过程特性<br />
-指明对于不同功能的各种可能事件的出现顺序。</p>
-</li>
-</ul>
-<h2><a id="2%E3%80%81%E6%95%B0%E6%8D%AE%E9%80%9A%E4%BF%A1%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2、数据通信的基础知识</h2>
-<h3><a id="2-1%E6%95%B0%E6%8D%AE%E9%80%9A%E4%BF%A1%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A8%A1%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.1 数据通信系统的模型</h3>
-<p><img src="http://hitol.blog.cdn.updev.cn/16055228410829.jpg" alt="" /></p>
-<p>一个数据通信系统可以划分为三大部分，即源系统（发送端、发送方）、传输系统（传输网络）、目的系统（接收端、接收方）。</p>
-<p>源系统一般包括两个部分：</p>
-<ul>
-<li>
-<p>源点<br />
-源点设备产生要传输的数据。例如，键盘输入汉字，计算机产生输出的数字比特流。源站、信源。</p>
+<p>互斥条件<br />
+一个资源每次只能被一个进程使用</p>
 </li>
 <li>
-<p>发送器<br />
-源点生成的数字比特流要通过发送器编码后才能够在传输系统中进行传输。典型的发送器就是 调制器。</p>
-</li>
-</ul>
-<p>目的系统一般也包含两个部分：</p>
-<ul>
-<li>
-<p>接收器<br />
-接收传输系统传送过来的信号，并把它转换为能够被目的设备处理的信息。典型的接收器就是 解调器。它把来自传输线路上的模拟信号进行解调，提取出在发送端置入的消息，还原出发送端产生的数字比特流。</p>
+<p>占有且等待<br />
+一个进程因请求资源而阻塞时，对已获得的资源保持不放</p>
 </li>
 <li>
-<p>终点<br />
-终点设备从接收器获取传送来的数字比特流，然后把信息输出。目的站、信宿。</p>
-</li>
-</ul>
-<p>通信的目的是传送消息，数据是运送消息的实体，是使用特定方式表示的信息，通常是有意义的符号序列。信号则是数据的电气或电磁的表现。</p>
-<p>信号可以分为两大类：</p>
-<ul>
-<li>
-<p>模拟信号，或连续信号，代表消息的参数的取值是连续的。</p>
+<p>不可强行占有<br />
+进程已获得的资源，在未使用完成之前，不能强行剥夺</p>
 </li>
 <li>
-<p>数字信号，或离散信号，代表消息的参数的取值是离散的。在使用时间域（简称 时域）的波形表示数字信号时，代表不同离散数值的基本波形称为码元。在使用 二进制编码时，只有两种不同的码元，0、1。</p>
+<p>循环等待<br />
+进程之间形成一种头尾相接的循环等待资源关系</p>
 </li>
-</ul>
-<h3><a id="2-2%E6%9C%89%E5%85%B3%E4%BF%A1%E9%81%93%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.2 有关信道的基本概念</h3>
-<p>信道一般都是用来表示向某一个方向传送信息的媒体。一条通信电路往往包含一条发送信道和一条接收信道。</p>
-<p>从通信双方信息交互的方式来看，可以有三种基本方式：</p>
-<ul>
-<li>
-<p>单向通信<br />
-单工通信，只有一个方向。广播</p>
-</li>
-<li>
-<p>双向交替通信<br />
-半双工通信，即通信的双方都可以发送消息，但不能同时发送。</p>
-</li>
-<li>
-<p>双向同时通信<br />
-全双工通信，即通信的双方可以同时发送和接收信息。</p>
-</li>
-</ul>
-<h3><a id="2-3%E4%BF%A1%E9%81%93%E7%9A%84%E6%9E%81%E9%99%90%E5%AE%B9%E9%87%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.3 信道的极限容量</h3>
-<h2><a id="3%E3%80%81%E7%89%A9%E7%90%86%E5%B1%82%E4%B8%8B%E9%9D%A2%E7%9A%84%E4%BC%A0%E8%BE%93%E5%AA%92%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3、物理层下面的传输媒体</h2>
-<p>传输媒体也称为传输介质或传媒介，它就是数据传输系统中在发送器和接收器之间的物理通路。</p>
-<p>传输媒体分为两大类：</p>
-<ul>
-<li>
-<p>导引型传输媒体<br />
-电磁波被导引沿着固体媒体（铜线或光纤）传播</p>
-</li>
-<li>
-<p>非引导型传输媒体<br />
-就是指自由空间，在非引导型传输媒体中电磁波的传输常称为无线传输。</p>
-</li>
-</ul>
-<h3><a id="3-1%E5%AF%BC%E5%BC%95%E5%9E%8B%E4%BC%A0%E8%BE%93%E5%AA%92%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3.1 导引型传输媒体</h3>
-<h4><a id="%E5%8F%8C%E7%BB%9E%E7%BA%BF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>双绞线</h4>
-<p>双纽线，最古老但是最常用的传输媒体。<br />
-绞合可减少对相邻导线的电磁干扰。</p>
-<p>在双绞线的外面在加上一层用金属丝编织成的屏蔽层就是 屏蔽双绞线，简称 STP。</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/16055295827691.jpg" alt="" /></p>
-<h4><a id="%E5%90%8C%E8%BD%B4%E7%94%B5%E7%BC%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>同轴电缆</h4>
-<p><img src="http://hitol.blog.cdn.updev.cn/16055820535599.jpg" alt="" /><br />
-目前主要用在有线电视网的居民小区中。</p>
-<h4><a id="%E5%85%89%E7%BC%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>光缆</h4>
-<p>光纤通信就是利用光导纤维传递光脉冲来进行通信。</p>
-<p>光纤是光纤通信的传输媒体，在发送端有光源，可以采用发光二极管或半导体激光器，它们在电脉冲的作用下能产生出光脉冲。接收端利用光电二极管做成光检测器，在检测到光脉冲时可还原出电脉冲。</p>
-<ul>
-<li>传输损耗小，中继距离常，对远距离传输特别经济</li>
-<li>抗雷电和电磁干扰性能好</li>
-<li>无串音干扰，保密性好</li>
-<li>体积小、重量轻</li>
-</ul>
-<h3><a id="3-2%E9%9D%9E%E5%AF%BC%E5%BC%95%E5%9E%8B%E4%BC%A0%E8%BE%93%E5%AA%92%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3.2 非导引型传输媒体</h3>
-<p>利用无线电波在自由空间的传播可以较快地实现多种通信。<br />
-将自由空间称为“非导引型传输媒体”</p>
-<p>无线传输。</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/16055361586475.jpg" alt="" style="width:824px;" /></p>
-<p>短波通信主要是靠电离层的反射。</p>
-<h2><a id="4%E3%80%81%E4%BF%A1%E9%81%93%E7%9A%84%E5%A4%8D%E7%94%A8%E6%8A%80%E6%9C%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4、信道的复用技术</h2>
-<p><img src="http://hitol.blog.cdn.updev.cn/16158233124406.jpg" alt="" /></p>
-<p>最基本的复用是 频分复用 FDM 和时分复用 TDM。</p>
-<h3><a id="4-1%E9%A2%91%E5%88%86%E5%A4%8D%E7%94%A8%E3%80%81%E6%97%B6%E5%88%86%E5%A4%8D%E7%94%A8%E3%80%81%E7%BB%9F%E8%AE%A1%E6%97%B6%E5%88%86%E5%A4%8D%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4.1 频分复用、时分复用、统计时分复用</h3>
-<ul>
-<li>频分复用的所有用户在同样的时间占用不同的带宽资源。</li>
-</ul>
-<p>将用于传输信号的总带宽划分为多个子频带（或称子信道），每一个子信道传输一路信号。频分复用要求总频率宽度大于各子信道之和，同时为了保证子信道之间信息互不干扰，各子信道之间设置隔离带。</p>
-<ul>
-<li>时分复用的所有用户是在不同的时间占用同样的频带宽度。</li>
-</ul>
-<p>将提供给整个信道传输信息的时间划分成若干时间片（简称时隙），并将这些时隙分配给每一个信号源使用，每一路信号在自己的时隙内独占信道进行数据传输。时分复用技术的特点是时隙事先规划分配好且固定不变，所以有时也叫同步时分复用。</p>
-<p>这两种复用方法的优点是技术比较成熟，但缺点是不够灵活。</p>
-<p>统计时分复用STDM 是一种改进的时分复用，能明显提高信道的利用率。</p>
-<h3><a id="4-2%E6%B3%A2%E5%88%86%E5%A4%8D%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4.2 波分复用</h3>
-<p>波分复用 WDM 就是光的频分复用。</p>
-<h3><a id="4-3%E7%A0%81%E5%88%86%E5%A4%8D%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4.3 码分复用</h3>
-<p><a href="https://blog.csdn.net/dog250/article/details/6420427">https://blog.csdn.net/dog250/article/details/6420427</a></p>
-<h2><a id="5%E3%80%81%E6%95%B0%E5%AD%97%E4%BC%A0%E8%BE%93%E7%B3%BB%E7%BB%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>5、数字传输系统</h2>
-<p>早起的数字传输系统存在许多缺点，其中最主要的两个<br />
-1、速率标准不同意<br />
-2、不是同步传输</p>
-<p>为了解决上述问题，美国在1988年上首先推出了一个数字传输系统，叫做同步光纤网 SONET。</p>
-<h2><a id="6%E3%80%81%E5%AE%BD%E5%B8%A6%E5%B0%B1%E6%8E%A5%E5%85%A5%E6%8A%80%E6%9C%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>6、宽带就接入技术</h2>
-<p>ASDL</p>
-<p>非对称数字用户线技术，是用数字技术对现有的模拟电话用户线进行改造，使它能够承载数字业务。</p>
-<p>光纤同轴混合网</p>
-<p>HFC 是在目前覆盖很广的有线电视网的基础上开发的一种居民宽带接入网，除可传送电视节目外，还能提供电话、数据和其他宽带交互性业务。</p>
-<p>FTTx</p>
-<p>光纤到户。</p>
+</ol>
 
                         
                       </div>
@@ -316,10 +204,10 @@
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/11/16 11:14 上午</span>
+                    <span class="date">2020/11/24 10:04 上午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html'>网络协议</a></span>
+          					    <span class="posted-in"><a href='Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html'>Java并发编程的艺术</a></span>
           				   
                     
 
@@ -427,6 +315,12 @@
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -446,12 +340,6 @@
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

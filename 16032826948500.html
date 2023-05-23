@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -147,7 +147,7 @@
 
       <div class="article-content">
       <p>安装mysql镜像，并启动两个容器，分别命名为master\slave1</p>
-<pre><code class="language-plain_text">docker pull mysql
+<pre class="line-numbers"><code class="language-plain_text">docker pull mysql
 
 docker run --name master -p 3307:3306 -e MYSQL_ROOT_PASSWORD=masterRoot -d mysql
 
@@ -156,23 +156,23 @@ docker run --name slave1 -p 3308:3306 -e MYSQL_ROOT_PASSWORD=slave1Root -d mysql
 </code></pre>
 <p>--</p>
 <p>查看master的ip</p>
-<pre><code class="language-plain_text">docker inspect --format='{{.NetworkSettings.IPAddress}}'  f7e6499911c8
+<pre class="line-numbers"><code class="language-plain_text">docker inspect --format='{{.NetworkSettings.IPAddress}}'  f7e6499911c8
 </code></pre>
 <p>172.17.0.3</p>
 <p>--</p>
 <p>修改master配置文件my.cnf<br />
 在[mysqld]配置中添加两个配置</p>
-<pre><code class="language-plain_text">log-bin         = mysql-bin
+<pre class="line-numbers"><code class="language-plain_text">log-bin         = mysql-bin
 server-id		= 1
 </code></pre>
 <p>修改slave1配置文件my.cnf<br />
 在[mysqld]配置中添加两个配置</p>
-<pre><code class="language-plain_text">log-bin         = mysql-bin
+<pre class="line-numbers"><code class="language-plain_text">log-bin         = mysql-bin
 server-id		= 2
 </code></pre>
 <p>--</p>
 <p>在master数据库中创建用来同步数据的用户</p>
-<pre><code class="language-plain_text">CREATE USER 'slave'@'%' IDENTIFIED BY '123456';
+<pre class="line-numbers"><code class="language-plain_text">CREATE USER 'slave'@'%' IDENTIFIED BY '123456';
 GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'slave'@'%';  
 </code></pre>
 <p><code>REPLICATION SLAVE</code> 常用于建立复制时所需要用到的用户权限，也就是slave server必须被master server授权具有该权限的用户，才能通过该用户复制。<br />
@@ -182,7 +182,7 @@ GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'slave'@'%';
 </blockquote>
 <p><code>REPLICATION CLIEN</code>T 不可用于建立复制，有该权限时，只是多了可以使用如&quot;SHOW SLAVE STATUS&quot;、&quot;SHOW MASTER STATUS&quot;等命令。</p>
 <p>--</p>
-<pre><code class="language-plain_text">mysql&gt; show master status
+<pre class="line-numbers"><code class="language-plain_text">mysql&gt; show master status
     -&gt; ;
 +------------------+----------+--------------+------------------+-------------------+
 | File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
@@ -195,7 +195,7 @@ mysql&gt;
 </code></pre>
 <p>--</p>
 <p>在slave1中执行</p>
-<pre><code class="language-plain_text">change master to master_host='172.17.0.3', master_user='slave', master_password='123456', master_port=3306, master_log_file='mysql-bin.000001', master_log_pos=156, master_connect_retry=30;  
+<pre class="line-numbers"><code class="language-plain_text">change master to master_host='172.17.0.3', master_user='slave', master_password='123456', master_port=3306, master_log_file='mysql-bin.000001', master_log_pos=156, master_connect_retry=30;  
 </code></pre>
 <p>这里需要注意下，<code>master_host</code>用master容器的ip，<code>master_port</code>是3306，<code>master_log_file</code>是上面master的<code>show master status</code>的File，<code>master_log_pos</code>则是Position。</p>
 <p>我一开始以为master_port是主机映射到master容器的端口3307，搞了半天也搞不通。</p>
@@ -325,6 +325,12 @@ mysql&gt;
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -344,12 +350,6 @@ mysql&gt;
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

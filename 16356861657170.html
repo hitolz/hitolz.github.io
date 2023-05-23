@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -148,7 +148,7 @@
 <p>Graphql 是一种类似于 REST 的一种 API 标准。<br />
 不是一种数据库技术。</p>
 <p>总的来说就是，后端可以根据前端需要的字段返回对应的信息，不需要修改原有接口。</p>
-<pre><code class="language-plain_text">--- 1.前端请求字段
+<pre class="line-numbers"><code class="language-plain_text">--- 1.前端请求字段
 {
   hero {
     name
@@ -199,7 +199,7 @@
 <h2><a id="demo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>demo</h2>
 <p><a href="https://gitee.com/hitol/graphql-demo.git">https://gitee.com/hitol/graphql-demo.git</a></p>
 <h3><a id="dependencies" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>dependencies</h3>
-<pre><code class="language-xml">&lt;dependency&gt;
+<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
     &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
     &lt;artifactId&gt;graphql-java&lt;/artifactId&gt;
     &lt;version&gt;11.0&lt;/version&gt;
@@ -225,7 +225,7 @@
 </code></pre>
 <h3><a id="schema" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Schema</h3>
 <p>在 resources 文件夹下新建一个 schema.graphqls 文件，其内容如下</p>
-<pre><code class="language-graphql">type Query {
+<pre class="line-numbers"><code class="language-graphql">type Query {
   bookById(id: ID): Book 
 }
 
@@ -244,7 +244,7 @@ type Author {
 
 </code></pre>
 <h2><a id="graphql%E5%8A%A0%E8%BD%BD%E5%88%B0-spring" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Graphql 加载到 Spring</h2>
-<pre><code class="language-java">
+<pre class="line-numbers"><code class="language-java">
 @Component
 public class GraphQLProvider {
 
@@ -407,6 +407,12 @@ public class GraphQLProvider {
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -426,12 +432,6 @@ public class GraphQLProvider {
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -167,7 +167,7 @@
 </ul>
 </div>
 <h2><a id="1%E3%80%81%E6%B7%BB%E5%8A%A0-mybatis%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1、添加 mybatis 依赖</h2>
-<pre><code class="language-plain_text">&lt;!--mybatis--&gt;
+<pre class="line-numbers"><code class="language-plain_text">&lt;!--mybatis--&gt;
 &lt;dependency&gt;
     &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
     &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
@@ -182,7 +182,7 @@
 </code></pre>
 <h2><a id="2%E3%80%81%E9%85%8D%E7%BD%AE-mybatis" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2、配置 mybatis</h2>
 <h3><a id="%E9%85%8D%E7%BD%AEdatasource" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 dataSource</h3>
-<pre><code class="language-plain_text">&lt;bean id=&quot;dataSource&quot; class=&quot;org.apache.commons.dbcp.BasicDataSource&quot;&gt;
+<pre class="line-numbers"><code class="language-plain_text">&lt;bean id=&quot;dataSource&quot; class=&quot;org.apache.commons.dbcp.BasicDataSource&quot;&gt;
 	&lt;property name=&quot;driverClassName&quot;  value=&quot;com.mysql.jdbc.Driver&quot; /&gt;
 	&lt;property name=&quot;url&quot;              value=&quot;${xxx}&quot; /&gt;
 	&lt;property name=&quot;username&quot;         value=&quot;${xxx}&quot; /&gt;
@@ -198,7 +198,7 @@
 &lt;/bean&gt;
 </code></pre>
 <h3><a id="%E9%85%8D%E7%BD%AEsqlsessionfactory" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 sqlSessionFactory</h3>
-<pre><code class="language-plain_text">&lt;bean id=&quot;sqlSessionFactory&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;
+<pre class="line-numbers"><code class="language-plain_text">&lt;bean id=&quot;sqlSessionFactory&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;
 	  p:dataSource-ref=&quot;dataSource&quot;
 	  p:configLocation=&quot;classpath:mybatis-config.xml&quot;
 	  p:typeAliasesPackage=&quot;com.acc.ac.core.common.model&quot;
@@ -208,18 +208,18 @@
 typeAliasesPackage: 实体类对应的包<br />
 mapperLocations: mapper.xml 文件存放位置。</p>
 <h3><a id="%E9%85%8D%E7%BD%AEmapperscannerconfigurer" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 MapperScannerConfigurer</h3>
-<pre><code class="language-plain_text">&lt;bean class=&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;
+<pre class="line-numbers"><code class="language-plain_text">&lt;bean class=&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;
 	  p:sqlSessionFactoryBeanName=&quot;sqlSessionFactory&quot;
 	  p:basePackage=&quot;com.acc.ac.core.dao&quot;/&gt;
 </code></pre>
 <p>配置之后会自动扫描 basePackage 包下的 mapper interface，加到 Spring 容器中。</p>
 <h3><a id="%E9%85%8D%E7%BD%AEtransactionmanager" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 transactionManager</h3>
-<pre><code class="language-plain_text">&lt;bean id=&quot;transactionManager&quot; class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;
+<pre class="line-numbers"><code class="language-plain_text">&lt;bean id=&quot;transactionManager&quot; class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;
 	  p:dataSource-ref=&quot;dataSource&quot;/&gt;
 </code></pre>
 <h2><a id="3%E3%80%81%E9%85%8D%E7%BD%AE-mybatis-generater%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3、配置 mybatis-generater 自动生成代码</h2>
 <h3><a id="pom%E6%96%87%E4%BB%B6%E4%B8%AD%E5%A2%9E%E5%8A%A0%E6%8F%92%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>pom 文件中增加插件</h3>
-<pre><code class="language-plain_text">&lt;build&gt;
+<pre class="line-numbers"><code class="language-plain_text">&lt;build&gt;
     &lt;plugins&gt;
         &lt;plugin&gt;
             &lt;groupId&gt;org.mybatis.generator&lt;/groupId&gt;
@@ -244,7 +244,7 @@ mapperLocations: mapper.xml 文件存放位置。</p>
 &lt;/build&gt;
 </code></pre>
 <h3><a id="mybatis-generatorconfig-xml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>mybatis-generatorConfig.xml 配置文件</h3>
-<pre><code class="language-plain_text">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+<pre class="line-numbers"><code class="language-plain_text">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;!DOCTYPE generatorConfiguration
         PUBLIC &quot;-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN&quot;
         &quot;http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd&quot;&gt;
@@ -438,6 +438,12 @@ mapperLocations: mapper.xml 文件存放位置。</p>
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -457,12 +463,6 @@ mapperLocations: mapper.xml 文件存放位置。</p>
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

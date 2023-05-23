@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -135,7 +135,7 @@
                         
                         	<h2><a id="redis-master" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-master</h2>
 <p>redis-master.yml</p>
-<pre><code class="language-yml">apiVersion: apps/v1
+<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis-master
@@ -176,14 +176,14 @@ spec:
 </code></pre>
 <h2><a id="redis-slave" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-slave</h2>
 <p>Dockerfile</p>
-<pre><code class="language-plain_text">FROM redis
+<pre class="line-numbers"><code class="language-plain_text">FROM redis
 
 COPY run.sh /
 RUN chmod +x /run.sh
 CMD /run.sh
 </code></pre>
 <p>run.sh</p>
-<pre><code class="language-shell">if [[ ${GET_HOSTS_FROM:-dns} == &quot;env&quot; ]]; then
+<pre class="line-numbers"><code class="language-shell">if [[ ${GET_HOSTS_FROM:-dns} == &quot;env&quot; ]]; then
   redis-server --slaveof ${REDIS_MASTER_SERVICE_HOST} 6379
 else
   redis-server --slaveof redis-master 6379
@@ -191,7 +191,7 @@ fi
 </code></pre>
 <p>docker build 生成镜像</p>
 <p>redis-slave.yml</p>
-<pre><code class="language-yml">apiVersion: apps/v1
+<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis-slave
@@ -355,6 +355,12 @@ spec:
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -374,12 +380,6 @@ spec:
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

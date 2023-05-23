@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -164,7 +164,7 @@
 自定义一个注解，被这个注解修饰的方法需要实现AOP。</p>
 <h2><a id="%E5%AE%9E%E7%8E%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>实现</h2>
 <p>定义一个缓存注解，被这个注解修饰的方法，会执行切面中的方法。</p>
-<pre><code class="language-plain_text">/**
+<pre class="line-numbers"><code class="language-plain_text">/**
  * redis缓存注解
  * @author hitol
  * @version $Id: RedisCache.java, v 0.1 2020年3月19日 下午8:26:48 hitol Exp $
@@ -183,7 +183,7 @@ public @interface RedisCache {
 
 </code></pre>
 <p>定义缓存切面，使用环绕通知.</p>
-<pre><code class="language-plain_text">/**
+<pre class="line-numbers"><code class="language-plain_text">/**
  * 缓存切面
  * @author hitol
  * @version $Id: CacheAop.java, v 0.1 2020年3月20日 下午6:49:10 hitol Exp $
@@ -359,6 +359,12 @@ public class CacheAop {
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -378,12 +384,6 @@ public class CacheAop {
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

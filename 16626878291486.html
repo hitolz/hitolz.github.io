@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -161,7 +161,7 @@
 </ol>
 <h2><a id="gin" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>gin</h2>
 <p>最快的 http 路由器和框架。</p>
-<pre><code class="language-go">package main
+<pre class="line-numbers"><code class="language-go">package main
 
 import &quot;github.com/gin-gonic/gin&quot;
 
@@ -177,7 +177,7 @@ func main() {
 </code></pre>
 <p>一个最简单的例子，启动后浏览器访问 <a href="http://localhost:8080/ping">http://localhost:8080/ping</a></p>
 <p>使用路由：</p>
-<pre><code class="language-go">func main() {
+<pre class="line-numbers"><code class="language-go">func main() {
 	engine := gin.Default()
 	engine.Group(&quot;/&quot;)
 
@@ -192,7 +192,7 @@ func main() {
 <p>将接口放在程序入口 main 方法中不太合适，通常会创建多个 handler，类似于 java 中的 controller。</p>
 <h2><a id="gorm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>gorm</h2>
 <p>连接数据库</p>
-<pre><code class="language-go">// 数据库连接：&quot;用户名:密码@tcp(IP:端口)/数据库?charset=utf8&quot;
+<pre class="line-numbers"><code class="language-go">// 数据库连接：&quot;用户名:密码@tcp(IP:端口)/数据库?charset=utf8&quot;
 sqlcon := &quot;root:123456@tcp(127.0.0.1:3306)/amc?charset=utf8&amp;parseTime=True&amp;loc=Local&quot;
 
 
@@ -217,7 +217,7 @@ sqlDB.SetMaxIdleConns(20)
 <h3><a id="crud" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CRUD</h3>
 <h4><a id="insert" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>insert</h4>
 <p>保存单条数据</p>
-<pre><code class="language-go">createConfig := dao.ShortLinkConfig{
+<pre class="line-numbers"><code class="language-go">createConfig := dao.ShortLinkConfig{
 	Enable:      1,
 	OriginUrl:   &quot;http://localhost:8080&quot;,
 	ShortCode:   &quot;test&quot;,
@@ -227,7 +227,7 @@ sqlDB.SetMaxIdleConns(20)
 mysql.Db.Save(&amp;createConfig)
 </code></pre>
 <p>保存多条数据</p>
-<pre><code class="language-go">shortLinkConfigs := []dao.ShortLinkConfig{
+<pre class="line-numbers"><code class="language-go">shortLinkConfigs := []dao.ShortLinkConfig{
 	{
 		Enable:      1,
 		OriginUrl:   &quot;http://localhost:8080&quot;,
@@ -255,7 +255,7 @@ mysql.Db.Save(&amp;createConfig)
 mysql.Db.CreateInBatches(&amp;shortLinkConfigs, 1000)
 </code></pre>
 <h4><a id="select" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>select</h4>
-<pre><code class="language-go">config := dao.ShortLinkConfig{
+<pre class="line-numbers"><code class="language-go">config := dao.ShortLinkConfig{
 	Enable: 1,
 }
 
@@ -307,7 +307,7 @@ for i, linkConfig := range shortLinkConfigs {
 </code></pre>
 <h4><a id="update" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>update</h4>
 <p>Save</p>
-<pre><code class="language-go">shortCode := &quot;test3&quot;
+<pre class="line-numbers"><code class="language-go">shortCode := &quot;test3&quot;
 shortLinkConfig := dao.ShortLinkConfig{}
 mysql.Db.Where(&quot;short_code = ? and enable = 1&quot;, shortCode).First(&amp;shortLinkConfig)
 log.Printf(&quot;short_code = %s,config = %v&quot;, shortCode, shortLinkConfig)
@@ -316,11 +316,11 @@ shortLinkConfig.ShortCode = &quot;test5&quot;
 mysql.Db.Save(&amp;shortLinkConfig)
 </code></pre>
 <p>Update 更新单个列</p>
-<pre><code class="language-go">// update short_link_config set short_code = &quot;123&quot; where short_code = &quot;test5&quot; and enable = 1
+<pre class="line-numbers"><code class="language-go">// update short_link_config set short_code = &quot;123&quot; where short_code = &quot;test5&quot; and enable = 1
 mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&quot;short_code = ? and enable = 1&quot;, shortCode).Update(&quot;short_code&quot;, &quot;123&quot;)
 </code></pre>
 <p>更新多列,struct 方式,只会更新非零值</p>
-<pre><code class="language-go">mysql.Db.Where(&amp;dao.ShortLinkConfig{
+<pre class="line-numbers"><code class="language-go">mysql.Db.Where(&amp;dao.ShortLinkConfig{
 	Enable: 1,
 }).Updates(dao.ShortLinkConfig{
 	Enable:    0,
@@ -328,11 +328,11 @@ mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&quot;short_code = ? and enable
 })
 </code></pre>
 <p>更新多列，map 方式</p>
-<pre><code class="language-go">mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&amp;dao.ShortLinkConfig{Enable: 1}).Updates(map[string]interface{}{&quot;origin_url&quot;: &quot;http://www.baidu.com&quot;})
+<pre class="line-numbers"><code class="language-go">mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&amp;dao.ShortLinkConfig{Enable: 1}).Updates(map[string]interface{}{&quot;origin_url&quot;: &quot;http://www.baidu.com&quot;})
 </code></pre>
 <h4><a id="delete" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>delete</h4>
 <p>根据主键删除</p>
-<pre><code class="language-go">// delete from short_link_config where id = 10
+<pre class="line-numbers"><code class="language-go">// delete from short_link_config where id = 10
 mysql.Db.Delete(&amp;dao.ShortLinkConfig{}, 10)
 </code></pre>
 <hr />
@@ -452,6 +452,12 @@ github: <a href="https://github.com/hitolz/shortLink">https://github.com/hitolz/
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -471,12 +477,6 @@ github: <a href="https://github.com/hitolz/shortLink">https://github.com/hitolz/
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

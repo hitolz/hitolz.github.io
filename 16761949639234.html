@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -152,7 +152,7 @@
 <p>Javassist是一个开源的Java字节码操作库，它允许开发人员在运行时编辑和创建Java类。使用Javassist，开发人员可以通过修改现有类的字节码来动态地改变它们的行为，也可以使用Javassist的API来创建全新的Java类。Javassist提供了一个易于使用的API，使开发人员能够在不需要了解复杂的字节码结构的情况下轻松地创建和编辑Java类。Javassist还提供了一些高级功能，如动态代理、AOP（面向切面编程）和Java字节码的转换。由于它的灵活性和易用性，Javassist被广泛用于Java应用程序的动态编程和增强。</p>
 <h2><a id="q-javassist%E5%85%A5%E9%97%A8%E7%A4%BA%E4%BE%8B%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 入门示例？</h2>
 <h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<pre><code class="language-java">import javassist.*;
+<pre class="line-numbers"><code class="language-java">import javassist.*;
 
 public class JavassistExample {
     public static void main(String[] args) throws Exception {
@@ -177,7 +177,7 @@ public class JavassistExample {
 <p>通过运行该示例，将在output文件夹中生成一个MyClass.class文件，该文件包含上述定义的类的字节码。这个示例只是Javassist的入门示例，Javassist还提供了许多其他功能，如修改现有类、动态代理等。</p>
 <h2><a id="q%E9%9C%80%E8%A6%81%E6%B7%BB%E5%8A%A0%E4%BB%80%E4%B9%88-maven%E4%BE%9D%E8%B5%96%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:需要添加什么 maven 依赖？</h2>
 <h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<pre><code class="language-xml">&lt;dependency&gt;
+<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
     &lt;groupId&gt;org.javassist&lt;/groupId&gt;
     &lt;artifactId&gt;javassist&lt;/artifactId&gt;
     &lt;version&gt;3.28.0-GA&lt;/version&gt;
@@ -191,29 +191,29 @@ public class JavassistExample {
 <p>使用Javassist修改现有类可以通过以下步骤完成：</p>
 <ol>
 <li>获取类池（ClassPool）对象。
-<pre><code class="language-java">ClassPool pool = ClassPool.getDefault();
+<pre class="line-numbers"><code class="language-java">ClassPool pool = ClassPool.getDefault();
 </code></pre>
 </li>
 <li>使用类池获取要修改的类的CtClass对象。
-<pre><code class="language-java">CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
+<pre class="line-numbers"><code class="language-java">CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
 </code></pre>
 </li>
 <li>修改类的字节码，比如添加新的方法或属性，修改现有方法或属性等。下面是一个添加新方法的示例：
-<pre><code class="language-java">CtMethod newMethod = CtNewMethod.make(
+<pre class="line-numbers"><code class="language-java">CtMethod newMethod = CtNewMethod.make(
 &quot;public void newMethod() { System.out.println(\&quot;This is a new method!\&quot;); }&quot;, cc);
 cc.addMethod(newMethod);
 </code></pre>
 </li>
 <li>将修改后的字节码写入class文件或者加载到当前JVM中。
-<pre><code class="language-java">cc.writeFile();
+<pre class="line-numbers"><code class="language-java">cc.writeFile();
 </code></pre>
 或者
-<pre><code class="language-java">cc.toClass();
+<pre class="line-numbers"><code class="language-java">cc.toClass();
 </code></pre>
 <code>writeFile</code>方法会将修改后的字节码写入到磁盘上，<code>toClass</code>方法会将字节码加载到当前JVM中。</li>
 </ol>
 <p>下面是一个完整的示例，它会将现有类&quot;com.example.MyClass&quot;中的方法&quot;oldMethod&quot;修改为输出一条新的信息：</p>
-<pre><code class="language-java">import javassist.*;
+<pre class="line-numbers"><code class="language-java">import javassist.*;
 
 public class JavassistExample {
     public static void main(String[] args) throws Exception {
@@ -243,7 +243,7 @@ public class JavassistExample {
 <h2><a id="q%E4%BD%BF%E7%94%A8-javassist%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%8C%E5%9C%A8%E5%85%B6%E4%B8%AD%E6%AF%8F%E4%B8%AA%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E5%89%8D%E5%90%8E%E8%BE%93%E5%87%BA%E5%BD%93%E5%89%8D%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4%EF%BC%8C%E4%BB%A5%E6%AD%A4%E6%9D%A5%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E7%9A%84%E6%97%B6%E9%97%B4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:使用Javassist修改现有类，在其中每个方法执行前后输出当前系统时间，以此来计算方法执行的时间</h2>
 <h2><a id="a%EF%BC%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A：</h2>
 <p>回答的步骤跟上一个问题的步骤是一样的，不过示例代码不同，而且有错误，最终修改完成后的示例：</p>
-<pre><code class="language-java">import javassist.*;
+<pre class="line-numbers"><code class="language-java">import javassist.*;
 
 
 public class JavassistExample {
@@ -270,7 +270,7 @@ public class JavassistExample {
 }
 </code></pre>
 <h2><a id="%E8%BF%90%E8%A1%8C%E7%94%9F%E6%88%90%E7%9A%84%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行生成的代码</h2>
-<pre><code class="language-java">public class MyApp {
+<pre class="line-numbers"><code class="language-java">public class MyApp {
     public static void main(String[] args) throws Exception {
         // 在 Javassist 中修改 MyClass
         JavassistExample.modifyClass();
@@ -282,7 +282,7 @@ public class JavassistExample {
 }
 </code></pre>
 <h2><a id="%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改后的字节码</h2>
-<pre><code class="language-java">
+<pre class="line-numbers"><code class="language-java">
 public class MyClass {
     public MyClass() {
     }
@@ -425,15 +425,15 @@ public class MyClass {
 这两种运行方式的最大区别在于第一种方式只能在程序启动时指定Agent文件，而attach方式可以在Java程序运行后根据进程ID动态注入Agent到JVM。</li>
 </ol>
 <p>Java Agent和普通的Java类并没有任何区别，普通的Java程序中规定了main方法为程序入口，而Java Agent则将premain（Agent模式）和agentmain（Attach模式）作为了Agent程序的入口，两者所接受的参数是完全一致的，如下：</p>
-<pre><code class="language-java">public static void premain(String args, Instrumentation inst) {}
+<pre class="line-numbers"><code class="language-java">public static void premain(String args, Instrumentation inst) {}
 public static void agentmain(String args, Instrumentation inst) {}
 </code></pre>
 <p>Java Agent还限制了我们必须以jar包的形式运行或加载，我们必须将编写好的Agent程序打包成一个jar文件。</p>
 <p>使用命令：</p>
-<pre><code class="language-plain_text">java -javaagent:/path/to/agent.jar -jar yourapp.jar
+<pre class="line-numbers"><code class="language-plain_text">java -javaagent:/path/to/agent.jar -jar yourapp.jar
 </code></pre>
 <p>除此之外，Java Agent还强制要求了所有的jar文件中必须包含/META-INF/MANIFEST.MF文件，且该文件中必须定义好Premain-Class（Agent模式）或Agent-Class:（Agent模式）配置，可以通过 maven 插件实现:</p>
-<pre><code class="language-xml">&lt;plugin&gt;
+<pre class="line-numbers"><code class="language-xml">&lt;plugin&gt;
     &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
     &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;
     &lt;version&gt;3.2.0&lt;/version&gt;
@@ -467,6 +467,9 @@ public static void agentmain(String args, Instrumentation inst) {}
       <div class="row">
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="16748079623338.html" 
+          title="Previous Post: rust 快速入门指南">&laquo; rust 快速入门指南</a>
       
         </p>
         </div>
@@ -569,6 +572,12 @@ public static void agentmain(String args, Instrumentation inst) {}
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -588,12 +597,6 @@ public static void agentmain(String args, Instrumentation inst) {}
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

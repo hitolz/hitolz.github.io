@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -134,24 +134,24 @@
                       <div class="a-content-text">
                         
                         	<p>所有机器都安装 nfs-utils。只安装 nfs-utils 即可，rpcbind 属于它的依赖，也会安装上。</p>
-<pre><code class="language-plain_text">sudo yum install nfs-utils
+<pre class="line-numbers"><code class="language-plain_text">sudo yum install nfs-utils
 </code></pre>
 <h2><a id="%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务端配置</h2>
 <h3><a id="%E8%AE%BE%E7%BD%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设置服务开机自启</h3>
-<pre><code class="language-plain_text">sudo systemctl enable rpcbind
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl enable rpcbind
 sudo systemctl enable nfs
 </code></pre>
 <h3><a id="%E5%90%AF%E5%8A%A8nfs%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动 NFS 服务</h3>
-<pre><code class="language-plain_text">sudo systemctl start rpcbind
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl start rpcbind
 sudo systemctl start nfs
 </code></pre>
 <h3><a id="%E9%85%8D%E7%BD%AE%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置共享目录</h3>
 <p>服务启动后，配置一个共享目录，这里使用的是 /data 目录作为共享目录</p>
-<pre><code class="language-plain_text">sudo mkdir /data
+<pre class="line-numbers"><code class="language-plain_text">sudo mkdir /data
 sudo chmod 755 /data
 </code></pre>
 <p>在 /etc/exports 文件中添加配置。</p>
-<pre><code class="language-plain_text">/data/     192.168.0.0/24(rw,sync,no_root_squash,no_all_squash)
+<pre class="line-numbers"><code class="language-plain_text">/data/     192.168.0.0/24(rw,sync,no_root_squash,no_all_squash)
 </code></pre>
 <ol>
 <li>/data: 共享目录位置。</li>
@@ -162,10 +162,10 @@ sudo chmod 755 /data
 <li>no_all_squash: 可以使用普通用户授权。</li>
 </ol>
 <h3><a id="%E9%87%8D%E5%90%AFnfs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重启 NFS</h3>
-<pre><code class="language-plain_text">sudo systemctl restart nfs
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl restart nfs
 </code></pre>
 <p>检查本地目录</p>
-<pre><code class="language-plain_text">showmount -e localhost
+<pre class="line-numbers"><code class="language-plain_text">showmount -e localhost
 
 -- 输出
 Export list for localhost:
@@ -173,13 +173,13 @@ Export list for localhost:
 </code></pre>
 <h2><a id="linux%E5%AE%A2%E6%88%B7%E7%AB%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Linux 客户端</h2>
 <h3><a id="%E8%AE%BE%E7%BD%AErpcbind%E6%9C%8D%E5%8A%A1%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设置 rpcbind 服务开机自启</h3>
-<pre><code class="language-plain_text">sudo systemctl enable rpcbind
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl enable rpcbind
 </code></pre>
 <h3><a id="%E5%90%AF%E5%8A%A8nfs%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动 NFS 服务</h3>
-<pre><code class="language-plain_text">sudo systemctl start rpcbind
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl start rpcbind
 </code></pre>
 <h3><a id="%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>查看服务端共享目录</h3>
-<pre><code class="language-plain_text">showmount -e 192.168.0.130
+<pre class="line-numbers"><code class="language-plain_text">showmount -e 192.168.0.130
 
 -- 输出
 Export list for 192.168.0.130:
@@ -188,20 +188,20 @@ Export list for 192.168.0.130:
 </code></pre>
 <h3><a id="%E6%8C%82%E8%BD%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>挂载</h3>
 <p>在客户端创建目录</p>
-<pre><code class="language-plain_text">sudo mkdir /data
+<pre class="line-numbers"><code class="language-plain_text">sudo mkdir /data
 </code></pre>
 <p>挂载</p>
-<pre><code class="language-plain_text">sudo mount -t nfs 192.168.0.130:/data /data
+<pre class="line-numbers"><code class="language-plain_text">sudo mount -t nfs 192.168.0.130:/data /data
 </code></pre>
 <h2><a id="%E6%B5%8B%E8%AF%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>测试</h2>
 <p>在随意一台机器上 /data 添加目录或者文件，在另一台机器上 /data 里查看</p>
 <h2><a id="%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>客户端自动挂载</h2>
 <p>编辑客户端文件 /etc/fstab<br />
 在最后一行添加</p>
-<pre><code class="language-plain_text">192.168.0.130:/data     /data                   nfs     defaults        0 0
+<pre class="line-numbers"><code class="language-plain_text">192.168.0.130:/data     /data                   nfs     defaults        0 0
 </code></pre>
 <p>由于修改了 /etc/fstab，需要重新加载 systemctl</p>
-<pre><code class="language-plain_text">sudo systemctl daemon-reload
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl daemon-reload
 </code></pre>
 
                         
@@ -322,6 +322,12 @@ Export list for 192.168.0.130:
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -341,12 +347,6 @@ Export list for 192.168.0.130:
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

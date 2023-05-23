@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -154,7 +154,7 @@
 ServiceLoader启动时会到 resource/META-INF/services/ 目录下读取以 实现类的全限定名 命名的文件。</p>
 <p>程序通过 ServiceLoader 动态加载实现类模块，通过扫描 META-INF/services 目录下的配置文件找到实现类的全限定名，把类加载到JVM;</p>
 <p>demo：</p>
-<pre><code class="language-plain_text">// 一个接口，两个实现类
+<pre class="line-numbers"><code class="language-plain_text">// 一个接口，两个实现类
 public interface Fruit {
 
 	void printName();
@@ -179,11 +179,11 @@ public class Orange implements Fruit {
 </code></pre>
 <p>在 src/main/resources/META-INF/services 下新建文件 xxx.xxx.xx.Fruit，这个文件名就是Fruit接口的全限定名，<br />
 文件内容：</p>
-<pre><code class="language-plain_text">com.hitol.service.impl.Apple
+<pre class="line-numbers"><code class="language-plain_text">com.hitol.service.impl.Apple
 com.hitol.service.impl.Orange
 </code></pre>
 <p>文件中的内容是 Apple、Orange类的全限定名，可以配置一个也可以配置多个。</p>
-<pre><code class="language-plain_text">public static void main(String[] args) {
+<pre class="line-numbers"><code class="language-plain_text">public static void main(String[] args) {
 	ServiceLoader&lt;Fruit&gt; fruits = ServiceLoader.load(Fruit.class);
 
 	for (Fruit fruit : fruits) {
@@ -201,12 +201,12 @@ com.hitol.service.impl.Orange
 增加了对扩展点 IOC 和 AOP 的支持，一个扩展点可以直接 setter 注入其它扩展点。</p>
 <p>将上面例子中的xx.Fruit文件移到 resource/META-INF/dubbo/ 目录下，同时需要在 Fruit 类上加 Dubbo 注解 @SPI。<br />
 文件内容</p>
-<pre><code class="language-plain_text">orange=com.hitol.util.services.impl.Orange
+<pre class="line-numbers"><code class="language-plain_text">orange=com.hitol.util.services.impl.Orange
 apple=com.hitol.util.services.impl.Apple
 
 </code></pre>
 <p>demo：</p>
-<pre><code class="language-plain_text">public static void main(String[] args) {
+<pre class="line-numbers"><code class="language-plain_text">public static void main(String[] args) {
 	ExtensionLoader&lt;Fruit&gt; extensionLoader = ExtensionLoader.getExtensionLoader(Fruit.class);
 	Fruit apple = extensionLoader.getExtension(&quot;apple&quot;);
 	Fruit orange = extensionLoader.getExtension(&quot;orange&quot;);
@@ -228,7 +228,7 @@ extensionLoader.getExtension</p>
 <h3><a id="extensionloader-getextensionloader" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ExtensionLoader.getExtensionLoader</h3>
 <p><img src="http://hitol.blog.cdn.updev.cn/SPI-1-getExtensionLoader.png" alt="SPI-1-getExtensionLoade" /></p>
 <p>这个方法的逻辑比较简单，是否有 SPI 注解，缓存中没有的话就 new 一个 ExtensionLoader 出来，不过在 new 的时候会去获取 objectFactory 属性的值。第一次 new 的话，会加载 ExtensionFactory，并获取它的默认实现。</p>
-<pre><code class="language-java">private ExtensionLoader(Class&lt;?&gt; type) {
+<pre class="line-numbers"><code class="language-java">private ExtensionLoader(Class&lt;?&gt; type) {
     this.type = type;
     objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
 }
@@ -239,7 +239,7 @@ extensionLoader.getExtension</p>
 <p>getAdaptiveExtension 方法就是获取这个默认的实现类。</p>
 <p>SPI(value= &quot;apple&quot;) 注解上可以指定 默认的实现类。</p>
 <h3><a id="extensionloader-getextension" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>extensionLoader.getExtension</h3>
-<pre><code class="language-java">public T getExtension(String name) {
+<pre class="line-numbers"><code class="language-java">public T getExtension(String name) {
     if (StringUtils.isEmpty(name)) {
         throw new IllegalArgumentException(&quot;Extension name == null&quot;);
     }
@@ -268,7 +268,7 @@ extensionLoader.getExtension</p>
 <p><img src="http://hitol.blog.cdn.updev.cn/getExtension.png" alt="getExtension" /></p>
 <p>拓展类对象的获取过程，都是先从缓存中查找，没有在新建对象。最重要的实现逻辑是在 createExtension 方法中。</p>
 <h3><a id="createextension" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>createExtension</h3>
-<pre><code class="language-java">private T createExtension(String name) {
+<pre class="line-numbers"><code class="language-java">private T createExtension(String name) {
         // 先从cachedClasses 缓存map中获取类对象，获取不到则new
         Class&lt;?&gt; clazz = getExtensionClasses().get(name);
         if (clazz == null) {
@@ -340,7 +340,7 @@ private Map&lt;String, Class&lt;?&gt;&gt; loadExtensionClasses() {
 <li>类中只有一个属性变量，是该接口的实例</li>
 <li>只有包含这个属性变量的构造方法。</li>
 </ol>
-<pre><code class="language-java">/**
+<pre class="line-numbers"><code class="language-java">/**
  * test if clazz is a wrapper class
  * &lt;p&gt;
  * which has Constructor with given class type as its only argument
@@ -354,7 +354,7 @@ private boolean isWrapperClass(Class&lt;?&gt; clazz) {
     }
 }
 </code></pre>
-<pre><code class="language-java">Fruit 的 wrapper 类
+<pre class="line-numbers"><code class="language-java">Fruit 的 wrapper 类
 public class FruitWrapper implements Fruit {
 	private Fruit fruit;
 
@@ -390,7 +390,7 @@ this is wrapper
 Apple
 </code></pre>
 <p>输出内容：</p>
-<pre><code class="language-plain_text">this is wrapper
+<pre class="line-numbers"><code class="language-plain_text">this is wrapper
 Apple
 </code></pre>
 <hr />
@@ -517,6 +517,12 @@ Apple
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -536,12 +542,6 @@ Apple
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  

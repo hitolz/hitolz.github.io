@@ -18,7 +18,7 @@
  
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site: ' + document.getElementById('search_input').value;
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -136,11 +136,11 @@
                         	<p>使用 RestTemplate 发送 get 请求携带参数，发现有问题，对面收不到我的请求参数，</p>
 <p>一种方式是使用占位符将请求的 url 转换一下，类似于这样 <code>String url = &quot;http://api.xxx.xxx?name={name}&amp;age={age}&quot;;</code> 将请求参数拼接在链接后面，这种方式比较麻烦，后面有修改的话改动较多。</p>
 <p>还有一种方式，	使用 UriComponentsBuilder 拼接请求参数</p>
-<pre><code class="language-java">UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParams(params);
+<pre class="line-numbers"><code class="language-java">UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParams(params);
 builder.queryParam(key,value)
 </code></pre>
 <p>一个工具类的 get 请求代码</p>
-<pre><code class="language-java">// 拼接字符串
+<pre class="line-numbers"><code class="language-java">// 拼接字符串
 private String buildUrl(String subUrl) {
 	return String.format(&quot;%s%s&quot;, volcanoUrl, subUrl);
 }
@@ -336,6 +336,12 @@ private static &lt;T&gt; ParameterizedTypeReference&lt;CommonResponse&lt;T&gt;&g
 	      
 		      
 			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
@@ -355,12 +361,6 @@ private static &lt;T&gt; ParameterizedTypeReference&lt;CommonResponse&lt;T&gt;&g
 		      
 			      <li class="post">
 			        <a href="16689222220789.html">actix-web</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16672061401168.html">rust 所有权</a>
 			      </li>
 		     
 		  
