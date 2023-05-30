@@ -104,6 +104,8 @@
             <li><a href="GO.html">GO</a></li>
         
             <li><a href="rust.html">rust</a></li>
+        
+            <li><a href="AI.html">AI</a></li>
          
 
       </ul>
@@ -126,276 +128,100 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16121664688743.html">
+                <a class="clearlink" href="16169197037719.html">
                 
-                  <h1>Dubbo SPI</h1>
+                  <h1>Redis 持久化 - RDB、AOF 及 混合持久化机制</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
                         	<div class="mweb_toc"><ul>
-<li><a href="#java-spi">Java SPI</a></li>
-<li><a href="#dubbo-spi">Dubbo SPI</a></li>
-<li><a href="#dubbo-spi%E7%9A%84%E5%AE%9E%E7%8E%B0">Dubbo SPI 的实现</a>
+<li><a href="#rdb">RDB</a>
 <ul>
-<li><a href="#extensionloader-getextensionloader">ExtensionLoader.getExtensionLoader</a></li>
-<li><a href="#getadaptiveextension">getAdaptiveExtension()</a></li>
-<li><a href="#extensionloader-getextension">extensionLoader.getExtension</a></li>
-<li><a href="#createextension">createExtension</a></li>
+<li><a href="#bgsave%E7%9A%84%E5%86%99%E6%97%B6%E5%A4%8D%E5%88%B6%E6%9C%BA%E5%88%B6-cow">bgsave 的写时复制机制 COW</a></li>
+<li><a href="#rdb%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A">RDB 存在的问题：</a></li>
 </ul>
 </li>
-<li><a href="#wrapper%E7%B1%BB">wrapper 类</a></li>
+<li><a href="#aof">AOF</a>
+<ul>
+<li><a href="#aof%E9%87%8D%E5%86%99">AOF 重写</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B7%B7%E5%90%88%E6%8C%81%E4%B9%85%E5%8C%96">混合持久化</a></li>
 </ul>
 </div>
-<p>Dubbo 源码阅读 gitee：<a href="https://gitee.com/hitol/dubbo-source/tree/read_2.7.5/">https://gitee.com/hitol/dubbo-source/tree/read_2.7.5/</a></p>
-<h2><a id="java-spi" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Java SPI</h2>
-<p>SPI 是服务发现机制，为某个接口寻找服务的实现。<br />
-是 JDK 6 的特性，ServiceLoader。<br />
-ServiceLoader启动时会到 resource/META-INF/services/ 目录下读取以 实现类的全限定名 命名的文件。</p>
-<p>程序通过 ServiceLoader 动态加载实现类模块，通过扫描 META-INF/services 目录下的配置文件找到实现类的全限定名，把类加载到JVM;</p>
-<p>demo：</p>
-<pre class="line-numbers"><code class="language-plain_text">// 一个接口，两个实现类
-public interface Fruit {
-
-	void printName();
-
-}
-
-
-public class Apple implements Fruit {
-	@Override
-	public void printName() {
-		System.out.println(&quot;Apple&quot;);
-	}
-}
-
-public class Orange implements Fruit {
-	@Override
-	public void printName() {
-		System.out.println(&quot;Orange&quot;);
-	}
-}
-
-</code></pre>
-<p>在 src/main/resources/META-INF/services 下新建文件 xxx.xxx.xx.Fruit，这个文件名就是Fruit接口的全限定名，<br />
-文件内容：</p>
-<pre class="line-numbers"><code class="language-plain_text">com.hitol.service.impl.Apple
-com.hitol.service.impl.Orange
-</code></pre>
-<p>文件中的内容是 Apple、Orange类的全限定名，可以配置一个也可以配置多个。</p>
-<pre class="line-numbers"><code class="language-plain_text">public static void main(String[] args) {
-	ServiceLoader&lt;Fruit&gt; fruits = ServiceLoader.load(Fruit.class);
-
-	for (Fruit fruit : fruits) {
-		fruit.printName();
-	}
-}
-</code></pre>
-<p>会依次调用xxx.xxx.xx.Fruit文件中配置的具体实现类。</p>
 <hr />
-<p>应用场景：各种数据库连接<br />
-<img src="http://hitol.blog.cdn.updev.cn/16146868237742.jpg" alt="" /></p>
-<h2><a id="dubbo-spi" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dubbo SPI</h2>
-<p>Dubbo SPI 扩展点加载，从 JDK 标准的 SPI 扩展点机制加强而来。<br />
-加载的路径约定为： resource/META-INF/dubbo/接口全限定名<br />
-增加了对扩展点 IOC 和 AOP 的支持，一个扩展点可以直接 setter 注入其它扩展点。</p>
-<p>将上面例子中的xx.Fruit文件移到 resource/META-INF/dubbo/ 目录下，同时需要在 Fruit 类上加 Dubbo 注解 @SPI。<br />
-文件内容</p>
-<pre class="line-numbers"><code class="language-plain_text">orange=com.hitol.util.services.impl.Orange
-apple=com.hitol.util.services.impl.Apple
-
-</code></pre>
-<p>demo：</p>
-<pre class="line-numbers"><code class="language-plain_text">public static void main(String[] args) {
-	ExtensionLoader&lt;Fruit&gt; extensionLoader = ExtensionLoader.getExtensionLoader(Fruit.class);
-	Fruit apple = extensionLoader.getExtension(&quot;apple&quot;);
-	Fruit orange = extensionLoader.getExtension(&quot;orange&quot;);
-
-	apple.printName();
-	orange.printName();
-}
-</code></pre>
-<p>Dubbo SPI 的实现封装在 ExtensionLoader 中。</p>
-<p>Dubbo 中几乎到处可见 SPI 机制的应用，比如说，</p>
+<h2><a id="rdb" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RDB</h2>
+<p>RDB 快照持久化，将内存数据库所有数据 保存在名字为 dump.rdb 二进制文件中。<br />
+目录在 配置文件中 dir 指定的目录</p>
+<p>可以对 Redis 进行设置，在 N 秒内数据集至少有 M 个改动，这一条件被满足是，自动保存一次数据集</p>
+<p>比如：<br />
+save 60 1000<br />
+60秒内至少有1000个键被改动，这一个条件满足时，自动保存一次数据集</p>
+<p>可以设置多个 save 条件。<br />
+只要满足其中一个条件 bgsave 命令就会被执行。</p>
+<p>dirty 计数器，记录了上一次执行 save 或者 bgsave 命令成功后，对数据库状态进行了多少次修改。<br />
+lastsave 上次执行 save 或 bgsave 命令的时间戳。</p>
+<p>通过执行 save 或 bgsave 命令创建一个新的 RDB 文件，已过期的键不会被保存到新建的 RDB 文件中。</p>
+<p>save 是同步操作，有可能会阻塞正常请求命令。<br />
+bgsave 是异步操作，需要 fork 子线程，消耗内存。</p>
+<h3><a id="bgsave%E7%9A%84%E5%86%99%E6%97%B6%E5%A4%8D%E5%88%B6%E6%9C%BA%E5%88%B6-cow" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>bgsave 的写时复制机制 COW</h3>
+<p>Redis 借助操作系统提供的写时复制技术  Copy-On-Write，在生成快照的同时，依然可以正常处理写命令。<br />
+bgsave 子进程是由主线程 fork 生成的，可以共享主线程的所有内存数据。bgsave 子进程运行后，开始读取主线程中的内存数据，并写入rdb文件。此时，如果主线程有修改操作，被修改的数据就会被复制一份，生成副本，然后 bgsave 子进程会把这个副本数据写入 rdb 文件，在这个过程中，主线程仍然可以直接修改原来的数据。</p>
+<h3><a id="rdb%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RDB 存在的问题：</h3>
+<p>每次都是全量持久化，宕机会丢失数据。</p>
+<h2><a id="aof" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>AOF</h2>
+<p>AOF：append-only file<br />
+将修改的每一条指令记录进文件 appendonly.aof 中，先写入 aof_buf 缓存区，每隔一段时间 fsync 到磁盘。<br />
+配置开关  appendonly yes/no<br />
+文件中存的是操作的命令。<br />
+文件恢复的时候逐条执行文件中的操作命令。</p>
+<p>有三个配置：</p>
+<ul>
+<li>
+<p>appendfsync always：<br />
+将 aof_buf 缓冲区中的所有内容写入并同步到 AOF 文件<br />
+每条命令都追加到 AOF 文件时就执行一次 fsync ，非常慢，也非常安全</p>
+</li>
+<li>
+<p>appendfsync everysec:<br />
+将 aof_buf 缓冲区中的所有内容写入到 AOF 文件中，如果上次同步 AOF 文件的时间距离现在超过 1 秒钟，那么再次对 AOF 文件进行同步，并且这个同步操作是由一个线程专门负责执行的。<br />
+每秒 fsync 一次，足够快，并且在故障时只会丢失1秒钟的数据</p>
+</li>
+<li>
+<p>appendfsync no:<br />
+将 aof_buf 缓冲区中的所有内容写入到 AOF 文件中，但并不对 AOF 文件进行同步，何时同步由操作系统来决定。</p>
+</li>
+</ul>
+<p>默认选项是 everysec 可以兼顾速度和安全。</p>
+<p>不修改数据的命令是不会追加到 aof 文件的。</p>
+<h3><a id="aof%E9%87%8D%E5%86%99" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>AOF 重写</h3>
+<p>因为 AOF 持久化是通过保存被执行过的命令来记录数据库状态的，所以随着时间的推移，AOF 文件中的内容会越来越多，文件体积也会越来越大，并且恢复起来所需时间就越多。针对这个问题，Redis 有 AOF 重写机制。</p>
+<p>从数据库中读取键现在的值，然后用一条命令去记录键值对，代替之前记录这个键值对的多条命令，这就是 AOF 重写的实现原理。</p>
+<p>例如：<br />
+INCR 命令执行多次，AOF 可以使用 set 命令来记录最终结果。</p>
+<p>配置策略<br />
+auto-aof-rewrite-percentage 100 // aof文件自上一次重写后文件大小增长了100%则再次触发重写，也就是64M<br />
+auto-aof-rewrite-min-size 64mb // aof文件至少要达到 64M 才会自动重写，文件太小恢复速度本来就很快，重写的意义不大</p>
+<p>bgrewriteaof  重写命令</p>
+<p>Redis 服务器设置了一个 AOF 重写缓冲区，这个缓冲区在服务器创建子进程之后开始使用，当 Redis 服务器执行完一个写命令之后，它会同时将这个命令发送给 AOF 缓冲区和 AOF 重写缓冲区，也就是说，在子进程执行 AOF 重写期间，服务器进程需要执行三个动作：</p>
 <ol>
-<li>反射创建默认实现类，org.apache.dubbo.common.extension.ExtensionLoader#createAdaptiveExtensionClass</li>
-<li>dubbo 协议</li>
+<li>执行客户端发送来的命令</li>
+<li>将执行后的写命令追加到 AOF 缓冲区</li>
+<li>将执行后的写命令追加到 AOF 重写缓冲区</li>
 </ol>
-<h2><a id="dubbo-spi%E7%9A%84%E5%AE%9E%E7%8E%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dubbo SPI 的实现</h2>
-<p>ExtensionLoader.getExtensionLoader<br />
-ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension())<br />
-extensionLoader.getExtension</p>
-<h3><a id="extensionloader-getextensionloader" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ExtensionLoader.getExtensionLoader</h3>
-<p><img src="http://hitol.blog.cdn.updev.cn/SPI-1-getExtensionLoader.png" alt="SPI-1-getExtensionLoade" /></p>
-<p>这个方法的逻辑比较简单，是否有 SPI 注解，缓存中没有的话就 new 一个 ExtensionLoader 出来，不过在 new 的时候会去获取 objectFactory 属性的值。第一次 new 的话，会加载 ExtensionFactory，并获取它的默认实现。</p>
-<pre class="line-numbers"><code class="language-java">private ExtensionLoader(Class&lt;?&gt; type) {
-    this.type = type;
-    objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
-}
-</code></pre>
-<h3><a id="getadaptiveextension" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>getAdaptiveExtension()</h3>
-<p>SPI 修饰的接口的实现类中，获取带有 @Adaptive 注解的实现。<br />
-在同一个接口的实现类中，@Adaptive 注解只能修饰其中的一个实现类，表示该接口的默认实现。</p>
-<p>getAdaptiveExtension 方法就是获取这个默认的实现类。</p>
-<p>SPI(value= &quot;apple&quot;) 注解上可以指定 默认的实现类。</p>
-<h3><a id="extensionloader-getextension" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>extensionLoader.getExtension</h3>
-<pre class="line-numbers"><code class="language-java">public T getExtension(String name) {
-    if (StringUtils.isEmpty(name)) {
-        throw new IllegalArgumentException(&quot;Extension name == null&quot;);
-    }
-    if (&quot;true&quot;.equals(name)) {
-        return getDefaultExtension();
-    }
-    // 获取holder，相当于持有对象的锁
-    // 从缓存map cachedInstances 中获取，获取不到就new
-    final Holder&lt;Object&gt; holder = getOrCreateHolder(name);
-    Object instance = holder.get();
-    // 双重检测单例模式
-    // 此处这个锁对象是holder，而不是整个class对象，锁粒度更小，并发更高
-    if (instance == null) {
-        synchronized (holder) {
-            instance = holder.get();
-            if (instance == null) {
-                instance = createExtension(name);
-                holder.set(instance);
-            }
-        }
-    }
-    return (T) instance;
-}
-
-</code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/getExtension.png" alt="getExtension" /></p>
-<p>拓展类对象的获取过程，都是先从缓存中查找，没有在新建对象。最重要的实现逻辑是在 createExtension 方法中。</p>
-<h3><a id="createextension" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>createExtension</h3>
-<pre class="line-numbers"><code class="language-java">private T createExtension(String name) {
-        // 先从cachedClasses 缓存map中获取类对象，获取不到则new
-        Class&lt;?&gt; clazz = getExtensionClasses().get(name);
-        if (clazz == null) {
-            throw findException(name);
-        }
-        try {
-            T instance = (T) EXTENSION_INSTANCES.get(clazz);
-            if (instance == null) {
-                // 生成具体类实例对象，放入缓存
-                EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance());
-                instance = (T) EXTENSION_INSTANCES.get(clazz);
-            }
-            // IOC 注入
-            injectExtension(instance);
-            Set&lt;Class&lt;?&gt;&gt; wrapperClasses = cachedWrapperClasses;
-            if (CollectionUtils.isNotEmpty(wrapperClasses)) {
-                for (Class&lt;?&gt; wrapperClass : wrapperClasses) {
-                    instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance));
-                }
-                
-            }
-            initExtension(instance);
-            return instance;
-        } catch (Throwable t) {
-            throw new IllegalStateException(&quot;Extension instance (name: &quot; + name + &quot;, class: &quot; +
-                    type + &quot;) couldn't be instantiated: &quot; + t.getMessage(), t);
-        }
-    }
-=========================================
-private Map&lt;String, Class&lt;?&gt;&gt; getExtensionClasses() {
-    // 缓存
-    Map&lt;String, Class&lt;?&gt;&gt; classes = cachedClasses.get();
-    // 双重检查单例模式
-    if (classes == null) {
-        synchronized (cachedClasses) {
-            classes = cachedClasses.get();
-            if (classes == null) {
-                // 加载所有的扩展点对象，然后放到缓存中
-                // SpiExtensionFactory
-                classes = loadExtensionClasses();
-                cachedClasses.set(classes);
-            }
-        }
-    }
-    return classes;
-}
-=========================================
-private Map&lt;String, Class&lt;?&gt;&gt; loadExtensionClasses() {
-    cacheDefaultExtensionName();
-
-    Map&lt;String, Class&lt;?&gt;&gt; extensionClasses = new HashMap&lt;&gt;();
-    // internal extension load from ExtensionLoader's ClassLoader first . 先加载 /internal 目录下的扩展点
-    loadDirectory(extensionClasses, DUBBO_INTERNAL_DIRECTORY, type.getName(), true);
-    // replace(&quot;org.apache&quot;, &quot;com.alibaba&quot;) 替换包名这个骚操作
-    loadDirectory(extensionClasses, DUBBO_INTERNAL_DIRECTORY, type.getName().replace(&quot;org.apache&quot;, &quot;com.alibaba&quot;), true);
-
-    loadDirectory(extensionClasses, DUBBO_DIRECTORY, type.getName());
-    loadDirectory(extensionClasses, DUBBO_DIRECTORY, type.getName().replace(&quot;org.apache&quot;, &quot;com.alibaba&quot;));
-    loadDirectory(extensionClasses, SERVICES_DIRECTORY, type.getName());
-    loadDirectory(extensionClasses, SERVICES_DIRECTORY, type.getName().replace(&quot;org.apache&quot;, &quot;com.alibaba&quot;));
-    return extensionClasses;
-}
-</code></pre>
-<h2><a id="wrapper%E7%B1%BB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>wrapper 类</h2>
-<p>wrapper 相当于 AOP 动态代理生成的 代理对象。</p>
-<p>一个类它是 wrapper 类的条件:</p>
+<p>可以保证 AOF 缓冲区的内容会定期被写入和同步到 AOF 文件，从创建子进程开始，所有的写命令都会被记录到 AOF 重写缓冲区里面。</p>
+<p>当子进程完成 AOF 重写工作之后，会向父进程发送一个信号，父进程在接到该信号之后 ，会调用一个信号处理函数，执行以下工作：</p>
 <ol>
-<li>实现某个接口</li>
-<li>类中只有一个属性变量，是该接口的实例</li>
-<li>只有包含这个属性变量的构造方法。</li>
+<li>将 AOF 重写缓冲区中的所有内容写入到 AOF 文件中，这时新的 AOF 文件所保存的数据库状态和服务器当前的数据库状态一致</li>
+<li>对新的 AOF 文件进行改名，原子地覆盖现有 AOF 文件，完成新旧两个 AOF 文件的替换。</li>
 </ol>
-<pre class="line-numbers"><code class="language-java">/**
- * test if clazz is a wrapper class
- * &lt;p&gt;
- * which has Constructor with given class type as its only argument
- */
-private boolean isWrapperClass(Class&lt;?&gt; clazz) {
-    try {
-        clazz.getConstructor(type);
-        return true;
-    } catch (NoSuchMethodException e) {
-        return false;
-    }
-}
-</code></pre>
-<pre class="line-numbers"><code class="language-java">Fruit 的 wrapper 类
-public class FruitWrapper implements Fruit {
-	private Fruit fruit;
-
-	public FruitWrapper(Fruit fruit) {
-		this.fruit = fruit;
-	}
-
-	@Override
-	public void printName() {
-		System.out.println(&quot;this is wrapper&quot;);
-		fruit.printName();
-	}
-}
-
----
-
-文件内容
-
-orange=com.hitol.util.services.impl.Orange
-apple=com.hitol.util.services.impl.Apple
-com.hitol.util.services.impl.FruitWrapper
-
----
-
-ExtensionLoader&lt;Fruit&gt; extensionLoader = ExtensionLoader.getExtensionLoader(Fruit.class);
-Fruit apple = extensionLoader.getExtension(&quot;apple&quot;);
-
-apple.printName();
-
----
-输出内容：
-this is wrapper
-Apple
-</code></pre>
-<p>输出内容：</p>
-<pre class="line-numbers"><code class="language-plain_text">this is wrapper
-Apple
-</code></pre>
-<hr />
-<p><a href="https://dubbo.apache.org/zh/docs/v2.7/dev/spi/">https://dubbo.apache.org/zh/docs/v2.7/dev/spi/</a><br />
-<a href="https://dubbo.apache.org/zh/docs/v2.7/dev/source/dubbo-spi/">https://dubbo.apache.org/zh/docs/v2.7/dev/source/dubbo-spi/</a></p>
+<h2><a id="%E6%B7%B7%E5%90%88%E6%8C%81%E4%B9%85%E5%8C%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>混合持久化</h2>
+<p>两种持久化方式都开启的话，会生成两个文件，重启是会选择 AOF 方式来恢复，因为 AOF 恢复的数据更多。但是 AOF 恢复数据慢。<br />
+Redis4.0 之后，有一个新的持久化选项 -- 混合持久化</p>
+<p>开启混合持久化：aof-use-rdb-preamble yes</p>
+<p>如果开启了混合持久化， AOF 在重写时，不在是单纯将内存数据转换为 RESP 命令写入 AOF 文件，而是将重写这一刻之前的内存做 RDB 快照处理，并且将 RDB 快照内容和增量的 AOF 修改内存数据的命令存在一起，都写入新的 AOF 文件，新的文件一开始不叫  appendonly.aof，等到重写完新的 AOF 文件才会进行改名，覆盖原有的 AOF 文件，完成新旧两个 AOF 文件的替换。</p>
+<p>于是在 Redis 重启的时候，可以先加载 RDB 的内容，然后在重放增量  AOF 日志就可以完全替代之前的 AOF 全量文件重放，因此重启效率大幅得到提升。</p>
 
                         
                       </div>
@@ -404,12 +230,10 @@ Apple
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/02/01 16:01 下午</span>
+                    <span class="date">2021/03/28 16:21 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
-          				  
-          					    <span class="posted-in"><a href='dubbo.html'>dubbo</a></span>
+          					    <span class="posted-in"><a href='redis.html'>redis</a></span>
           				   
                     
 
@@ -501,6 +325,8 @@ Apple
             <a href="GO.html"><strong>GO</strong></a>
         
             <a href="rust.html"><strong>rust</strong></a>
+        
+            <a href="AI.html"><strong>AI</strong></a>
          
         </p>
 
@@ -517,13 +343,19 @@ Apple
 	      
 		      
 			      <li class="post">
-			        <a href="16748079623338.html">rust 快速入门指南</a>
+			        <a href="16849954851968.html">向量数据库 Vector Database</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
 			      </li>
 		     
 		  
@@ -536,12 +368,6 @@ Apple
 		      
 			      <li class="post">
 			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16689222220789.html">actix-web</a>
 			      </li>
 		     
 		  

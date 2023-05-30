@@ -2,7 +2,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
   <loc>http://blog.hitol.top/</loc>
-  <lastmod>2023-05-23T10:56:50+08:00</lastmod>
+  <lastmod>2023-05-30T10:40:55+08:00</lastmod>
+</url>
+
+<url>
+  <loc>http://blog.hitol.top/16849954851968.html</loc>
+  <lastmod>2023-05-25T14:18:05+08:00</lastmod>
 </url>
 
 <url>
@@ -332,6 +337,10 @@
 
 <url>
   <loc>http://blog.hitol.top/rust.html</loc>
+</url>
+
+<url>
+  <loc>http://blog.hitol.top/AI.html</loc>
 </url>
 
 

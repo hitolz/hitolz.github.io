@@ -104,6 +104,8 @@
             <li><a href="GO.html">GO</a></li>
         
             <li><a href="rust.html">rust</a></li>
+        
+            <li><a href="AI.html">AI</a></li>
          
 
       </ul>
@@ -126,34 +128,100 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16400068828317.html">
+                <a class="clearlink" href="16407431442346.html">
                 
-                  <h1>Spring.factories</h1>
+                  <h1>时间格式转换问题</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>Spring 在启动加载 bean 的时候会加载所有 jar 包中的 <code>/resources/META-INF/spring.factories</code> 文件中配置的 bean。<br />
-所以我们在提供给别人工具包的时候可以在 spring.factories 文件中定义一些 bean 自动加载到使用方的 Spring 容器中。<br />
-spring.factories 中一般都是一些配置 bean，也就是使用了 @Configuration 这个注解的 bean，在这个配置 bean 中初始化一些我们的工具包需要的 bean 就比较方便了。</p>
-<p>在<code>src/main/resources/META-INF</code>下新建 spring.factories 文件<br />
-类似这种的配置：</p>
-<pre class="line-numbers"><code class="language-properties">org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.wacai.gbl.config.LinkupSmsAutoConfiguration
+                        	<div class="mweb_toc"><ul>
+<li><a href="#%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4">各种标准时间</a>
+<ul>
+<li><a href="#%E6%A0%BC%E6%9E%97%E5%A8%81%E6%B2%BB%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4gmt">格林威治标准时间GMT</a></li>
+<li><a href="#%E5%8D%8F%E8%B0%83%E4%B8%96%E7%95%8C%E6%97%B6%E9%97%B4utc">协调世界时间UTC</a></li>
+<li><a href="#iso8601">ISO8601</a></li>
+<li><a href="#cst">CST</a></li>
+</ul>
+</li>
+<li><a href="#%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyymmdd%E4%B8%8E-yyyymmdd%E7%9A%84%E5%8C%BA%E5%88%AB">日期格式化 YYYYMMdd 与 yyyyMMdd 的区别</a></li>
+<li><a href="#%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyy-mm-dd-hh-mm-ss%E4%B8%8E-yyyy-mm-dd-hh-mm-ss%E7%9A%84%E5%8C%BA%E5%88%AB">日期格式化 yyyy-MM-dd HH:mm:SS 与 yyyy-MM-dd HH:mm:ss 的区别</a></li>
+</ul>
+</div>
+<p>在配置文件中全局的配置</p>
+<pre class="line-numbers"><code class="language-properties">spring.jackson.date-format=yyyy-MM-dd HH:mm:ss
+spring.jackson.time-zone=GMT+8
 </code></pre>
-<h2><a id="%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E6%B3%A8%E8%A7%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>一些常用的注解</h2>
-<h3><a id="configuration" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Configuration</h3>
-<p>开启配置</p>
-<h3><a id="enableconfigurationproperties-xxxproperties-class-xxxproperties-class" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@EnableConfigurationProperties(xxxProperties.class,xxxProperties.class)</h3>
-<p>读取哪些配置文件<br />
-xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&quot;)</code> 读取配置文件中前缀相同的配置</p>
-<h3><a id="bean" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Bean</h3>
-<p>与下面的配置配合使用</p>
-<h3><a id="conditionalonexpression" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@ConditionalOnExpression(&quot;${} || ${}&quot;)</h3>
-<p>可以配置多个条件，满足条件的就会初始化 bean</p>
-<h3><a id="conditionalonproperty-value-xx-xx-xx-havingvalue-matchifmissing-false" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@ConditionalOnProperty(value = &quot;xx.xx.xx&quot;,havingValue = &quot;&quot;,matchIfMissing = false)</h3>
-<p>读取配置文件中的 xx.xx.xx，havingValue 的值与配置文件中的值相等则会初始化</p>
-<h3><a id="primary" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Primary</h3>
-<p>默认，首选的。 </p>
+<p>所有使用到时间格式的地方都会转换为这种格式的</p>
+<h2><a id="%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>各种标准时间</h2>
+<p><a href="https://ahuigo.github.io/b/c/shell-time#/">https://ahuigo.github.io/b/c/shell-time#/</a></p>
+<h3><a id="%E6%A0%BC%E6%9E%97%E5%A8%81%E6%B2%BB%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4gmt" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>格林威治标准时间GMT</h3>
+<p>含义：「格林威治标准时间」(Greenwich Mean Time，简称G.M.T.)以伦敦格林威治的子午线为基线，以地球自转为标准，全球都以此标准设定时间。<br />
+以下几个时间相同，但用于不同的时区/地区。</p>
+<pre class="line-numbers"><code class="language-plain_text">Wed Aug 14 08:21:05 GMT 2013 //标准GMT时间
+Wed Aug 14 16:21:05 GMT+8 2013 //东8区，即我们的北京时间
+Wed Aug 14 03:21:05 GMT-5 2013 //西5区，美国和加拿大时间
+</code></pre>
+<h3><a id="%E5%8D%8F%E8%B0%83%E4%B8%96%E7%95%8C%E6%97%B6%E9%97%B4utc" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>协调世界时间UTC</h3>
+<p>由于地球每天的自转是有些不规则的，而且正在缓慢减速，因此格林威治时间已经不再被作为标准时间使用。现在的标准时间，是由原子钟报时的协调世界时（UTC: Coordinated Universal Time）。UTC比GMT更精确严谨。</p>
+<pre class="line-numbers"><code class="language-plain_text">Wed Aug 14 08:21:05 UTC 2013 //标准UTC时间
+Wed Aug 14 16:21:05 UTC+8 2013 //东8区，即我们的北京时间
+Wed Aug 14 03:21:05 UTC-5 2013 //西5区，美国和加拿大时间
+</code></pre>
+<p>常识：<br />
+国际原子时的误差为每日数纳秒<br />
+对我们日常所使用的时间工具而言，UTC和GMT时间没有区别。</p>
+<h3><a id="iso8601" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ISO8601</h3>
+<p>moment.defaultFormat is the ISO8601 format YYYY-MM-DDTHH:mm:ssZ<br />
+ISO8601:</p>
+<pre class="line-numbers"><code class="language-plain_text">new Date(&quot;2016-01-01 11:13:00Z&quot;);      +0区
+new Date(&quot;2016-01-01T11:13:00Z&quot;);      +0区
+new Date(&quot;2016-01-01 11:13:00+08&quot;);     +8区
+new Date(&quot;2016-01-01 11:13:00+0800&quot;); +8区
+new Date(&quot;2016-01-01T11:13:00+08:00&quot;); +8区
+new Date(&quot;2016-01-01T11:13:00.333+08:00&quot;); +8区
+
+new Date(&quot;2016-01-01&quot;);                 +0区(默认)
+new Date(&quot;2016-01-01 11:13:00&quot;);        +8区(默认)
+new Date(&quot;October 13, 1975 11:13:00&quot;);  +8区(默认)
+</code></pre>
+<h3><a id="cst" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CST</h3>
+<p>CST是时区缩写，可以指下列的时区：</p>
+<p>澳洲中部时间，Central Standard Time (Australia)<br />
+中部标准时区（北美洲），Central Standard Time (North America)<br />
+北京时间，China Standard Time<br />
+古巴标准时间，Cuba Standard Time，参见北美东部时区<br />
+建议不要使用CST时间，对于以下时间，你可能不知道它到底是北京时间，还是其它时间：</p>
+<pre class="line-numbers"><code class="language-plain_text">Wed Aug 14 08:21:05 CST 2013 //北京、北美中部、古巴、澳洲中部？Who knows?
+</code></pre>
+<p>CST 转北京时间<br />
+在需要转换日期格式的字段上添加注解<code>com.fasterxml.jackson.annotation.JsonFormat</code></p>
+<pre class="line-numbers"><code class="language-plain_text">@JsonFormat(pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;,timezone = &quot;GMT+8&quot;)
+</code></pre>
+<h2><a id="%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyymmdd%E4%B8%8E-yyyymmdd%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>日期格式化 YYYYMMdd 与 yyyyMMdd 的区别</h2>
+<p>大写的 YYYY 表示这一天所在的周 所在的年份，也就是说如果当前周跨年了，这个获取到的就有问题。</p>
+<h2><a id="%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyy-mm-dd-hh-mm-ss%E4%B8%8E-yyyy-mm-dd-hh-mm-ss%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>日期格式化 yyyy-MM-dd HH:mm:SS 与 yyyy-MM-dd HH:mm:ss 的区别</h2>
+<p>HH 表示按 24 小时格式返回</p>
+<p>SS 表示毫秒？<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot%202022-01-10%20at%2018.04.39@2x.png" alt="CleanShot 2022-01-10 at 18.04.39@2x" /></p>
+<p>用小写的 ss 表示秒。</p>
+<pre class="line-numbers"><code class="language-sql">select d.queue,
+       count(*) as total
+from gbl_loan a
+         join gbl_loan_type_dictionary b on a.loan_source = b.id and a.channel_id = b.channel_id
+         join gbl_collection_case c on c.loan_id = a.id
+         join gbl_assignment d on c.id = d.collection_id
+where a.loan_source = #{loanSourceId}
+  and a.active = 1
+  and c.active = 1
+  and b.tenant = #{tenant}
+  and d.queue = #{queue}
+  and d.agentId is not null
+&lt;![CDATA[
+  and a.created_time &gt; #{reportStartDate}
+  and a.created_time &lt; #{reportEndDate}
+]]&gt;
+</code></pre>
 
                         
                       </div>
@@ -162,12 +230,8 @@ xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&qu
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/12/20 21:28 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
-          				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+                    <span class="date">2021/12/29 09:59 上午</span>
+                    
           				   
                     
 
@@ -259,6 +323,8 @@ xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&qu
             <a href="GO.html"><strong>GO</strong></a>
         
             <a href="rust.html"><strong>rust</strong></a>
+        
+            <a href="AI.html"><strong>AI</strong></a>
          
         </p>
 
@@ -275,13 +341,19 @@ xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&qu
 	      
 		      
 			      <li class="post">
-			        <a href="16748079623338.html">rust 快速入门指南</a>
+			        <a href="16849954851968.html">向量数据库 Vector Database</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
 			      </li>
 		     
 		  
@@ -294,12 +366,6 @@ xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&qu
 		      
 			      <li class="post">
 			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16689222220789.html">actix-web</a>
 			      </li>
 		     
 		  

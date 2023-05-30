@@ -104,6 +104,8 @@
             <li><a href="GO.html">GO</a></li>
         
             <li><a href="rust.html">rust</a></li>
+        
+            <li><a href="AI.html">AI</a></li>
          
 
       </ul>
@@ -126,1409 +128,154 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16748079623338.html">
+                <a class="clearlink" href="16849954851968.html">
                 
-                  <h1>rust 快速入门指南</h1>
+                  <h1>向量数据库 Vector Database</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<div class="mweb_toc"><ul>
-<li><a href="#%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F">定义变量</a></li>
-<li><a href="#%E5%B8%B8%E9%87%8F">常量</a></li>
-<li><a href="#%E5%AD%97%E7%AC%A6%E4%B8%B2">字符串</a></li>
-<li><a href="#u64%E3%80%81i64%E3%80%81f64">u64、i64、f64</a></li>
-<li><a href="#if">if</a></li>
-<li><a href="#match">match</a></li>
-<li><a href="#%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6">读取文件</a></li>
-<li><a href="#%E8%A7%A3%E6%9E%90json">解析 json</a></li>
-<li><a href="#%E5%BE%AA%E7%8E%AF">循环</a></li>
-<li><a href="#iter">iter</a></li>
-<li><a href="#while">while</a></li>
-<li><a href="#loop">loop</a></li>
-<li><a href="#%E5%87%BD%E6%95%B0">函数</a>
+                        	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<div class="mweb_toc"><ul>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93">什么是向量数据库</a></li>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F">什么是向量</a></li>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE">什么是向量数据</a>
 <ul>
-<li><a href="#%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC">函数返回值 -&gt;</a></li>
-<li><a href="#%E5%8F%82%E6%95%B0%E5%80%BC%E4%BC%A0%E9%80%92">参数-值传递</a></li>
-<li><a href="#%E5%8F%82%E6%95%B0%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92">参数-引用传递</a></li>
+<li><a href="#%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E5%9B%BE%E7%89%87%E7%9A%84%E7%89%B9%E5%BE%81">向量如何表示图片的特征</a></li>
+<li><a href="#%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E9%9F%B3%E9%A2%91">向量如何表示音频</a></li>
+<li><a href="#%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E6%96%87%E6%9C%AC">向量如何表示文本</a></li>
 </ul>
 </li>
-<li><a href="#%E5%85%83%E7%BB%84tuple">元组 tuple</a>
+<li><a href="#%E4%B8%8E%E4%BC%A0%E7%BB%9F%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8C%BA%E5%88%AB">与传统关系型数据库的区别</a></li>
+<li><a href="#%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF">向量数据库的应用场景</a>
 <ul>
-<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+<li><a href="#ai%E7%9A%84%E9%95%BF%E6%9C%9F%E8%AE%B0%E5%BF%86">AI 的长期记忆</a></li>
 </ul>
 </li>
-<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93">结构体</a>
-<ul>
-<li><a href="#%E5%AE%9A%E4%B9%89%E7%BB%93%E6%9E%84%E4%BD%93">定义结构体</a></li>
-<li><a href="#%E5%88%9B%E5%BB%BA%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9E%E4%BE%8B">创建结构体实例</a></li>
-<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93%E4%BD%9C%E4%B8%BA%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0">结构体作为函数参数</a></li>
-<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93%E4%BD%9C%E4%B8%BA%E8%BF%94%E5%9B%9E%E5%80%BC">结构体作为返回值</a></li>
-<li><a href="#%E6%96%B9%E6%B3%95">方法</a></li>
-<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95">结构体静态方法</a></li>
-</ul>
-</li>
-<li><a href="#%E6%9E%9A%E4%B8%BE">枚举</a>
-<ul>
-<li><a href="#option%E6%9E%9A%E4%B8%BE">Option枚举</a></li>
-</ul>
-</li>
-<li><a href="#%E9%9B%86%E5%90%88">集合</a>
-<ul>
-<li><a href="#vec">Vec</a></li>
-<li><a href="#hashmap">HashMap</a></li>
-<li><a href="#hashset">HashSet</a></li>
-</ul>
-</li>
-<li><a href="#%E6%B3%9B%E5%9E%8B">泛型</a></li>
-<li><a href="#trait">Trait</a></li>
-<li><a href="#%E8%BF%AD%E4%BB%A3%E5%99%A8">迭代器</a></li>
-<li><a href="#%E9%97%AD%E5%8C%85">闭包</a></li>
-<li><a href="#%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8">闭包的使用</a></li>
-<li><a href="#%E7%BA%BF%E7%A8%8B">线程</a>
-<ul>
-<li><a href="#join">join</a></li>
-</ul>
-</li>
-<li><a href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">错误处理</a>
-<ul>
-<li><a href="#panic%E4%B8%8D%E5%8F%AF%E6%81%A2%E5%A4%8D%E9%94%99%E8%AF%AF">panic!() 不可恢复错误</a></li>
-<li><a href="#result%E6%9E%9A%E4%B8%BE%E5%92%8C%E5%8F%AF%E6%81%A2%E5%A4%8D%E9%94%99%E8%AF%AF">Result 枚举和可恢复错误</a></li>
-<li><a href="#unwrap%E5%92%8C-expect">unwrap() 和 expect()</a></li>
-</ul>
-</li>
-<li><a href="#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88">智能指针</a>
-<ul>
-<li><a href="#%E4%BD%BF%E7%94%A8box-t%E5%9C%A8%E5%A0%86%E4%B8%8A%E5%88%86%E9%85%8D%E6%95%B0%E6%8D%AE">使用 Box<T> 在堆上分配数据</a></li>
-<li><a href="#%E9%80%9A%E8%BF%87deref-trait%E5%B0%86%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E8%A7%86%E4%BD%9C%E5%B8%B8%E8%A7%84%E5%BC%95%E7%94%A8">通过 Deref trait 将智能指针视作常规引用</a></li>
-</ul>
-</li>
-<li><a href="#rc-t%E5%9F%BA%E4%BA%8E%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%9A%84%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88">Rc<T> 基于引用计数的智能指针</a></li>
-<li><a href="#refcell-t%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F"><code>RefCell&lt;T&gt;</code>: 内部可变性模式</a></li>
-<li><a href="#%E5%8C%85%E7%AE%A1%E7%90%86">包管理</a></li>
-<li><a href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95">单元测试</a></li>
-<li><a href="#arc">Arc</a></li>
-<li><a href="#rwlock">RwLock</a></li>
-<li><a href="#%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F">时间格式</a></li>
-<li><a href="#%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F">策略模式</a></li>
-<li><a href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1">多线程与定时任务</a></li>
-<li><a href="#channel">channel</a></li>
-<li><a href="#rayon">rayon</a></li>
-<li><a href="#%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%EF%BC%8C%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8">&lt;'_&gt; 是什么意思，什么作用</a></li>
-<li><a href="#%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88">函数指针</a></li>
-<li><a href="#%E9%97%AD%E5%8C%85%E4%B8%8Efn%E3%80%81fnmut%E3%80%81fnonce">闭包与Fn、FnMut、FnOnce</a></li>
-<li><a href="#%E5%AE%8F">宏</a>
-<ul>
-<li><a href="#macro-rules%E5%A3%B0%E6%98%8E%E5%AE%8F">macro_rules! 声明宏</a></li>
-<li><a href="#%E5%B1%9E%E6%80%A7%E5%AE%8F">属性宏</a></li>
-<li><a href="#%E5%87%BD%E6%95%B0%E5%AE%8F">函数宏</a></li>
-</ul>
-</li>
-<li><a href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AAderive%E5%AE%8F">自定义一个 derive 宏</a></li>
-<li><a href="#%E5%AE%9E%E7%8E%B0kafka%E7%9A%84%E5%B7%A5%E5%85%B7%E5%8C%85%EF%BC%8C%E5%8F%91%E5%B8%83%E5%88%B0-crate-io">实现 kafka 的工具包，发布到 crate.io</a></li>
+<li><a href="#%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%A7%E5%93%81">向量数据库 产品</a></li>
+<li><a href="#%E5%B8%82%E5%9C%BA%E7%A9%BA%E9%97%B4%E5%B7%A8%E5%A4%A7%EF%BC%8C%E8%A1%8C%E4%B8%9A%E5%A4%84%E4%BA%8E%E4%BB%8E0-1%E9%98%B6%E6%AE%B5">市场空间巨大，行业处于从0-1阶段</a></li>
 </ul>
 </div>
-<h2><a id="%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定义变量</h2>
-<pre class="line-numbers"><code class="language-rust">let 变量名 = 值;           // 不指定变量类型
-let 变量名:数据类型 = 值;   // 指定变量类型
-</code></pre>
-<p>可以包含 字母、数字 和 下划线 。</p>
-<p>变量名必须以 字母 或 下划线 开头。不能以 数字 开头。</p>
-<p>变量名是 区分大小 写的。也就是大写的 Study 和小写的 study 是两个不同的变量。</p>
-<p>let 关键字定义的变量是不可变变量<br />
-mut 表示可变，在变量前边加</p>
-<h2><a id="%E5%B8%B8%E9%87%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>常量</h2>
-<pre class="line-numbers"><code class="language-rust">const 常量名称:数据类型=值;
-</code></pre>
-<p>Rust 中，常量不能被隐藏，也不能被重复定义。</p>
-<h2><a id="%E5%AD%97%E7%AC%A6%E4%B8%B2" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>字符串</h2>
-<p>Rust 语言提供了两种字符串</p>
+<p>近期，随着 AI 相关话题热度提升，向量数据库也出现在了更多人的视野中。</p>
+<p>本篇文章，让你对向量数据库有一个基本的了解。</p>
+<h2><a id="%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>什么是向量数据库</h2>
+<p>向量数据库是专门用来存储和查询向量的数据库，其存储的向量来自于对文本、语音、图像、视频等的向量化数据。</p>
+<p>其主要特点是能够高效地处理包含大量向量的数据集，并支持快速的相似度搜索。<br />
+与传统的关系型数据库不同，向量数据库更适合处理高维稠密向量数据，广泛应用于图像、音频、文本等领域的人工智能和机器学习任务中。<br />
+在向量数据库中，每个向量都可以看作是一个多维空间中的点，而相似度搜索则是通过测量向量之间的距离或角度来实现的。向量数据库的发展得益于硬件技术的不断提升和机器学习领域的迅速发展，具有良好的应用前景。</p>
+<h2><a id="%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>什么是向量</h2>
+<p>在数学中，向量（vector）是指具有大小（magnitude）和方向（direction）的量。一般来说，向量可以在一个指定的坐标系中被表示为一组有序数（有限个实数），这些实数称为向量的分量（component）。常用的表示方式是将向量写成一个列向量或行向量的形式，例如：</p>
+<p>列向量：\(\mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_n \end{bmatrix}\)</p>
+<p>行向量：\(\mathbf{v} = [v_1,v_2,\cdots,v_n]\)</p>
+<p>其中，\(v_1, v_2, \cdots, v_n\) 是向量的\(n\)个分量。除此之外，还有一些特殊的向量，如零向量、单位向量等。</p>
+<p>在计算机科学领域，向量常常被用来表示对象的特征，例如图像、文本、音频等。将对象转换成向量形式便于进行相似度搜索、聚类等操作。向量化的方式可以通过特征提取、文本建模、深度学习等方法来实现。</p>
+<p>处理向量数据成为了许多应用程序的核心问题。为了解决这些问题，人们设计了各种向量数据库和向量索引技术，以提供高效的相似度搜索和近邻查询功能。</p>
+<h2><a id="%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>什么是向量数据</h2>
+<p>向量数据是由多个数值组成的一维数组，常用于表示文本、图像、音频等非结构化数据。在向量中，每个数值代表了该向量在某个方向上的分量。例如，在二维平面上，一个点的位置可以用一个二维向量表示，其中第一个数值代表了该点在x轴上的位置，第二个数值代表了该点在y轴上的位置。</p>
+<p>在现代数据科学和机器学习中，向量数据被广泛应用于各种任务，如相似度匹配、聚类、分类和回归。这些任务通常需要计算向量之间的距离或相似度，并且需要对向量进行检索和排序。因此，高效处理向量数据是许多数据科学和机器学习应用程序的核心问题。为了解决这些问题，人们开发了许多向量数据库和向量索引技术，以提供高效的相似度搜索和近邻查询功能。</p>
+<h3><a id="%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E5%9B%BE%E7%89%87%E7%9A%84%E7%89%B9%E5%BE%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量如何表示图片的特征</h3>
+<p>在计算机视觉领域中，向量通常被用来表示图片的特征。这些特征向量可以通过多种方法获得，其中最常用的是卷积神经网络（Convolutional Neural Network，简称CNN）。CNN 是一类深度学习模型，它通过卷积、池化等操作对图片进行处理，最终输出一个固定大小的向量作为该图片的特征表示。</p>
+<p>具体而言，CNN 通过一系列的卷积层和池化层对输入图片进行特征提取，并逐渐减小特征图的尺寸和数量。在最后一层卷积层之后，通常会添加若干全连接层，将卷积层输出的高维特征转换为一个固定长度的向量。这个向量被认为是该图片的“特征表示”，它能够反映出图片的语义信息，例如物体类别、颜色、纹理等特征。这样，我们就可以使用向量距离的概念来度量不同图片之间的相似性，从而支持基于内容的图片检索、聚类等应用。</p>
+<h3><a id="%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E9%9F%B3%E9%A2%91" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量如何表示音频</h3>
+<p>在音频处理中，向量也可以用来表示音频的特征。其中最常见的是使用梅尔频率倒谱系数（Mel-Frequency Cepstral Coefficients，简称MFCC）来提取音频的特征向量。</p>
+<p>MFCC 是一种基于人耳感知特性的声学特征，它模拟了人耳对不同频率声音的感受，具有很好的区分能力。MFCC 提取过程包括以下几步：</p>
 <ol>
-<li>Rust 核心内置的数据类型&amp;str，字符串字面量 。</li>
-<li>Rust 标准库中的一个 公开 pub 结构体。字符串对象 String。</li>
+<li>
+<p>预加重：对原始音频信号进行高通滤波，增强高频部分的能量。</p>
+</li>
+<li>
+<p>分帧：将音频信号分割成若干个长度相等的帧。</p>
+</li>
+<li>
+<p>加窗：对每一帧应用汉明窗等窗函数，减少频谱泄漏。</p>
+</li>
+<li>
+<p>傅里叶变换：对每一帧的信号进行离散傅里叶变换（DFT），得到其频域表达。</p>
+</li>
+<li>
+<p>梅尔滤波器组：将频域信号通过一组梅尔滤波器，将其转换为梅尔频率域的信号。</p>
+</li>
+<li>
+<p>对数压缩：对每个滤波器组输出值取对数，以便更好地表示人耳对音量的感知。</p>
+</li>
+<li>
+<p>离散余弦变换：对每个滤波器组输出值进行离散余弦变换（DCT），得到其MFCC系数。</p>
+</li>
 </ol>
-<pre class="line-numbers"><code class="language-rust">String::new() //创建一个新的空字符串,它是静态方法。
-String::from() //从具体的字符串字面量创建字符串对象。
-
-
-let mut s3 = String::new();
-
-
-s3.push('O');
-s3.push('K');
-println!(&quot;{}&quot;,s3);//输出 Go语言极简一本通OK
-
-replace()
-
-len()
-
-to_string()
-
-as_str()
-
-trim()
-
-split()
-
-chars()
-
-</code></pre>
-<h2><a id="u64%E3%80%81i64%E3%80%81f64" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>u64、i64、f64</h2>
-<p>u64 是一个无符号的 64 位整数，表示范围为从 0 到 18,446,744,073,709,551,615，可用于表示不需要小数的正整数值。</p>
-<p>i64 是一个带符号的 64 位整数，表示范围为 -9,223,372,036,854,775,808 到 9,223,372,036,854,775,807，可以表示正数和负数，适用于需要保存有符号整数的场景。</p>
-<p>f64 是一个 64 位浮点数，可以表示带小数点的浮点值，并且可以表示非常小或非常大的数字，可以在一定的精度范围内表示几乎所有实数。但是由于精度限制，浮点数在进行数值计算时容易出现误差，所以需要谨慎使用。</p>
-<p>在 Rust 中，您需要根据实际的应用场景选择合适的数据类型。如果您需要保存的整数是正数且不需要超过 u64 的取值范围，那么使用 u64 可能会更合适，而如果您需要保存的整数可以是正数或者负数，使用 i64 可能更合适。如果您需要进行小数数值计算，不需要非常高的精度，那么选择 f64 可能更简单。但是如果您需要进行高精度货币计算等精确计算，建议使用 Decimal 等第三方库。</p>
-<p>需要注意的是，在 Rust 中，这三种类型之间的转换需要谨慎，因为它们的类型不兼容，并且在进行转换时，可能发生数据精度丢失等问题。对于 i64 到 f64 或者 u64 到 f64 的转换，可以使用 as 运算符。而对于 f64 到 i64 或者 f64 到 u64 的转换，需要使用 .round() 等函数将浮点数向上或向下取整，并处理溢出的情况。</p>
-<h2><a id="if" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>if</h2>
-<pre class="line-numbers"><code class="language-rust">if 条件表达式1 {
-   // 当 条件表达式1 为 true 时要执行的语句
-} else if 条件表达式2 {
-   // 当 条件表达式2 为 true 时要执行的语句
-} else {
-   // 如果 条件表达式1 和 条件表达式2 都为 false 时要执行的语句
-}
-
-let total:f32=366.00;
-if total&gt;200.00 &amp;&amp; total&lt;500.00{
-   println!(&quot;打9折,{}&quot;,total*0.9)
-}else if total&gt;500.00{
-   println!(&quot;打8折,{}&quot;,total*0.9)
-} else{
-   println!(&quot;无折扣优惠,{}&quot;,total)
-}
-//输出 打9折,329.4
-</code></pre>
-<h2><a id="match" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>match</h2>
-<pre class="line-numbers"><code class="language-rust">match variable_expression {
-   constant_expr1 =&gt; {
-      // 语句;
-   },
-   constant_expr2 =&gt; {
-      // 语句;
-   },
-   _ =&gt; {
-      // 默认
-      // 其它语句
-   }
-};
-
-let code = &quot;10010&quot;;
-let choose = match code {
-   &quot;10010&quot; =&gt; &quot;联通&quot;,
-   &quot;10086&quot; =&gt; &quot;移动&quot;,
-   _ =&gt; &quot;Unknown&quot;
-};
-println!(&quot;选择 {}&quot;, choose);
-//输出 选择 联通
-
-
-let code = &quot;80010&quot;;
-let choose = match code {
-   &quot;10010&quot; =&gt; &quot;联通&quot;,
-   &quot;10086&quot; =&gt; &quot;移动&quot;,
-   _ =&gt; &quot;Unknown&quot;
-};
-println!(&quot;选择 {}&quot;, choose);
-//输出 选择 Unknown
-</code></pre>
-<h2><a id="%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>读取文件</h2>
-<pre class="line-numbers"><code class="language-rust">let content = fs::read_to_string(&quot;json.json&quot;).unwrap();
-</code></pre>
-<h2><a id="%E8%A7%A3%E6%9E%90json" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>解析 json</h2>
-<pre class="line-numbers"><code class="language-rust">let json = serde_json::to_string(&amp;content).unwrap();
-print!(&quot;json: {}&quot;, json);
-</code></pre>
-<pre class="line-numbers"><code class="language-rust">let parsed:WebResponse = serde_json::from_str(raw_json).unwrap();
-return pased
-</code></pre>
-<h2><a id="%E5%BE%AA%E7%8E%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>循环</h2>
-<pre class="line-numbers"><code class="language-rust">for num in 1..5{
-   println!(&quot;num is {}&quot;, num);
-}
-//输出
-num is 1
-num is 2
-num is 3
-num is 4
-
-
-for num in 1..=5 {
-   println!(&quot;num is {}&quot;, num);
-}
-输出
-num is 1
-num is 2
-num is 3
-num is 4
-num is 5
-</code></pre>
-<h2><a id="iter" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>iter</h2>
-<pre class="line-numbers"><code class="language-rust">let array = vec![
-    &quot;1&quot;,
-    &quot;2&quot;,
-    &quot;3&quot;,
-];
-for name in array.iter() {
-    match name {
-        &amp;&quot;3&quot; =&gt; println!(&quot;3-{}!&quot;, name),
-        _ =&gt; println!(&quot;{}&quot;, name),
-    }
-}
-
-//输出
-1
-2
-3-3!
-</code></pre>
-<p>iter 在每次迭代的时候会从集合中借用元素，这样集合本身不会被改变，循环结束后，集合依然可以使用。</p>
-<p>into_iter会消耗集合，会remove 集合中的元素。</p>
-<pre class="line-numbers"><code class="language-rust">let array = vec![
-    &quot;1&quot;,
-    &quot;2&quot;,
-    &quot;3&quot;,
-];
-for name in array.into_iter() { // `array` moved due to this method call
-    match name {
-        &quot;3&quot; =&gt; println!(&quot;3-{}!&quot;, name),
-        _ =&gt; println!(&quot;{}&quot;, name),
-    }
-}
-println!(&quot;{:?}&quot;,array) // value  borrowed here after move
-</code></pre>
-<h2><a id="while" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>while</h2>
-<pre class="line-numbers"><code class="language-rust">while ( 条件表达式 ) {
-    // 执行业务逻辑
-}
-</code></pre>
-<pre class="line-numbers"><code class="language-rust">let mut num = 1;
-while num &lt; 20 {
-    num = num + 1;
-    println!(&quot;{}&quot;,num)
-}
-
-while 内部也是可以使用 break；
-</code></pre>
-<h2><a id="loop" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>loop</h2>
-<pre class="line-numbers"><code class="language-rust">let mut num = 1;
-loop {
-    num = num + 1;
-    if num &gt; 20{
-        break;
-    }
-    println!(&quot;{}&quot;,num)
-}
-</code></pre>
-<h2><a id="%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数</h2>
-<pre class="line-numbers"><code class="language-rust">fn 函数名称([参数:数据类型]) -&gt; 返回值 {
-   // 函数代码
-}
-
-fn hello(){
-    println!(&quot;Hello, rust!&quot;);
-}
-
-fn main() {
-    hello();
-}
-
-//输出 Hello, rust!
-</code></pre>
-<p>一个 “不” 返回值的函数。实际上会返回一个单元类型 ()</p>
-<h3><a id="%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数返回值 -&gt;</h3>
-<p>如果函数最后没有 return，那么函数会使用最后一条语句的执行结果当做返回值返回，没有分号。</p>
-<h3><a id="%E5%8F%82%E6%95%B0%E5%80%BC%E4%BC%A0%E9%80%92" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>参数-值传递</h3>
-<p>值传递 是把传递的变量的值传递给函数的 形参，所以，函数体外的变量值和函数参数是各自保存了相同的值，互不影响。因此函数内部修改函数参数的值并不会影响外部变量的值。</p>
-<p>值传递变量导致重新创建一个变量</p>
-<pre class="line-numbers"><code class="language-rust">fn double_price(mut price:i32){
-    price=price*2;
-    println!(&quot;内部的price是{}&quot;,price)
-}
-
-fn main() {
-    let mut price=99;
-    double_price(price); //输出 内部的price是198
-    println!(&quot;外部的price是{}&quot;,price); //输出 外部的price是99
-}
-</code></pre>
-<h3><a id="%E5%8F%82%E6%95%B0%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>参数-引用传递</h3>
-<p>引用传递把当前变量的内存位置传递给函数。传递的变量和函数参数都共同指向了同一个内存位置。引用传递在参数类型的前面加上 &amp; 符号。</p>
-<pre class="line-numbers"><code class="language-rust">fn 函数名称(参数: &amp;数据类型) {
-   // 执行逻辑代码
-}
-
-fn double_price2(price:&amp;mut i32){
-    *price=*price*2;
-    println!(&quot;内部的price是{}&quot;,price)
-}
-
-fn main() {
-    let mut price=88;
-    double_price2(&amp;mut price); //输出 内部的price是176
-    println!(&quot;外部的price是{}&quot;,price);//输出 外部的price是176
-}
-</code></pre>
-<h2><a id="%E5%85%83%E7%BB%84tuple" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>元组 tuple</h2>
-<p>Tuple 元组是一个 复合类型 ，可以存储多个不同类型的数据。 Rust 支持元组 tuple 类型。元组使用括号 () 来构造（construct）。函数可以使用元组来返回多个值，因为元组可以拥有任意多个值。</p>
-<p>元组一旦定义，就不能再增长或缩小，长度是固定的。元组的下标从 0 开始。</p>
-<h3><a id="%E5%AE%9A%E4%B9%89" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定义</h3>
-<pre class="line-numbers"><code class="language-rust">let tuple变量名称:(数据类型1,数据类型2,...) = (数据1，数据2，...);
-let tuple变量名称 = (数据1，数据2，...);
-</code></pre>
-<p>tuple 使用一对小括号 () 把所有元素放在一起，元素之间使用逗号 , 分隔。如果显式指定了元组的数据类型，那么数据类型的个数必须和元组的个数相同，否则会报错。</p>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let t:(&amp;str,&amp;str) = (&quot;GO&quot;,&quot;rust&quot;);
-    println!(&quot;{:?}&quot;,t);
-    println!(&quot;{}&quot;,t.0);
-    println!(&quot;{}&quot;,t.1);
-    
-    // 解构，将2个元素的元组，赋值给两个变量
-    let (go,rust) = t;
-    println!(&quot;{}&quot;,go);
-    println!(&quot;{}&quot;,rust)
-}
-</code></pre>
-<h2><a id="%E7%BB%93%E6%9E%84%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体</h2>
-<h3><a id="%E5%AE%9A%E4%B9%89%E7%BB%93%E6%9E%84%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定义结构体</h3>
-<pre class="line-numbers"><code class="language-rust">struct 结构体名称 {
-    字段1:数据类型,
-    字段2:数据类型,
-    ...
-}
-</code></pre>
-<h3><a id="%E5%88%9B%E5%BB%BA%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9E%E4%BE%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>创建结构体实例</h3>
-<pre class="line-numbers"><code class="language-rust">let 实例名称 = 结构体名称{
-    field1:value1,
-    field2:value2
-    ...
-};
-
--------
-
-#[derive(Debug)]
-struct Study {
-    name: String,
-    target: String,
-    spend: i32,
-}
-
-fn main() {
-    let s = Study {
-        name: String::from(&quot;GO&quot;),
-        target: String::from(&quot;GOGOGO&quot;),
-        spend: 3,
-    };
-    println!(&quot;{:?}&quot;, s);
-    println!(&quot;{:?}&quot;, s.name);
-}
-
-</code></pre>
-<h3><a id="%E7%BB%93%E6%9E%84%E4%BD%93%E4%BD%9C%E4%B8%BA%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体作为函数参数</h3>
-<pre class="line-numbers"><code class="language-rust">fn show(s: Study) {
-    println!(
-        &quot;name is :{} target is {} spend is{}&quot;,
-        s.name, s.target, s.spend
-    );
-}
-</code></pre>
-<h3><a id="%E7%BB%93%E6%9E%84%E4%BD%93%E4%BD%9C%E4%B8%BA%E8%BF%94%E5%9B%9E%E5%80%BC" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体作为返回值</h3>
-<pre class="line-numbers"><code class="language-rust">fn get_instance(name: String, target: String, spend: i32) -&gt; Study {
-    return Study {
-        name,
-        target,
-        spend,
-    };
-}
-</code></pre>
-<h3><a id="%E6%96%B9%E6%B3%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>方法</h3>
-<p>方法是依附于对象的函数。<br />
-这些方法通过关键字 self 来访问对象中的数据和其他。方法在 impl 代码块中定义。</p>
-<blockquote>
-<p>与函数的区别<br />
-函数：可以直接调用，同一个程序不能出现 2 个相同的函数签名的函数，应为函数不归属任何 owner。<br />
-方法：归属某一个 owner，不同的 owner 可以有相同的方法签名。</p>
-</blockquote>
-<pre class="line-numbers"><code class="language-rust">impl 结构体{
-    fn 方法名(&amp;self,参数列表) 返回值 {
-        //方法体
-    }
-}
-</code></pre>
-<pre class="line-numbers"><code class="language-rust">struct User{
-    name:String,
-    age:u32
-}
-
-impl User{
-    fn get_name(&amp;self) -&gt; String {
-        return String::from(self.name.to_string())
-    }
-}
-
-fn main() {
-    let user = User{
-        name:&quot;zhangsan&quot;.to_string(),
-        age:1
-    };
-    println!(&quot;{}&quot;,user.get_name());
-}
-</code></pre>
-<h3><a id="%E7%BB%93%E6%9E%84%E4%BD%93%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体静态方法</h3>
-<pre class="line-numbers"><code class="language-rust">fn 方法名(参数: 数据类型,...) -&gt; 返回值类型 {
-      // 方法体
-   }
-
-调用方式
-结构体名称::方法名(参数列表)
-
-
-impl Study {
-    fn get_instance_another(name: String, target: String, spend: i32) -&gt; Study {
-        return Study {
-            name,
-            target,
-            spend,
-        };
-    }
-}
-fn main() {
-    let s = Study::get_instance_another(&quot;GO&quot;.to_string(),&quot;GOGOGO&quot;.to_string(),3);
-    println!(&quot;{:?}&quot;, s);
-    println!(&quot;{:?}&quot;, s.name);
-}
-</code></pre>
-<h2><a id="%E6%9E%9A%E4%B8%BE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>枚举</h2>
-<pre class="line-numbers"><code class="language-rust">enum 枚举名称{
- variant1,
- variant2,
- ...
-}
-
-使用：
-枚举名称::variant
-</code></pre>
-<h3><a id="option%E6%9E%9A%E4%B8%BE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Option枚举</h3>
-<pre class="line-numbers"><code class="language-rust">enum Option&lt;T&gt; {
-   Some(T),      // 用于返回一个值
-   None          // 用于返回 null,用None来代替。
-}
-</code></pre>
-<p>Option 枚举经常用在函数中的返回值，它可以表示有返回值，也可以用于表示没有返回值。如果有返回值。可以使用返回 Some(data)，如果函数没有返回值，可以返回 None。</p>
-<h2><a id="%E9%9B%86%E5%90%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>集合</h2>
-<p>Rust 语言标准库提供了通用的数据结构的实现。包括 向量 （Vector）、哈希表（ HashMap ）、哈希集合（ HashSet ） 。</p>
-<h3><a id="vec" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Vec</h3>
-<p>Rust 在标准库中定义了结构体 Vec 用于表示一个向量。向量和数组很相似，只是数组长度是编译时就确定了，定义后就不能改变了，那要么改数组，让他支持可变长度，显然 Rust 没有这么做，它用向量这个数据结构，也是在内存中开辟一段连续的内存空间来存储元素。</p>
-<p>特点：</p>
+<p>最终，MFCC 系数被组合成一个向量作为音频的特征表示。这个向量通常包含20-40个元素，每个元素代表一个MFCC系数，反映了音频中不同频率的能量分布情况。这样，我们就可以使用向量距离的概念来度量不同音频之间的相似性，从而支持基于内容的音频检索、分类等应用。</p>
+<h3><a id="%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E6%96%87%E6%9C%AC" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量如何表示文本</h3>
+<p>在自然语言处理中，向量也常被用来表示文本的特征。一个常见的方法是使用词袋模型（Bag-of-Words Model）以及词向量（Word Embedding）。</p>
+<p>词袋模型是一种基于频次的文本表示方法，它将文本表示为一个由每个单词出现次数所组成的向量。具体而言，假设我们有一个包含 \(N\) 个文档的文本集合，其中每个文档由若干个单词组成。那么词袋模型将该文本集合表示为 \(N\) 个 \(M\) 维向量的矩阵，其中第 \(i\) 个向量表示第 \(i\) 个文档中每个单词出现的次数。这样，我们就可以使用向量距离的概念来度量不同文档之间的相似性，从而支持基于内容的文本分类、聚类等应用。</p>
+<p>词向量是一种更加高级的文本表示方法，它将每个单词映射到一个连续的向量空间中，并且使得语义上相似的单词在向量空间中彼此接近。其中最常用的词向量模型是 Word2Vec，它通过训练神经网络来学习单词的向量表示。与词袋模型不同，词向量不仅考虑了单词出现的频率，还学习了单词之间的语义关系，因此能够更好地捕捉文本的语义信息。这样，我们就可以使用向量相似度的概念来进行文本匹配、情感分析等<br />
+任务。</p>
+<h2><a id="%E4%B8%8E%E4%BC%A0%E7%BB%9F%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>与传统关系型数据库的区别</h2>
+<p>与传统关系型数据库相比，向量数据库具有以下几个区别：</p>
 <ol>
-<li>向量中的元素都是相同类型元素的集合。</li>
-<li>长度可变，运行时可以增加和减少。</li>
-<li>使用索引查找元素。（索引从 0 开始）</li>
-<li>添加元素时，添加到向量尾部。</li>
-<li>向量的内存在堆上，长度可动态变化。</li>
+<li>
+<p>数据模型不同：传统关系型数据库采用表格方式存储数据，而向量数据库则采用向量方式存储数据。向量数据库中每个记录都是一个向量，而不是传统数据库中的行。</p>
+</li>
+<li>
+<p>查询方式不同：传统关系型数据库通常使用SQL语言进行查询，而向量数据库则支持基于向量相似度的查询。这种查询方式能够快速地找到相似的向量数据，适用于人工智能和机器学习领域的一些任务，如推荐系统、图像搜索和自然语言处理等。</p>
+</li>
+<li>
+<p>存储和索引技术不同：向量数据库采用向量化存储和索引技术，能够高效地处理包含大量向量的数据集，而传统关系型数据库则采用B树等索引结构。在向量数据库中，每个向量都可以看作是多维空间中的点，而索引则是通过测量向量之间的距离或角度来实现的。</p>
+</li>
+<li>
+<p>应用场景不同：传统关系型数据库适用于业务管理和数据分析等场景，而向量数据库则更适合处理高维稠密向量数据，并广泛应用于图像、音频、文本等领域的人工智能和机器学习任务中。</p>
+</li>
 </ol>
-<pre class="line-numbers"><code class="language-rust">let mut 向量的变量名称 = Vec::new();
-// 使用 vec宏简化
-let 向量的变量名称 = vec![val1,val2,...]
-</code></pre>
-<p>常用方法</p>
+<p>向量数据库也支持 CRUD。对向量更快的相似性搜索。</p>
+<h2><a id="%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量数据库的应用场景</h2>
+<p><img src="media/16849954851968/16850922776165.jpg" alt="" /></p>
+<p>向量数据库在人工智能和机器学习领域中有着广泛的应用场景，以下是一些常见的应用场景：</p>
 <ol>
-<li>new():创建一个空的向量实例</li>
-<li>push():添加到向量末尾</li>
-<li>remove():删除并返回指定的下表元素</li>
-<li>contains():判断向量中是否包含某个值</li>
-<li>len():返回向量中元素个数</li>
+<li>
+<p>人脸识别：向量数据库可以存储大量人脸特征向量，并能够快速地检索相似的人脸，从而实现高效准确的人脸识别。</p>
+</li>
+<li>
+<p>图像搜索：向量数据库可以将图像转化为高维特征向量，并根据相似度进行检索。这种技术被广泛应用于图像搜索引擎、商品推荐等领域。</p>
+</li>
+<li>
+<p>推荐系统：向量数据库可以通过存储用户历史行为数据，并利用相似度计算来产生个性化推荐结果。这种技术被广泛应用于电商、社交网络等领域。</p>
+</li>
+<li>
+<p>自然语言处理：向量数据库可以存储单词或文本片段的向量表示，并通过相似度计算来进行文本分类、情感分析等任务。</p>
+</li>
+<li>
+<p>视频监控：向量数据库可以存储视频特征向量，以实现更加高效准确的视频检索和目标跟踪。</p>
+</li>
+<li>
+<p>AI 长期记忆：ChatGPT等 AI 产品的底层数据库大概率就是向量数据库。</p>
+</li>
 </ol>
-<h3><a id="hashmap" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>HashMap</h3>
-<pre class="line-numbers"><code class="language-rust">let mut 变量名称 = HashMap::new();
-
-
-fn main() {
-    let mut map = HashMap::new();
-    map.insert(1,&quot;rust&quot;);
-    map.insert(2,&quot;go&quot;);
-    map.insert(3,&quot;java&quot;);
-
-    println!(&quot;len = {}&quot;,map.len());
-
-    let value = map.get(&amp;1);
-    match value {
-        Some(v) =&gt;{
-            println!(&quot;{}&quot;,v)
-        }
-        None =&gt;{
-            println!(&quot;none&quot;)
-        }
-    }
-
-    let map2 = map.clone();
-    for x in map2 {
-        println!(&quot;{:?}&quot;,x)
-    }
-
-    for (k,v) in map.iter() {
-        println!(&quot;k = {},v = {}&quot;,k,v);
-    }
-}
-</code></pre>
-<h3><a id="hashset" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>HashSet</h3>
-<p>Hashset 是相同数据类型的集合，它是没有重复值的。如果集合中已经存在相同的值，则会插入失败。</p>
-<pre class="line-numbers"><code class="language-rust">let mut 变量名称 = HashSet::new();
-
-</code></pre>
-<h2><a id="%E6%B3%9B%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>泛型</h2>
-<p>Rust 语言中的泛型主要包含 泛型集合、泛型结构体、泛型函数、范型枚举 和 特质 。</p>
-<p>Rust 使用使用 <T> 语法来实现泛型, 其中 T 可以是任意数据类型。</p>
-<pre class="line-numbers"><code class="language-rust">struct 结构体名称&lt;T&gt; {
-   元素:T,
-}
-
-
-struct Data&lt;T&gt; {
-   value:T,
-}
-
-fn main() {
-    let t:Data&lt;i32&gt; = Data{value:100};
-    println!(&quot;值:{} &quot;,t.value);//输出 值:100
-    let t:Data&lt;f64&gt; = Data{value:66.00};
-    println!(&quot;值:{} &quot;,t.value);//输出 值:66
-    let t:Data&lt;String&gt; = Data{value:&quot;123&quot;.to_string()};
-    println!(&quot;值:{} &quot;,t.value);//输出 值 123
-}
-</code></pre>
-<h2><a id="trait" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Trait</h2>
-<p>可以把这个特质（traits）对标其他语言的接口，都是对行为的抽象。使用 trait关键字用来定义。特质，可以包含具体的方法，也可以包含抽象的方法。</p>
-<pre class="line-numbers"><code class="language-rust">trait some_trait {
-   // 没有任何实现的虚方法
-   fn method1(&amp;self);
-
-   // 有具体实现的普通方法
-   fn method2(&amp;self){
-      //方法的具体代码
-   }
-}
-</code></pre>
-<p>实现特质  demo</p>
-<pre class="line-numbers"><code class="language-rust">struct Book {
-    name: String,
-    id: u32,
-    author: String,
-}
-
-trait ShowBook {
-    fn Show(&amp;self);
-}
-
-impl ShowBook for Book{
-    fn Show(&amp;self) {
-        println!(&quot;Id:{},Name:{},Author:{}&quot;,self.id,self.name,self.author);
-    }
-}
-
-fn main() {
-    let book = Book{
-        id:1,
-        name: String::from(&quot;GO&quot;),
-        author: String::from(&quot;xx&quot;)
-    };
-    book.Show();
-}
-</code></pre>
-<p>泛型函数</p>
-<pre class="line-numbers"><code class="language-rust">fn 方法名&lt;T[:特质名称]&gt;(参数1:T, ...) {
-
-   // 函数实现代码
-}
-
-
-fn show2&lt;T:Display&gt;(t:T){
-    println!(&quot;{}&quot;,t);
-}
-impl Display for Book{
-    fn fmt(&amp;self, f: &amp;mut Formatter&lt;'_&gt;) -&gt; std::fmt::Result {
-        println!(&quot;Id:{},Name:{},Author:{}&quot;,self.id,self.name,self.author);
-        let r=Result::Ok(());
-        return r;
-    }
-}
-
-show2(book);
-</code></pre>
-<h2><a id="%E8%BF%AD%E4%BB%A3%E5%99%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>迭代器</h2>
-<p>迭代器 就是把集合中的所有元素按照顺序一个接一个的传递给处理逻辑。</p>
-<p>Iterator 特质有两个函数：</p>
-<ol>
-<li>一个是 iter()，用于返回一个 迭代器 对象，也称之为 项 ( items ) 。</li>
-<li>一个是 next()，用于返回迭代器中的下一个元素。如果已经迭代到集合的末尾（最后一个项后面）则返回 None。</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let array = vec![
-        &quot;1&quot;,
-        &quot;2&quot;,
-        &quot;3&quot;,
-    ];
-    let mut iter = array.iter();
-    println!(&quot;{:?}&quot;,iter.next());
-    println!(&quot;{:?}&quot;,iter.next());
-    println!(&quot;{:?}&quot;,iter.next());
-
-    for x in array {
-        println!(&quot;{:?}&quot;,x)
-    }
-}
-</code></pre>
-<h2><a id="%E9%97%AD%E5%8C%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>闭包</h2>
-<p>Rust 中的闭包（closure），也叫做 lambda 表达式或者 lambda，是一类能够捕获周围作用域中变量的函数。</p>
-<p>调用一个闭包和调用一个函数完全相同，不过调用闭包时，输入和返回类型两者都可以自动推导，而输入变量名必须指明。</p>
-<p>其他的特点包括：</p>
-<ol>
-<li>声明时使用 || 替代 () 将输入参数括起来。</li>
-<li>函数体定界符（{}）对于单个表达式是可选的，其他情况必须加上。</li>
-<li>有能力捕获外部环境的变量。</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">普通函数
-fn 函数名(参数列表) -&gt; 返回值 {
-   // 业务逻辑
-}
-
-// 闭包
-|参数列表| {
-	// 业务逻辑
-}
-// 无参数闭包
-|| {
-	// 业务逻辑
-}
-
-let 闭包变量 = |参数列表| {
-   // 闭包的具体逻辑
-}
-
-</code></pre>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let double = |x| { x * 2 };
-
-    let add = |a, b| { a + b };
-    
-    let x = add(2, 4);
-    println!(&quot;{:?}&quot;, x);
-
-    let y = double(5);
-    println!(&quot;{:?}&quot;, y);
-
-    let v = 3;
-    let add2 = |x| { v + x };
-    println!(&quot;{:?}&quot;, add2(4));
-    
-    let r = (|x| x + 1)(3); // 3 是参数，结果r是4
-}
-</code></pre>
-<p>闭包就是在一个函数内创建立即调用的另一个函数。</p>
-<p>闭包是一个匿名函数。</p>
-<p>闭包虽然没有函数名，但可以把整个闭包赋值一个变量，通过调用该变量来完成闭包的调用。</p>
-<p>闭包不用声明返回值，但它却可以有返回值。并且使用最后一条语句的执行结果作为返回值。闭包的返回值可以赋值给变量。</p>
-<p>闭包又称之为 内联函数。可以让闭包访问外层函数里的变量。</p>
-<h2><a id="%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>闭包的使用</h2>
-<p><a href="https://www.go-edu.cn/2022/07/05/rust-39-%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/">https://www.go-edu.cn/2022/07/05/rust-39-%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</a></p>
-<pre class="line-numbers"><code class="language-rust">let add = |x, y| x + y;
-let result = add(3, 4);
-println!(&quot;{}&quot;, result);
-
-------------
-闭包像普通函数一样被调用。
-fn receives_closure&lt;F&gt;(closure: F)
-    where
-        F: Fn(i32, i32) -&gt; i32,
-{
-    let result = closure(3, 5);
-    println!(&quot;闭包作为参数执行结果 =&gt; {}&quot;, result);
-}
-
-fn main() {
-    let add = |x, y| x + y;
-    receives_closure(add);
-}
-
-输出:
-闭包作为参数执行结果 =&gt; 8
-
-
-------------
-闭包捕获变量
-fn receives_closure2&lt;F&gt;(closure:F)
-    where
-        F:Fn(i32)-&gt;i32{
-    let result = closure(1);
-    println!(&quot;closure(1) =&gt; {}&quot;, result);
-}
-
-fn main() {
-    let y = 2;
-    receives_closure2(|x| x + y);
-
-    let y = 3;
-    receives_closure2(|x| x + y);
-}
-输出:
-捕获变量的结果 =&gt; 3
-捕获变量的结果 =&gt; 4
-
-
-
-
--------
-返回闭包
-fn returns_closure() -&gt; impl Fn(i32) -&gt; i32 {
-    |x| x + 6
-}
-
-fn main() {
-    let closure = returns_closure();
-    println!(&quot;返回闭包 =&gt; {}&quot;, closure(1));
-}
-输出:
-返回闭包 =&gt; 7
-
-
-
-------
-参数和返回值都有闭包
-
-</code></pre>
-<h2><a id="%E7%BA%BF%E7%A8%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>线程</h2>
-<pre class="line-numbers"><code class="language-rust">创建线程
-std::thread::spawn()
-
-//spawn() 函数的原型
-pub fn spawn&lt;F, T&gt;(f: F) -&gt; JoinHandle&lt;T&gt;
-</code></pre>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    //子线程
-    thread::spawn(|| {
-        for i in 1..10 {
-            println!(&quot;子线程 {}&quot;, i);
-            thread::sleep(Duration::from_millis(1));
-        }
-    });
-    // 主线程
-    for i in 1..5 {
-        println!(&quot;主线程 {}&quot;, i);
-        thread::sleep(Duration::from_millis(1));
-    }
-}
-
-|| 是闭包，匿名函数，也可以使用外部函数
-
-fn a(){
-    for i in 1..10 {
-        println!(&quot;子线程 {}&quot;, i);
-        thread::sleep(Duration::from_millis(1));
-    }
-}
-
-fn main() {
-
-    thread::spawn(a);
-    // 主线程
-    for i in 1..5 {
-        println!(&quot;主线程 {}&quot;, i);
-        thread::sleep(Duration::from_millis(1));
-    }
-}
-</code></pre>
-<h3><a id="join" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>join</h3>
-<p>上面的例子主线程结束后，子线程还没有运行完，但是子线程也结束了。如果想让子线程结束后，主线程再结束，我们就要使用Join 方法，把子线程加入主线程等待队列。</p>
-<pre class="line-numbers"><code class="language-rust">fn a(){
-    for i in 1..10 {
-        println!(&quot;子线程 {}&quot;, i);
-        thread::sleep(Duration::from_millis(1));
-    }
-}
-
-fn main() {
-
-   let handler = thread::spawn(a);
-    // 主线程
-    for i in 1..5 {
-        println!(&quot;主线程 {}&quot;, i);
-        thread::sleep(Duration::from_millis(1));
-    }
-    handler.join().unwrap();
-
-}
-</code></pre>
-<h2><a id="%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>错误处理</h2>
-<h3><a id="panic%E4%B8%8D%E5%8F%AF%E6%81%A2%E5%A4%8D%E9%94%99%E8%AF%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>panic!() 不可恢复错误</h3>
-<p>panic!() 程序立即退出，退出时调用者抛出退出原因。</p>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    panic!(&quot;出错啦&quot;);
-    println!(&quot;Hello Rust&quot;); // 不可能执行的语句
-}
-//输出
-thread 'main' panicked at '出错啦', src/main.rs:2:5
-
-</code></pre>
-<h3><a id="result%E6%9E%9A%E4%B8%BE%E5%92%8C%E5%8F%AF%E6%81%A2%E5%A4%8D%E9%94%99%E8%AF%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Result 枚举和可恢复错误</h3>
-<p>枚举的定义</p>
-<pre class="line-numbers"><code class="language-rust">enum Result&lt;T,E&gt; {
-   OK(T),
-   Err(E)
-}
-OK(T) T OK 时作为正常返回的值的数据类型。
-Err(E) E Err 时作为错误返回的错误的类型。
-</code></pre>
-<h3><a id="unwrap%E5%92%8C-expect" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>unwrap() 和 expect()</h3>
-<p>unwrap是 Result&lt;T, E&gt;的方法，在实例上调用此方法时，如果是 Ok 枚举值，就会返回 Ok 中的对象，如果是 Err 枚举值，在运行时会 panic，报错信息是 format!(“{}”, error)。其缺点是，如果在不同地方都使用 unwrap，运行时出现 panic 的时候。</p>
-<pre class="line-numbers"><code class="language-rust">fn is_even(no:i32)-&gt;Result&lt;bool,String&gt; {
-    return if no % 2 == 0 {
-        Ok(true)
-    } else {
-        Err(&quot;输入值，不是偶数&quot;.to_string())
-    }
-}
-
-let result = is_even(6).unwrap();
-println!(&quot;结果 {}&quot;,result);
-//输出 结果 true
-
-let result = is_even(11).unwrap();
-println!(&quot;结果 {}&quot;,result);
-//输出 thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: &quot;输入值，不是偶数&quot;'
-</code></pre>
-<p>expect方法的作用和unwrap类似，区别在于，expect方法接受msg: &amp;str作为参数，它在运行时的panic信息为format!(&quot;{}: {}&quot;, msg, error)，使用expect时，可以自定义报错信息，因此出现panic时比较容易定位。</p>
-<pre class="line-numbers"><code class="language-rust">let f = File::open(&quot;abc.txt&quot;).expect(&quot;无法打开该文件&quot;); // 文件不存在
-//输出 thread 'main' panicked at '无法打开该文件: Os { code: 2, kind: NotFound, message: &quot;No such file or directory&quot; }'
-</code></pre>
-<h2><a id="%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>智能指针</h2>
-<p>指针，指代那些包含内存地址的变量。这个地址被用于索引，或者说用于指向内存中的其他数据。<br />
-rust 中最常用的指针就是 引用。</p>
-<p>而智能指针则是一些数据结构，他们的行为类似于指针但拥有额外的元数据和附加功能。<br />
-引用是只借用数据的指针，而大多数智能指针本身就拥有它们指向的数据。</p>
-<p><code>String</code> 和 <code>Vec&lt;T&gt;</code> 也是智能指针。因为他们拥有一片内存区域并允许用户对其进行操作。他们还拥有元数据，例如容量，并提供额外的功能或保障。</p>
-<p>一般用结构体实现智能指针，通常会实现 Deref 和 Drop 这两个 trait。<br />
-Deref 使得智能指针结构体的实例拥有与引用一致的行为，可以编写出能够同时用于引用和智能指针的代码</p>
-<p>Drop 可以自定义智能指针离开作用域时运行的代码。</p>
-<p>常见的智能指针：</p>
-<ul>
-<li><code>Box&lt;T&gt;</code>:可用于在堆上分配值。</li>
-<li><code>Rc&lt;T&gt;</code>:允许多重所有权的引用计数类型。</li>
-<li><code>Ref&lt;T&gt;</code>和 <code>RefMut&lt;T&gt;</code>：可以通过 <code>RefCell&lt;T&gt;</code> 访问，是一种可以在运行时而不是编译时执行借用规则的类型。</li>
-</ul>
-<p>内部可变性模式，使用了这一模式的不可变类型会暴露出能够改变自己内部值的 API。</p>
-<h3><a id="%E4%BD%BF%E7%94%A8box-t%E5%9C%A8%E5%A0%86%E4%B8%8A%E5%88%86%E9%85%8D%E6%95%B0%E6%8D%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>使用 Box<T> 在堆上分配数据</h3>
-<p><code>Box&lt;T&gt;</code> 装箱，是最简单直接的一种智能指针。将数据保存在堆上，并在栈中保留一个指向堆数据的指针。<br />
-装箱使用场景：</p>
-<ol>
-<li>当拥有一个无法编译时确定大小的类型，但又想在一个要求固定尺寸的上下文环境中使用这个类型的值时</li>
-<li>当希望拥有一个实现了指定 trait 的类型值，但又不关心具体的类型时</li>
-</ol>
-<h3><a id="%E9%80%9A%E8%BF%87deref-trait%E5%B0%86%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E8%A7%86%E4%BD%9C%E5%B8%B8%E8%A7%84%E5%BC%95%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>通过 Deref trait 将智能指针视作常规引用</h3>
-<p>实现这个 trait 可以自定义解引用运算符的行为</p>
-<pre class="line-numbers"><code class="language-rust">use std::ops::Deref;
-
-/// 定义一个 名为 MyBox 的结构体。结构体的定义中附带了泛型参数 T，可以存储任意类型的值。
-/// MyBox 是一个拥有 T 类型单元素的元组结构体。
-struct MyBox&lt;T&gt;(T);
-
-impl&lt;T&gt; MyBox&lt;T&gt; {
-    fn new(x: T) -&gt; MyBox&lt;T&gt; {
-        MyBox(x)
-    }
-}
-
-impl&lt;T&gt; Deref for MyBox&lt;T&gt; {
-    // 定义了 Deref trait 的一个关联类型、
-    // 关联类型是一种稍微有些不同的泛型参数定义方式。
-    type Target = T;
-
-    // 返回一个指向值的引用。进而允许通过 * 访问。
-    // * -&gt; *(y.deref())
-    fn deref(&amp;self) -&gt; &amp;Self::Target {
-        &amp;self.0
-    }
-}
-
-fn main() {
-    let x = 5;
-    let y = MyBox::new(x);
-
-    assert_eq!(5, x);
-    assert_eq!(5, *y);
-}
-</code></pre>
-<p>Rust 语言把指针封装在如下两个特质Trait中。<br />
-Deref	std::ops::Deref	用于创建一个只读智能指针，例如 *v<br />
-Drop	std::ops::Drop	智能指针超出它的作用域范围时会回调该特质的 drop() 方法。 类似于其它语言的 析构函数。</p>
-<p>当一个结构体实现了以上的接口后，它们就是智能指针。</p>
-<p>Rust 提供了在 堆 上存储数据的能力并把这个能力封装到了 Box 中。</p>
-<p>这种把 栈 上数据搬到 堆 上的能力，我们称之为 装箱。<br />
-Box 指针可以把数据存储在堆（heap）上，而不是栈（stack）上。这就是装箱（box），栈（stack）还是包含指向 堆（heap） 上数据的指针。</p>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let a = 6;           // 默认保存在 栈 上
-    let b = Box::new(a); // 使用 Box 后数据会存储在堆上
-    println!(&quot;b = {}&quot;, b);// 输出 b = 6
-}
-</code></pre>
-<h2><a id="rc-t%E5%9F%BA%E4%BA%8E%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%9A%84%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rc<T> 基于引用计数的智能指针</h2>
-<p>某些场景下，单个值可能同时被多个所有者持有，Rust 提供了一个名为 <code>Rc&lt;T&gt;</code>的类型来支持多重所有权，RC 是 Reference counting （引用计数）的缩写。<br />
-<code>Rc&lt;T&gt;</code> 类型的实例会在内部维护一个用于记录值引用次数的计数器，从而确定这个值是否仍在使用。</p>
-<p>将堆上的一些数据分享给程序的锁哥部分同时使用，而又无法在编译期确定哪个部分会最后释放这些数据时，就可以使用 <code>Rc&lt;T&gt;</code> 类型、Rc 仅适用于单线程场景。</p>
-<p>clone Rc 会增加引用计数</p>
-<h2><a id="refcell-t%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>RefCell&lt;T&gt;</code>: 内部可变性模式</h2>
-<p>RefCell 代表了其持有数据的唯一所有权。</p>
-<h2><a id="%E5%8C%85%E7%AE%A1%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>包管理</h2>
-<p><a href="https://blog.hitol.top/16727524082529.html">https://blog.hitol.top/16727524082529.html</a></p>
-<h2><a id="%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>单元测试</h2>
-<pre class="line-numbers"><code class="language-rust">#[test]
-fn it_works(){
-    let result = 2 + 2;
-    assert_eq!(result,4);
-}
-</code></pre>
-<h2><a id="arc" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Arc</h2>
-<p>Arc（Atomic Reference Counted）是 Rust 标准库中的一种类型，它实现了原子引用计数（Atomic Reference Counting）。Arc 可以在多个线程间共享数据，而不必担心数据安全。</p>
-<p>Arc 使用了一个内部计数器，来记录有多少个引用指向该数据。当最后一个引用被销毁时，Arc 会自动销毁数据。</p>
-<p>例如：</p>
-<pre class="line-numbers"><code class="language-rust">use std::sync::Arc;
-use std::thread;
-
-fn main() {
-    let data = Arc::new(vec![1, 2, 3, 4, 5]);
-
-    for i in 0..5 {
-        let data = data.clone();
-        thread::spawn(move || {
-            println!(&quot;Thread {}: {:?}&quot;, i, data);
-        });
-    }
-}
-
-</code></pre>
-<p>在上面的代码中，我们创建了一个用于存储整数的 vector，并用 Arc 包装它。然后在循环中，我们创建了五个线程，每个线程都有一个对该 vector 的引用。当最后一个引用被销毁时，Arc 会自动销毁 vector。</p>
-<p>Arc 是一种非常有用的工具，特别是当你需要在多个线程间共享数据时，可以替代手写的计数器。</p>
-<h2><a id="rwlock" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RwLock</h2>
-<p>RwLock 是 Rust 标准库中的一种类型，用于实现读写锁。读写锁是一种线程同步机制，它可以同时允许多个读线程读取共享数据，但是只允许一个写线程对共享数据进行修改。</p>
-<pre class="line-numbers"><code class="language-rust">use std::sync::{Arc, RwLock};
-use std::thread;
-
-fn main() {
-    let data = Arc::new(RwLock::new(vec![1, 2, 3, 4, 5]));
-
-    for i in 0..5 {
-        let data = data.clone();
-        thread::spawn(move || {
-            let mut data = data.write().unwrap();
-            data[i] += 1;
-        });
-    }
-
-    thread::sleep_ms(50);
-
-    let data = data.read().unwrap();
-    println!(&quot;{:?}&quot;, data);
-}
-
-</code></pre>
-<p>在上面的代码中，我们创建了一个用于存储整数的 vector，并用 RwLock 包装它。然后在循环中，我们创建了五个线程，每个线程都试图对该 vector 进行修改。由于我们使用了读写锁，因此在任意时刻只有一个线程能够修改 vector，从而避免了竞争条件的产生。</p>
-<p>RwLock 是一种非常有用的工具，特别是当你需要保护共享数据不被多个线程同时修改时，可以使用它来保证数据安全。</p>
-<h2><a id="%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>时间格式</h2>
-<pre class="line-numbers"><code class="language-rust">use chrono::{DateTime, Utc};
-
-fn main() {
-    let now: DateTime&lt;Utc&gt; = Utc::now();
-
-    println!(&quot;UTC now is: {}&quot;, now);
-    println!(&quot;UTC now in RFC 2822 is: {}&quot;, now.to_rfc2822());
-    println!(&quot;UTC now in RFC 3339 is: {}&quot;, now.to_rfc3339());
-    println!(&quot;UTC now in a custom format is: {}&quot;, now.format(&quot;%a %b %e %T %Y&quot;));
-}
-
-</code></pre>
-<h2><a id="%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>策略模式</h2>
-<p>在 Rust 中，策略模式是一种常见的设计模式，用于将算法与其实现分离开来，并在运行时动态选择不同的算法实现。</p>
-<p>以下是一个简单的示例代码，展示了如何使用策略模式来实现对两个整数进行加法、减法和乘法计算：</p>
-<pre class="line-numbers"><code class="language-rust">trait Calculator {
-    fn calculate(&amp;self, a: i32, b: i32) -&gt; i32;
-}
-
-struct AddCalculator;
-
-impl Calculator for AddCalculator {
-    fn calculate(&amp;self, a: i32, b: i32) -&gt; i32 {
-        a + b
-    }
-}
-
-struct SubtractCalculator;
-
-impl Calculator for SubtractCalculator {
-    fn calculate(&amp;self, a: i32, b: i32) -&gt; i32 {
-        a - b
-    }
-}
-
-struct MultiplyCalculator;
-
-impl Calculator for MultiplyCalculator {
-    fn calculate(&amp;self, a: i32, b: i32) -&gt; i32 {
-        a * b
-    }
-}
-
-struct Context&lt;'a&gt; {
-    calculator: Box&lt;dyn Calculator + 'a&gt;,
-}
-
-impl&lt;'a&gt; Context&lt;'a&gt; {
-    fn new(calculator: Box&lt;dyn Calculator + 'a&gt;) -&gt; Self {
-        Self { calculator }
-    }
-
-    fn set_calculator(&amp;mut self, calculator: Box&lt;dyn Calculator + 'a&gt;) {
-        self.calculator = calculator;
-    }
-
-    fn execute(&amp;self, a: i32, b: i32) -&gt; i32 {
-        self.calculator.calculate(a, b)
-    }
-}
-
-fn main() {
-    let mut context = Context::new(Box::new(AddCalculator));
-    println!(&quot;1 + 2 = {}&quot;, context.execute(1, 2));
-
-    context.set_calculator(Box::new(SubtractCalculator));
-    println!(&quot;3 - 1 = {}&quot;, context.execute(3, 1));
-
-    context.set_calculator(Box::new(MultiplyCalculator));
-    println!(&quot;2 * 4 = {}&quot;, context.execute(2, 4));
-}
-</code></pre>
-<p>在上面的代码中，首先定义了一个 Calculator trait，该 trait 包含一个用于计算两个整数的 calculate() 方法。然后，分别实现了 AddCalculator、SubtractCalculator 和 MultiplyCalculator 三种不同的计算方法，并让它们都实现了 Calculator trait。</p>
-<p>接着，定义了一个 Context 结构体，包含一个 Box<dyn Calculator> 类型的成员变量，用于保存当前选定的计算方法。定义了 new() 方法用于创建新的 Context 对象并设置默认的计算方法；定义了 set_calculator() 方法用于切换计算方法；定义了 execute() 方法用于执行具体的计算操作。</p>
-<p>最后，在 main() 函数中，创建一个 Context 对象，并使用 execute() 方法分别执行加法、减法和乘法计算。</p>
-<p>需要注意的是，采用策略模式可以解除算法与其实现之间的耦合关系，并提高代码的可扩展性和可维护性。同时，也可以根据具体需求选择不同的计算方法，从而灵活地应对各种计算场景。</p>
-<pre class="line-numbers"><code class="language-rust">#[derive(Clone, Copy)]
-struct TaskRecord {
-    code: u32,
-}
-
- trait TaskStepService {
-     fn do_task_step(task_record: &amp;TaskRecord);
-     fn retry_task_step(task_record: &amp;TaskRecord);
-}
-
-
-pub struct StepA;
-
-impl TaskStepService for StepA {
-     fn do_task_step(task_record: &amp;TaskRecord) {
-        println!(&quot;Do task step A with code {}&quot;, task_record.code);
-    }
-
-     fn retry_task_step(task_record: &amp;TaskRecord) {
-        println!(&quot;Retry task step A with code {}&quot;, task_record.code);
-    }
-}
-
-pub struct StepB;
-
-impl TaskStepService for StepB {
-     fn do_task_step(task_record: &amp;TaskRecord) {
-        println!(&quot;Do task step B with code {}&quot;, task_record.code);
-    }
-
-     fn retry_task_step(task_record: &amp;TaskRecord) {
-        println!(&quot;Retry task step B with code {}&quot;, task_record.code);
-    }
-}
-
-enum TaskStep {
-    A(StepA),
-    B(StepB),
-}
-
-impl TaskStep {
-    fn from_code(code: u32) -&gt; Option&lt;Self&gt; {
-        match code {
-            1 =&gt; Some(Self::A(StepA)),
-            2 =&gt; Some(Self::B(StepB)),
-            _ =&gt; None,
-        }
-    }
-}
-
- fn process_task_step(task_record: TaskRecord) {
-    if let Some(step) = TaskStep::from_code(task_record.code) {
-        match step {
-            TaskStep::A(service) =&gt; service.do_task_step(&amp;task_record),
-            TaskStep::B(service) =&gt; service.do_task_step(&amp;task_record),
-        }
-    } else {
-        println!(&quot;Invalid task code: {}&quot;, task_record.code);
-    }
-}
-
- fn retry_task_step(task_record: TaskRecord) {
-    if let Some(step) = TaskStep::from_code(task_record.code) {
-        match step {
-            TaskStep::A(service) =&gt; service.retry_task_step(&amp;task_record),
-            TaskStep::B(service) =&gt; service.retry_task_step(&amp;task_record),
-        }
-    } else {
-        println!(&quot;Invalid task code: {}&quot;, task_record.code);
-    }
-}
-
-pub fn main() {
-    let task_record1 = TaskRecord { code: 1 };
-    let task_record2 = TaskRecord { code: 2 };
-    let task_record3 = TaskRecord { code: 3 };
-
-    process_task_step(task_record1);
-    process_task_step(task_record2);
-    process_task_step(task_record3);
-
-    retry_task_step(task_record1);
-    retry_task_step(task_record2);
-    retry_task_step(task_record3);
-}
-报错还未解决
-</code></pre>
-<pre class="line-numbers"><code class="language-rust">struct TaskRecord {
-    code: u32,
-}
-
-trait TaskStepService {
-    fn do_task_step(&amp;self, task_record: &amp;TaskRecord) {
-        println!(&quot;default do_task_step implementation for code {}&quot;, task_record.code);
-    }
-    fn retry_task_step(&amp;self, task_record: &amp;TaskRecord) {
-        println!(&quot;default retry_task_step implementation for code {}&quot;, task_record.code);
-    }
-}
-
-struct TaskStepServiceImpl1;
-impl TaskStepService for TaskStepServiceImpl1 {
-    fn do_task_step(&amp;self, task_record: &amp;TaskRecord) {
-        println!(&quot;TaskStepServiceImpl1 do_task_step implementation for code {}&quot;, task_record.code);
-    }
-    fn retry_task_step(&amp;self, task_record: &amp;TaskRecord) {
-        println!(&quot;TaskStepServiceImpl1 retry_task_step implementation for code {}&quot;, task_record.code);
-    }
-}
-
-struct TaskStepServiceImpl2;
-impl TaskStepService for TaskStepServiceImpl2 {
-    fn do_task_step(&amp;self, task_record: &amp;TaskRecord) {
-        println!(&quot;TaskStepServiceImpl2 do_task_step implementation for code {}&quot;, task_record.code);
-    }
-    fn retry_task_step(&amp;self, task_record: &amp;TaskRecord) {
-        println!(&quot;TaskStepServiceImpl2 retry_task_step implementation for code {}&quot;, task_record.code);
-    }
-}
-
-
-fn main() {
-    let task_record = TaskRecord { code: 1 };
-
-    match task_record.code {
-        1 =&gt; {
-            let service = TaskStepServiceImpl1 {};
-            service.do_task_step(&amp;task_record);
-            service.retry_task_step(&amp;task_record);
-        },
-        2 =&gt; {
-            let service = TaskStepServiceImpl2 {};
-            service.do_task_step(&amp;task_record);
-            service.retry_task_step(&amp;task_record);
-        },
-        _ =&gt; println!(&quot;unsupported code {}&quot;, task_record.code),
-    }
-}
-
-</code></pre>
-<h2><a id="%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>多线程与定时任务</h2>
-<pre class="line-numbers"><code class="language-rust">
-use std::future::Future;
-use std::pin::Pin;
-use tokio::time::{sleep, Duration};
-
-pub async fn do_task() -&gt; Result&lt;(), Box&lt;dyn std::error::Error + Send + Sync&gt;&gt; {
-    loop {
-        println!(&quot;Running scheduled task...&quot;);
-        // 执行定时任务的代码...
-        println!(&quot;hello &quot;);
-
-        sleep(Duration::from_secs(2)).await;
-    }
-}
-
-pub fn spawn_task() -&gt; Pin&lt;Box&lt;dyn Future&lt;Output = ()&gt; + Send + Sync&gt;&gt; {
-    let fut = async move {
-        if let Err(err) = do_task().await {
-            eprintln!(&quot;Scheduled task failed: {:?}&quot;, err);
-        }
-    };
-    Box::pin(fut)
-}
-
----
-
-
-mod job;
-
-use std::collections::HashMap;
-
-use std::time::Duration;
-use tokio::time::{interval, Instant, sleep};
-
-#[actix_web::main]
-async fn main() {
-    let task = job::do_task();
-    tokio::spawn(task);
-
-    sleep(Duration::from_secs(60)).await;
-}
-</code></pre>
-<h2><a id="channel" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>channel</h2>
-<pre class="line-numbers"><code class="language-rust">use std::thread;
-use std::sync::mpsc;
-
-fn main() {
-    let (tx, rx) = mpsc::channel();
-
-    thread::spawn(move || {
-        let val = String::from(&quot;hi&quot;);
-        tx.send(val).unwrap();
-    });
-
-    let received = rx.recv().unwrap();
-    println!(&quot;Got: {}&quot;, received);
-}
-
-</code></pre>
-<h2><a id="rayon" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>rayon</h2>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16819109466507.jpg" alt="" /><br />
-工作窃取。</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16819110812309.jpg" alt="" /></p>
-<h2><a id="%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%EF%BC%8C%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>&lt;'_&gt; 是什么意思，什么作用</h2>
-<p>在 Rust 中，<code>&lt;'_&gt;</code> 用于定义匿名生命周期。</p>
-<p>生命周期是 Rust 中管理内存和引用的机制，它用于确保程序中的引用安全有效。通常，生命周期标记使用单引号 <code>'</code> 来表示。例如：</p>
-<pre class="line-numbers"><code class="language-rust">fn foo&lt;'a&gt;(x: &amp;'a i32) -&gt; &amp;'a i32 {
-    x
-}
-</code></pre>
-<p>在这个例子中，<code>&lt;'a&gt;</code> 表示 <code>foo()</code> 函数使用一个生命周期 <code>a</code>，该生命周期确保返回值 <code>&amp;'a i32</code> 的引用与参数 <code>x: &amp;'a i32</code> 的生命周期相同。</p>
-<p><code>&lt;'_&gt;</code> 是一种特殊的生命周期标记，它表示一个匿名生命周期。这意味着，Rust 编译器会自动确定匿名生命周期的实际生命周期，无需手动指定。</p>
-<p>例如，以下代码中的 <code>&lt;'_&gt;</code> 标记可以自动确定 <code>s</code> 和 <code>s2</code> 的实际生命周期，而无需指定具体的生命周期名称：</p>
-<pre class="line-numbers"><code class="language-rust">fn print_str(s: &amp;str) {
-    println!(&quot;{}&quot;, s);
-}
-
-fn main() {
-    let s = String::from(&quot;Hello, world!&quot;);
-    let s2: &amp;str = &amp;s;
-    print_str(s2);
-}
-</code></pre>
-<p>在这个例子中，我们定义了一个函数 <code>print_str()</code>，该函数接受一个字符串引用，并在控制台上打印出它。在 <code>main()</code> 函数中，我们首先定义了一个字符串 <code>s</code>，然后获取它的引用 <code>s2</code>，并将其传递给 <code>print_str()</code> 函数。 接下来我们将参数转换为 <code>&amp;str</code> 类型。在这个过程中，我们使用了 <code>&lt;'_&gt;</code> 标记来表示一个匿名生命周期，此时 Rust 编译器会自动确定 <code>s</code> 和 <code>s2</code> 的实际生命周期，从而使得该代码更简洁，更易于阅读和维护。</p>
-<p>总之， <code>&lt;'_&gt;</code> 适用于匿名生命周期，可以让代码更简洁，并且让 Rust 编译器自动确定实际生命周期。如果您不需要手动编写生命周期标记，并且可以让编译器自动确定生命周期，则可以使用 <code>&lt;'_&gt;</code> 来代替具体的生命周期名称。</p>
-<h2><a id="%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数指针</h2>
-<p>将普通函数传递至其他函数<br />
-函数在传递的过程中会被强制转换成 fn 类型，fn 就是函数指针。</p>
-<pre class="line-numbers"><code class="language-rust">fn add_one(x: i32) -&gt; i32 {
-    x + 1
-}
-
-fn do_twice(f: fn(i32) -&gt; i32, arg: i32) -&gt; i32 {
-    f(arg) + f(arg)
-}
-
-fn main() {
-    let answer = do_twice(add_one, 5);
-    println!(&quot;The answer is: {}&quot;, answer);
-}
-</code></pre>
-<p>fn 是一个类型而不是一个 trait。<br />
-函数指针实现了全部 3 中闭包 trait(Fn、FnMut、FnOnce)，所以可以把函数指针<br />
-用作参数传递给一个接收闭包的函数。<br />
-倾向于使用搭配闭包 trait 的泛型来编写函数，这样的函数可以同时处理闭包与普通函数。</p>
-<h2><a id="%E9%97%AD%E5%8C%85%E4%B8%8Efn%E3%80%81fnmut%E3%80%81fnonce" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>闭包与Fn、FnMut、FnOnce</h2>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let s = String::from(&quot;closure test&quot;);
-
-    let f1 = || println!(&quot;{}&quot;, s); // 不可变借用，这里 闭包就相当于 Fn
-
-    f1();
-
-    let mut s = String::from(&quot;closure test mut&quot;);
-    // 注意由于这里是使用可变借用，因此，闭包函数的接收者也必须声明为可变借用类型
-    let mut f2 = || {
-        s.push_str(&quot;, hello!&quot;);
-        println!(&quot;{}&quot;, s);
-    };// 可变借用 -&gt; FnMut
-
-    f2();
-
-    let s = String::from(&quot;closure test value&quot;);
-
-    let f3 = move || println!(&quot;{}&quot;, s); // move语句使用相当于把s的所有权移到的闭包内部，闭包外部不能再使用该值 -&gt; FnOnce
-
-    f3();
-}
-</code></pre>
-<p>闭包底层实现机制。<br />
-Fn 不可变引用<br />
-FnMut 可变引用<br />
-FnOnce （move）</p>
-<p>Fn 继承了 FnMut，FnMut 继承了 FnOnce。</p>
-<h2><a id="%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>宏</h2>
-<p>一组相关功能的集合称谓。<br />
-macro_rules! 构造的声明宏(declarative macro) 以及3中过程宏(procedural macro):</p>
-<ol>
-<li>用于结构体或枚举的自定义 #[derive] 宏，可以指定随 derive 属性自动添加的代码</li>
-<li>用于为任意条目添加自定义属性的属性宏</li>
-<li>看起来类似于函数的函数宏，可以接收并处理一段标记序列</li>
-</ol>
-<p>宏是一种用于编写其他代码的代码编写方式，元编程范式。相当于自定义注解？</p>
-<p>derive属性是一种宏，自动生成各种 trait 的实现。</p>
-<p>宏小册：<a href="https://zjp-cn.github.io/tlborm/introduction.html">https://zjp-cn.github.io/tlborm/introduction.html</a></p>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16843984175104.jpg" alt="" /><br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/16843997515972.jpg" alt="" /></p>
-<h3><a id="macro-rules%E5%A3%B0%E6%98%8E%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>macro_rules! 声明宏</h3>
-<pre class="line-numbers"><code class="language-rust">macro_rules! my_macro {
-    ($($arg: expr), *) =&gt; {
-        // 宏的实现逻辑
-        println!(&quot;Hello, {}&quot;, $($arg), *);
-    }
-}
-
-fn main() {
-    my_macro!(&quot;World!&quot;);
-}
-
-</code></pre>
-<h3><a id="%E5%B1%9E%E6%80%A7%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>属性宏</h3>
-<p>允许创建新的属性，而不是为 derive 属性生成代码。<br />
-derive 只能被用于结构体和枚举，而属性则可以同时被用于其他条目，比如函数等。</p>
-<h3><a id="%E5%87%BD%E6%95%B0%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数宏</h3>
-<h2><a id="%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AAderive%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>自定义一个 derive 宏</h2>
-<p>实现一个宏，达到的效果是，在任意类型上标注 #[derive(HelloMacro)]，得到 hello_macro 函数的默认实现</p>
-<pre class="line-numbers"><code class="language-rust">use hello_macro::HelloMacro;
-use hello_macro_derive::HelloMacro;
-
-#[derive(HelloMacro)]
-struct Pancakes;
-
-fn main() {
-    Pancakes::hello_macro();
-}
-
-打印出 “Hello, Macro! My name is Pancakes!”
-</code></pre>
-<p>首先，创建一个新的代码包</p>
-<h2><a id="%E5%AE%9E%E7%8E%B0kafka%E7%9A%84%E5%B7%A5%E5%85%B7%E5%8C%85%EF%BC%8C%E5%8F%91%E5%B8%83%E5%88%B0-crate-io" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>实现 kafka 的工具包，发布到 crate.io</h2>
-<p><a href="media/16748079623338/Rust%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.pdf">Rust学习路线图.pdf</a></p>
+<!--当我们在使用 ChatGPT 输入一个查询时，ChatGPT 会将该查询转换为一个向量表示，并使用预训练和微调好的模型对其进行处理并生成响应。-->
+<h3><a id="ai%E7%9A%84%E9%95%BF%E6%9C%9F%E8%AE%B0%E5%BF%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>AI 的长期记忆</h3>
+<p>众所周知，目前的大模型（无论是 NLP 领域的 GPT 系列还是 CV 领域的 ResNET 系列）都是预先训练 Pretrain 的大模型，有着非常明晰的训练截止日 Cut-off Date，这导致这些模型对于训练截止日之后发生的事情一无所知。</p>
+<p>而随着向量数据库的引入，其内部存储的最新的信息向量能够极大地拓展大模型的应用边界，向量数据库可以使得大模型保持准实时性，提高大模型的适用性，并使得大模型能够动态调整。也就是说，向量数据库使得大模型的长期记忆得到了可能。</p>
+<p>AutoGPT 等于 ChatGPT 加上向量数据库。通过向量数据库让 AutoGPT 具备了长期记忆能力，它知道之前搜的是什么，把历史全部记进去了，不然每次查询是没有上下文的。</p>
+<p>如果将向量数据库部署在公司内部，能够协助解决目前企业界最担忧的大模型泄露隐私的问题。</p>
+<p><img src="media/16849944997542/16854132952262.jpg" alt="" /></p>
+<h2><a id="%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%A7%E5%93%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量数据库 产品</h2>
+<p>Milvus：世界上最快的向量数据库<br />
+Pinecone，这个提供 Google Cloud 或 AWS 的托管服务，Rust 重写<br />
+Qdrant，开源版及商业版都有<br />
+pgvector，PostgreSQL 的扩展</p>
+<p><img src="media/16849954851968/16853468597006.jpg" alt="" /><br />
+4月28日，向量数据库平台Pinecone宣布获得1亿美元（约7亿元）B轮融资，由Andreessen Horowitz领投，ICONIQ Growth等跟投。</p>
+<p>4月22日，向量数据库平台Weaviate宣布获得5000万美元（约3.5亿元）B轮融资，由Index Ventures领投，Battery Ventures等跟投。</p>
+<p>此外，4月6日Chroma获1800万美元种子轮融资，4月19日Qdrant获750万美元种子轮融资。</p>
+<p>Pinecone: <a href="https://www.pinecone.io">https://www.pinecone.io</a><br />
+Weaviate: <a href="https://weaviate.io">https://weaviate.io</a><br />
+Chroma: <a href="https://www.trychroma.com/">https://www.trychroma.com/</a><br />
+Zilliz: <a href="https://zilliz.com">https://zilliz.com</a><br />
+Vespa: <a href="https://vespa.ai">https://vespa.ai</a></p>
+<h2><a id="%E5%B8%82%E5%9C%BA%E7%A9%BA%E9%97%B4%E5%B7%A8%E5%A4%A7%EF%BC%8C%E8%A1%8C%E4%B8%9A%E5%A4%84%E4%BA%8E%E4%BB%8E0-1%E9%98%B6%E6%AE%B5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>市场空间巨大，行业处于从0-1阶段</h2>
+<p>向量数据库是 AI 时代的 Killer App。AI时代一切AI化，而AI化的本质则是向量化，向量化计算成本高昂，海量的高维向量势必需要专门的数据库进行存储和处理，向量数据库应运而生，向量数据库在拓展AI全新应用场景的同时，也将对传统数据库产品形成替代，进而成为AI时代的Killer App。</p>
+<hr />
+<p><a href="https://wallstreetcn.com/articles/3688270">https://wallstreetcn.com/articles/3688270</a><br />
+<a href="https://wallstreetcn.com/articles/3688423">https://wallstreetcn.com/articles/3688423</a></p>
+<p><a href="https://www.youtube.com/watch?v=dN0lsF2cvm4">https://www.youtube.com/watch?v=dN0lsF2cvm4</a><br />
+<a href="https://www.youtube.com/watch?v=u03AZlmZF_8">https://www.youtube.com/watch?v=u03AZlmZF_8</a></p>
 
                         
                       </div>
@@ -1537,10 +284,10 @@ fn main() {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2023/01/27 16:26 下午</span>
+                    <span class="date">2023/05/25 14:18 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='rust.html'>rust</a></span>
+          					    <span class="posted-in"><a href='AI.html'>AI</a></span>
           				   
                     
 
@@ -1632,6 +379,8 @@ fn main() {
             <a href="GO.html"><strong>GO</strong></a>
         
             <a href="rust.html"><strong>rust</strong></a>
+        
+            <a href="AI.html"><strong>AI</strong></a>
          
         </p>
 
@@ -1648,13 +397,19 @@ fn main() {
 	      
 		      
 			      <li class="post">
-			        <a href="16748079623338.html">rust 快速入门指南</a>
+			        <a href="16849954851968.html">向量数据库 Vector Database</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16748079623338.html">rust 快速入门指南</a>
 			      </li>
 		     
 		  
@@ -1667,12 +422,6 @@ fn main() {
 		      
 			      <li class="post">
 			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16689222220789.html">actix-web</a>
 			      </li>
 		     
 		  
