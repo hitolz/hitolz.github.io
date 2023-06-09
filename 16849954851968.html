@@ -151,7 +151,11 @@
       <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <div class="mweb_toc"><ul>
 <li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93">什么是向量数据库</a></li>
-<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F">什么是向量</a></li>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F">什么是向量</a>
+<ul>
+<li><a href="#%E5%90%91%E9%87%8F%E7%9A%84%E5%AE%9E%E9%99%85%E5%90%AB%E4%B9%89">向量的实际含义</a></li>
+</ul>
+</li>
 <li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE">什么是向量数据</a>
 <ul>
 <li><a href="#%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E5%9B%BE%E7%89%87%E7%9A%84%E7%89%B9%E5%BE%81">向量如何表示图片的特征</a></li>
@@ -160,6 +164,7 @@
 </ul>
 </li>
 <li><a href="#%E4%B8%8E%E4%BC%A0%E7%BB%9F%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8C%BA%E5%88%AB">与传统关系型数据库的区别</a></li>
+<li><a href="#%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E7%9A%84%E5%90%8D%E8%AF%8D">向量数据库中的名词</a></li>
 <li><a href="#%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF">向量数据库的应用场景</a>
 <ul>
 <li><a href="#ai%E7%9A%84%E9%95%BF%E6%9C%9F%E8%AE%B0%E5%BF%86">AI 的长期记忆</a></li>
@@ -167,6 +172,22 @@
 </li>
 <li><a href="#%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%A7%E5%93%81">向量数据库 产品</a></li>
 <li><a href="#%E5%B8%82%E5%9C%BA%E7%A9%BA%E9%97%B4%E5%B7%A8%E5%A4%A7%EF%BC%8C%E8%A1%8C%E4%B8%9A%E5%A4%84%E4%BA%8E%E4%BB%8E0-1%E9%98%B6%E6%AE%B5">市场空间巨大，行业处于从0-1阶段</a></li>
+<li><a href="#milvus%E9%83%A8%E7%BD%B2%EF%BC%9A">milvus 部署：</a></li>
+<li><a href="#%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6%E6%8F%90%E5%8F%96%E5%90%91%E9%87%8F%E7%89%B9%E5%BE%81">音频文件提取向量特征</a>
+<ul>
+<li><a href="#mfcc">MFCC</a></li>
+<li><a href="#sftf">SFTF</a></li>
+<li><a href="#cqt">CQT</a></li>
+<li><a href="#python%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0">python 代码实现</a>
+<ul>
+<li><a href="#mfcc">mfcc</a></li>
+<li><a href="#stft">stft</a></li>
+<li><a href="#panns-inference">panns-inference</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#chat-with-your-docs">Chat With Your Docs</a></li>
 </ul>
 </div>
 <p>近期，随着 AI 相关话题热度提升，向量数据库也出现在了更多人的视野中。</p>
@@ -183,6 +204,33 @@
 <p>其中，\(v_1, v_2, \cdots, v_n\) 是向量的\(n\)个分量。除此之外，还有一些特殊的向量，如零向量、单位向量等。</p>
 <p>在计算机科学领域，向量常常被用来表示对象的特征，例如图像、文本、音频等。将对象转换成向量形式便于进行相似度搜索、聚类等操作。向量化的方式可以通过特征提取、文本建模、深度学习等方法来实现。</p>
 <p>处理向量数据成为了许多应用程序的核心问题。为了解决这些问题，人们设计了各种向量数据库和向量索引技术，以提供高效的相似度搜索和近邻查询功能。</p>
+<h3><a id="%E5%90%91%E9%87%8F%E7%9A%84%E5%AE%9E%E9%99%85%E5%90%AB%E4%B9%89" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量的实际含义</h3>
+<p>向量A [0.8,0.3]，表示有一个人，这个人喜欢 0.8 强度的喜剧片，喜欢 0.3 强度的动作</p>
+<p>向量B [0.4,0.6]，表示一部电影，这部电影是 0.4 强度的喜剧，0.6 强度的动作片</p>
+<p>这两个向量之间的余弦相似度计算过程：<br />
+向量的余弦相似度可以表示为：\(cos\theta = \frac{\mathbf{a} \cdot \mathbf{b}}{\|\mathbf{a}\|\|\mathbf{b}\|}\)</p>
+<p>其中，a 和 b 分别表示要计算余弦相似度的两个向量， \(\mathbf{a} \cdot \mathbf{b}\) 表示它们的点积，$|\mathbf{a}|$ 和 $|\mathbf{b}|$ 分别表示它们的模长。</p>
+<p>将 a = [0.8, 0.3], b = [0.4, 0.6] 代入公式计算，有：\(\mathbf{a} \cdot \mathbf{b} = 0.8 \times 0.4 + 0.3 \times 0.6 = 0.32 + 0.18 = 0.5\)</p>
+<p>\(\begin{aligned} \|\mathbf{a}\| &amp;= \sqrt{0.8^2 + 0.3^2} \approx 0.854 \\ \|\mathbf{b}\| &amp;= \sqrt{0.4^2 + 0.6^2} \approx 0.721 \end{aligned}\)</p>
+<p>将上述计算结果代入余弦相似度公式中，可得这两个向量的余弦相似度为：\(cos\theta \approx \frac{0.5}{0.854 \times 0.721} \approx 0.852\)</p>
+<p>算出来的这个值可以表示为 这个人喜欢这部电影的程度</p>
+<p>余弦相似度的取值范围为[-1, 1]，值越大，代表相似度越高。</p>
+<p>除了余弦相似度，还有一些可用于评估向量相似度的度量方法：</p>
+<ol>
+<li>
+<p>欧氏距离（Euclidean distance）：它衡量两个点之间的直线距离，也被称为 L2 范数。它在计算上非常简单，但有时有可能不是最佳选择。</p>
+</li>
+<li>
+<p>曼哈顿距离（Manhattan distance）：它衡量两个点之间的城市街区距离，也被称为 L1 范数。它类似于欧氏距离，但它更适合于某些特定的应用场景，比如在计算跨越城市街区的驾驶路线时。</p>
+</li>
+<li>
+<p>闵可夫斯基距离（Minkowski distance）：它是欧氏距离和曼哈顿距离的泛化形式。在这种情况下，一个参数被引入，该参数控制欧氏距离和曼哈顿距离之间取值的倾向性。</p>
+</li>
+<li>
+<p>矢量余弦相似度（Vector cosine similarity）：这种度量方式与余弦相似度非常相似，只是这里要比较的是两个向量的单位化版本。</p>
+</li>
+</ol>
+<p>在实践中，通常使用向量余弦相似度来衡量向量之间的相似度，以减少向量大小对相似度的影响。</p>
 <h2><a id="%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>什么是向量数据</h2>
 <p>向量数据是由多个数值组成的一维数组，常用于表示文本、图像、音频等非结构化数据。在向量中，每个数值代表了该向量在某个方向上的分量。例如，在二维平面上，一个点的位置可以用一个二维向量表示，其中第一个数值代表了该点在x轴上的位置，第二个数值代表了该点在y轴上的位置。</p>
 <p>在现代数据科学和机器学习中，向量数据被广泛应用于各种任务，如相似度匹配、聚类、分类和回归。这些任务通常需要计算向量之间的距离或相似度，并且需要对向量进行检索和排序。因此，高效处理向量数据是许多数据科学和机器学习应用程序的核心问题。为了解决这些问题，人们开发了许多向量数据库和向量索引技术，以提供高效的相似度搜索和近邻查询功能。</p>
@@ -190,7 +238,7 @@
 <p>在计算机视觉领域中，向量通常被用来表示图片的特征。这些特征向量可以通过多种方法获得，其中最常用的是卷积神经网络（Convolutional Neural Network，简称CNN）。CNN 是一类深度学习模型，它通过卷积、池化等操作对图片进行处理，最终输出一个固定大小的向量作为该图片的特征表示。</p>
 <p>具体而言，CNN 通过一系列的卷积层和池化层对输入图片进行特征提取，并逐渐减小特征图的尺寸和数量。在最后一层卷积层之后，通常会添加若干全连接层，将卷积层输出的高维特征转换为一个固定长度的向量。这个向量被认为是该图片的“特征表示”，它能够反映出图片的语义信息，例如物体类别、颜色、纹理等特征。这样，我们就可以使用向量距离的概念来度量不同图片之间的相似性，从而支持基于内容的图片检索、聚类等应用。</p>
 <h3><a id="%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E9%9F%B3%E9%A2%91" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量如何表示音频</h3>
-<p>在音频处理中，向量也可以用来表示音频的特征。其中最常见的是使用梅尔频率倒谱系数（Mel-Frequency Cepstral Coefficients，简称MFCC）来提取音频的特征向量。</p>
+<p>在音频处理中，向量也可以用来表示音频的特征。其中最常见的是使用 梅尔频率倒谱系数（Mel-Frequency Cepstral Coefficients，简称MFCC）来提取音频的特征向量。</p>
 <p>MFCC 是一种基于人耳感知特性的声学特征，它模拟了人耳对不同频率声音的感受，具有很好的区分能力。MFCC 提取过程包括以下几步：</p>
 <ol>
 <li>
@@ -238,6 +286,8 @@
 </li>
 </ol>
 <p>向量数据库也支持 CRUD。对向量更快的相似性搜索。</p>
+<h2><a id="%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E7%9A%84%E5%90%8D%E8%AF%8D" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量数据库中的名词</h2>
+<p><img src="media/16849944997542/16862782310241.jpg" alt="" /></p>
 <h2><a id="%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量数据库的应用场景</h2>
 <p><img src="media/16849954851968/16850922776165.jpg" alt="" /></p>
 <p>向量数据库在人工智能和机器学习领域中有着广泛的应用场景，以下是一些常见的应用场景：</p>
@@ -284,11 +334,159 @@ Zilliz: <a href="https://zilliz.com">https://zilliz.com</a><br />
 Vespa: <a href="https://vespa.ai">https://vespa.ai</a></p>
 <h2><a id="%E5%B8%82%E5%9C%BA%E7%A9%BA%E9%97%B4%E5%B7%A8%E5%A4%A7%EF%BC%8C%E8%A1%8C%E4%B8%9A%E5%A4%84%E4%BA%8E%E4%BB%8E0-1%E9%98%B6%E6%AE%B5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>市场空间巨大，行业处于从0-1阶段</h2>
 <p>向量数据库是 AI 时代的 Killer App。AI时代一切AI化，而AI化的本质则是向量化，向量化计算成本高昂，海量的高维向量势必需要专门的数据库进行存储和处理，向量数据库应运而生，向量数据库在拓展AI全新应用场景的同时，也将对传统数据库产品形成替代，进而成为AI时代的Killer App。</p>
+<h2><a id="milvus%E9%83%A8%E7%BD%B2%EF%BC%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>milvus 部署：</h2>
+<p><a href="https://github.com/milvus-io/bootcamp/tree/master/solutions/audio/audio_similarity_search/quick_deploy">https://github.com/milvus-io/bootcamp/tree/master/solutions/audio/audio_similarity_search/quick_deploy</a></p>
+<p><img src="media/16849944997542/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_8beef102-e26e-493b-b60c-304f16f2fe60.png" alt="企业微信截图_8beef102-e26e-493b-b60c-304f16f2fe60" /></p>
+<p><img src="media/16849944997542/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_830e3973-e87e-4a06-ada1-93c360044383.png" alt="企业微信截图_830e3973-e87e-4a06-ada1-93c360044383" /></p>
+<hr />
+<h2><a id="%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6%E6%8F%90%E5%8F%96%E5%90%91%E9%87%8F%E7%89%B9%E5%BE%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>音频文件提取向量特征</h2>
+<p>提取音频文件的向量特征是语音处理中的一个重要任务。以下是一些常用的技术：</p>
+<ol>
+<li>
+<p>MFCC（Mel频率倒谱系数）：MFCC 是一种常见的音频特征提取方法，它模拟了人耳的感知方式。它首先将音频信号转换为频谱图，然后将频率轴上的频率划分为若干个 Mel 频率带，最后计算每个频率带的功率谱，并将其转换为倒谱系数。MFCC 能够捕捉音频信号的频率和时域信息，常用于语音识别和语音合成等任务。</p>
+</li>
+<li>
+<p>短时傅里叶变换（STFT）：STFT 是另一种常见的音频特征提取方法，它将音频信号分成若干个短时窗口，并对每个窗口进行傅里叶变换。这样可以得到每个窗口的频谱信息，从而捕捉音频信号的频率和时域信息。STFT 通常用于音频信号处理和音乐信息检索等任务。</p>
+</li>
+<li>
+<p>CQT（离散余弦变换）：CQT 是一种类似于 STFT 的方法，它使用一组不同的频率带宽来捕捉音频信号的频率信息。与 STFT 不同，CQT 可以在频率轴上对数刻度，这使得它能够更好地处理低频信号。CQT 通常用于音乐信息检索和音频分类等任务。</p>
+</li>
+</ol>
+<h3><a id="mfcc" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>MFCC</h3>
+<p>MFCC（Mel-frequency cepstral coefficients）是一种常用的音频信号处理技术，用于提取音频的特征向量。其主要步骤如下：</p>
+<ol>
+<li>
+<p>预加重：对音频信号进行高通滤波，以增强高频部分的能量，减少低频部分的能量损失。</p>
+</li>
+<li>
+<p>分帧：将音频信号分成若干帧，通常每帧的长度为20~40毫秒，相邻帧之间有重叠。</p>
+</li>
+<li>
+<p>加窗：对每帧信号进行加窗处理，以减少帧边缘的突变，常用的窗函数有汉宁窗、汉明窗等。</p>
+</li>
+<li>
+<p>傅里叶变换：对每帧信号进行快速傅里叶变换（FFT），得到每帧的频谱。</p>
+</li>
+<li>
+<p>梅尔滤波器组：将频谱映射到梅尔频率上，梅尔频率是一种人耳感知的频率，梅尔滤波器组通常由20~40个滤波器组成，每个滤波器的带宽和中心频率不同。</p>
+</li>
+<li>
+<p>取对数：对每个滤波器的输出取对数，得到每帧信号的梅尔频率倒谱系数（Mel-frequency cepstral coefficients，MFCC）。</p>
+</li>
+<li>
+<p>DCT变换：对每帧MFCC系数进行离散余弦变换（DCT），得到每帧的MFCC特征向量。</p>
+</li>
+</ol>
+<h3><a id="sftf" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>SFTF</h3>
+<p>STFT（Short-time Fourier transform）是一种常用的音频信号处理技术，用于将音频信号从时域（time domain）转换到频域（frequency domain）。其主要步骤如下：</p>
+<ol>
+<li>
+<p>将音频信号分成多个短时窗口，每个窗口长度为 N 个采样点，通常使用汉宁窗（Hanning window）等窗函数进行加窗处理，以减少频谱泄漏（spectral leakage）。</p>
+</li>
+<li>
+<p>对于每个窗口，进行傅里叶变换（Fourier transform）得到其频谱（spectrum），即将时域信号转换为频域信号。可以使用快速傅里叶变换（Fast Fourier Transform，FFT）算法加速计算。</p>
+</li>
+<li>
+<p>对于每个窗口的频谱，可以使用一些技术进行后处理，如使用对数幅度谱（logarithmic amplitude spectrum）代替线性幅度谱（linear amplitude spectrum），以更好地模拟人耳对声音的感知。</p>
+</li>
+<li>
+<p>将所有窗口的频谱拼接起来，得到整个音频信号的频谱表示。这个频谱通常是一个二维矩阵，其中每一行表示一个频率，每一列表示一个时间窗口。</p>
+</li>
+</ol>
+<h3><a id="cqt" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CQT</h3>
+<p>CQT（Constant-Q transform）是一种将音频信号从时域（time domain）转换到频域（frequency domain）的技术，其主要步骤如下：</p>
+<ol>
+<li>
+<p>将音频信号分成多个短时段，每个时段的长度通常为20~40毫秒。</p>
+</li>
+<li>
+<p>对每个时段的信号进行加窗处理，以避免频谱泄露（spectral leakage）的问题。</p>
+</li>
+<li>
+<p>对加窗后的信号进行傅里叶变换（Fourier transform）得到频域信号。</p>
+</li>
+<li>
+<p>对频域信号进行滤波，以提取感兴趣的频率范围。</p>
+</li>
+<li>
+<p>对滤波后的频域信号进行下采样（downsampling），以减少计算量。</p>
+</li>
+<li>
+<p>重复上述步骤，直到处理完整个音频信号，得到音频的频谱表示。</p>
+</li>
+</ol>
+<h3><a id="python%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>python 代码实现</h3>
+<h4><a id="mfcc" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>mfcc</h4>
+<pre class="line-numbers"><code class="language-python">import librosa
+import numpy as np
+
+# 加载音频文件
+audio_file = '/data/2.wav'
+y, sr = librosa.load(audio_file)
+
+# 计算 MFCC 特征
+mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+
+# 将 MFCC 特征转换为一维向量
+mfccs_vector = np.mean(mfccs.T, axis=0)
+
+print(mfccs_vector)
+</code></pre>
+<p>输出结果</p>
+<pre class="line-numbers"><code class="language-plain_text">[-3.7972183e+02  1.0088512e+02 -3.5129642e+00 -1.9051785e+01
+ -2.3919962e+01 -2.5029432e+01 -1.4385112e+01 -1.0009483e+01
+ -1.8019070e+01  2.9479107e-01  3.8208574e-02 -5.6408200e+00
+ -2.3487382e+00]
+</code></pre>
+<h4><a id="stft" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>stft</h4>
+<pre class="line-numbers"><code class="language-python">import librosa
+import numpy as np
+
+# 加载音频文件
+audio_file = '/data/2.wav'
+y, sr = librosa.load(audio_file)
+
+# 计算 STFT 特征
+stft = np.abs(librosa.stft(y))
+
+# 将 STFT 特征转换为一维向量
+stft_vector = np.mean(stft.T, axis=0)
+print(stft_vector)
+
+</code></pre>
+<pre class="line-numbers"><code class="language-plain_text">[6.4813397e-03 8.3055627e-03 1.2067630e-02 ... 3.4121547e-07 3.3004611e-07
+ 3.2894093e-07]
+</code></pre>
+<h4><a id="panns-inference" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>panns-inference</h4>
+<p>PANNs Inference 模型使用的是 STFT（短时傅里叶变换）来生成音频的特征向量。<!--STFT 可以将信号分解成一系列短时窗口的频谱，并将频谱转换为能量谱，从而提取出音频的频率和强度信息。-->与 MFCC 和 CQT 相比，STFT 在音频信号处理中更常用，因为它能够提供更详细的频率和时间信息。</p>
+<pre class="line-numbers"><code class="language-python">def get_audio_embedding(path):
+    # Use panns_inference model to generate feature vector of audio
+    try:
+        RESAMPLE_RATE=32000
+        audio, _ = librosa.core.load(path, sr=RESAMPLE_RATE, mono=True)
+        if audio.size &lt; RESAMPLE_RATE:
+            audio = np.pad(audio, (0, RESAMPLE_RATE-audio.size), 'constant', constant_values=(0, 0))
+        audio = audio[None, :]
+        at = AudioTagging(checkpoint_path=None, device='cuda')
+        _, embedding = at.inference(audio)
+        embedding = embedding/np.linalg.norm(embedding)
+        embedding = embedding.tolist()[0]
+        return embedding
+    except Exception as e:
+        print(f&quot;Error with embedding:{e}&quot;)
+        return None
+</code></pre>
+<p><img src="media/16849944997542/16860598937715.jpg" alt="" /></p>
+<p>Cnn14_mAP=0.431.pth 是 PANNs Inference 模型的预训练权重文件，用于加载训练好的神经网络模型参数。这个模型是在音频分类任务上进行训练的，可以识别出不同的音频类别，比如说乐器、声音效果、人声等等。它是基于卷积神经网络 (CNN) 的架构，使用了 STFT 特征提取方法，输入的音频信号经过一系列卷积、池化、归一化等操作后，最终输出一个包含各个音频类别概率的向量。在使用 PANNs Inference 模型进行音频分类时，我们可以使用这个预训练权重文件来加载模型参数，从而进行预测。</p>
+<h2><a id="chat-with-your-docs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Chat With Your Docs</h2>
+<p><a href="https://github.com/mayooear/gpt4-pdf-chatbot-langchain">https://github.com/mayooear/gpt4-pdf-chatbot-langchain</a><br />
+<img src="media/16849944997542/gpt-langchain-pdf.png" alt="gpt-langchain-pdf" /></p>
 <hr />
 <p><a href="https://wallstreetcn.com/articles/3688270">https://wallstreetcn.com/articles/3688270</a><br />
 <a href="https://wallstreetcn.com/articles/3688423">https://wallstreetcn.com/articles/3688423</a></p>
 <p><a href="https://www.youtube.com/watch?v=dN0lsF2cvm4">https://www.youtube.com/watch?v=dN0lsF2cvm4</a><br />
 <a href="https://www.youtube.com/watch?v=u03AZlmZF_8">https://www.youtube.com/watch?v=u03AZlmZF_8</a></p>
+<p><a href="https://www.bilibili.com/video/BV1414y1c785">https://www.bilibili.com/video/BV1414y1c785</a></p>
 
 
     
@@ -499,6 +697,8 @@ Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
 
 
 
+
+<script src="asset/prism.js"></script>
 
 
 <style type="text/css">
