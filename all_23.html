@@ -79,6 +79,8 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="rust.html">rust</a></li>
+        
             <li><a href="redis.html">redis</a></li>
         
             <li><a href="dubbo.html">dubbo</a></li>
@@ -103,8 +105,6 @@
         
             <li><a href="GO.html">GO</a></li>
         
-            <li><a href="rust.html">rust</a></li>
-        
             <li><a href="AI.html">AI</a></li>
          
 
@@ -128,168 +128,100 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16213217139614.html">
+                <a class="clearlink" href="16218450358247.html">
                 
-                  <h1>MySQL 动态行转列</h1>
+                  <h1>Spring Cloud Stream 整合 RocketMQ</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>表结构及数据</p>
-<pre class="line-numbers"><code class="language-plain_text">
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
+                        	<h2><a id="spring-cloud-stream%E4%BB%8B%E7%BB%8D" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spring Cloud Stream 介绍</h2>
+<p>Spring Cloud Stream 是一个用于构建基于消息的微服务应用框架。它基于 SpringBoot 来创建具有生产级别的单机 Spring 应用，并且使用 Spring Integration 与 Broker 进行连接。</p>
+<p>Spring Cloud Stream 提供了消息中间件配置的统一抽象，推出了 publish-subscribe、consumer groups、partition 这些统一的概念。</p>
+<p>Spring Cloud Stream 内部有两个概念：Binder 和 Binding。</p>
+<p>Binder: 跟外部消息中间件集成的组件，用来创建 Binding，各消息中间件都有自己的 Binder 实现。</p>
+<p>比如 Kafka 的实现 KafkaMessageChannelBinder，RabbitMQ 的实现 RabbitMessageChannelBinder 以及 RocketMQ 的实现 RocketMQMessageChannelBinder。</p>
+<p>Binding: 包括 Input Binding 和 Output Binding。</p>
+<p>Binding 在消息中间件与应用程序提供的 Provider 和 Consumer 之间提供了一个桥梁，实现了开发者只需使用应用程序的 Provider 或 Consumer 生产或消费数据即可，屏蔽了开发者与底层消息中间件的接触。</p>
+<h2><a id="%E6%95%B4%E5%90%88rocketmq" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>整合 RocketMQ</h2>
+<h3><a id="spring-boot%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spring Boot 项目添加依赖</h3>
+<pre class="line-numbers"><code class="language-plain_text">&lt;spring.boot.version&gt;2.2.5.RELEASE&lt;/spring.boot.version&gt;
+&lt;spring.alibaba.cloud.version&gt;2.2.1.RELEASE&lt;/spring.alibaba.cloud.version&gt;
 
--- ----------------------------
--- Table structure for Course
--- ----------------------------
-DROP TABLE IF EXISTS `Course`;
-CREATE TABLE `Course` (
-`CId` varchar(10) DEFAULT NULL,
-`Cname` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Records of Course
--- ----------------------------
-BEGIN;
-INSERT INTO `Course` VALUES ('1', '数据库');
-INSERT INTO `Course` VALUES ('3', '编译原理');
-INSERT INTO `Course` VALUES ('4', '计算机网络');
-INSERT INTO `Course` VALUES ('2', '操作系统');
-COMMIT;
-
--- ----------------------------
--- Table structure for SC
--- ----------------------------
-DROP TABLE IF EXISTS `SC`;
-CREATE TABLE `SC` (
-`SId` varchar(10) DEFAULT NULL,
-`CId` varchar(10) DEFAULT NULL,
-`score` decimal(18,1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of SC
--- ----------------------------
-BEGIN;
-INSERT INTO `SC` VALUES ('2', '1', 80.0);
-INSERT INTO `SC` VALUES ('2', '2', 73.0);
-INSERT INTO `SC` VALUES ('2', '3', 87.0);
-INSERT INTO `SC` VALUES ('2', '4', 68.0);
-INSERT INTO `SC` VALUES ('3', '1', 85.0);
-INSERT INTO `SC` VALUES ('3', '2', 66.0);
-INSERT INTO `SC` VALUES ('3', '3', 66.0);
-INSERT INTO `SC` VALUES ('3', '4', 98.0);
-INSERT INTO `SC` VALUES ('1', '1', 90.0);
-INSERT INTO `SC` VALUES ('1', '2', 55.0);
-INSERT INTO `SC` VALUES ('1', '3', 78.0);
-INSERT INTO `SC` VALUES ('1', '4', 45.0);
-INSERT INTO `SC` VALUES ('4', '1', 70.0);
-INSERT INTO `SC` VALUES ('4', '2', 77.0);
-INSERT INTO `SC` VALUES ('4', '3', 56.0);
-INSERT INTO `SC` VALUES ('4', '4', 82.0);
-COMMIT;
-
--- ----------------------------
--- Table structure for Student
--- ----------------------------
-DROP TABLE IF EXISTS `Student`;
-CREATE TABLE `Student` (
-`SId` varchar(10) DEFAULT NULL,
-`Sname` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of Student
--- ----------------------------
-BEGIN;
-INSERT INTO `Student` VALUES ('1', '张三');
-INSERT INTO `Student` VALUES ('2', '李四');
-INSERT INTO `Student` VALUES ('3', '王五');
-INSERT INTO `Student` VALUES ('4', '孙六');
-COMMIT;
-
-SET FOREIGN_KEY_CHECKS = 1;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-stream-rocketmq&lt;/artifactId&gt;
+    &lt;version&gt;${spring.alibaba.cloud.version}&lt;/version&gt;
+&lt;/dependency&gt;
 
 </code></pre>
-</details>
-<p>查看学生哪门课程多少分数</p>
-<pre class="line-numbers"><code class="language-plain_text">SELECT a.SId,a.Sname,c.CId,c.Cname,b.score from Student a join SC b on a.SId = b.SId
-join Course c on c.CId = b.CId order by a.SId;
+<h3><a id="%E6%B7%BB%E5%8A%A0%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加配置</h3>
+<p>application.yml 中添加配置</p>
+<pre class="line-numbers"><code class="language-plain_text">spring:
+  cloud:
+    stream:
+      bindings:
+        # output 相当于生产者
+        output:
+          # 目的地。这里使用 RocketMQ Topic
+          destination: test111
+          content-type: application/json
+
+        # input 相当于消费者
+        input:
+          # 目的地。这里使用 RocketMQ Topic
+          destination: test111
+          content-type: application/json
+          # rocket mq 的消费者必须要有 group，不然启动失败
+          group: test
+
+      rocketmq:
+        binder:
+          # rocket mq 地址
+          name-server: 127.0.0.1:9876
+          # enable-msg-trace: true
 </code></pre>
-<p>结果是这样<br />
-<img src="http://hitol.blog.cdn.updev.cn/16213237716609.jpg" alt="" /></p>
-<p>但是如果想做成这样的呢？<br />
-<img src="http://hitol.blog.cdn.updev.cn/16213239029529.jpg" alt="" /></p>
-<p>这就是行转列，也叫作竖表转横表<br />
-可以通过 case when 或者 if</p>
-<p>IF 语法：<br />
-<code>IF(expr1,expr2,expr3)</code><br />
-如果 expr1 为 true，则返回 expr2，否则返回 expr3</p>
-<p>静态行转列:</p>
-<pre class="line-numbers"><code class="language-plain_text">SELECT a.SId,a.Sname,
+<h3><a id="%E5%8F%91%E9%80%81%E4%B8%8E%E6%8E%A5%E6%94%B6%E6%B6%88%E6%81%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>发送与接收消息</h3>
+<p>Source</p>
+<pre class="line-numbers"><code class="language-plain_text">public interface Source {
 
-MAX(IF(c.Cname = '操作系统',b.score,null)) as '操作系统',
-MAX(IF(c.Cname = '数据库',b.score,null)) as '数据库',
-MAX(IF(c.Cname = '编译原理',b.score,null)) as '编译原理',
-MAX(IF(c.Cname = '计算机网络',b.score,null)) as '计算机网络'
+	String OUTPUT = &quot;output&quot;;
+	String INPUT = &quot;input&quot;;
 
-from Student a join SC b on a.SId = b.SId
-join Course c on c.CId = b.CId 
-group by a.Sname
-</code></pre>
-<p>在这个场景下，用 MAX 或者 SUM 都可以<br />
-但是如果增加了课程，这条 sql 也要同步修改</p>
-<p>动态 行转列</p>
-<pre class="line-numbers"><code class="language-plain_text">MAX(IF(c.Cname = '操作系统',b.score,null)) as '操作系统',
-MAX(IF(c.Cname = '数据库',b.score,null)) as '数据库',
-MAX(IF(c.Cname = '编译原理',b.score,null)) as '编译原理',
-MAX(IF(c.Cname = '计算机网络',b.score,null)) as '计算机网络'
-</code></pre>
-<p>从上面看，这一部分的 sql 语法是一样的，利用 concat 函数动态拼接出来：</p>
-<pre class="line-numbers"><code class="language-plain_text">SELECT
-	CONCAT('MAX(IF(c.Cname = ''', c.Cname, ''', a.score, NULL)) AS ''', c.Cname, '\'')
-FROM
-	Course c;
-</code></pre>
-<p>这一部分有了，把所有的 sql 语句都拼接起来<br />
-但是这个地方使用 concat 不行，concat 只会返回一条结果</p>
-<pre class="line-numbers"><code class="language-plain_text">SET @sql = '';
+	@Output(Source.OUTPUT)
+	MessageChannel output();
 
-SELECT
-	CONCAT('MAX(IF(c.Cname = ''', c.Cname, ''', a.score, NULL)) AS ''', c.Cname, '\'')
-FROM
-	Course c INTO @sql;
+	@Input(Source.INPUT)
+	SubscribableChannel input();
 
-SELECT	@sql;
-</code></pre>
-<p>需要把 concat 的返回结果拼接到一起，这就需要用到 group_concat 函数。</p>
-<p><code>PREPARE</code> 语句准备好一条SQL语句，并分配给这条SQL 语句一个名字供之后调用。<br />
-准备好的 SQL 语句通过 <code>EXECUTE</code> 命令执行，<br />
-最后通过 <code>DEALLOCATE PREPARE</code> 命令释放掉</p>
-<p>所以最终结果是这样的:</p>
-<pre class="line-numbers"><code class="language-plain_text">SET @sql = '';
-
-SELECT
-	GROUP_CONCAT(CONCAT('MAX(IF(c.Cname = ''', c.Cname, ''', a.score, NULL)) AS ''', c.Cname, '\''))
-FROM
-	Course c INTO @sql;
-
-SET @sql = CONCAT('Select b.Sname as ''姓名'' , ', @sql, ' From SC  a
- JOIN Student b ON a.SId = b.SId
- 	JOIN Course c ON a.CId = c.CId
- Group by b.Sname');
-
-SELECT
-	@sql;
-
-PREPARE stmt FROM @sql;
-EXECUTE stmt;
-DEALLOCATE PREPARE stmt;
+}
 
 </code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/16213239029529.jpg" alt="" /></p>
+<p>发送消息</p>
+<pre class="line-numbers"><code class="language-plain_text">@Autowired
+private Source source;
+
+@Override
+public void send(String msg) {
+	Message&lt;String&gt; message = MessageBuilder.withPayload(msg)
+			.build();
+	source.output().send(message);
+}
+</code></pre>
+<p>接收消息</p>
+<pre class="line-numbers"><code class="language-plain_text">@StreamListener(value = Source.INPUT)
+public void receiveInput(String receiveMsg) {
+	System.out.println(&quot;input receive: &quot; + receiveMsg);
+}
+
+</code></pre>
+<h3><a id="%E5%90%AF%E5%8A%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动</h3>
+<p>启动类上添加注解 <code>@EnableBinding({Source.class})</code></p>
+<p><a href="https://gitee.com/hitol/spring-alibaba/tree/master/cloud-stream-rocketmq">gitee</a></p>
+<hr />
+<p><a href="https://github.com/alibaba/spring-cloud-alibaba/wiki/RocketMQ">https://github.com/alibaba/spring-cloud-alibaba/wiki/RocketMQ</a></p>
+<p><a href="https://xie.infoq.cn/article/13407cedcc683163cfce19afc">https://xie.infoq.cn/article/13407cedcc683163cfce19afc</a></p>
 
                         
                       </div>
@@ -298,10 +230,8 @@ DEALLOCATE PREPARE stmt;
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/05/18 15:08 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
+                    <span class="date">2021/05/24 16:30 下午</span>
+                    
           				   
                     
 
@@ -368,6 +298,8 @@ DEALLOCATE PREPARE stmt;
 
       	<p class="cat-list">
         
+            <a href="rust.html"><strong>rust</strong></a>
+        
             <a href="redis.html"><strong>redis</strong></a>
         
             <a href="dubbo.html"><strong>dubbo</strong></a>
@@ -392,8 +324,6 @@ DEALLOCATE PREPARE stmt;
         
             <a href="GO.html"><strong>GO</strong></a>
         
-            <a href="rust.html"><strong>rust</strong></a>
-        
             <a href="AI.html"><strong>AI</strong></a>
          
         </p>
@@ -409,6 +339,12 @@ DEALLOCATE PREPARE stmt;
                 <div class="side-content">
                 <ul class="posts-list">
 	      
+		      
+			      <li class="post">
+			        <a href="16892187258215.html">wasm 初体验</a>
+			      </li>
+		     
+		  
 		      
 			      <li class="post">
 			        <a href="16849954851968.html">向量数据库 Vector Database</a>
@@ -430,12 +366,6 @@ DEALLOCATE PREPARE stmt;
 		      
 			      <li class="post">
 			        <a href="16727524082529.html">rust 包管理与工作空间</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
 			      </li>
 		     
 		  

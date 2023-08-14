@@ -79,6 +79,8 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="rust.html">rust</a></li>
+        
             <li><a href="redis.html">redis</a></li>
         
             <li><a href="dubbo.html">dubbo</a></li>
@@ -102,8 +104,6 @@
             <li><a href="Spring.html">Spring</a></li>
         
             <li><a href="GO.html">GO</a></li>
-        
-            <li><a href="rust.html">rust</a></li>
         
             <li><a href="AI.html">AI</a></li>
          
@@ -234,42 +234,44 @@
 <li>new出来的对象都是强引用对象，在没有指定该对象=null，不会被回收。</li>
 </ul>
 <pre class="line-numbers"><code class="language-plain_text">Object obj =new Object();  // 强引用
+obj = null;//这时候为垃圾回收器回收这个对象，至于什么时候回收，取决于垃圾回收器的算法
 </code></pre>
+</li>
+<li>
+<p>软引用：</p>
+<ul>
+<li>SoftReference</li>
+<li>当内存不够用的时候会回收。</li>
+<li>适合做缓存。</li>
+</ul>
+<pre class="line-numbers"><code class="language-plain_text">String value = new String(“sy”);
+SoftReference sfRefer = new SoftReference (value );
+sfRefer .get();//可以获得引用对象值
+</code></pre>
+</li>
+<li>
+<p>弱引用</p>
+<ul>
+<li>WeakReference</li>
+<li>只要发生GC就会回收。</li>
+<li>适合加载的时候初始化用。</li>
+<li>ThreadLocal中有使用。</li>
+</ul>
+<pre class="line-numbers"><code class="language-plain_text">String value = new String(“sy”);
+WeakReference weakRefer = new WeakReference(value );
+System.gc();
+weakRefer.get();//null
+</code></pre>
+</li>
+<li>
+<p>虚引用</p>
+<ul>
+<li>作用：管理堆外内存。</li>
+<li>NIO中 DirectByreBuffer</li>
+</ul>
 </li>
 </ul>
-<p>obj = null;//这时候为垃圾回收器回收这个对象，至于什么时候回收，取决于垃圾回收器的算法</p>
-<pre class="line-numbers"><code class="language-plain_text">     
- - 软引用：
-     - SoftReference
-     - 当内存不够用的时候会回收。
-     - 适合做缓存。
-
-     
-     ```
-     String value = new String(“sy”);
-</code></pre>
 </li>
-</ol>
-<p>SoftReference sfRefer = new SoftReference (value );<br />
-sfRefer .get();//可以获得引用对象值<br />
-```<br />
-- 弱引用<br />
-- WeakReference<br />
-- 只要发生GC就会回收。<br />
-- 适合加载的时候初始化用。<br />
-- ThreadLocal中有使用。</p>
-<pre class="line-numbers"><code class="language-plain_text">    ```
-    String value = new String(“sy”);
-    WeakReference weakRefer = new WeakReference(value );
-    System.gc();
-    weakRefer.get();//null
-    ```
-    
-- 虚引用
-    - 作用：管理堆外内存。
-    - NIO中 DirectByreBuffer
-</code></pre>
-<ol start="4">
 <li>
 <p>对象的自我拯救-二次标记</p>
 <ul>
@@ -458,6 +460,8 @@ STW<br />
 
       	<p class="cat-list">
         
+            <a href="rust.html"><strong>rust</strong></a>
+        
             <a href="redis.html"><strong>redis</strong></a>
         
             <a href="dubbo.html"><strong>dubbo</strong></a>
@@ -482,8 +486,6 @@ STW<br />
         
             <a href="GO.html"><strong>GO</strong></a>
         
-            <a href="rust.html"><strong>rust</strong></a>
-        
             <a href="AI.html"><strong>AI</strong></a>
          
         </p>
@@ -499,6 +501,12 @@ STW<br />
                 <div class="side-content">
                 <ul class="posts-list">
 	      
+		      
+			      <li class="post">
+			        <a href="16892187258215.html">wasm 初体验</a>
+			      </li>
+		     
+		  
 		      
 			      <li class="post">
 			        <a href="16849954851968.html">向量数据库 Vector Database</a>
@@ -520,12 +528,6 @@ STW<br />
 		      
 			      <li class="post">
 			        <a href="16727524082529.html">rust 包管理与工作空间</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
 			      </li>
 		     
 		  

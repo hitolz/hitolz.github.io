@@ -79,6 +79,8 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="rust.html">rust</a></li>
+        
             <li><a href="redis.html">redis</a></li>
         
             <li><a href="dubbo.html">dubbo</a></li>
@@ -103,8 +105,6 @@
         
             <li><a href="GO.html">GO</a></li>
         
-            <li><a href="rust.html">rust</a></li>
-        
             <li><a href="AI.html">AI</a></li>
          
 
@@ -128,163 +128,168 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16208120012139.html">
+                <a class="clearlink" href="16213217139614.html">
                 
-                  <h1>Sentinel</h1>
+                  <h1>MySQL 动态行转列</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<div class="mweb_toc"><ul>
-<li><a href="#demo">demo</a></li>
-<li><a href="#spring-boot%E4%B8%8E-sentinel">Spring boot 与 Sentinel</a>
-<ul>
-<li><a href="#quick-start">Quick Start</a>
-<ul>
-<li><a href="#%E8%BF%90%E8%A1%8C%E6%8E%A7%E5%88%B6%E5%8F%B0">运行控制台</a></li>
-<li><a href="#%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">项目添加依赖</a></li>
-</ul>
-</li>
-<li><a href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6">流量控制</a></li>
-</ul>
-</li>
-<li><a href="#dubbo%E4%B8%8E-sentinel">Dubbo 与 Sentinel</a>
-<ul>
-<li><a href="#%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%BF%AE%E6%94%B9">服务提供者修改</a>
-<ul>
-<li><a href="#%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96">增加依赖</a></li>
-<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
-</ul>
-</li>
-<li><a href="#%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E4%BF%AE%E6%94%B9">服务消费者修改</a>
-<ul>
-<li><a href="#%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96">增加依赖</a></li>
-<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
-</ul>
-</li>
-<li><a href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C">运行结果</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<h2><a id="demo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>demo</h2>
-<h2><a id="spring-boot%E4%B8%8E-sentinel" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spring boot 与 Sentinel</h2>
-<h3><a id="quick-start" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick Start</h3>
-<h4><a id="%E8%BF%90%E8%A1%8C%E6%8E%A7%E5%88%B6%E5%8F%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行控制台</h4>
-<p>github 地址<br />
-<a href="https://github.com/alibaba/Sentinel">https://github.com/alibaba/Sentinel</a></p>
-<p>文档地址：<br />
-<a href="https://github.com/alibaba/Sentinel/wiki/">https://github.com/alibaba/Sentinel/wiki/</a></p>
-<p>下载 sentinel-dashboard-1.8.1.jar<br />
-运行 <code>java -jar sentinel-dashboard-1.8.1.jar</code><br />
-访问web地址：<a href="http://localhost:8080">http://localhost:8080</a>   默认用户名和密码都是sentinel/sentinel，然后进入首页</p>
-<h4><a id="%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>项目添加依赖</h4>
-<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
-    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>添加配置</p>
-<pre class="line-numbers"><code class="language-properties">server.port=8081
-# sentinel 配置
-spring.application.name=hitol-sentinel
-spring.cloud.sentinel.transport.dashboard=localhost:8080
-spring.cloud.sentinel.transport.heartbeat-interval-ms=500
-</code></pre>
-<p>编写一个 controller 用于测试</p>
-<pre class="line-numbers"><code class="language-java">@RestController
-public class SentinelController {
+                        	<p>表结构及数据</p>
+<pre class="line-numbers"><code class="language-plain_text">
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
 
-	@RequestMapping(&quot;/&quot;)
-	public String sentinel() {
-		return &quot;sentinel ....&quot;;
-	}
-}
-</code></pre>
-<p>浏览器访问 localhost:8081,多刷新几次，控制台实时监控<br />
-<img src="http://hitol.blog.cdn.updev.cn/16208040517121.jpg" alt="" /></p>
-<h3><a id="%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>流量控制</h3>
-<p><img src="http://hitol.blog.cdn.updev.cn/16208047724648.jpg" alt="" /></p>
-<p>添加规则后多刷新几次接口<br />
-<img src="http://hitol.blog.cdn.updev.cn/16208047941828.jpg" alt="" /></p>
-<h2><a id="dubbo%E4%B8%8E-sentinel" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dubbo 与 Sentinel</h2>
-<h3><a id="%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%BF%AE%E6%94%B9" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务提供者修改</h3>
-<h4><a id="%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>增加依赖</h4>
-<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
-    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
-&lt;/dependency&gt;
+-- ----------------------------
+-- Table structure for Course
+-- ----------------------------
+DROP TABLE IF EXISTS `Course`;
+CREATE TABLE `Course` (
+`CId` varchar(10) DEFAULT NULL,
+`Cname` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;
-    &lt;artifactId&gt;sentinel-apache-dubbo-adapter&lt;/artifactId&gt;
-    &lt;version&gt;1.7.0&lt;/version&gt;
-&lt;/dependency&gt;
+-- ----------------------------
+-- Records of Course
+-- ----------------------------
+BEGIN;
+INSERT INTO `Course` VALUES ('1', '数据库');
+INSERT INTO `Course` VALUES ('3', '编译原理');
+INSERT INTO `Course` VALUES ('4', '计算机网络');
+INSERT INTO `Course` VALUES ('2', '操作系统');
+COMMIT;
 
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;
-    &lt;artifactId&gt;sentinel-transport-simple-http&lt;/artifactId&gt;
-    &lt;version&gt;1.7.1&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<h4><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h4>
-<pre class="line-numbers"><code class="language-plain_text">server:
-  port: 8070
-spring:
-  application:
-    name: service-provider
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-        group: test
-        namespace: fed092ce-956c-4792-977c-affc5d8f1dc7
+-- ----------------------------
+-- Table structure for SC
+-- ----------------------------
+DROP TABLE IF EXISTS `SC`;
+CREATE TABLE `SC` (
+`SId` varchar(10) DEFAULT NULL,
+`CId` varchar(10) DEFAULT NULL,
+`score` decimal(18,1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-    sentinel:
-      transport:
-        port: 8070
-        dashboard: localhost:8080        
-</code></pre>
-<h3><a id="%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E4%BF%AE%E6%94%B9" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务消费者修改</h3>
-<h4><a id="%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>增加依赖</h4>
-<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
-    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
-&lt;/dependency&gt;
+-- ----------------------------
+-- Records of SC
+-- ----------------------------
+BEGIN;
+INSERT INTO `SC` VALUES ('2', '1', 80.0);
+INSERT INTO `SC` VALUES ('2', '2', 73.0);
+INSERT INTO `SC` VALUES ('2', '3', 87.0);
+INSERT INTO `SC` VALUES ('2', '4', 68.0);
+INSERT INTO `SC` VALUES ('3', '1', 85.0);
+INSERT INTO `SC` VALUES ('3', '2', 66.0);
+INSERT INTO `SC` VALUES ('3', '3', 66.0);
+INSERT INTO `SC` VALUES ('3', '4', 98.0);
+INSERT INTO `SC` VALUES ('1', '1', 90.0);
+INSERT INTO `SC` VALUES ('1', '2', 55.0);
+INSERT INTO `SC` VALUES ('1', '3', 78.0);
+INSERT INTO `SC` VALUES ('1', '4', 45.0);
+INSERT INTO `SC` VALUES ('4', '1', 70.0);
+INSERT INTO `SC` VALUES ('4', '2', 77.0);
+INSERT INTO `SC` VALUES ('4', '3', 56.0);
+INSERT INTO `SC` VALUES ('4', '4', 82.0);
+COMMIT;
 
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;
-    &lt;artifactId&gt;sentinel-apache-dubbo-adapter&lt;/artifactId&gt;
-    &lt;version&gt;1.7.0&lt;/version&gt;
-&lt;/dependency&gt;
+-- ----------------------------
+-- Table structure for Student
+-- ----------------------------
+DROP TABLE IF EXISTS `Student`;
+CREATE TABLE `Student` (
+`SId` varchar(10) DEFAULT NULL,
+`Sname` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of Student
+-- ----------------------------
+BEGIN;
+INSERT INTO `Student` VALUES ('1', '张三');
+INSERT INTO `Student` VALUES ('2', '李四');
+INSERT INTO `Student` VALUES ('3', '王五');
+INSERT INTO `Student` VALUES ('4', '孙六');
+COMMIT;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
 </code></pre>
-<p>因为消费者是通过 http 调用的，所以比服务提供者少了一个依赖</p>
-<h4><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h4>
-<pre class="line-numbers"><code class="language-plain_text">server:
-  port: 8071
-spring:
-  application:
-    name: service-consumer
-  cloud:
-    nacos:
-      discovery:
-        group: test
-        namespace: fed092ce-956c-4792-977c-affc5d8f1dc7
-        server-addr: 127.0.0.1:8848
-    sentinel:
-      transport:
-        port: 8071
-        dashboard: localhost:8080
+</details>
+<p>查看学生哪门课程多少分数</p>
+<pre class="line-numbers"><code class="language-plain_text">SELECT a.SId,a.Sname,c.CId,c.Cname,b.score from Student a join SC b on a.SId = b.SId
+join Course c on c.CId = b.CId order by a.SId;
 </code></pre>
-<p>sentinel.transport.port 跟程序运行的 port 一致才行。</p>
-<h3><a id="%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行结果</h3>
-<p>添加完依赖，修改完配置，启动即可。<br />
-调用 服务消费者提供的 api，多刷新几次<br />
-<img src="http://hitol.blog.cdn.updev.cn/16208082058974.jpg" alt="" /><br />
-<img src="http://hitol.blog.cdn.updev.cn/16208082166138.jpg" alt="" /></p>
+<p>结果是这样<br />
+<img src="http://hitol.blog.cdn.updev.cn/16213237716609.jpg" alt="" /></p>
+<p>但是如果想做成这样的呢？<br />
+<img src="http://hitol.blog.cdn.updev.cn/16213239029529.jpg" alt="" /></p>
+<p>这就是行转列，也叫作竖表转横表<br />
+可以通过 case when 或者 if</p>
+<p>IF 语法：<br />
+<code>IF(expr1,expr2,expr3)</code><br />
+如果 expr1 为 true，则返回 expr2，否则返回 expr3</p>
+<p>静态行转列:</p>
+<pre class="line-numbers"><code class="language-plain_text">SELECT a.SId,a.Sname,
+
+MAX(IF(c.Cname = '操作系统',b.score,null)) as '操作系统',
+MAX(IF(c.Cname = '数据库',b.score,null)) as '数据库',
+MAX(IF(c.Cname = '编译原理',b.score,null)) as '编译原理',
+MAX(IF(c.Cname = '计算机网络',b.score,null)) as '计算机网络'
+
+from Student a join SC b on a.SId = b.SId
+join Course c on c.CId = b.CId 
+group by a.Sname
+</code></pre>
+<p>在这个场景下，用 MAX 或者 SUM 都可以<br />
+但是如果增加了课程，这条 sql 也要同步修改</p>
+<p>动态 行转列</p>
+<pre class="line-numbers"><code class="language-plain_text">MAX(IF(c.Cname = '操作系统',b.score,null)) as '操作系统',
+MAX(IF(c.Cname = '数据库',b.score,null)) as '数据库',
+MAX(IF(c.Cname = '编译原理',b.score,null)) as '编译原理',
+MAX(IF(c.Cname = '计算机网络',b.score,null)) as '计算机网络'
+</code></pre>
+<p>从上面看，这一部分的 sql 语法是一样的，利用 concat 函数动态拼接出来：</p>
+<pre class="line-numbers"><code class="language-plain_text">SELECT
+	CONCAT('MAX(IF(c.Cname = ''', c.Cname, ''', a.score, NULL)) AS ''', c.Cname, '\'')
+FROM
+	Course c;
+</code></pre>
+<p>这一部分有了，把所有的 sql 语句都拼接起来<br />
+但是这个地方使用 concat 不行，concat 只会返回一条结果</p>
+<pre class="line-numbers"><code class="language-plain_text">SET @sql = '';
+
+SELECT
+	CONCAT('MAX(IF(c.Cname = ''', c.Cname, ''', a.score, NULL)) AS ''', c.Cname, '\'')
+FROM
+	Course c INTO @sql;
+
+SELECT	@sql;
+</code></pre>
+<p>需要把 concat 的返回结果拼接到一起，这就需要用到 group_concat 函数。</p>
+<p><code>PREPARE</code> 语句准备好一条SQL语句，并分配给这条SQL 语句一个名字供之后调用。<br />
+准备好的 SQL 语句通过 <code>EXECUTE</code> 命令执行，<br />
+最后通过 <code>DEALLOCATE PREPARE</code> 命令释放掉</p>
+<p>所以最终结果是这样的:</p>
+<pre class="line-numbers"><code class="language-plain_text">SET @sql = '';
+
+SELECT
+	GROUP_CONCAT(CONCAT('MAX(IF(c.Cname = ''', c.Cname, ''', a.score, NULL)) AS ''', c.Cname, '\''))
+FROM
+	Course c INTO @sql;
+
+SET @sql = CONCAT('Select b.Sname as ''姓名'' , ', @sql, ' From SC  a
+ JOIN Student b ON a.SId = b.SId
+ 	JOIN Course c ON a.CId = c.CId
+ Group by b.Sname');
+
+SELECT
+	@sql;
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/16213239029529.jpg" alt="" /></p>
 
                         
                       </div>
@@ -293,8 +298,10 @@ spring:
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/05/12 17:33 下午</span>
-                    
+                    <span class="date">2021/05/18 15:08 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
           				   
                     
 
@@ -361,6 +368,8 @@ spring:
 
       	<p class="cat-list">
         
+            <a href="rust.html"><strong>rust</strong></a>
+        
             <a href="redis.html"><strong>redis</strong></a>
         
             <a href="dubbo.html"><strong>dubbo</strong></a>
@@ -385,8 +394,6 @@ spring:
         
             <a href="GO.html"><strong>GO</strong></a>
         
-            <a href="rust.html"><strong>rust</strong></a>
-        
             <a href="AI.html"><strong>AI</strong></a>
          
         </p>
@@ -402,6 +409,12 @@ spring:
                 <div class="side-content">
                 <ul class="posts-list">
 	      
+		      
+			      <li class="post">
+			        <a href="16892187258215.html">wasm 初体验</a>
+			      </li>
+		     
+		  
 		      
 			      <li class="post">
 			        <a href="16849954851968.html">向量数据库 Vector Database</a>
@@ -423,12 +436,6 @@ spring:
 		      
 			      <li class="post">
 			        <a href="16727524082529.html">rust 包管理与工作空间</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
 			      </li>
 		     
 		  

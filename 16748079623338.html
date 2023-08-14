@@ -79,6 +79,8 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="rust.html">rust</a></li>
+        
             <li><a href="redis.html">redis</a></li>
         
             <li><a href="dubbo.html">dubbo</a></li>
@@ -102,8 +104,6 @@
             <li><a href="Spring.html">Spring</a></li>
         
             <li><a href="GO.html">GO</a></li>
-        
-            <li><a href="rust.html">rust</a></li>
         
             <li><a href="AI.html">AI</a></li>
          
@@ -219,7 +219,7 @@
 </ul>
 </li>
 <li><a href="#rc-t%E5%9F%BA%E4%BA%8E%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%9A%84%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88">Rc<T> 基于引用计数的智能指针</a></li>
-<li><a href="#refcell-t%E4%BD%BF%E7%94%A8%E4%BA%86%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%B1%BB%E5%9E%8B"><code>RefCell&lt;T&gt;</code>: 使用了内部可变性模式的类型</a></li>
+<li><a href="#refcell-t%E4%BD%BF%E7%94%A8%E4%BA%86%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%B1%BB%E5%9E%8B">RefCell<T>: 使用了内部可变性模式的类型</a></li>
 <li><a href="#refcell%E5%92%8C-box%E7%9A%84%E5%8C%BA%E5%88%AB">RefCell 和 Box 的区别</a></li>
 <li><a href="#%E5%8C%85%E7%AE%A1%E7%90%86">包管理</a></li>
 <li><a href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95">单元测试</a></li>
@@ -1089,7 +1089,7 @@ Box 指针可以把数据存储在堆（heap）上，而不是栈（stack）上�
 <code>Rc&lt;T&gt;</code> 类型的实例会在内部维护一个用于记录值引用次数的计数器，从而确定这个值是否仍在使用。</p>
 <p>将堆上的一些数据分享给程序的锁哥部分同时使用，而又无法在编译期确定哪个部分会最后释放这些数据时，就可以使用 <code>Rc&lt;T&gt;</code> 类型、Rc 仅适用于单线程场景。</p>
 <p>clone Rc 会增加引用计数</p>
-<h2><a id="refcell-t%E4%BD%BF%E7%94%A8%E4%BA%86%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%B1%BB%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>RefCell&lt;T&gt;</code>: 使用了内部可变性模式的类型</h2>
+<h2><a id="refcell-t%E4%BD%BF%E7%94%A8%E4%BA%86%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%B1%BB%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RefCell<T>: 使用了内部可变性模式的类型</h2>
 <p>RefCell 代表了其持有数据的唯一所有权。</p>
 <p>内部可变性，是 Rust 的设计模式之一，它允许你在只持有不可变引用的前提下对数据进行修改；通常而言，类似的行为会被借用规则所禁止。</p>
 <p>为了能够改变数据，内部可变性模式在它的数据结构中使用了 unsafe 代码来绕过 Rust 正常的可变性和借用规则。</p>
@@ -1554,7 +1554,7 @@ fn main() {
 <p>首先，创建一个新的代码包</p>
 <h2><a id="%E5%AE%9E%E7%8E%B0kafka%E7%9A%84%E5%B7%A5%E5%85%B7%E5%8C%85%EF%BC%8C%E5%8F%91%E5%B8%83%E5%88%B0-crate-io" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>实现 kafka 的工具包，发布到 crate.io</h2>
 <p><a href="media/16748079623338/Rust%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.pdf">Rust学习路线图.pdf</a></p>
-<p><img src="media/16748079623338/16854298066353.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16854298066353.jpg" alt="" /></p>
 
 
     
@@ -1628,6 +1628,8 @@ fn main() {
 
       	<p class="cat-list">
         
+            <a href="rust.html"><strong>rust</strong></a>
+        
             <a href="redis.html"><strong>redis</strong></a>
         
             <a href="dubbo.html"><strong>dubbo</strong></a>
@@ -1652,8 +1654,6 @@ fn main() {
         
             <a href="GO.html"><strong>GO</strong></a>
         
-            <a href="rust.html"><strong>rust</strong></a>
-        
             <a href="AI.html"><strong>AI</strong></a>
          
         </p>
@@ -1669,6 +1669,12 @@ fn main() {
                 <div class="side-content">
                 <ul class="posts-list">
 	      
+		      
+			      <li class="post">
+			        <a href="16892187258215.html">wasm 初体验</a>
+			      </li>
+		     
+		  
 		      
 			      <li class="post">
 			        <a href="16849954851968.html">向量数据库 Vector Database</a>
@@ -1690,12 +1696,6 @@ fn main() {
 		      
 			      <li class="post">
 			        <a href="16727524082529.html">rust 包管理与工作空间</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
 			      </li>
 		     
 		  

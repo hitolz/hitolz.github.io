@@ -79,6 +79,8 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="rust.html">rust</a></li>
+        
             <li><a href="redis.html">redis</a></li>
         
             <li><a href="dubbo.html">dubbo</a></li>
@@ -103,8 +105,6 @@
         
             <li><a href="GO.html">GO</a></li>
         
-            <li><a href="rust.html">rust</a></li>
-        
             <li><a href="AI.html">AI</a></li>
          
 
@@ -128,83 +128,108 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16208119771915.html">
+                <a class="clearlink" href="16208120012139.html">
                 
-                  <h1>spring-cloud-alibaba  nacos</h1>
+                  <h1>Sentinel</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
                         	<div class="mweb_toc"><ul>
-<li><a href="#nacos%E4%BD%9C%E4%B8%BA%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83">Nacos 作为注册中心</a>
+<li><a href="#demo">demo</a></li>
+<li><a href="#spring-boot%E4%B8%8E-sentinel">Spring boot 与 Sentinel</a>
 <ul>
-<li><a href="#nacos-rest%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8">Nacos REST 服务调用</a>
+<li><a href="#quick-start">Quick Start</a>
 <ul>
-<li><a href="#%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85">服务提供者</a>
+<li><a href="#%E8%BF%90%E8%A1%8C%E6%8E%A7%E5%88%B6%E5%8F%B0">运行控制台</a></li>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">项目添加依赖</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6">流量控制</a></li>
+</ul>
+</li>
+<li><a href="#dubbo%E4%B8%8E-sentinel">Dubbo 与 Sentinel</a>
 <ul>
-<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
+<li><a href="#%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%BF%AE%E6%94%B9">服务提供者修改</a>
+<ul>
+<li><a href="#%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96">增加依赖</a></li>
 <li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
 </ul>
 </li>
-<li><a href="#%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85">服务消费者</a>
+<li><a href="#%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E4%BF%AE%E6%94%B9">服务消费者修改</a>
 <ul>
-<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
+<li><a href="#%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96">增加依赖</a></li>
 <li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
 </ul>
 </li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C">运行结果</a></li>
 </ul>
 </li>
-<li><a href="#nacos-dubbo">Nacos Dubbo</a>
-<ul>
-<li><a href="#%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85">服务提供者</a>
-<ul>
-<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
-<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
-</ul>
-</li>
-<li><a href="#%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85">服务消费者</a>
-<ul>
-<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
-<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#nacos%E4%BD%9C%E4%B8%BA%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83">Nacos 作为配置中心</a>
-<ul>
-<li><a href="#%E5%AE%A2%E6%88%B7%E7%AB%AF">客户端</a>
-<ul>
-<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
-<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB">环境隔离</a></li>
 </ul>
 </div>
-<p>学习下Spring Cloud Alibaba</p>
-<p>Spring Cloud Alibaba 致力于提供分布式应用服务开发的一站式解决方案。项目包含开发分布式应用服务的必需组件，方便开发者通过 Spring Cloud 编程模型轻松使用这些组件来开发分布式应用服务。</p>
-<h2><a id="nacos%E4%BD%9C%E4%B8%BA%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nacos 作为注册中心</h2>
-<p>适配 Spring Cloud 服务注册与发现标准，默认集成了 Ribbon 的支持。<br />
-<img src="http://hitol.blog.cdn.updev.cn/2020-09-27-16011860283161.jpg" alt="" /></p>
-<p>可作为配置中心、服务注册中心<br />
-Nacos 支持将注册中心(Service Registry）与配置中心(Config Center) 在一个进程合并部署或者将2者分离部署的两种模式。</p>
-<p><a href="https://nacos.io/zh-cn/docs/quick-start.html">启动nacos</a></p>
-<p><a href="https://nacos.io/zh-cn/docs/quick-start-spring-cloud.html">Nacos Spring Cloud 快速开始</a></p>
-<h3><a id="nacos-rest%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nacos REST 服务调用</h3>
-<h4><a id="%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务提供者</h4>
-<h5><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h5>
-<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
+<h2><a id="demo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>demo</h2>
+<h2><a id="spring-boot%E4%B8%8E-sentinel" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spring boot 与 Sentinel</h2>
+<h3><a id="quick-start" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick Start</h3>
+<h4><a id="%E8%BF%90%E8%A1%8C%E6%8E%A7%E5%88%B6%E5%8F%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行控制台</h4>
+<p>github 地址<br />
+<a href="https://github.com/alibaba/Sentinel">https://github.com/alibaba/Sentinel</a></p>
+<p>文档地址：<br />
+<a href="https://github.com/alibaba/Sentinel/wiki/">https://github.com/alibaba/Sentinel/wiki/</a></p>
+<p>下载 sentinel-dashboard-1.8.1.jar<br />
+运行 <code>java -jar sentinel-dashboard-1.8.1.jar</code><br />
+访问web地址：<a href="http://localhost:8080">http://localhost:8080</a>   默认用户名和密码都是sentinel/sentinel，然后进入首页</p>
+<h4><a id="%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>项目添加依赖</h4>
+<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
     &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
     &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
 &lt;/dependency&gt;
-        
 </code></pre>
-<h5><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h5>
+<p>添加配置</p>
+<pre class="line-numbers"><code class="language-properties">server.port=8081
+# sentinel 配置
+spring.application.name=hitol-sentinel
+spring.cloud.sentinel.transport.dashboard=localhost:8080
+spring.cloud.sentinel.transport.heartbeat-interval-ms=500
+</code></pre>
+<p>编写一个 controller 用于测试</p>
+<pre class="line-numbers"><code class="language-java">@RestController
+public class SentinelController {
+
+	@RequestMapping(&quot;/&quot;)
+	public String sentinel() {
+		return &quot;sentinel ....&quot;;
+	}
+}
+</code></pre>
+<p>浏览器访问 localhost:8081,多刷新几次，控制台实时监控<br />
+<img src="http://hitol.blog.cdn.updev.cn/16208040517121.jpg" alt="" /></p>
+<h3><a id="%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>流量控制</h3>
+<p><img src="http://hitol.blog.cdn.updev.cn/16208047724648.jpg" alt="" /></p>
+<p>添加规则后多刷新几次接口<br />
+<img src="http://hitol.blog.cdn.updev.cn/16208047941828.jpg" alt="" /></p>
+<h2><a id="dubbo%E4%B8%8E-sentinel" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dubbo 与 Sentinel</h2>
+<h3><a id="%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%BF%AE%E6%94%B9" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务提供者修改</h3>
+<h4><a id="%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>增加依赖</h4>
+<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
+    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;
+    &lt;artifactId&gt;sentinel-apache-dubbo-adapter&lt;/artifactId&gt;
+    &lt;version&gt;1.7.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;
+    &lt;artifactId&gt;sentinel-transport-simple-http&lt;/artifactId&gt;
+    &lt;version&gt;1.7.1&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h4><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h4>
 <pre class="line-numbers"><code class="language-plain_text">server:
   port: 8070
 spring:
@@ -214,40 +239,30 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
-</code></pre>
-<p>编写测试 controller</p>
-<pre class="line-numbers"><code class="language-plain_text">@RestController
-public class EchoController {
+        group: test
+        namespace: fed092ce-956c-4792-977c-affc5d8f1dc7
 
-	@RequestMapping(value = &quot;/echo/{string}&quot;, method = RequestMethod.GET)
-	public String echo(@PathVariable String string) {
-		return &quot;Hello Nacos222 Discovery &quot; + string;
-	}
-}
-
+    sentinel:
+      transport:
+        port: 8070
+        dashboard: localhost:8080        
 </code></pre>
-<p>启动类上添加 <code>@EnableDiscoveryClient</code></p>
-<h4><a id="%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务消费者</h4>
-<h5><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h5>
+<h3><a id="%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E4%BF%AE%E6%94%B9" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务消费者修改</h3>
+<h4><a id="%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>增加依赖</h4>
 <pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
-    &lt;version&gt;0.2.2.RELEASE&lt;/version&gt;
-    &lt;exclusions&gt;
-        &lt;exclusion&gt;
-            &lt;groupId&gt;com.alibaba.nacos&lt;/groupId&gt;
-            &lt;artifactId&gt;nacos-client&lt;/artifactId&gt;
-        &lt;/exclusion&gt;
-    &lt;/exclusions&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.nacos&lt;/groupId&gt;
-    &lt;artifactId&gt;nacos-client&lt;/artifactId&gt;
-    &lt;version&gt;1.1.4&lt;/version&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
+    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
 &lt;/dependency&gt;
 
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;
+    &lt;artifactId&gt;sentinel-apache-dubbo-adapter&lt;/artifactId&gt;
+    &lt;version&gt;1.7.0&lt;/version&gt;
+&lt;/dependency&gt;
 </code></pre>
-<h5><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h5>
+<p>因为消费者是通过 http 调用的，所以比服务提供者少了一个依赖</p>
+<h4><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h4>
 <pre class="line-numbers"><code class="language-plain_text">server:
   port: 8071
 spring:
@@ -256,110 +271,20 @@ spring:
   cloud:
     nacos:
       discovery:
+        group: test
+        namespace: fed092ce-956c-4792-977c-affc5d8f1dc7
         server-addr: 127.0.0.1:8848
+    sentinel:
+      transport:
+        port: 8071
+        dashboard: localhost:8080
 </code></pre>
-<p>启动类上添加 <code>@EnableDiscoveryClient</code></p>
-<p>访问 <a href="http://127.0.0.1:8071/echo/123">http://127.0.0.1:8071/echo/123</a> 服务可用</p>
-<h3><a id="nacos-dubbo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nacos Dubbo</h3>
-<h4><a id="%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务提供者</h4>
-<h5><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h5>
-<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
-    &lt;artifactId&gt;dubbo&lt;/artifactId&gt;
-    &lt;version&gt;2.7.10&lt;/version&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
-    &lt;artifactId&gt;dubbo-registry-nacos&lt;/artifactId&gt;
-    &lt;version&gt;2.7.5&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
-    &lt;artifactId&gt;dubbo-spring-boot-starter&lt;/artifactId&gt;
-    &lt;version&gt;2.7.5&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<h5><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h5>
-<pre class="line-numbers"><code class="language-plain_text">dubbo:
-  application:
-    name: nacos-provider
-    version: 1.0.0
-
-  registry:
-    address: nacos://127.0.0.1:8848
-    version: 1.0.0
-</code></pre>
-<p>启动类上添加 <code>@EnableDubbo</code></p>
-<h4><a id="%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务消费者</h4>
-<h5><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h5>
-<p>与服务提供者依赖一致</p>
-<h5><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h5>
-<pre class="line-numbers"><code class="language-plain_text">dubbo:
-  application:
-    name: nacos-consumer
-    version: 1.0.0
-
-  registry:
-    address: nacos://127.0.0.1:8848
-    version: 1.0.0
-</code></pre>
-<p>启动类上添加 <code>@EnableDubbo</code></p>
-<h2><a id="nacos%E4%BD%9C%E4%B8%BA%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nacos 作为配置中心</h2>
-<h3><a id="%E5%AE%A2%E6%88%B7%E7%AB%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>客户端</h3>
-<h4><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h4>
-<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-config&lt;/artifactId&gt;
-    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<h4><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h4>
-<p>新建配置文件 bootstrap.yml，配置文件要与 nacos 里配置的 Data ID 一致。<br />
-nacos 控制台上添加配置<br />
-<img src="http://hitol.blog.cdn.updev.cn/16208113798180.jpg" alt="" /><br />
-Data ID 是 nacos-config2-dev.yml，所以在 bootstrap.yml 配置文件中这么配置</p>
-<p>Data ID 与配置文件之间的联系 <code>${prefix}-${spring.profile.active}.${file-extension}</code><br />
-prefix 默认为 spring.application.name 的值，也可以通过配置项 spring.cloud.nacos.config.prefix来配置。</p>
-<pre class="line-numbers"><code class="language-plain_text">spring:
-  cloud:
-    nacos:
-      config:
-        server-addr: 127.0.0.1:8848
-        file-extension: yml
-  application:
-    name: nacos-config2
-  profiles:
-    active: dev 
-</code></pre>
-<p>通过 controller 查看配置</p>
-<pre class="line-numbers"><code class="language-plain_text">@RestController
-@RefreshScope
-@RequestMapping(&quot;/config&quot;)
-public class ConfigController {
-
-
-	@Value(&quot;${user.name}&quot;)
-	private String userName;
-
-	@Value(&quot;${user.age}&quot;)
-	private String userAge;
-
-	@RequestMapping(&quot;/get&quot;)
-	public String get() {
-		return &quot;user.name = &quot; + userName + &quot; user.age = &quot; + userAge;
-	}
-}
-</code></pre>
-<p><a href="http://127.0.0.1:8081/config/get">http://127.0.0.1:8081/config/get</a></p>
-<p>在 nacos 控制台中修改配置后，会同步刷新。</p>
-<h2><a id="%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>环境隔离</h2>
-<p>Nacos 文档中对命名空间的描述：</p>
-<blockquote>
-<p>用于进行租户粒度的配置隔离。不同的命名空间下，可以存在相同的 Group 或 Data ID 的配置。Namespace 的常用场景之一是不同环境的配置的区分隔离，例如开发测试环境和生产环境的资源（如配置、服务）隔离等。</p>
-</blockquote>
-<p>在命名空间页面中添加不同的空间。<br />
-<img src="media/16208119771915/16240064916718.jpg" alt="" /></p>
+<p>sentinel.transport.port 跟程序运行的 port 一致才行。</p>
+<h3><a id="%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行结果</h3>
+<p>添加完依赖，修改完配置，启动即可。<br />
+调用 服务消费者提供的 api，多刷新几次<br />
+<img src="http://hitol.blog.cdn.updev.cn/16208082058974.jpg" alt="" /><br />
+<img src="http://hitol.blog.cdn.updev.cn/16208082166138.jpg" alt="" /></p>
 
                         
                       </div>
@@ -368,7 +293,7 @@ public class ConfigController {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/05/12 17:32 下午</span>
+                    <span class="date">2021/05/12 17:33 下午</span>
                     
           				   
                     
@@ -436,6 +361,8 @@ public class ConfigController {
 
       	<p class="cat-list">
         
+            <a href="rust.html"><strong>rust</strong></a>
+        
             <a href="redis.html"><strong>redis</strong></a>
         
             <a href="dubbo.html"><strong>dubbo</strong></a>
@@ -460,8 +387,6 @@ public class ConfigController {
         
             <a href="GO.html"><strong>GO</strong></a>
         
-            <a href="rust.html"><strong>rust</strong></a>
-        
             <a href="AI.html"><strong>AI</strong></a>
          
         </p>
@@ -477,6 +402,12 @@ public class ConfigController {
                 <div class="side-content">
                 <ul class="posts-list">
 	      
+		      
+			      <li class="post">
+			        <a href="16892187258215.html">wasm 初体验</a>
+			      </li>
+		     
+		  
 		      
 			      <li class="post">
 			        <a href="16849954851968.html">向量数据库 Vector Database</a>
@@ -498,12 +429,6 @@ public class ConfigController {
 		      
 			      <li class="post">
 			        <a href="16727524082529.html">rust 包管理与工作空间</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
 			      </li>
 		     
 		  

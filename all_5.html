@@ -79,6 +79,8 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="rust.html">rust</a></li>
+        
             <li><a href="redis.html">redis</a></li>
         
             <li><a href="dubbo.html">dubbo</a></li>
@@ -103,8 +105,6 @@
         
             <li><a href="GO.html">GO</a></li>
         
-            <li><a href="rust.html">rust</a></li>
-        
             <li><a href="AI.html">AI</a></li>
          
 
@@ -128,178 +128,139 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16689222220789.html">
+                <a class="clearlink" href="16669473309292.html">
                 
-                  <h1>actix-web</h1>
+                  <h1>rust actix-diesel-mysql demo</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>actix-web 是 rust 中的一个 web 框架，本篇文章简单介绍下 actix-web 的使用。</p>
-<h2><a id="getting-started" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
-<p><a href="https://actix.rs/docs/getting-started">https://actix.rs/docs/getting-started</a></p>
+                        	<p>rust 使用 actix-web、diesel、mysql 的 demo。</p>
 <ol>
-<li>创建rust 工程</li>
+<li>
+<p>创建工程</p>
+<pre class="line-numbers"><code class="language-plain_text">cargo new rust_diesel_mysql_demo
+</code></pre>
+</li>
+<li>
+<p>添加 diesel 依赖</p>
+<pre class="line-numbers"><code class="language-plain_text">diesel = { version = &quot;2.0.0&quot;, features = [&quot;mysql&quot;] }
+dotenvy = &quot;0.15&quot;
+</code></pre>
+</li>
+<li>
+<p>mysql 连接信息写入到 env 文件</p>
+<pre class="line-numbers"><code class="language-plain_text">echo DATABASE_URL=mysql://root:123456@localhost:3306/diesel_demo &gt;.env
+</code></pre>
+</li>
+<li>
+<p><code>cargo install diesel_cli --no-default-features --features mysql</code></p>
+</li>
+<li>
+<p><code>diesel setup</code></p>
+<ol>
+<li>生成 migrations 存放初始化 sql 文件的目录。</li>
+<li>生成 diesel.toml，存放生成文件的目录
+<pre class="line-numbers"><code class="language-plain_text">[print_schema]
+file = &quot;src/schema.rs&quot;
+
+[migrations_directory]
+dir = &quot;migrations&quot;
+</code></pre>
+</li>
 </ol>
-<pre class="line-numbers"><code class="language-rust">cargo new hello-world
+</li>
+<li>
+<p>diesel migration generate create_posts<br />
+生成初始化 sql 文件。</p>
+<pre class="line-numbers"><code class="language-plain_text">Creating migrations/2022-11-22-085601_create_posts/up.sql
+Creating migrations/2022-11-22-085601_create_posts/down.sql
 </code></pre>
-<ol start="2">
-<li>Cargo.toml 添加依赖</li>
+<p>将初始化 sql 写到 up.sql 中。</p>
+<pre class="line-numbers"><code class="language-sql">CREATE TABLE `posts` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `title` varchar(256) NOT NULL COMMENT '标题',
+  `body` text NOT NULL COMMENT '内容',
+  `published` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否发布',
+  PRIMARY KEY (`id`)
+) ;
+</code></pre>
+</li>
+<li>
+<p>diesel migration run</p>
+<ol>
+<li>读取上一步生成的 migrations 文件夹的 up.sql，生成对应的实体，生成到 print_schema 指定的文件</li>
+<li>如果上一步没有执行，migrations 里是空的，默认会生成数据库里所有表的实体</li>
 </ol>
-<pre class="line-numbers"><code class="language-rust">[dependencies]
-actix-web=&quot;4&quot;
-</code></pre>
-<ol start="3">
-<li>使用 actix-web<br />
-在 src/main.rs 中编写如下代码</li>
+</li>
 </ol>
-<pre class="line-numbers"><code class="language-rust">use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-
-#[get(&quot;/&quot;)]
-async fn hello() -&gt; impl Responder {
-    HttpResponse::Ok().body(&quot;Hello world!&quot;)
-}
-
-#[post(&quot;/echo&quot;)]
-async fn echo(req_body: String) -&gt; impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -&gt; impl Responder {
-    HttpResponse::Ok().body(&quot;Hey there!&quot;)
-}
-
-
-#[actix_web::main]
-async fn main() -&gt; std::io::Result&lt;()&gt; {
-    HttpServer::new( || {
-        App::new()
-            .service(hello)
-            .service(echo)
-            .route(&quot;/hey&quot;, web::get().to(manual_hello))
-    })
-        .bind((&quot;127.0.0.1&quot;, 8099))?
-        .run()
-        .await
-}
-</code></pre>
-<p>HttpServer 绑定到 ip、端口，同时，提供了两个 get 方法(/,/hey)，一个 post 方法(/echo)，通过浏览器访问 localhost:8099 即可访问。<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-13.36.34.png" alt="2022-11-20-13.36.34" /></p>
-<h2><a id="scope" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>scope</h2>
-<p>scope 就相当于请求路径的前缀</p>
-<pre class="line-numbers"><code class="language-rust">#[actix_web::main]
-async fn main() -&gt; std::io::Result&lt;()&gt; {
-    HttpServer::new(|| {
-        App::new().service(
-            web::scope(&quot;/app&quot;)
-                .route(&quot;/hey&quot;, web::get().to(manual_hello)),
-        )
-    })
-        .bind((&quot;127.0.0.1&quot;, 8099))?
-        .run()
-        .await
-}
-</code></pre>
-<p>这样的话在请求 localhost:8099/hey 就请求不到了，这样要请求的路径是 localhost:8099/app/hey</p>
-<h2><a id="state" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>state</h2>
-<p>相当于全局变量、多个线程之间共享的。</p>
-<pre class="line-numbers"><code class="language-rust">use std::sync::Mutex;
-
-use actix_web::{App, HttpServer, web};
-
-struct AppStateWithCounter {
-    counter: Mutex&lt;i32&gt;, // &lt;- Mutex is necessary to mutate safely across threads
-}
-
-async fn index(data: web::Data&lt;AppStateWithCounter&gt;) -&gt; String {
-    let mut counter = data.counter.lock().unwrap(); // &lt;- get counter's MutexGuard
-    *counter += 1; // &lt;- access counter inside MutexGuard
-
-    format!(&quot;Request number: {counter}&quot;) // &lt;- response with count
-}
-
-#[actix_web::main]
-async fn main() -&gt; std::io::Result&lt;()&gt; {
-    // Note: web::Data created _outside_ HttpServer::new closure
-    let counter = web::Data::new(AppStateWithCounter {
-        counter: Mutex::new(0),
-    });
-
-    HttpServer::new(move || {
-        // move counter into the closure
-        App::new()
-            .app_data(counter.clone()) // &lt;- register the created data
-            .route(&quot;/&quot;, web::get().to(index))
-    })
-        .bind((&quot;127.0.0.1&quot;, 8099))?
-        .run()
-        .await
-}
-</code></pre>
-<p>浏览器请求 localhost:8099,每次刷新都会导致 counter+1；</p>
-<h2><a id="%E8%BF%94%E5%9B%9Ejson" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>返回 json</h2>
-<p>cargo.toml添加依赖</p>
-<pre class="line-numbers"><code class="language-rust">serde = { version = &quot;1.0&quot;, features = [&quot;derive&quot;] }
-serde_json = { version = &quot;1.0.2&quot;, optional = true }
-</code></pre>
-<p>main.rs</p>
-<pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web};
-use actix_web::web::Json;
-use serde::Serialize;
-
-#[derive(Debug, Serialize)]
-pub struct Response&lt;T: Serialize&gt; {
-    pub ok: bool,
-    pub code: Option&lt;i32&gt;,
-    pub data: Option&lt;T&gt;,
-    pub error: Option&lt;String&gt;,
-}
-
-impl&lt;T: Serialize&gt; Response&lt;T&gt; {
-    pub fn success(data: Option&lt;T&gt;) -&gt; Response&lt;T&gt; {
-        Response {
-            ok: true,
-            code: Some(0),
-            data,
-            error: None,
-        }
-    }
-
-    pub fn error(err: Option&lt;String&gt;) -&gt; Response&lt;T&gt; {
-        Response {
-            ok: false,
-            code: Some(-1),
-            data: None,
-            error: err,
-        }
-    }
-}
-
-
-#[get(&quot;/&quot;)]
-async fn hello() -&gt; impl Responder {
-    let response = Response::success(Option::from(&quot;Hello&quot;));
-    println!(&quot;{:?}&quot;, response);
-    Json(response)
-}
-
-
-
-#[actix_web::main]
-async fn main() -&gt; std::io::Result&lt;()&gt; {
-    HttpServer::new(|| {
-        App::new()
-            .service(hello)
-    })
-        .bind((&quot;127.0.0.1&quot;, 8099))?
-        .run()
-        .await
-}
-</code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-14.58.01.png" alt="2022-11-20-14.58.01" /></p>
 <hr />
-<p><a href="https://juejin.cn/post/7108743876659118117">https://juejin.cn/post/7108743876659118117</a><br />
-<a href="https://web.veaba.me/rust/actix-web/#application">https://web.veaba.me/rust/actix-web/#application</a></p>
+<p>以上就是使用 diesel 的准备工作，接下来就是编码工作</p>
+<ol>
+<li>
+<p>在 src 目录下创建文件夹 api、database、models、service</p>
+<pre class="line-numbers"><code class="language-plain_text">├── src
+│   ├── api
+│   │   ├── mod.rs
+│   │   └── test_api.rs
+│   ├── database
+│   │   ├── mod.rs
+│   │   ├── mysql.rs
+│   │   └── schema.rs
+│   ├── main.rs
+│   ├── models
+│   │   ├── mod.rs
+│   │   └── models.rs
+│   ├── service
+│   │   ├── mod.rs
+│   │   └── test_service.rs
+│   └── settings.rs
+</code></pre>
+<ol>
+<li>rust 的目录结构还在摸索中，这里还是 mvc 的方式</li>
+<li>api 提供服务的接口，类似于 controller</li>
+<li>database 数据库相关，初始化数据库连接以及存放生成的 schema</li>
+<li>models 代码运行过程中的 struct</li>
+<li>service 服务逻辑处理</li>
+</ol>
+</li>
+</ol>
+<p>每个文件夹里都有个 mod.rs，里边有声明 mod 的语句，而声明的 mod 在同级别的目录下有对应名字的文件存在。<br />
+例如 database 文件夹里的 mod.rs:</p>
+<pre class="line-numbers"><code class="language-plain_text">pub mod mysql;
+pub mod schema;
+</code></pre>
+<p>database 文件夹里还有 mysql.rs、schema.rs 两个文件。</p>
+<p>这个好像是 rust 的一个规则。当一个目录下有一个名为 mod.rs 的源文件时，模块的文件名也可以和这个目录互相映射。<br />
+不过这个 mod.rs 文件有点太多了。。。</p>
+<h2><a id="diesel-crud" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>diesel crud</h2>
+<p><a href="https://docs.diesel.rs/diesel/query_dsl/trait.QueryDsl.html">https://docs.diesel.rs/diesel/query_dsl/trait.QueryDsl.html</a></p>
+<p>insert</p>
+<pre class="line-numbers"><code class="language-rust">diesel::insert_into(posts::table)
+        .values(&amp;new_post)
+        .execute(connection)
+        .expect(&quot;Error saving new post&quot;);
+</code></pre>
+<p>select<br />
+一个 selectById 都能有好几中写法</p>
+<pre class="line-numbers"><code class="language-rust">posts::table.filter(posts::id.eq(id)).first(connection).unwrap()
+posts::dsl::posts.find(id).first(connection).unwrap()
+posts::table.find(id).first(connection).unwrap()
+</code></pre>
+<p>delete</p>
+<pre class="line-numbers"><code class="language-rust">diesel::delete(posts::table).filter(posts::id.eq(id))
+    .execute(connection).unwrap();
+</code></pre>
+<p>update</p>
+<pre class="line-numbers"><code class="language-rust">diesel::update(posts::table).filter(posts::id.eq(id))
+    .set(posts::published.eq(true))
+    .execute(connection).unwrap();
+</code></pre>
+<p>github 地址：<br />
+<a href="https://github.com/hitolz/rust_actix_diesel_mysql_demo">https://github.com/hitolz/rust_actix_diesel_mysql_demo</a></p>
+<hr />
+<p><a href="https://diesel.rs/guides/getting-started">https://diesel.rs/guides/getting-started</a><br />
+<a href="https://www.rectcircle.cn/posts/rust-diesel/">https://www.rectcircle.cn/posts/rust-diesel/</a></p>
 
                         
                       </div>
@@ -308,7 +269,7 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2022/11/10 13:30 下午</span>
+                    <span class="date">2022/11/22 16:55 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='rust.html'>rust</a></span>
@@ -378,6 +339,8 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 
       	<p class="cat-list">
         
+            <a href="rust.html"><strong>rust</strong></a>
+        
             <a href="redis.html"><strong>redis</strong></a>
         
             <a href="dubbo.html"><strong>dubbo</strong></a>
@@ -402,8 +365,6 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
         
             <a href="GO.html"><strong>GO</strong></a>
         
-            <a href="rust.html"><strong>rust</strong></a>
-        
             <a href="AI.html"><strong>AI</strong></a>
          
         </p>
@@ -419,6 +380,12 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
                 <div class="side-content">
                 <ul class="posts-list">
 	      
+		      
+			      <li class="post">
+			        <a href="16892187258215.html">wasm 初体验</a>
+			      </li>
+		     
+		  
 		      
 			      <li class="post">
 			        <a href="16849954851968.html">向量数据库 Vector Database</a>
@@ -440,12 +407,6 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 		      
 			      <li class="post">
 			        <a href="16727524082529.html">rust 包管理与工作空间</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
 			      </li>
 		     
 		  

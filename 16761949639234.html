@@ -79,6 +79,8 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="rust.html">rust</a></li>
+        
             <li><a href="redis.html">redis</a></li>
         
             <li><a href="dubbo.html">dubbo</a></li>
@@ -102,8 +104,6 @@
             <li><a href="Spring.html">Spring</a></li>
         
             <li><a href="GO.html">GO</a></li>
-        
-            <li><a href="rust.html">rust</a></li>
         
             <li><a href="AI.html">AI</a></li>
          
@@ -148,7 +148,7 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <p><img src="http://hitol.blog.cdn.updev.cn/mweb/16767189601796.jpg" alt="" /></p>
+      <p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825540.jpg" alt="" /></p>
 <h2><a id="q-javassist%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 是什么？</h2>
 <h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
 <p>Javassist是一个开源的Java字节码操作库，它允许开发人员在运行时编辑和创建Java类。使用Javassist，开发人员可以通过修改现有类的字节码来动态地改变它们的行为，也可以使用Javassist的API来创建全新的Java类。Javassist提供了一个易于使用的API，使开发人员能够在不需要了解复杂的字节码结构的情况下轻松地创建和编辑Java类。Javassist还提供了一些高级功能，如动态代理、AOP（面向切面编程）和Java字节码的转换。由于它的灵活性和易用性，Javassist被广泛用于Java应用程序的动态编程和增强。</p>
@@ -187,7 +187,7 @@ public class JavassistExample {
 </code></pre>
 <p>最新版本是 3.29.1-GA</p>
 <p>添加完 maven 依赖后运行，确实在 output 文件夹下生成了 MyClass.class<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1816.57.14@2x.png" alt="CleanShot2023-02-1816.57.14@2x" /></p>
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825562.png" alt="CleanShot2023-02-1816.57.14@2x" /></p>
 <h2><a id="q%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:如何修改现有类？</h2>
 <h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
 <p>使用Javassist修改现有类可以通过以下步骤完成：</p>
@@ -232,9 +232,9 @@ public class JavassistExample {
 <p>注意，为了执行这个示例，你需要将&quot;com.example.MyClass&quot;这个类的字节码文件放在类路径下。</p>
 <hr />
 <p>执行前，我的 TestClass类，里面 test 方法，输出1<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1817.07.50@2x.png" alt="CleanShot2023-02-1817.07.50@2x" /></p>
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825576.png" alt="CleanShot2023-02-1817.07.50@2x" /></p>
 <p>执行后<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1817.08.29@2x.png" alt="CleanShot2023-02-1817.08.29@2x" /></p>
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825589.png" alt="CleanShot2023-02-1817.08.29@2x" /></p>
 <p>执行后的这个是新生成的文件，并不是覆盖掉原来的文件。</p>
 <h2><a id="q-cc-toclass%E5%92%8C-cc-writefile%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:cc.toClass() 和 cc.writeFile() 的区别</h2>
 <h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
@@ -533,6 +533,8 @@ public static void agentmain(String args, Instrumentation inst) {}
 
       	<p class="cat-list">
         
+            <a href="rust.html"><strong>rust</strong></a>
+        
             <a href="redis.html"><strong>redis</strong></a>
         
             <a href="dubbo.html"><strong>dubbo</strong></a>
@@ -557,8 +559,6 @@ public static void agentmain(String args, Instrumentation inst) {}
         
             <a href="GO.html"><strong>GO</strong></a>
         
-            <a href="rust.html"><strong>rust</strong></a>
-        
             <a href="AI.html"><strong>AI</strong></a>
          
         </p>
@@ -574,6 +574,12 @@ public static void agentmain(String args, Instrumentation inst) {}
                 <div class="side-content">
                 <ul class="posts-list">
 	      
+		      
+			      <li class="post">
+			        <a href="16892187258215.html">wasm 初体验</a>
+			      </li>
+		     
+		  
 		      
 			      <li class="post">
 			        <a href="16849954851968.html">向量数据库 Vector Database</a>
@@ -595,12 +601,6 @@ public static void agentmain(String args, Instrumentation inst) {}
 		      
 			      <li class="post">
 			        <a href="16727524082529.html">rust 包管理与工作空间</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
 			      </li>
 		     
 		  

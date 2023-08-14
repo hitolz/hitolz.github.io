@@ -4,13 +4,295 @@
   <title><![CDATA[非著名Java程序员]]></title>
   <link href="http://blog.hitol.top/atom.xml" rel="self"/>
   <link href="http://blog.hitol.top/"/>
-  <updated>2023-06-26T17:40:27+08:00</updated>
+  <updated>2023-08-14T11:08:30+08:00</updated>
   <id>http://blog.hitol.top/</id>
   <author>
     <name><![CDATA[]]></name>
     
   </author>
   <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[wasm 初体验]]></title>
+    <link href="http://blog.hitol.top/16892187258215.html"/>
+    <updated>2023-07-13T11:25:25+08:00</updated>
+    <id>http://blog.hitol.top/16892187258215.html</id>
+    <content type="html"><![CDATA[
+<div class="mweb_toc"><ul>
+<li><a href="#hello-world">Hello World</a>
+<ul>
+<li><a href="#1%E5%AE%89%E8%A3%85">1. 安装</a></li>
+<li><a href="#2%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%B9%E7%9B%AE">2. 初始化项目</a></li>
+<li><a href="#3%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE">3. 构建项目</a></li>
+<li><a href="#4%E7%94%9F%E6%88%90%E9%A1%B5%E9%9D%A2">4. 生成页面</a></li>
+<li><a href="#5%E9%A1%B5%E9%9D%A2%E4%BD%BF%E7%94%A8%E6%88%91%E4%BB%AC%E7%9A%84%E4%BB%A3%E7%A0%81">5. 页面使用我们的代码</a></li>
+<li><a href="#6%E5%90%AF%E5%8A%A8">6. 启动</a></li>
+</ul>
+</li>
+<li><a href="#rust-to-wasm">Rust to wasm</a>
+<ul>
+<li><a href="#1-install-rust">1. install Rust</a></li>
+<li><a href="#2-cargo-install-wasm-pack">2. <code>cargo install wasm-pack</code></a></li>
+<li><a href="#3-cargo-new-lib-hello-wasm">3. <code>cargo new --lib hello-wasm</code></a></li>
+<li><a href="#4-lib-rs%E4%B8%AD%E7%BC%96%E5%86%99-wasm%E4%BB%A3%E7%A0%81">4. lib.rs 中编写 wasm 代码</a></li>
+<li><a href="#5-build">5. build</a></li>
+<li><a href="#6-using-the-package-on-the-web">6. Using the package on the web</a>
+<ul>
+<li><a href="#%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AAhtml%E9%A1%B5%E9%9D%A2%EF%BC%8C%E4%BD%BF%E7%94%A8-hello-wasm-js">编写一个 html 页面，使用 hello_wasm.js</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E4%B8%80%E4%B8%AAserver%E6%9C%8D%E5%8A%A1">启动一个 server 服务</a></li>
+</ul>
+</li>
+<li><a href="#7-making-our-package-available-to-npm">7. Making our package available to npm</a>
+<ul>
+<li><a href="#%E9%87%8D%E6%96%B0%E7%BC%96%E8%AF%91">重新编译</a></li>
+<li><a href="#npm-link">npm link</a></li>
+<li><a href="#using-the-npm-package-on-the-web">Using the npm package on the web</a>
+<ul>
+<li><a href="#package-json">package.json</a></li>
+<li><a href="#webpack-config-js">webpack.config.js</a></li>
+<li><a href="#index-js">index.js</a></li>
+<li><a href="#index-html">index.html</a></li>
+<li><a href="#site%E7%9A%84%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84">site 的目录结构</a></li>
+<li><a href="#%E5%9C%A8site%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%AD%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4">在 site 文件夹中执行命令</a></li>
+<li><a href="#%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98">出现的问题</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E8%A1%A5%E5%85%85">补充</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>WASM 不是一种编程语言🙂。简而言之，它是一种将用一种编程语言编写的代码转换为浏览器可理解的机器代码（JavaScript）的技术。</p>
+<p>WASM (WebAssembly 的缩写)被设计为其他语言的编译目标，允许服务器端代码(如 C 或 C++代码)被编译成 WASM 并在浏览器中执行。</p>
+<p>也被称作  web 汇编。</p>
+<h2><a id="hello-world" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hello World</h2>
+<h3><a id="1%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. 安装</h3>
+<pre class="line-numbers"><code class="language-plain_text">cargo install cargo-generate
+
+cargo install wasm-pack
+
+npm install npm@latest -g
+
+</code></pre>
+<h3><a id="2%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%B9%E7%9B%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. 初始化项目</h3>
+<pre class="line-numbers"><code class="language-plain_text">cargo generate --git https://github.com/rustwasm/wasm-pack-template
+</code></pre>
+<p>项目命名为 first-wasm</p>
+<h3><a id="3%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. 构建项目</h3>
+<p>项目根目录执行</p>
+<pre class="line-numbers"><code class="language-plain_text">wasm-pack build
+</code></pre>
+<p>构建完成后会生成 pkg 目录。</p>
+<h3><a id="4%E7%94%9F%E6%88%90%E9%A1%B5%E9%9D%A2" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. 生成页面</h3>
+<p>node 初始化一个前端项目，在根目录执行。</p>
+<pre class="line-numbers"><code class="language-plain_text">npm init wasm-app www
+</code></pre>
+<p>项目中会出现一个 www 目录，<br />
+进入到 www 中，安装 node 依赖</p>
+<pre class="line-numbers"><code class="language-plain_text">npm install
+</code></pre>
+<h3><a id="5%E9%A1%B5%E9%9D%A2%E4%BD%BF%E7%94%A8%E6%88%91%E4%BB%AC%E7%9A%84%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. 页面使用我们的代码</h3>
+<ol>
+<li>在 pkg 目录下执行</li>
+</ol>
+<pre class="line-numbers"><code class="language-plain_text">npm link
+</code></pre>
+<p>pkg 文件夹中会出现 package.json 文件</p>
+<ol start="2">
+<li>在 www 中执行</li>
+</ol>
+<pre class="line-numbers"><code class="language-plain_text">npm link first-wasm
+</code></pre>
+<ol start="3">
+<li>修改 /www/index.js</li>
+</ol>
+<pre class="line-numbers"><code class="language-plain_text">import * as wasm from 'first-wasm';
+
+</code></pre>
+<h3><a id="6%E5%90%AF%E5%8A%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>6. 启动</h3>
+<pre class="line-numbers"><code class="language-plain_text">npm run start
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16919824092381.jpg" alt="" /></p>
+<p>如果要修改 alert 显示的内容，修改 rust 代码 lib.rs 中的 greet 方法。</p>
+<h1><a id="rust-to-wasm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rust to wasm</h1>
+<p>上面的例子是使用的 cargo generate  直接生成的模板，<br />
+按照 <a href="https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm">https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm</a> 里的步骤<br />
+可以自己一步一步实现 rust 编译为 wasm。</p>
+<h2><a id="1-install-rust" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. install Rust</h2>
+<h2><a id="2-cargo-install-wasm-pack" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. <code>cargo install wasm-pack</code></h2>
+<h2><a id="3-cargo-new-lib-hello-wasm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. <code>cargo new --lib hello-wasm</code></h2>
+<h2><a id="4-lib-rs%E4%B8%AD%E7%BC%96%E5%86%99-wasm%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. lib.rs 中编写 wasm 代码</h2>
+<pre class="line-numbers"><code class="language-plain_text">use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+extern {
+    pub fn alert(s: &amp;str);
+}
+    
+#[wasm_bindgen]
+pub fn greet(name: &amp;str) {
+    alert(&amp;format!(&quot;Hello, {}!&quot;, name));
+}
+</code></pre>
+<p>添加依赖</p>
+<pre class="line-numbers"><code class="language-plain_text">[lib]
+crate-type = [&quot;cdylib&quot;, &quot;rlib&quot;]
+    
+[dependencies]
+wasm-bindgen=&quot;0.2&quot;
+</code></pre>
+<h2><a id="5-build" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. build</h2>
+<pre class="line-numbers"><code class="language-plain_text">wasm-pack build --target web
+</code></pre>
+<p>现在的目录结构</p>
+<pre class="line-numbers"><code class="language-plain_text">├── Cargo.lock
+├── Cargo.toml
+├── index.html
+├── pkg
+│   ├── hello_wasm.d.ts
+│   ├── hello_wasm.js
+│   ├── hello_wasm_bg.wasm
+│   ├── hello_wasm_bg.wasm.d.ts
+│   └── package.json
+├── src
+│   └── lib.rs
+└── target
+    ├── CACHEDIR.TAG
+    ├── release
+    └── wasm32-unknown-unknown
+</code></pre>
+<h2><a id="6-using-the-package-on-the-web" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>6. Using the package on the web</h2>
+<h3><a id="%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AAhtml%E9%A1%B5%E9%9D%A2%EF%BC%8C%E4%BD%BF%E7%94%A8-hello-wasm-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>编写一个 html 页面，使用 hello_wasm.js</h3>
+<pre class="line-numbers"><code class="language-html">&lt;!doctype html&gt;
+&lt;html lang=&quot;en-US&quot;&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot; /&gt;
+    &lt;title&gt;hello-wasm example&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;script type=&quot;module&quot;&gt;
+      import init, { greet } from &quot;./pkg/hello_wasm.js&quot;;
+      init().then(() =&gt; {
+        greet(&quot;WebAssembly&quot;);
+      });
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h3><a id="%E5%90%AF%E5%8A%A8%E4%B8%80%E4%B8%AAserver%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动一个 server 服务</h3>
+<pre class="line-numbers"><code class="language-plain_text">python3 -m http.server
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16919806550698.jpg" alt="" /></p>
+<p>至此，一个简单的 wasm 就运行起来了。</p>
+<h2><a id="7-making-our-package-available-to-npm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>7. Making our package available to npm</h2>
+<h3><a id="%E9%87%8D%E6%96%B0%E7%BC%96%E8%AF%91" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重新编译</h3>
+<p>如果想要在 node 中使用 wasm，重新编译代码，使用 bundler 模式</p>
+<pre class="line-numbers"><code class="language-plain_text">wasm-pack build --target bundler
+</code></pre>
+<h3><a id="npm-link" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>npm link</h3>
+<blockquote>
+<p>Next, let's use npm link to make this package available to other JavaScript packages installed</p>
+</blockquote>
+<pre class="line-numbers"><code class="language-plain_text">cd pkg
+npm link
+</code></pre>
+<blockquote>
+<p>We now have an npm package, written in Rust, but compiled to WebAssembly. It's ready for use from JavaScript, and doesn't require the user to have Rust installed; the code included was the WebAssembly code, not the Rust source.</p>
+</blockquote>
+<h3><a id="using-the-npm-package-on-the-web" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the npm package on the web</h3>
+<p>根目录中创建新的文件夹，site</p>
+<pre class="line-numbers"><code class="language-plain_text">mkdir site
+cd site
+npm link hello-wasm
+</code></pre>
+<p>site 文件夹中创建 package.json、webpack.config.js、index.js、index.html</p>
+<h4><a id="package-json" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>package.json</h4>
+<pre class="line-numbers"><code class="language-plain_text">{
+  &quot;scripts&quot;: {
+    &quot;serve&quot;: &quot;webpack-dev-server&quot;
+  },
+  &quot;dependencies&quot;: {
+    &quot;hello-wasm&quot;: &quot;^0.1.0&quot;
+  },
+  &quot;devDependencies&quot;: {
+    &quot;webpack&quot;: &quot;^4.25.1&quot;,
+    &quot;webpack-cli&quot;: &quot;^3.1.2&quot;,
+    &quot;webpack-dev-server&quot;: &quot;^3.1.10&quot;
+  }
+}
+</code></pre>
+<h4><a id="webpack-config-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>webpack.config.js</h4>
+<pre class="line-numbers"><code class="language-plain_text">const path = require(&quot;path&quot;);
+module.exports = {
+  entry: &quot;./index.js&quot;,
+  output: {
+    path: path.resolve(__dirname, &quot;dist&quot;),
+    filename: &quot;index.js&quot;,
+  },
+  mode: &quot;development&quot;,
+};
+</code></pre>
+<h4><a id="index-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>index.js</h4>
+<pre class="line-numbers"><code class="language-plain_text">import(&quot;./node_modules/hello-wasm/hello_wasm.js&quot;).then((js) =&gt; {
+  js.greet(&quot;WebAssembly with npm&quot;);
+});
+</code></pre>
+<h4><a id="index-html" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>index.html</h4>
+<pre class="line-numbers"><code class="language-plain_text">&lt;!doctype html&gt;
+&lt;html lang=&quot;en-US&quot;&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot; /&gt;
+    &lt;title&gt;hello-wasm example&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;script src=&quot;./index.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h4><a id="site%E7%9A%84%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>site 的目录结构</h4>
+<pre class="line-numbers"><code class="language-plain_text">├── index.html
+├── index.js
+├── node_modules
+│   └── hello-wasm -&gt; ../../pkg
+├── package.json
+└── webpack.config.js
+</code></pre>
+<h4><a id="%E5%9C%A8site%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%AD%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>在 site 文件夹中执行命令</h4>
+<pre class="line-numbers"><code class="language-plain_text">npm install
+npm run serve
+</code></pre>
+<h4><a id="%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>出现的问题</h4>
+<pre class="line-numbers"><code class="language-plain_text">opensslErrorStack: [ 'error:03000086:digital envelope routines::initialization error' ],
+library: 'digital envelope routines',
+reason: 'unsupported',
+code: 'ERR_OSSL_EVP_UNSUPPORTED'
+</code></pre>
+<p>先执行这条命令，然后在运行</p>
+<pre class="line-numbers"><code class="language-plain_text">export NODE_OPTIONS=--openssl-legacy-provider
+</code></pre>
+<p>以上就是 Rust 编译为 wasm 的过程。</p>
+<hr />
+<h2><a id="%E8%A1%A5%E5%85%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>补充</h2>
+<pre class="line-numbers"><code class="language-plain_text">编译为 web
+wasm-pack build --target web
+
+编译为 bundler
+wasm-pack build --target bundler
+</code></pre>
+<p>编译为 web，可以在 html 中直接引用。<br />
+编译为 bundler、nodejs，可以在 nodejs 中使用。</p>
+<p><a href="https://rustwasm.github.io/docs/wasm-pack/commands/build.html">https://rustwasm.github.io/docs/wasm-pack/commands/build.html</a><br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16904715130997.jpg" alt="" /></p>
+<hr />
+<p><a href="https://xie.infoq.cn/article/0bb5ff2fa5d5d9db492c88a4c">https://xie.infoq.cn/article/0bb5ff2fa5d5d9db492c88a4c</a></p>
+<p><a href="https://llever.com/rustwasm-book/game-of-life/hello-world.zh.html">https://llever.com/rustwasm-book/game-of-life/hello-world.zh.html</a></p>
+<p><a href="https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm">https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm</a></p>
+<p><a href="https://rustwasm.github.io/docs/wasm-pack/introduction.html">https://rustwasm.github.io/docs/wasm-pack/introduction.html</a></p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[向量数据库 Vector Database]]></title>
@@ -158,9 +440,9 @@
 </ol>
 <p>向量数据库也支持 CRUD。对向量更快的相似性搜索。</p>
 <h2><a id="%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E7%9A%84%E5%90%8D%E8%AF%8D" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量数据库中的名词</h2>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16862782310241.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749228.jpg" alt="" /></p>
 <h2><a id="%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量数据库的应用场景</h2>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16850922776165.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749244.jpg" alt="" /></p>
 <p>向量数据库在人工智能和机器学习领域中有着广泛的应用场景，以下是一些常见的应用场景：</p>
 <ol>
 <li>
@@ -188,13 +470,13 @@
 <p>而随着向量数据库的引入，其内部存储的最新的信息向量能够极大地拓展大模型的应用边界，向量数据库可以使得大模型保持准实时性，提高大模型的适用性，并使得大模型能够动态调整。也就是说，向量数据库使得大模型的长期记忆得到了可能。</p>
 <p>AutoGPT 等于 ChatGPT 加上向量数据库。通过向量数据库让 AutoGPT 具备了长期记忆能力，它知道之前搜的是什么，把历史全部记进去了，不然每次查询是没有上下文的。</p>
 <p>如果将向量数据库部署在公司内部，能够协助解决目前企业界最担忧的大模型泄露隐私的问题。</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16854132952262.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749264.jpg" alt="" /></p>
 <h2><a id="%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%A7%E5%93%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量数据库 产品</h2>
 <p>Milvus：世界上最快的向量数据库<br />
 Pinecone，这个提供 Google Cloud 或 AWS 的托管服务，Rust 重写<br />
 Qdrant，开源版及商业版都有<br />
 pgvector，PostgreSQL 的扩展</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16853468597006.jpg" alt="" /><br />
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749284.jpg" alt="" /><br />
 4月28日，向量数据库平台Pinecone宣布获得1亿美元（约7亿元）B轮融资，由Andreessen Horowitz领投，ICONIQ Growth等跟投。</p>
 <p>4月22日，向量数据库平台Weaviate宣布获得5000万美元（约3.5亿元）B轮融资，由Index Ventures领投，Battery Ventures等跟投。</p>
 <p>此外，4月6日Chroma获1800万美元种子轮融资，4月19日Qdrant获750万美元种子轮融资。</p>
@@ -207,8 +489,8 @@ Vespa: <a href="https://vespa.ai">https://vespa.ai</a></p>
 <p>向量数据库是 AI 时代的 Killer App。AI时代一切AI化，而AI化的本质则是向量化，向量化计算成本高昂，海量的高维向量势必需要专门的数据库进行存储和处理，向量数据库应运而生，向量数据库在拓展AI全新应用场景的同时，也将对传统数据库产品形成替代，进而成为AI时代的Killer App。</p>
 <h2><a id="milvus%E9%83%A8%E7%BD%B2%EF%BC%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>milvus 部署：</h2>
 <p><a href="https://github.com/milvus-io/bootcamp/tree/master/solutions/audio/audio_similarity_search/quick_deploy">https://github.com/milvus-io/bootcamp/tree/master/solutions/audio/audio_similarity_search/quick_deploy</a></p>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16877720466799.jpg" alt="" /></p>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16877720530990.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749307.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749332.jpg" alt="" /></p>
 <h2><a id="qdrant" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Qdrant</h2>
 <p><a href="https://qdrant.tech/documentation/overview/">https://qdrant.tech/documentation/overview/</a></p>
 <p>docker 启动</p>
@@ -355,11 +637,11 @@ print(stft_vector)
         print(f&quot;Error with embedding:{e}&quot;)
         return None
 </code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16860598937715.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749356.jpg" alt="" /></p>
 <p>Cnn14_mAP=0.431.pth 是 PANNs Inference 模型的预训练权重文件，用于加载训练好的神经网络模型参数。这个模型是在音频分类任务上进行训练的，可以识别出不同的音频类别，比如说乐器、声音效果、人声等等。它是基于卷积神经网络 (CNN) 的架构，使用了 STFT 特征提取方法，输入的音频信号经过一系列卷积、池化、归一化等操作后，最终输出一个包含各个音频类别概率的向量。在使用 PANNs Inference 模型进行音频分类时，我们可以使用这个预训练权重文件来加载模型参数，从而进行预测。</p>
 <h2><a id="chat-with-your-docs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Chat With Your Docs</h2>
 <p><a href="https://github.com/mayooear/gpt4-pdf-chatbot-langchain">https://github.com/mayooear/gpt4-pdf-chatbot-langchain</a><br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/gpt-langchain-pdf.png" alt="gpt-langchain-pdf" /></p>
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749387.png" alt="gpt-langchain-pdf" /></p>
 <hr />
 <p><a href="https://wallstreetcn.com/articles/3688270">https://wallstreetcn.com/articles/3688270</a><br />
 <a href="https://wallstreetcn.com/articles/3688423">https://wallstreetcn.com/articles/3688423</a></p>
@@ -376,7 +658,7 @@ print(stft_vector)
     <updated>2023-02-12T17:42:43+08:00</updated>
     <id>http://blog.hitol.top/16761949639234.html</id>
     <content type="html"><![CDATA[
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16767189601796.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825540.jpg" alt="" /></p>
 <h2><a id="q-javassist%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 是什么？</h2>
 <h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
 <p>Javassist是一个开源的Java字节码操作库，它允许开发人员在运行时编辑和创建Java类。使用Javassist，开发人员可以通过修改现有类的字节码来动态地改变它们的行为，也可以使用Javassist的API来创建全新的Java类。Javassist提供了一个易于使用的API，使开发人员能够在不需要了解复杂的字节码结构的情况下轻松地创建和编辑Java类。Javassist还提供了一些高级功能，如动态代理、AOP（面向切面编程）和Java字节码的转换。由于它的灵活性和易用性，Javassist被广泛用于Java应用程序的动态编程和增强。</p>
@@ -415,7 +697,7 @@ public class JavassistExample {
 </code></pre>
 <p>最新版本是 3.29.1-GA</p>
 <p>添加完 maven 依赖后运行，确实在 output 文件夹下生成了 MyClass.class<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1816.57.14@2x.png" alt="CleanShot2023-02-1816.57.14@2x" /></p>
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825562.png" alt="CleanShot2023-02-1816.57.14@2x" /></p>
 <h2><a id="q%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:如何修改现有类？</h2>
 <h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
 <p>使用Javassist修改现有类可以通过以下步骤完成：</p>
@@ -460,9 +742,9 @@ public class JavassistExample {
 <p>注意，为了执行这个示例，你需要将&quot;com.example.MyClass&quot;这个类的字节码文件放在类路径下。</p>
 <hr />
 <p>执行前，我的 TestClass类，里面 test 方法，输出1<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1817.07.50@2x.png" alt="CleanShot2023-02-1817.07.50@2x" /></p>
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825576.png" alt="CleanShot2023-02-1817.07.50@2x" /></p>
 <p>执行后<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot2023-02-1817.08.29@2x.png" alt="CleanShot2023-02-1817.08.29@2x" /></p>
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825589.png" alt="CleanShot2023-02-1817.08.29@2x" /></p>
 <p>执行后的这个是新生成的文件，并不是覆盖掉原来的文件。</p>
 <h2><a id="q-cc-toclass%E5%92%8C-cc-writefile%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:cc.toClass() 和 cc.writeFile() 的区别</h2>
 <h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
@@ -769,7 +1051,7 @@ public static void agentmain(String args, Instrumentation inst) {}
 </ul>
 </li>
 <li><a href="#rc-t%E5%9F%BA%E4%BA%8E%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%9A%84%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88">Rc<T> 基于引用计数的智能指针</a></li>
-<li><a href="#refcell-t%E4%BD%BF%E7%94%A8%E4%BA%86%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%B1%BB%E5%9E%8B"><code>RefCell&lt;T&gt;</code>: 使用了内部可变性模式的类型</a></li>
+<li><a href="#refcell-t%E4%BD%BF%E7%94%A8%E4%BA%86%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%B1%BB%E5%9E%8B">RefCell<T>: 使用了内部可变性模式的类型</a></li>
 <li><a href="#refcell%E5%92%8C-box%E7%9A%84%E5%8C%BA%E5%88%AB">RefCell 和 Box 的区别</a></li>
 <li><a href="#%E5%8C%85%E7%AE%A1%E7%90%86">包管理</a></li>
 <li><a href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95">单元测试</a></li>
@@ -1639,7 +1921,7 @@ Box 指针可以把数据存储在堆（heap）上，而不是栈（stack）上�
 <code>Rc&lt;T&gt;</code> 类型的实例会在内部维护一个用于记录值引用次数的计数器，从而确定这个值是否仍在使用。</p>
 <p>将堆上的一些数据分享给程序的锁哥部分同时使用，而又无法在编译期确定哪个部分会最后释放这些数据时，就可以使用 <code>Rc&lt;T&gt;</code> 类型、Rc 仅适用于单线程场景。</p>
 <p>clone Rc 会增加引用计数</p>
-<h2><a id="refcell-t%E4%BD%BF%E7%94%A8%E4%BA%86%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%B1%BB%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>RefCell&lt;T&gt;</code>: 使用了内部可变性模式的类型</h2>
+<h2><a id="refcell-t%E4%BD%BF%E7%94%A8%E4%BA%86%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%B1%BB%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RefCell<T>: 使用了内部可变性模式的类型</h2>
 <p>RefCell 代表了其持有数据的唯一所有权。</p>
 <p>内部可变性，是 Rust 的设计模式之一，它允许你在只持有不可变引用的前提下对数据进行修改；通常而言，类似的行为会被借用规则所禁止。</p>
 <p>为了能够改变数据，内部可变性模式在它的数据结构中使用了 unsafe 代码来绕过 Rust 正常的可变性和借用规则。</p>
@@ -2104,7 +2386,7 @@ fn main() {
 <p>首先，创建一个新的代码包</p>
 <h2><a id="%E5%AE%9E%E7%8E%B0kafka%E7%9A%84%E5%B7%A5%E5%85%B7%E5%8C%85%EF%BC%8C%E5%8F%91%E5%B8%83%E5%88%B0-crate-io" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>实现 kafka 的工具包，发布到 crate.io</h2>
 <p><a href="media/16748079623338/Rust%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.pdf">Rust学习路线图.pdf</a></p>
-<p><img src="media/16748079623338/16854298066353.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16854298066353.jpg" alt="" /></p>
 
 ]]></content>
   </entry>
@@ -2186,7 +2468,7 @@ fn main() {
 </ul>
 <h2><a id="%E4%BD%BF%E7%94%A8%E5%A4%96%E9%83%A8%E5%8C%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>使用外部包</h2>
 <p>Cargo.toml 文件中的 [dependencies]<br />
-<img src="media/16727524082529/2023-01-05-07.36.08.png" alt="2023-01-05-07.36.08" /></p>
+<img src="http://hitol.blog.cdn.updev.cn/mweb/2023-01-05-07.36.08.png" alt="2023-01-05-07.36.08" /></p>
 <h2><a id="workspace" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>workspace</h2>
 <p>如何使用工作空间来管理代码目录结构，通过一个例子来说明一下。<br />
 在这个例子中，创建了一个 add 工作空间，这个空间中有一个二进制包 adder，有一个 lib 包 add-one，adder 依赖 add-one。</p>
@@ -5002,95 +5284,6 @@ docker run -di --name=my_mongo -p 27017:27017 mongo</p>
 <hr />
 <p>看完权当一乐。<br />
 很早之前在知乎看的，今天看笔记翻到了。侵删。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[MVCC]]></title>
-    <link href="http://blog.hitol.top/16291932023474.html"/>
-    <updated>2021-08-17T17:40:02+08:00</updated>
-    <id>http://blog.hitol.top/16291932023474.html</id>
-    <content type="html"><![CDATA[
-<div class="mweb_toc"><ul>
-<li><a href="#%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86">重点知识</a></li>
-<li><a href="#%E4%BE%8B%E5%AD%90">例子</a>
-<ul>
-<li><a href="#%E5%B0%9D%E8%AF%95%E5%9B%9E%E7%AD%94%E4%B8%8B">尝试回答下</a></li>
-<li><a href="#%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90">详细分析</a></li>
-<li><a href="#%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1a%E7%9A%84%E7%BB%93%E6%9E%9C">如何得到事务 A 的结果</a></li>
-<li><a href="#%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1b%E7%9A%84%E7%BB%93%E6%9E%9C">如何得到事务 B 的结果</a></li>
-</ul>
-</li>
-<li><a href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E7%9A%84%E8%83%BD%E5%8A%9B%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84">事务的可重复读的能力是怎么实现的</a></li>
-</ul>
-</div>
-<h2><a id="%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重点知识</h2>
-<p>MVCC 指行多版本控制。提高数据库并发，也是事务隔离的实现机制。</p>
-<p>使用 MVCC 可以做到在对同一行数据进行读写操作的时候不用加锁。这个读指的是 快照读。</p>
-<p>MVCC 是一个概念，这个概念的实现就是 快照读。<br />
-快照读操作只读取该事务开始前的数据库快照。</p>
-<p>按照可重复读的定义，一个事务启动的时候，能够看到所有已经提交的事务结果。但是之后，这个事务执行期间，其他事务的更新对它不可见。</p>
-<p>事务启动时有一个 事务 id，叫做 transaction id。是在事务开始时候向 InnoDB 申请的，严格按照申请顺序递增的。</p>
-<p>每次事务更新数据的时候都会把 transaction id 赋值给这个数据版本的事务 id，记为 row trx_id。<br />
-一行数据可能有多个版本，每个版本都有一个 row trx_id。</p>
-<p>在实现上， InnoDB为每个事务构造了一个数组，用来保存这个事务启动瞬间，当前正在“活跃”的所有事务ID。“活跃”指的就是，启动了但还没提交。</p>
-<h2><a id="%E4%BE%8B%E5%AD%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>例子</h2>
-<pre class="line-numbers"><code class="language-sql">mysql&gt; CREATE TABLE `t` (
-  `id` int(11) NOT NULL,
-  `k` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
-
-insert into t(id, k) values(1,1);
-</code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/2021-08-18-16291936408457.jpg" alt="事务A、B、C的执行流程" /></p>
-<p>问：MySQL InnoDB 默认隔离级别下，事务 A、B、C 里，K 的值分别是多少？</p>
-<h3><a id="%E5%B0%9D%E8%AF%95%E5%9B%9E%E7%AD%94%E4%B8%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>尝试回答下</h3>
-<p>事务 C 没有指定手动提交事务，所以是自动提交的，并且 C 事务先执行的，所以 K 是 2。<br />
-事务 B 在执行，由于 B 执行了 update，会以当前读的方式获取最新数据，所以 C 提交后的事务，B 是可以看到的，所以，K 是 3。</p>
-<p>事务 A 最后执行，由于是 RR 级别，可重复读，并且是当前读，所以与事务开始的时候保持一致，所以 K 是 1 。</p>
-<h3><a id="%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>详细分析</h3>
-<p>这里，我们不妨做如下假设：</p>
-<ol>
-<li>事务A开始前，系统里面只有一个活跃事务 ID 是99；</li>
-<li>事务 A、B、C的版本号分别是100、101、102，且当前系统里只有这四个事务；</li>
-</ol>
-<p>这样，事务A的视图数组就是[99,100], 事务B的视图数组是[99,100,101], 事务C的视图数组是[99,100,101,102]。</p>
-<h3><a id="%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1a%E7%9A%84%E7%BB%93%E6%9E%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何得到事务 A 的结果</h3>
-<p>简化下，只画出跟事务A查询逻辑有关的操作：<br />
-<img src="http://hitol.blog.cdn.updev.cn/2021-08-18-16291942450909.jpg" alt="事务A查询数据逻辑图" /></p>
-<p>一个数据版本，对于一个事务视图来说，除了自己的更新总是可见以外，有三种情况：</p>
-<ol>
-<li>版本未提交，不可见；</li>
-<li>版本已提交，但是是在视图创建后提交的，不可见；</li>
-<li>版本已提交，而且是在视图创建前提交的，可见。</li>
-</ol>
-<p>现在，我们用这个规则来判断图中的查询结果，事务A的查询语句的视图数组是在事务A启动的时候生成的，这时候：</p>
-<ol>
-<li>(1,3)还没提交，属于情况1，不可见；</li>
-<li>(1,2)虽然提交了，但是是在视图数组创建之后提交的，属于情况2，不可见；</li>
-<li>(1,1)是在视图数组创建之前提交的，可见。</li>
-</ol>
-<h3><a id="%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1b%E7%9A%84%E7%BB%93%E6%9E%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何得到事务 B 的结果</h3>
-<p>一条规则：更新数据都是先读后写的，而这个读，只能读当前的值，称为“当前读”<br />
-因此，在更新的时候，当前读拿到的数据是(1,2)，更新后生成了新版本的数据(1,3)，这个新版本的row trx_id是101。</p>
-<p>所以，在执行事务B查询语句的时候，一看自己的版本号是101，最新数据的版本号也是101，是自己的更新，可以直接使用，所以查询得到的k的值是3。</p>
-<h2><a id="%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E7%9A%84%E8%83%BD%E5%8A%9B%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>事务的可重复读的能力是怎么实现的</h2>
-<p>可重复读的核心就是一致性读（consistent read）；<br />
-而事务更新数据的时候，只能用当前读。<br />
-如果当前的记录的行锁被其他事务占用的话，就需要进入锁等待。</p>
-<p>而读提交的逻辑和可重复读的逻辑类似，它们最主要的区别是：</p>
-<ol>
-<li>在可重复读隔离级别下，只需要在事务开始的时候创建一致性视图，之后事务里的其他查询都共用这个一致性视图；</li>
-<li>在读提交隔离级别下，每一个语句执行前都会重新算出一个新的视图。</li>
-</ol>
-<p>这里需要说明一下，“start transaction with consistent snapshot; ”的意思是从这个语句开始，创建一个持续整个事务的一致性快照。所以，在读提交隔离级别下，这个用法就没意义了，等效于普通的start transaction。</p>
-<hr />
-<p>undo 链<br />
-read view 视图</p>
-<p>-- 《MySQL 实战 45 讲》，03、08讲。<br />
-<a href="https://juejin.cn/post/6871046354018238472#heading-3">https://juejin.cn/post/6871046354018238472#heading-3</a></p>
 
 ]]></content>
   </entry>

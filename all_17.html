@@ -79,6 +79,8 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="rust.html">rust</a></li>
+        
             <li><a href="redis.html">redis</a></li>
         
             <li><a href="dubbo.html">dubbo</a></li>
@@ -103,8 +105,6 @@
         
             <li><a href="GO.html">GO</a></li>
         
-            <li><a href="rust.html">rust</a></li>
-        
             <li><a href="AI.html">AI</a></li>
          
 
@@ -128,286 +128,162 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16345641979115.html">
+                <a class="clearlink" href="16356861657170.html">
                 
-                  <h1>mongoDB</h1>
+                  <h1>Graphql</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<div class="mweb_toc"><ul>
-<li><a href="#%E6%A6%82%E5%BF%B5">概念</a>
-<ul>
-<li><a href="#%E6%95%B0%E6%8D%AE%E5%BA%93">数据库</a></li>
-<li><a href="#%E9%9B%86%E5%90%88">集合</a></li>
-<li><a href="#%E6%96%87%E6%A1%A3">文档</a></li>
-</ul>
-</li>
-<li><a href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B">数据类型</a></li>
-<li><a href="#%E6%93%8D%E4%BD%9C">操作</a>
-<ul>
-<li><a href="#%E6%9F%A5%E8%AF%A2%E6%96%87%E6%A1%A3">查询文档</a></li>
-<li><a href="#%E6%8F%92%E5%85%A5%E6%96%87%E6%A1%A3">插入文档</a></li>
-<li><a href="#%E6%9B%B4%E6%96%B0%E6%96%87%E6%A1%A3">更新文档</a></li>
-</ul>
-</li>
-<li><a href="#%E5%88%A0%E9%99%A4%E6%96%87%E6%A1%A3">删除文档</a></li>
-<li><a href="#gridfs">GridFS</a></li>
-<li><a href="#%E5%AE%89%E8%A3%85">安装</a>
-<ul>
-<li><a href="#mac%E5%AE%89%E8%A3%85">mac 安装</a></li>
-<li><a href="#docker%E5%AE%89%E8%A3%85">Docker 安装</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<h2><a id="%E6%A6%82%E5%BF%B5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>概念</h2>
-<table>
-<thead>
-<tr>
-<th>SQL术语/概念</th>
-<th>MongoDB术语/概念</th>
-<th>解释/说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>database</td>
-<td>database</td>
-<td>数据库</td>
-</tr>
-<tr>
-<td>table</td>
-<td>collection</td>
-<td>数据库表/集合</td>
-</tr>
-<tr>
-<td>row</td>
-<td>document</td>
-<td>数据记录行/文档</td>
-</tr>
-<tr>
-<td>column</td>
-<td>field</td>
-<td>数据字段/域</td>
-</tr>
-<tr>
-<td>index</td>
-<td>index</td>
-<td>索引</td>
-</tr>
-<tr>
-<td>table joins</td>
-<td></td>
-<td>表连接,MongoDB不支持</td>
-</tr>
-<tr>
-<td>primary key</td>
-<td>primary key</td>
-<td>主键,MongoDB自动将_id字段设置为主键</td>
-</tr>
-</tbody>
-</table>
-<p><img src="http://hitol.blog.cdn.updev.cn/2021-10-18-16341942000243.jpg" alt="" /></p>
-<h3><a id="%E6%95%B0%E6%8D%AE%E5%BA%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数据库</h3>
-<p>数据库的概念跟关系型数据库(如 MySQL)中是一样的。<br />
-一个 mongoDB 中可以建立多个数据库。<br />
-默认数据库为 db。</p>
-<p>命令</p>
-<pre class="line-numbers"><code class="language-plain_text">show dbs # 查看所有数据库
+                        	<h2><a id="%E7%AE%80%E4%BB%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>简介</h2>
+<p>Graphql 是一种类似于 REST 的一种 API 标准。<br />
+不是一种数据库技术。</p>
+<p>总的来说就是，后端可以根据前端需要的字段返回对应的信息，不需要修改原有接口。</p>
+<pre class="line-numbers"><code class="language-plain_text">--- 1.前端请求字段
+{
+  hero {
+    name
+  }
+}
 
-db # 查看当前连接的数据库
-
-use xx # 连接到 xx 数据库,如果数据库不存在，则创建数据库
-</code></pre>
-<h3><a id="%E9%9B%86%E5%90%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>集合</h3>
-<p>集合类似于关系型数据库中的 table。<br />
-集合存在于数据库中，没有固定结构，这意味着可以在集合中插入不同的文档，但是一般情况下文档都有一定的关联性。</p>
-<h3><a id="%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>文档</h3>
-<p>文档类似于关系型数据库中的 行。<br />
-文档是一组 键值对</p>
-<h2><a id="%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数据类型</h2>
-<table>
-<thead>
-<tr>
-<th>数据类型</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>String</td>
-<td>字符串。存储数据常用的数据类型。在 MongoDB 中，UTF-8 编码的字符串才是合法的。</td>
-</tr>
-<tr>
-<td>Integer</td>
-<td>整型数值。用于存储数值。根据你所采用的服务器，可分为 32 位或 64 位。</td>
-</tr>
-<tr>
-<td>Boolean</td>
-<td>布尔值。用于存储布尔值（真/假）</td>
-</tr>
-<tr>
-<td>Double</td>
-<td>双精度浮点值。用于存储浮点值。</td>
-</tr>
-<tr>
-<td>Min/Max keys</td>
-<td>将一个值与 BSON（二进制的 JSON）元素的最低值和最高值相对比</td>
-</tr>
-<tr>
-<td>Array</td>
-<td>用于将数组或列表或多个值存储为一个键</td>
-</tr>
-<tr>
-<td>Timestamp</td>
-<td>时间戳。记录文档修改或添加的具体时间。</td>
-</tr>
-<tr>
-<td>Object</td>
-<td>用于内嵌文档</td>
-</tr>
-<tr>
-<td>Null</td>
-<td>用于创建空值</td>
-</tr>
-<tr>
-<td>Symbol</td>
-<td>符号。该数据类型基本上等同于字符串类型，但不同的是，它一般用于采用特殊符号类型的语言。</td>
-</tr>
-<tr>
-<td>Date</td>
-<td>日期时间。用 UNIX 时间格式来存储当前日期或时间。你可以指定自己的日期时间：创建 Date 对象，传入年月日信息。</td>
-</tr>
-<tr>
-<td>Object ID</td>
-<td>对象 ID。用于创建文档的 ID。</td>
-</tr>
-<tr>
-<td>Binary Data</td>
-<td>二进制数据。用于存储二进制数据。</td>
-</tr>
-<tr>
-<td>Code</td>
-<td>代码类型。用于在文档中存储 JavaScript 代码。</td>
-</tr>
-<tr>
-<td>Regular expression</td>
-<td>正则表达式类型。用于存储正则表达式。</td>
-</tr>
-</tbody>
-</table>
-<h2><a id="%E6%93%8D%E4%BD%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>操作</h2>
-<h3><a id="%E6%9F%A5%E8%AF%A2%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>查询文档</h3>
-<p>语法：</p>
-<pre class="line-numbers"><code class="language-plain_text">db.collection.find(query, projection)
-query ：可选，使用查询操作符指定查询条件
-projection ：可选，使用投影操作符指定返回的键。查询时返回文档中所有键值， 只需省略该参数即可（默认省略）。
-
-</code></pre>
-<p>例子：</p>
-<pre class="line-numbers"><code class="language-plain_text">查询所有: 
-db.chat_calls.find()
-
-按条件查询:
-db.chat_calls.find({&quot;machine_id&quot;:&quot;GV2_T1&quot;,&quot;call_uuid&quot;:&quot;01QJI91IMKENL3L8A0Q11B5AES00007V&quot;})
-
-只返回具体字段:
-db.chat_calls.find({&quot;machine_id&quot;:&quot;GV2_T1&quot;,&quot;call_uuid&quot;:&quot;01QJI91IMKENL3L8A0Q11B5AES00007V&quot;}, { _id:0,machine_id:1})
-
-</code></pre>
-<h3><a id="%E6%8F%92%E5%85%A5%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>插入文档</h3>
-<p>语法:</p>
-<pre class="line-numbers"><code class="language-plain_text">db.COLLECTION_NAME.insert(document)
-或
-db.COLLECTION_NAME.save(document)
-</code></pre>
-<p>例子:</p>
-<pre class="line-numbers"><code class="language-plain_text">db.chat_calls.insert(
-{&quot;machine_id&quot;:&quot;test&quot;,&quot;call_uuid&quot;:&quot;test&quot;})
-</code></pre>
-<h3><a id="%E6%9B%B4%E6%96%B0%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>更新文档</h3>
-<p>语法:</p>
-<pre class="line-numbers"><code class="language-plain_text">db.collection.update(
-   &lt;query&gt;,
-   &lt;update&gt;,
-   {
-     upsert: &lt;boolean&gt;,
-     multi: &lt;boolean&gt;,
-     writeConcern: &lt;document&gt;
-   }
-)
-
-query : update的查询条件，类似sql update查询内where后面的。
-update : update的对象和一些更新的操作符（如$,$inc...）等，也可以理解为sql update查询内set后面的
-upsert : 可选，这个参数的意思是，如果不存在update的记录，是否插入objNew,true为插入，默认是false，不插入。
-multi : 可选，mongodb 默认是false,只更新找到的第一条记录，如果这个参数为true,就把按条件查出来多条记录全部更新。
-writeConcern :可选，抛出异常的级别。
-</code></pre>
-<p>例子:</p>
-<pre class="line-numbers"><code class="language-plain_text">db.chat_calls.update(
-	{&quot;machine_id&quot;:&quot;test&quot;,&quot;call_uuid&quot;:&quot;test&quot;}, 
-	{
-		$set:{&quot;machine_id&quot;:&quot;test111&quot;}
-	}
-)
-运算符 $set,将 machine_id 修改为 test111
-</code></pre>
-<p>save() 方法，通过 _id 主键存在则更新，如果不存在则新增。</p>
-<pre class="line-numbers"><code class="language-plain_text">db.collection.save(
-   &lt;document&gt;,
-   {
-     writeConcern: &lt;document&gt;
-   }
-)
-</code></pre>
-<h2><a id="%E5%88%A0%E9%99%A4%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>删除文档</h2>
-<p>db.collection.deleteOne()<br />
-db.collection.deleteMany()</p>
-<p>语法：</p>
-<pre class="line-numbers"><code class="language-plain_text">db.collection.deleteOne(
-   &lt;filter&gt;,
-   {
-      writeConcern: &lt;document&gt;,
-      collation: &lt;document&gt;,
-      hint: &lt;document|string&gt;       
-   }
-)
+--- 2.后端返回结果
+{
+  &quot;data&quot;: {
+    &quot;hero&quot;: {
+      &quot;name&quot;: &quot;R2-D2&quot;
+    }
+  }
+}
 
 
-db.collection.deleteMany(
-   &lt;filter&gt;,
-   {
-      writeConcern: &lt;document&gt;,
-      collation: &lt;document&gt;
-   }
-)
+--- 1.前端请求字段
+{
+  hero {
+    name
+    # Queries can have comments!
+    friends {
+      name
+    }
+  }
+}
+
+--- 2.后端返回结果
+{
+  &quot;data&quot;: {
+    &quot;hero&quot;: {
+      &quot;name&quot;: &quot;R2-D2&quot;,
+      &quot;friends&quot;: [
+        {
+          &quot;name&quot;: &quot;Luke Skywalker&quot;
+        },
+        {
+          &quot;name&quot;: &quot;Han Solo&quot;
+        },
+        {
+          &quot;name&quot;: &quot;Leia Organa&quot;
+        }
+      ]
+    }
+  }
+}
+</code></pre>
+<h2><a id="demo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>demo</h2>
+<p><a href="https://gitee.com/hitol/graphql-demo.git">https://gitee.com/hitol/graphql-demo.git</a></p>
+<h3><a id="dependencies" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>dependencies</h3>
+<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
+    &lt;artifactId&gt;graphql-java&lt;/artifactId&gt;
+    &lt;version&gt;11.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
+    &lt;artifactId&gt;graphiql-spring-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;3.10.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
+    &lt;artifactId&gt;graphql-java-spring-boot-starter-webmvc&lt;/artifactId&gt;
+    &lt;version&gt;1.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;com.google.guava&lt;/groupId&gt;
+    &lt;artifactId&gt;guava&lt;/artifactId&gt;
+    &lt;version&gt;26.0-jre&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h3><a id="schema" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Schema</h3>
+<p>在 resources 文件夹下新建一个 schema.graphqls 文件，其内容如下</p>
+<pre class="line-numbers"><code class="language-graphql">type Query {
+  bookById(id: ID): Book 
+}
+
+type Book {
+  id: ID
+  name: String
+  pageCount: Int
+  author: Author
+}
+
+type Author {
+  id: ID
+  firstName: String
+  lastName: String
+}
 
 </code></pre>
-<p>例子:</p>
-<pre class="line-numbers"><code class="language-plain_text">db.chat_calls.deleteOne({&quot;machine_id&quot;:&quot;test&quot;})
+<h2><a id="graphql%E5%8A%A0%E8%BD%BD%E5%88%B0-spring" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Graphql 加载到 Spring</h2>
+<pre class="line-numbers"><code class="language-java">
+@Component
+public class GraphQLProvider {
+
+
+    @Autowired
+    GraphQLDataFetchers graphQLDataFetchers;
+
+    private GraphQL graphQL;
+
+    @PostConstruct
+    public void init() throws IOException {
+        URL url = Resources.getResource(&quot;schema.graphqls&quot;);
+        String sdl = Resources.toString(url, Charsets.UTF_8);
+        GraphQLSchema graphQLSchema = buildSchema(sdl);
+        this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
+    }
+
+    private GraphQLSchema buildSchema(String sdl) {
+        TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);
+        RuntimeWiring runtimeWiring = buildWiring();
+        SchemaGenerator schemaGenerator = new SchemaGenerator();
+        return schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
+    }
+
+    private RuntimeWiring buildWiring() {
+        return RuntimeWiring.newRuntimeWiring()
+                .type(newTypeWiring(&quot;Query&quot;)
+                        .dataFetcher(&quot;bookById&quot;, graphQLDataFetchers.getBookByIdDataFetcher()))
+                .type(newTypeWiring(&quot;Book&quot;)
+                        .dataFetcher(&quot;author&quot;, graphQLDataFetchers.getAuthorDataFetcher()))
+                .build();
+    }
+
+    @Bean
+    public GraphQL graphQL() {
+        return graphQL;
+    }
+
+}
 </code></pre>
-<h1><a id="gridfs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>GridFS</h1>
-<p>GridFS 用于存储和恢复那些超过16M（BSON文件限制）的文件(如：图片、音频、视频等)。</p>
-<p>GridFS 也是文件存储的一种方式，但是它是存储在MonoDB的集合中。</p>
-<p>GridFS 可以更好的存储大于16M的文件。</p>
-<p>GridFS 会将大文件对象分割成多个小的chunk(文件片段),一般为256k/个,每个chunk将作为MongoDB的一个文档(document)被存储在chunks集合中。</p>
-<p>GridFS 用两个集合来存储一个文件：fs.files与fs.chunks。</p>
-<pre class="line-numbers"><code class="language-plain_text">gridfs = GridFS(db_client.get_database(db_name), collection=collection)
-</code></pre>
-<h1><a id="%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>安装</h1>
-<h2><a id="mac%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>mac 安装</h2>
-<p>brew tap mongodb/brew<br />
-brew install mongodb-community</p>
-<p>检验安装完成</p>
-<p>mongod -version</p>
-<p>作为mac os 的服务启动<br />
-brew services start mongodb-community</p>
-<h2><a id="docker%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Docker 安装</h2>
-<p>docker pull mongo<br />
-docker run -di --name=my_mongo -p 27017:27017 mongo</p>
+<p>其中对于文件的解析 最重要的方法就是 buildWiring</p>
+<p>这一块其实就是后端提供的关于 graphql 的接口。</p>
+<p>使用了一个插件，方便调试 graphiql</p>
+<p>项目启动之后浏览器中访问，<a href="http://localhost:8080/graphiql">http://localhost:8080/graphiql</a><br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16356860055184.jpg" alt="" /></p>
 <hr />
-<p><a href="https://docs.mongoing.com/">https://docs.mongoing.com/</a></p>
+<p><a href="http://graphql.js.cool/learn/">http://graphql.js.cool/learn/</a></p>
+<p><a href="https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/">https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/</a></p>
 
                         
                       </div>
@@ -416,7 +292,7 @@ docker run -di --name=my_mongo -p 27017:27017 mongo</p>
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/10/18 21:36 下午</span>
+                    <span class="date">2021/10/31 21:16 下午</span>
                     
           				   
                     
@@ -484,6 +360,8 @@ docker run -di --name=my_mongo -p 27017:27017 mongo</p>
 
       	<p class="cat-list">
         
+            <a href="rust.html"><strong>rust</strong></a>
+        
             <a href="redis.html"><strong>redis</strong></a>
         
             <a href="dubbo.html"><strong>dubbo</strong></a>
@@ -508,8 +386,6 @@ docker run -di --name=my_mongo -p 27017:27017 mongo</p>
         
             <a href="GO.html"><strong>GO</strong></a>
         
-            <a href="rust.html"><strong>rust</strong></a>
-        
             <a href="AI.html"><strong>AI</strong></a>
          
         </p>
@@ -525,6 +401,12 @@ docker run -di --name=my_mongo -p 27017:27017 mongo</p>
                 <div class="side-content">
                 <ul class="posts-list">
 	      
+		      
+			      <li class="post">
+			        <a href="16892187258215.html">wasm 初体验</a>
+			      </li>
+		     
+		  
 		      
 			      <li class="post">
 			        <a href="16849954851968.html">向量数据库 Vector Database</a>
@@ -546,12 +428,6 @@ docker run -di --name=my_mongo -p 27017:27017 mongo</p>
 		      
 			      <li class="post">
 			        <a href="16727524082529.html">rust 包管理与工作空间</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16669473309292.html">rust actix-diesel-mysql demo</a>
 			      </li>
 		     
 		  
