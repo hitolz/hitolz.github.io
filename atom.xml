@@ -4,7 +4,7 @@
   <title><![CDATA[非著名Java程序员]]></title>
   <link href="http://blog.hitol.top/atom.xml" rel="self"/>
   <link href="http://blog.hitol.top/"/>
-  <updated>2023-08-14T11:08:30+08:00</updated>
+  <updated>2023-10-06T03:11:41+08:00</updated>
   <id>http://blog.hitol.top/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -124,7 +124,7 @@ npm install npm@latest -g
 <h2><a id="2-cargo-install-wasm-pack" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. <code>cargo install wasm-pack</code></h2>
 <h2><a id="3-cargo-new-lib-hello-wasm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. <code>cargo new --lib hello-wasm</code></h2>
 <h2><a id="4-lib-rs%E4%B8%AD%E7%BC%96%E5%86%99-wasm%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. lib.rs 中编写 wasm 代码</h2>
-<pre class="line-numbers"><code class="language-plain_text">use wasm_bindgen::prelude::*;
+<pre class="line-numbers"><code class="language-rust">use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern {
@@ -209,7 +209,7 @@ npm link hello-wasm
 </code></pre>
 <p>site 文件夹中创建 package.json、webpack.config.js、index.js、index.html</p>
 <h4><a id="package-json" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>package.json</h4>
-<pre class="line-numbers"><code class="language-plain_text">{
+<pre class="line-numbers"><code class="language-json">{
   &quot;scripts&quot;: {
     &quot;serve&quot;: &quot;webpack-dev-server&quot;
   },
@@ -224,7 +224,7 @@ npm link hello-wasm
 }
 </code></pre>
 <h4><a id="webpack-config-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>webpack.config.js</h4>
-<pre class="line-numbers"><code class="language-plain_text">const path = require(&quot;path&quot;);
+<pre class="line-numbers"><code class="language-js">const path = require(&quot;path&quot;);
 module.exports = {
   entry: &quot;./index.js&quot;,
   output: {
@@ -235,12 +235,12 @@ module.exports = {
 };
 </code></pre>
 <h4><a id="index-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>index.js</h4>
-<pre class="line-numbers"><code class="language-plain_text">import(&quot;./node_modules/hello-wasm/hello_wasm.js&quot;).then((js) =&gt; {
+<pre class="line-numbers"><code class="language-js">import(&quot;./node_modules/hello-wasm/hello_wasm.js&quot;).then((js) =&gt; {
   js.greet(&quot;WebAssembly with npm&quot;);
 });
 </code></pre>
 <h4><a id="index-html" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>index.html</h4>
-<pre class="line-numbers"><code class="language-plain_text">&lt;!doctype html&gt;
+<pre class="line-numbers"><code class="language-html">&lt;!doctype html&gt;
 &lt;html lang=&quot;en-US&quot;&gt;
   &lt;head&gt;
     &lt;meta charset=&quot;utf-8&quot; /&gt;
