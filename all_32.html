@@ -129,228 +129,276 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16066274677997.html">
+                <a class="clearlink" href="16121664688743.html">
                 
-                  <h1>Java并发编程的基础</h1>
+                  <h1>Dubbo SPI</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
                         	<div class="mweb_toc"><ul>
-<li><a href="#volatile">volatile</a></li>
-<li><a href="#synchronized">synchronized</a></li>
-<li><a href="#%E7%AD%89%E5%BE%85%E9%80%9A%E7%9F%A5%E6%9C%BA%E5%88%B6">等待/通知机制</a></li>
-<li><a href="#join">join</a></li>
-<li><a href="#threadlocal">ThreadLocal</a></li>
+<li><a href="#java-spi">Java SPI</a></li>
+<li><a href="#dubbo-spi">Dubbo SPI</a></li>
+<li><a href="#dubbo-spi%E7%9A%84%E5%AE%9E%E7%8E%B0">Dubbo SPI 的实现</a>
+<ul>
+<li><a href="#extensionloader-getextensionloader">ExtensionLoader.getExtensionLoader</a></li>
+<li><a href="#getadaptiveextension">getAdaptiveExtension()</a></li>
+<li><a href="#extensionloader-getextension">extensionLoader.getExtension</a></li>
+<li><a href="#createextension">createExtension</a></li>
+</ul>
+</li>
+<li><a href="#wrapper%E7%B1%BB">wrapper 类</a></li>
 </ul>
 </div>
-<p>##线程间通信</p>
-<h3><a id="volatile" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>volatile</h3>
-<p>多线程访问 volatile 修饰的变量都需要从共享内存中获取，而对它的修改必须同步刷新回共享内存，它能保证所有线程对变量访问的可见性。</p>
-<h3><a id="synchronized" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>synchronized</h3>
-<p>可以修饰方法或者以同步代码块的形式来使用，确保多个线程在同一时间只能有一个线程处于方法或者代码块中，保证了线程对变量访问的可见性和排他性。</p>
-<p>同步代码块的底层实现是 monitorenter 和 monitorexit 指令，而同步方法则是一开方法修饰符上的 ACC_SYNCHRONIZED 完成。</p>
-<h3><a id="%E7%AD%89%E5%BE%85%E9%80%9A%E7%9F%A5%E6%9C%BA%E5%88%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>等待/通知机制</h3>
-<p>生产者、消费者模型</p>
-<p>wait()/notify()</p>
-<p>wait和notify方法都是锁对象来调用。它们必须在被synchronized修饰的方法内。</p>
-<p>wait方法会使在临界区内的线程进入等待状态，同时释放被同步对象的锁。</p>
-<p>notify方法会唤醒一个因调用了wait方法而处于阻塞状态的线程，使其进入就绪状态。<br />
-被重新唤醒的线程会试图重新获取锁的控制权，并继续执行wait之后的代码。</p>
-<pre class="line-numbers"><code class="language-plain_text">static class Provider implements Runnable {
+<p>Dubbo 源码阅读 gitee：<a href="https://gitee.com/hitol/dubbo-source/tree/read_2.7.5/">https://gitee.com/hitol/dubbo-source/tree/read_2.7.5/</a></p>
+<h2><a id="java-spi" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Java SPI</h2>
+<p>SPI 是服务发现机制，为某个接口寻找服务的实现。<br />
+是 JDK 6 的特性，ServiceLoader。<br />
+ServiceLoader启动时会到 resource/META-INF/services/ 目录下读取以 实现类的全限定名 命名的文件。</p>
+<p>程序通过 ServiceLoader 动态加载实现类模块，通过扫描 META-INF/services 目录下的配置文件找到实现类的全限定名，把类加载到JVM;</p>
+<p>demo：</p>
+<pre class="line-numbers"><code class="language-plain_text">// 一个接口，两个实现类
+public interface Fruit {
 
-	@SneakyThrows
+	void printName();
+
+}
+
+
+public class Apple implements Fruit {
 	@Override
-	public void run() {
-		synchronized (lock) {
-			System.out.println(&quot;生产者运行开始，当前时间 = &quot; + System.currentTimeMillis());
-			lock.wait();
-			System.out.println(&quot;生产者运行结束，当前时间 = &quot; + System.currentTimeMillis());
-		}
+	public void printName() {
+		System.out.println(&quot;Apple&quot;);
 	}
 }
 
-static class Consumer implements Runnable {
-
-	@SneakyThrows
+public class Orange implements Fruit {
 	@Override
-	public void run() {
-
-		synchronized (lock) {
-			System.out.println(&quot;消费者运行开始，当前时间 = &quot; + System.currentTimeMillis());
-			lock.notify();
-			System.out.println(&quot;消费者运行结束，当前时间 = &quot; + System.currentTimeMillis());
-		}
-	}
-}
-</code></pre>
-<p>其运行结果如下：</p>
-<pre class="line-numbers"><code class="language-plain_text">生产者运行开始，当前时间 = 1609770771102
-消费者运行开始，当前时间 = 1609770771103
-消费者运行结束，当前时间 = 1609770771103
-生产者运行结束，当前时间 = 1609770771103
-</code></pre>
-<p>wait方法执行后，线程会立即释放锁，而notify方法执行后，线程并不释放锁。</p>
-<pre class="line-numbers"><code class="language-plain_text">static class Provider implements Runnable {
-
-	@SneakyThrows
-	@Override
-	public void run() {
-		synchronized (lock) {
-			System.out.println(&quot;生产者运行开始，当前时间 = &quot; + System.currentTimeMillis());
-			lock.wait();
-			TimeUnit.MILLISECONDS.sleep(300);
-			System.out.println(&quot;生产者运行结束，当前时间 = &quot; + System.currentTimeMillis());
-		}
+	public void printName() {
+		System.out.println(&quot;Orange&quot;);
 	}
 }
 
-static class Consumer implements Runnable {
+</code></pre>
+<p>在 src/main/resources/META-INF/services 下新建文件 xxx.xxx.xx.Fruit，这个文件名就是Fruit接口的全限定名，<br />
+文件内容：</p>
+<pre class="line-numbers"><code class="language-plain_text">com.hitol.service.impl.Apple
+com.hitol.service.impl.Orange
+</code></pre>
+<p>文件中的内容是 Apple、Orange类的全限定名，可以配置一个也可以配置多个。</p>
+<pre class="line-numbers"><code class="language-plain_text">public static void main(String[] args) {
+	ServiceLoader&lt;Fruit&gt; fruits = ServiceLoader.load(Fruit.class);
 
-	@SneakyThrows
-	@Override
-	public void run() {
-
-		synchronized (lock) {
-			System.out.println(&quot;消费者运行开始，当前时间 = &quot; + System.currentTimeMillis());
-			lock.notify();
-			TimeUnit.MILLISECONDS.sleep(300);
-			System.out.println(&quot;消费者运行结束，当前时间 = &quot; + System.currentTimeMillis());
-		}
+	for (Fruit fruit : fruits) {
+		fruit.printName();
 	}
 }
 </code></pre>
-<p>其运行结果：</p>
-<pre class="line-numbers"><code class="language-plain_text">生产者运行开始，当前时间 = 1609771313436
-消费者运行开始，当前时间 = 1609771313437
-消费者运行结束，当前时间 = 1609771313738
-生产者运行结束，当前时间 = 1609771314039
-</code></pre>
-<p>从结果上可以证明上述观点。<br />
-生产者wait之后，消费者立即开始执行，然而消费者notify后，还要等待sleep时间过后，生产者才重新拿到锁对象。</p>
+<p>会依次调用xxx.xxx.xx.Fruit文件中配置的具体实现类。</p>
 <hr />
-<p>场景例子：<br />
-生产者生产数字到List中，当List中的元素个数为10的时候，发送通知给到消费者，消费者消费List中的元素，使其个数为0.</p>
-<pre class="line-numbers"><code class="language-plain_text">public class ProviderConsumer {
+<p>应用场景：各种数据库连接<br />
+<img src="http://hitol.blog.cdn.updev.cn/16146868237742.jpg" alt="" /></p>
+<h2><a id="dubbo-spi" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dubbo SPI</h2>
+<p>Dubbo SPI 扩展点加载，从 JDK 标准的 SPI 扩展点机制加强而来。<br />
+加载的路径约定为： resource/META-INF/dubbo/接口全限定名<br />
+增加了对扩展点 IOC 和 AOP 的支持，一个扩展点可以直接 setter 注入其它扩展点。</p>
+<p>将上面例子中的xx.Fruit文件移到 resource/META-INF/dubbo/ 目录下，同时需要在 Fruit 类上加 Dubbo 注解 @SPI。<br />
+文件内容</p>
+<pre class="line-numbers"><code class="language-plain_text">orange=com.hitol.util.services.impl.Orange
+apple=com.hitol.util.services.impl.Apple
 
-	static int x = 0;
-	private static List&lt;Integer&gt; list = new ArrayList&lt;&gt;();
-	private static Object lock = new Object();
+</code></pre>
+<p>demo：</p>
+<pre class="line-numbers"><code class="language-plain_text">public static void main(String[] args) {
+	ExtensionLoader&lt;Fruit&gt; extensionLoader = ExtensionLoader.getExtensionLoader(Fruit.class);
+	Fruit apple = extensionLoader.getExtension(&quot;apple&quot;);
+	Fruit orange = extensionLoader.getExtension(&quot;orange&quot;);
 
-	public static void main(String[] args) {
-		Thread a = new Thread(new Provider());
-		Thread b = new Thread(new Consumer());
-
-		a.start();
-		b.start();
-	}
-
-	static class Provider implements Runnable {
-
-		@SneakyThrows
-		@Override
-		public void run() {
-			synchronized (lock) {
-				while (true) {
-					TimeUnit.MILLISECONDS.sleep(100);
-					list.add(x++);
-					if (list.size() == 10) {
-						lock.wait();
-					}
-					lock.notify();
-				}
-			}
-		}
-	}
-
-	static class Consumer implements Runnable {
-
-		@SneakyThrows
-		@Override
-		public void run() {
-
-			synchronized (lock) {
-				while (true) {
-					if (list.size() == 10) {
-						System.out.println(list);
-						list.clear();
-						lock.notify();
-					}
-					lock.wait();
-				}
-			}
-		}
-	}
+	apple.printName();
+	orange.printName();
 }
 </code></pre>
-<h3><a id="join" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>join</h3>
-<p>主线程等待子线程执行完成后在接着执行。<br />
-join的作用就是等待子线程对象销毁。</p>
-<pre class="line-numbers"><code class="language-plain_text">static class MyThread implements Runnable{
-
-	@SneakyThrows
-	@Override
-	public void run() {
-		TimeUnit.SECONDS.sleep(3);
-		System.out.println(&quot;子线程运行结束&quot;);
-	}
-}
-@SneakyThrows
-public static void main(String[] args) {
-	MyThread t = new MyThread();
-
-	Thread a = new Thread(t);
-	a.start();
-	a.join();
-	System.out.println(&quot;主线程运行结束&quot;);
+<p>Dubbo SPI 的实现封装在 ExtensionLoader 中。</p>
+<p>Dubbo 中几乎到处可见 SPI 机制的应用，比如说，</p>
+<ol>
+<li>反射创建默认实现类，org.apache.dubbo.common.extension.ExtensionLoader#createAdaptiveExtensionClass</li>
+<li>dubbo 协议</li>
+</ol>
+<h2><a id="dubbo-spi%E7%9A%84%E5%AE%9E%E7%8E%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dubbo SPI 的实现</h2>
+<p>ExtensionLoader.getExtensionLoader<br />
+ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension())<br />
+extensionLoader.getExtension</p>
+<h3><a id="extensionloader-getextensionloader" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ExtensionLoader.getExtensionLoader</h3>
+<p><img src="http://hitol.blog.cdn.updev.cn/SPI-1-getExtensionLoader.png" alt="SPI-1-getExtensionLoade" /></p>
+<p>这个方法的逻辑比较简单，是否有 SPI 注解，缓存中没有的话就 new 一个 ExtensionLoader 出来，不过在 new 的时候会去获取 objectFactory 属性的值。第一次 new 的话，会加载 ExtensionFactory，并获取它的默认实现。</p>
+<pre class="line-numbers"><code class="language-java">private ExtensionLoader(Class&lt;?&gt; type) {
+    this.type = type;
+    objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
 }
 </code></pre>
-<p>join使得当前线程等待子线程执行完成之后继续执行当前线程的代码。</p>
-<p>join内部使用了wait，所以join方法会释放锁。</p>
-<h3><a id="threadlocal" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ThreadLocal</h3>
-<p>ThreadLocal即线程变量，属于线程私有。多个线程之间是隔离的。<br />
-是一个以ThreadLocal对象为key，任意对象为value的键值对存储结构，绑定在Thread上。</p>
-<p>Thread 中的变量<br />
-<code>ThreadLocal.ThreadLocalMap threadLocals = null;</code></p>
-<p>ThreadLocal set 方法</p>
-<pre class="line-numbers"><code class="language-java">public void set(T value) {
-    Thread t = Thread.currentThread();
-    // Map 是与当前线程绑定的
-    ThreadLocalMap map = getMap(t);
-    if (map != null)
-        // 
-        map.set(this, value);
-    else
-        createMap(t, value);
-}
-
-ThreadLocalMap getMap(Thread t) {
-    return t.threadLocals;
-}
-
-
-void createMap(Thread t, T firstValue) {
-    t.threadLocals = new ThreadLocalMap(this, firstValue);
-}
-
-
-
-// ThreadLocal 内部类 ThreadLocalMap 
-static class ThreadLocalMap {
-    // ThreadLocalMap 内部类 Entry，用的是 弱引用，GC 的时候就会被回收
-    static class Entry extends WeakReference&lt;ThreadLocal&lt;?&gt;&gt; {
-        Object value;
-        Entry(ThreadLocal&lt;?&gt; k, Object v) {
-            super(k);
-            value = v;
+<h3><a id="getadaptiveextension" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>getAdaptiveExtension()</h3>
+<p>SPI 修饰的接口的实现类中，获取带有 @Adaptive 注解的实现。<br />
+在同一个接口的实现类中，@Adaptive 注解只能修饰其中的一个实现类，表示该接口的默认实现。</p>
+<p>getAdaptiveExtension 方法就是获取这个默认的实现类。</p>
+<p>SPI(value= &quot;apple&quot;) 注解上可以指定 默认的实现类。</p>
+<h3><a id="extensionloader-getextension" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>extensionLoader.getExtension</h3>
+<pre class="line-numbers"><code class="language-java">public T getExtension(String name) {
+    if (StringUtils.isEmpty(name)) {
+        throw new IllegalArgumentException(&quot;Extension name == null&quot;);
+    }
+    if (&quot;true&quot;.equals(name)) {
+        return getDefaultExtension();
+    }
+    // 获取holder，相当于持有对象的锁
+    // 从缓存map cachedInstances 中获取，获取不到就new
+    final Holder&lt;Object&gt; holder = getOrCreateHolder(name);
+    Object instance = holder.get();
+    // 双重检测单例模式
+    // 此处这个锁对象是holder，而不是整个class对象，锁粒度更小，并发更高
+    if (instance == null) {
+        synchronized (holder) {
+            instance = holder.get();
+            if (instance == null) {
+                instance = createExtension(name);
+                holder.set(instance);
+            }
         }
+    }
+    return (T) instance;
+}
+
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/getExtension.png" alt="getExtension" /></p>
+<p>拓展类对象的获取过程，都是先从缓存中查找，没有在新建对象。最重要的实现逻辑是在 createExtension 方法中。</p>
+<h3><a id="createextension" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>createExtension</h3>
+<pre class="line-numbers"><code class="language-java">private T createExtension(String name) {
+        // 先从cachedClasses 缓存map中获取类对象，获取不到则new
+        Class&lt;?&gt; clazz = getExtensionClasses().get(name);
+        if (clazz == null) {
+            throw findException(name);
+        }
+        try {
+            T instance = (T) EXTENSION_INSTANCES.get(clazz);
+            if (instance == null) {
+                // 生成具体类实例对象，放入缓存
+                EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance());
+                instance = (T) EXTENSION_INSTANCES.get(clazz);
+            }
+            // IOC 注入
+            injectExtension(instance);
+            Set&lt;Class&lt;?&gt;&gt; wrapperClasses = cachedWrapperClasses;
+            if (CollectionUtils.isNotEmpty(wrapperClasses)) {
+                for (Class&lt;?&gt; wrapperClass : wrapperClasses) {
+                    instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance));
+                }
+                
+            }
+            initExtension(instance);
+            return instance;
+        } catch (Throwable t) {
+            throw new IllegalStateException(&quot;Extension instance (name: &quot; + name + &quot;, class: &quot; +
+                    type + &quot;) couldn't be instantiated: &quot; + t.getMessage(), t);
+        }
+    }
+=========================================
+private Map&lt;String, Class&lt;?&gt;&gt; getExtensionClasses() {
+    // 缓存
+    Map&lt;String, Class&lt;?&gt;&gt; classes = cachedClasses.get();
+    // 双重检查单例模式
+    if (classes == null) {
+        synchronized (cachedClasses) {
+            classes = cachedClasses.get();
+            if (classes == null) {
+                // 加载所有的扩展点对象，然后放到缓存中
+                // SpiExtensionFactory
+                classes = loadExtensionClasses();
+                cachedClasses.set(classes);
+            }
+        }
+    }
+    return classes;
+}
+=========================================
+private Map&lt;String, Class&lt;?&gt;&gt; loadExtensionClasses() {
+    cacheDefaultExtensionName();
+
+    Map&lt;String, Class&lt;?&gt;&gt; extensionClasses = new HashMap&lt;&gt;();
+    // internal extension load from ExtensionLoader's ClassLoader first . 先加载 /internal 目录下的扩展点
+    loadDirectory(extensionClasses, DUBBO_INTERNAL_DIRECTORY, type.getName(), true);
+    // replace(&quot;org.apache&quot;, &quot;com.alibaba&quot;) 替换包名这个骚操作
+    loadDirectory(extensionClasses, DUBBO_INTERNAL_DIRECTORY, type.getName().replace(&quot;org.apache&quot;, &quot;com.alibaba&quot;), true);
+
+    loadDirectory(extensionClasses, DUBBO_DIRECTORY, type.getName());
+    loadDirectory(extensionClasses, DUBBO_DIRECTORY, type.getName().replace(&quot;org.apache&quot;, &quot;com.alibaba&quot;));
+    loadDirectory(extensionClasses, SERVICES_DIRECTORY, type.getName());
+    loadDirectory(extensionClasses, SERVICES_DIRECTORY, type.getName().replace(&quot;org.apache&quot;, &quot;com.alibaba&quot;));
+    return extensionClasses;
+}
+</code></pre>
+<h2><a id="wrapper%E7%B1%BB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>wrapper 类</h2>
+<p>wrapper 相当于 AOP 动态代理生成的 代理对象。</p>
+<p>一个类它是 wrapper 类的条件:</p>
+<ol>
+<li>实现某个接口</li>
+<li>类中只有一个属性变量，是该接口的实例</li>
+<li>只有包含这个属性变量的构造方法。</li>
+</ol>
+<pre class="line-numbers"><code class="language-java">/**
+ * test if clazz is a wrapper class
+ * &lt;p&gt;
+ * which has Constructor with given class type as its only argument
+ */
+private boolean isWrapperClass(Class&lt;?&gt; clazz) {
+    try {
+        clazz.getConstructor(type);
+        return true;
+    } catch (NoSuchMethodException e) {
+        return false;
     }
 }
 </code></pre>
-<p>Entry 是 弱引用，发生 GC 就会被回收。</p>
-<p>ThreadLocal 本身并不存储，是当做 key 传给内部的 ThreadLocalMap</p>
+<pre class="line-numbers"><code class="language-java">Fruit 的 wrapper 类
+public class FruitWrapper implements Fruit {
+	private Fruit fruit;
+
+	public FruitWrapper(Fruit fruit) {
+		this.fruit = fruit;
+	}
+
+	@Override
+	public void printName() {
+		System.out.println(&quot;this is wrapper&quot;);
+		fruit.printName();
+	}
+}
+
+---
+
+文件内容
+
+orange=com.hitol.util.services.impl.Orange
+apple=com.hitol.util.services.impl.Apple
+com.hitol.util.services.impl.FruitWrapper
+
+---
+
+ExtensionLoader&lt;Fruit&gt; extensionLoader = ExtensionLoader.getExtensionLoader(Fruit.class);
+Fruit apple = extensionLoader.getExtension(&quot;apple&quot;);
+
+apple.printName();
+
+---
+输出内容：
+this is wrapper
+Apple
+</code></pre>
+<p>输出内容：</p>
+<pre class="line-numbers"><code class="language-plain_text">this is wrapper
+Apple
+</code></pre>
 <hr />
-<p><a href="https://zhuanlan.zhihu.com/p/138689342">https://zhuanlan.zhihu.com/p/138689342</a></p>
+<p><a href="https://dubbo.apache.org/zh/docs/v2.7/dev/spi/">https://dubbo.apache.org/zh/docs/v2.7/dev/spi/</a><br />
+<a href="https://dubbo.apache.org/zh/docs/v2.7/dev/source/dubbo-spi/">https://dubbo.apache.org/zh/docs/v2.7/dev/source/dubbo-spi/</a></p>
 
                         
                       </div>
@@ -359,10 +407,12 @@ static class ThreadLocalMap {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/11/29 13:24 下午</span>
+                    <span class="date">2021/02/01 16:01 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html'>Java并发编程的艺术</a></span>
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				  
+          					    <span class="posted-in"><a href='dubbo.html'>dubbo</a></span>
           				   
                     
 
@@ -472,6 +522,12 @@ static class ThreadLocalMap {
 	      
 		      
 			      <li class="post">
+			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16892187258215.html">wasm 初体验</a>
 			      </li>
 		     
@@ -491,12 +547,6 @@ static class ThreadLocalMap {
 		      
 			      <li class="post">
 			        <a href="16748079623338.html">rust 快速入门指南</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16727524082529.html">rust 包管理与工作空间</a>
 			      </li>
 		     
 		  

@@ -129,83 +129,395 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16587443411197.html">
+                <a class="clearlink" href="16625340324703.html">
                 
-                  <h1>centos7 安装 NFS</h1>
+                  <h1>Java 太卷了转 GO（一）</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>所有机器都安装 nfs-utils。只安装 nfs-utils 即可，rpcbind 属于它的依赖，也会安装上。</p>
-<pre class="line-numbers"><code class="language-plain_text">sudo yum install nfs-utils
-</code></pre>
-<h2><a id="%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务端配置</h2>
-<h3><a id="%E8%AE%BE%E7%BD%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设置服务开机自启</h3>
-<pre class="line-numbers"><code class="language-plain_text">sudo systemctl enable rpcbind
-sudo systemctl enable nfs
-</code></pre>
-<h3><a id="%E5%90%AF%E5%8A%A8nfs%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动 NFS 服务</h3>
-<pre class="line-numbers"><code class="language-plain_text">sudo systemctl start rpcbind
-sudo systemctl start nfs
-</code></pre>
-<h3><a id="%E9%85%8D%E7%BD%AE%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置共享目录</h3>
-<p>服务启动后，配置一个共享目录，这里使用的是 /data 目录作为共享目录</p>
-<pre class="line-numbers"><code class="language-plain_text">sudo mkdir /data
-sudo chmod 755 /data
-</code></pre>
-<p>在 /etc/exports 文件中添加配置。</p>
-<pre class="line-numbers"><code class="language-plain_text">/data/     192.168.0.0/24(rw,sync,no_root_squash,no_all_squash)
-</code></pre>
+                        	<div class="mweb_toc"><ul>
+<li><a href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%A3%B0%E6%98%8E">变量的声明</a></li>
+<li><a href="#%E5%B8%B8%E9%87%8F">常量</a>
+<ul>
+<li><a href="#%E6%9E%9A%E4%B8%BE">枚举</a></li>
+<li><a href="#iota">iota</a></li>
+</ul>
+</li>
+<li><a href="#%E5%87%BD%E6%95%B0">函数</a>
+<ul>
+<li><a href="#main%E5%87%BD%E6%95%B0">main 函数</a></li>
+<li><a href="#init%E5%87%BD%E6%95%B0">init 函数</a></li>
+<li><a href="#%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F">执行顺序</a></li>
+<li><a href="#%E5%80%BC%E4%BC%A0%E9%80%92">值传递</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92%EF%BC%88%E6%8C%87%E9%92%88%E4%BC%A0%E9%80%92%EF%BC%89">引用传递（指针传递）</a></li>
+</ul>
+</li>
+<li><a href="#defer">defer</a></li>
+<li><a href="#%E6%95%B0%E7%BB%84">数组</a>
+<ul>
+<li><a href="#%E5%88%87%E7%89%87">切片</a></li>
+<li><a href="#append%E5%92%8C-copy%E5%87%BD%E6%95%B0">append 和 copy 函数</a></li>
+</ul>
+</li>
+<li><a href="#map">map</a></li>
+<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93">结构体</a></li>
+<li><a href="#%E7%BB%A7%E6%89%BF">继承</a>
+<ul>
+<li><a href="#method">method</a></li>
+<li><a href="#method%E7%BB%A7%E6%89%BF">method 继承</a></li>
+</ul>
+</li>
+<li><a href="#interface">interface</a></li>
+</ul>
+</div>
+<p>GO 的一些基础用法，帮助 Java 程序员快速转 GO。</p>
+<h2><a id="%E5%8F%98%E9%87%8F%E7%9A%84%E5%A3%B0%E6%98%8E" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>变量的声明</h2>
 <ol>
-<li>/data: 共享目录位置。</li>
-<li>192.168.0.0/24: 客户端 IP 范围，* 代表所有，即没有限制。</li>
-<li>rw: 权限设置，可读可写。</li>
-<li>sync: 同步共享目录。</li>
-<li>no_root_squash: 可以使用 root 授权。</li>
-<li>no_all_squash: 可以使用普通用户授权。</li>
+<li>第一种，指定变量类型，声明后若不赋值，使用默认值0。</li>
 </ol>
-<h3><a id="%E9%87%8D%E5%90%AFnfs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重启 NFS</h3>
-<pre class="line-numbers"><code class="language-plain_text">sudo systemctl restart nfs
+<pre class="line-numbers"><code class="language-go">var a int
+var a int = 10
 </code></pre>
-<p>检查本地目录</p>
-<pre class="line-numbers"><code class="language-plain_text">showmount -e localhost
+<ol start="2">
+<li>根据值自行判定变量类型。</li>
+</ol>
+<pre class="line-numbers"><code class="language-go">var a = 10
+</code></pre>
+<ol start="3">
+<li>第三种，省略var, 注意 :=左侧的变量不应该是已经声明过的，否则会导致编译错误。</li>
+</ol>
+<pre class="line-numbers"><code class="language-go">a := 10
+</code></pre>
+<h2><a id="%E5%B8%B8%E9%87%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>常量</h2>
+<pre class="line-numbers"><code class="language-go">const b int = 10
+const b = 10
+</code></pre>
+<h3><a id="%E6%9E%9A%E4%B8%BE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>枚举</h3>
+<p>常量可以用作枚举</p>
+<pre class="line-numbers"><code class="language-go">const (
+    Unknown = 0
+    Female = 1
+    Male = 2
+)
+</code></pre>
+<h3><a id="iota" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>iota</h3>
+<p>它简化了常量用于增长数字的定义</p>
+<pre class="line-numbers"><code class="language-go">const (
+    CategoryBooks = iota // 0
+    CategoryHealth       // 1
+    CategoryClothing     // 2
+)
+</code></pre>
+<h2><a id="%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数</h2>
+<pre class="line-numbers"><code class="language-go">package main
 
--- 输出
-Export list for localhost:
-/data 192.168.0.130/24
-</code></pre>
-<h2><a id="linux%E5%AE%A2%E6%88%B7%E7%AB%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Linux 客户端</h2>
-<h3><a id="%E8%AE%BE%E7%BD%AErpcbind%E6%9C%8D%E5%8A%A1%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设置 rpcbind 服务开机自启</h3>
-<pre class="line-numbers"><code class="language-plain_text">sudo systemctl enable rpcbind
-</code></pre>
-<h3><a id="%E5%90%AF%E5%8A%A8nfs%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动 NFS 服务</h3>
-<pre class="line-numbers"><code class="language-plain_text">sudo systemctl start rpcbind
-</code></pre>
-<h3><a id="%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>查看服务端共享目录</h3>
-<pre class="line-numbers"><code class="language-plain_text">showmount -e 192.168.0.130
+import &quot;fmt&quot;
 
--- 输出
-Export list for 192.168.0.130:
-/data 192.168.0.130/24
+func main() {
+
+	var a int = 10
+	var b int = 20
+
+	fmt.Println(&quot;1--&quot;, a, b)
+
+	swap(a, b)
+	fmt.Println(&quot;2--&quot;, a, b)
+}
+
+func swap(a int, b int) {
+	var c int = a
+	a = b
+	b = c
+}
+</code></pre>
+<h3><a id="main%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>main 函数</h3>
+<p>main 函数只能出现在 package main 中。是程序的入口。</p>
+<h3><a id="init%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>init 函数</h3>
+<p>init 函数可在package main中，可在其他package中，可在同一个package中出现多次。</p>
+<h3><a id="%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>执行顺序</h3>
+<p>golang里面有两个保留的函数：init函数（能够应用于所有的package）和main函数（只能应用于package main）。这两个函数在定义时不能有任何的参数和返回值。</p>
+<p>go程序会自动调用init()和main()，所以你不需要在任何地方调用这两个函数。每个package中的init函数都是可选的，但package main就必须包含一个main函数。</p>
+<p>如果main包还导入了其它的包，那么就会在编译时将它们依次导入。有时一个包会被多个包同时导入，那么它只会被导入一次（例如很多包可能都会用到fmt包，但它只会被导入一次，因为没有必要导入多次）。</p>
+<p>当一个包被导入时，如果该包还导入了其它的包，那么会先将其它包导入进来，然后再对这些包中的包级常量和变量进行初始化，接着执行init函数（如果有的话），依次类推。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16634751307970.jpg" alt="" /></p>
+<h3><a id="%E5%80%BC%E4%BC%A0%E9%80%92" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>值传递</h3>
+<p>值传递是指在调用函数时将实际参数复制一份传递到函数中，这样在函数中如果对参数进行修改，将不会影响到实际参数。</p>
+<p>默认情况下，Go 语言使用的是值传递，即在调用过程中不会影响到实际参数。</p>
+<p>swap 函数就是值传递的，交换两个数的操作，但是不会生效。</p>
+<h3><a id="%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92%EF%BC%88%E6%8C%87%E9%92%88%E4%BC%A0%E9%80%92%EF%BC%89" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>引用传递（指针传递）</h3>
+<p>&amp;： 取地址<br />
+*： 解引用</p>
+<pre class="line-numbers"><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+
+	var a int = 10
+	var b int = 20
+
+	fmt.Println(&quot;1--&quot;, a, b)
+
+	swap2(&amp;a, &amp;b)
+	fmt.Println(&quot;2--&quot;, a, b)
+}
+
+func swap2(a *int, b *int) {
+	var c = *a
+	*a = *b
+	*b = c
+}
 
 </code></pre>
-<h3><a id="%E6%8C%82%E8%BD%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>挂载</h3>
-<p>在客户端创建目录</p>
-<pre class="line-numbers"><code class="language-plain_text">sudo mkdir /data
+<h2><a id="defer" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>defer</h2>
+<p>defer 相当于 java 中 finally</p>
+<h2><a id="%E6%95%B0%E7%BB%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数组</h2>
+<p>var variable_name [SIZE] variable_type</p>
+<pre class="line-numbers"><code class="language-go">var nums [10]int;
 </code></pre>
-<p>挂载</p>
-<pre class="line-numbers"><code class="language-plain_text">sudo mount -t nfs 192.168.0.130:/data /data
+<p>如果数组长度不确定，可以使用 ... 代替数组的长度</p>
+<pre class="line-numbers"><code class="language-go">balance := [...]float32{1000.0, 2.0, 3.4, 7.0, 50.0}
 </code></pre>
-<h2><a id="%E6%B5%8B%E8%AF%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>测试</h2>
-<p>在随意一台机器上 /data 添加目录或者文件，在另一台机器上 /data 里查看</p>
-<h2><a id="%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>客户端自动挂载</h2>
-<p>编辑客户端文件 /etc/fstab<br />
-在最后一行添加</p>
-<pre class="line-numbers"><code class="language-plain_text">192.168.0.130:/data     /data                   nfs     defaults        0 0
+<h3><a id="%E5%88%87%E7%89%87" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>切片</h3>
+<p>var identifier []type<br />
+未指定大小的数组来定义切片,切片不需要说明长度。</p>
+<pre class="line-numbers"><code class="language-go">var slice1 []type = make([]type, len)
+
+// 也可以简写为
+
+slice1 := make([]type, len)
+
+// 直接初始化
+s :=[] int {1,2,3 }
+
+// 直接初始化切片，[]表示是切片类型，{1,2,3}初始化值依次是1,2,3.其cap=len=3
 </code></pre>
-<p>由于修改了 /etc/fstab，需要重新加载 systemctl</p>
-<pre class="line-numbers"><code class="language-plain_text">sudo systemctl daemon-reload
+<p>len()长度,<br />
+cap()容量，当长度等于容量时扩容为当前长度的2倍。</p>
+<h3><a id="append%E5%92%8C-copy%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>append 和 copy 函数</h3>
+<p>append 用于向切片中追加一个元素，</p>
+<pre class="line-numbers"><code class="language-go">package main
+
+
+import &quot;fmt&quot;
+
+
+func main() {
+   var numbers []int
+   printSlice(numbers)
+
+
+   /* 允许追加空切片 */
+   numbers = append(numbers, 0)
+   printSlice(numbers)
+
+
+   /* 向切片添加一个元素 */
+   numbers = append(numbers, 1)
+   printSlice(numbers)
+
+
+   /* 同时添加多个元素 */
+   numbers = append(numbers, 2,3,4)
+   printSlice(numbers)
+
+
+   /* 创建切片 numbers1 是之前切片的两倍容量*/
+   numbers1 := make([]int, len(numbers), (cap(numbers))*2)
+
+
+   /* 拷贝 numbers 的内容到 numbers1 */
+   copy(numbers1,numbers)
+   printSlice(numbers1)   
+}
+
+
+func printSlice(x []int){
+   fmt.Printf(&quot;len=%d cap=%d slice=%v\n&quot;,len(x),cap(x),x)
+}
 </code></pre>
+<h2><a id="map" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>map</h2>
+<p>Map 是一种无序的键值对的集合。Map 最重要的一点是通过 key 来快速检索数据，key 类似于索引，指向数据的值。</p>
+<p>Map 是一种集合，所以我们可以像迭代数组和切片那样迭代它。不过，Map 是无序的，我们无法决定它的返回顺序，这是因为 Map 是使用 hash 表来实现的。</p>
+<pre class="line-numbers"><code class="language-go">/* 声明变量，默认 map 是 nil */
+var map_variable map[key_data_type]value_data_type
+
+/* 使用 make 函数 */
+map_variable := make(map[key_data_type]value_data_type)
+</code></pre>
+<h2><a id="%E7%BB%93%E6%9E%84%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体</h2>
+<pre class="line-numbers"><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+// 类名大写，其他包也可以引用到。小写就不行
+type Books struct {
+	title  string
+	author string
+}
+
+// 普通函数，参数是结构体
+func printBook(book Books) {
+	fmt.Printf(&quot;book = %v\n&quot;, book)
+}
+
+// 普通函数，参数是结构体，值传递，修改不会在 main 函数中生效
+func SetTitle(book Books) {
+	book.title = &quot;Python&quot;
+}
+// 使用指针传递参数可以修改其属性值
+func SetTitle2(book *Books) {
+	book.title = &quot;Python&quot;
+}
+
+// 这个函数相当于结构体的函数，可以 book.SetAuthor() 调用。
+// 注意是个指针传递，可以写成值传递，但修改没有效果
+func (t *Books) SetAuthor() {
+	t.author = &quot;lisi&quot;
+}
+
+func main() {
+	book := Books{&quot;GO&quot;, &quot;test&quot;}
+	fmt.Println(book)
+	book.title = &quot;C&quot;
+	fmt.Println(book)
+
+	java := Books{title: &quot;Java&quot;, author: &quot;22&quot;}
+	printBook(java)
+	SetTitle(java)
+	printBook(java)
+
+	SetTitle2(&amp;java)
+	java.SetAuthor()
+	printBook(java)
+}
+
+</code></pre>
+<h2><a id="%E7%BB%A7%E6%89%BF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>继承</h2>
+<h3><a id="method" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>method</h3>
+<p>method 附属在一个给定类型上，语法和函数的语法几乎一样，只是在 func 后面增加了一个 receiver(也就是 method 所依从的主体)</p>
+<p>method 给用户定义的类型添加新的行为。</p>
+<p>method 的接收者可以是普通类型，也可以是指针类型，是普通类型的时候接收的值的副本，也就是值传递，是指针类型的时候接收的是内存地址，就是引用传递。</p>
+<pre class="line-numbers"><code class="language-go">func (r receiverType) funcName(parameters) (results)
+</code></pre>
+<p>虽然 method 的名字一模一样，但是如果接收者不一样，那么 method 就不一样</p>
+<h3><a id="method%E7%BB%A7%E6%89%BF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>method 继承</h3>
+<p>如果匿名字段实现了一个 method，那么包含这个匿名字段的 struct 也能调用该 method</p>
+<pre class="line-numbers"><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+)
+
+type Human struct {
+	name string
+	sex  string
+}
+
+func (t *Human) Eat() {
+	fmt.Println(&quot;eat&quot;)
+}
+
+func (t *Human) Walk() {
+	fmt.Println(&quot;walk&quot;)
+}
+
+type SuperHuman struct {
+	// 匿名字段，使得 SuperHuman 的对象也拥有 Human 的 method
+	Human
+	level int
+}
+
+// 重写 SuperHuman 的 Walk 方法。
+func (t *SuperHuman) Walk() {
+	fmt.Println(&quot;fly&quot;)
+}
+
+func main() {
+	man := Human{
+		name: &quot;zhangsan&quot;,
+		sex:  &quot;男&quot;,
+	}
+	man.Eat()
+	man.Walk()
+
+	// 创建子类对象
+	//superMan := SuperHuman{
+	//	Human{&quot;lisi&quot;, &quot;男&quot;}, 100,
+	//}
+	var superMan SuperHuman
+	superMan.level = 100
+	superMan.name = &quot;lisi&quot;
+	superMan.sex = &quot;男&quot;
+
+	superMan.Eat()
+	superMan.Walk()
+}
+
+</code></pre>
+<h2><a id="interface" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>interface</h2>
+<p>interface 本质上是个指针。<br />
+interface 定义了一组 method，如果某个对象实现了某个接口的所有方法，则此对象就实现了这个接口</p>
+<p>interface 是一组抽象方法的集合，必须由其他非 interface 类型实现，而不能自我实现，</p>
+<pre class="line-numbers"><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+// 定义一个 interface，有两个方法 eat、run
+type Anaimal interface {
+	eat()
+	run()
+}
+
+// ======
+// 定义子类，实现 interface 中的 2个方法，必须要完全实现 interface 中的所有方法，才算是继承
+type Dog struct {
+}
+
+func (dog Dog) eat() {
+	fmt.Println(&quot;dog eat&quot;)
+}
+
+func (dog Dog) run() {
+	fmt.Println(&quot;dog run&quot;)
+}
+
+// ======
+
+type Cat struct {
+}
+
+func (cat Cat) eat() {
+	fmt.Println(&quot;cat eat&quot;)
+}
+
+func (cat Cat) run() {
+	fmt.Println(&quot;cat run&quot;)
+}
+
+// ======
+
+func main() {
+	var anaimal Anaimal
+	anaimal = new(Dog)
+	anaimal.eat()
+	anaimal.run()
+
+	anaimal = new(Cat)
+	anaimal.eat()
+	anaimal.run()
+}
+</code></pre>
+<p>以上这些就是 GO 的一些基础知识。学会了这些下面就能简单进行开发了。</p>
+<p>下一篇文章介绍下 GO 的框架，ORM 框架，Web 框架，以及用这些开发一个小应用。</p>
+<hr />
+<p>参考网站<br />
+<a href="https://learnku.com/go/wikis">https://learnku.com/go/wikis</a><br />
+<a href="https://learnku.com/docs/the-little-go-book">https://learnku.com/docs/the-little-go-book</a><br />
+<a href="https://learnku.com/docs/the-way-to-go">https://learnku.com/docs/the-way-to-go</a><br />
+<a href="https://www.yuque.com/aceld/mo95lb/dsk886">https://www.yuque.com/aceld/mo95lb/dsk886</a><br />
+<a href="https://www.runoob.com/go/go-map.html">https://www.runoob.com/go/go-map.html</a></p>
 
                         
                       </div>
@@ -214,10 +526,10 @@ Export list for 192.168.0.130:
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2022/07/25 18:19 下午</span>
+                    <span class="date">2022/09/07 15:00 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='kubernetes.html'>kubernetes</a></span>
+          					    <span class="posted-in"><a href='GO.html'>GO</a></span>
           				   
                     
 
@@ -327,6 +639,12 @@ Export list for 192.168.0.130:
 	      
 		      
 			      <li class="post">
+			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16892187258215.html">wasm 初体验</a>
 			      </li>
 		     
@@ -346,12 +664,6 @@ Export list for 192.168.0.130:
 		      
 			      <li class="post">
 			        <a href="16748079623338.html">rust 快速入门指南</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16727524082529.html">rust 包管理与工作空间</a>
 			      </li>
 		     
 		  

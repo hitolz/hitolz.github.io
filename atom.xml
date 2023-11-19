@@ -4,13 +4,380 @@
   <title><![CDATA[非著名Java程序员]]></title>
   <link href="http://blog.hitol.top/atom.xml" rel="self"/>
   <link href="http://blog.hitol.top/"/>
-  <updated>2023-10-09T14:30:00+08:00</updated>
+  <updated>2023-11-17T23:37:42+08:00</updated>
   <id>http://blog.hitol.top/</id>
   <author>
     <name><![CDATA[]]></name>
     
   </author>
   <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[Rust web 开发-1.web 框架]]></title>
+    <link href="http://blog.hitol.top/17002145985395.html"/>
+    <updated>2023-11-17T17:49:58+08:00</updated>
+    <id>http://blog.hitol.top/17002145985395.html</id>
+    <content type="html"><![CDATA[
+<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+<ol>
+<li>web 框架</li>
+<li>数据库/orm</li>
+<li>config</li>
+<li>log</li>
+<li>线程池</li>
+<li>kafka</li>
+<li>redis</li>
+<li>打包成 docker 镜像</li>
+<li>gracefully shutdown</li>
+</ol>
+<hr />
+<p>本文介绍第一部分，web 框架。<br />
+目前比较出名的 web 框架有</p>
+<ol>
+<li><a href="https://github.com/tokio-rs/axum">axum</a></li>
+<li><a href="https://github.com/SergioBenitez/Rocket">Rocket</a></li>
+<li><a href="https://github.com/actix/actix-web">actix-web</a></li>
+<li><a href="https://github.com/hyperium/hyper">Hyper</a></li>
+<li><a href="https://github.com/http-rs/tide">Tide</a></li>
+<li><a href="https://github.com/seanmonstar/warp">Warp</a></li>
+</ol>
+<p>接下来主要介绍一下 actix-web，其他框架待后面有时间再介绍。</p>
+<h2><a id="actix-web" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>actix-web</h2>
+<p>actix-web 服务端的逻辑都是建立在 App 实例上的，通过 App 实例为所有资源和中间件注册路由，存储同一范围内所有线程共享的状态。<br />
+接下来从零开始实现一个 actix-web 示例。</p>
+<ol>
+<li>创建rust 工程</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">cargo new hello-world
+</code></pre>
+<ol start="2">
+<li>Cargo.toml 添加依赖</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">[dependencies]
+actix-web=&quot;4&quot;
+</code></pre>
+<ol start="3">
+<li>使用 actix-web<br />
+在 src/main.rs 中编写如下代码</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+
+#[get(&quot;/&quot;)]
+async fn hello() -&gt; impl Responder {
+    HttpResponse::Ok().body(&quot;Hello world!&quot;)
+}
+
+#[post(&quot;/echo&quot;)]
+async fn echo(req_body: String) -&gt; impl Responder {
+    HttpResponse::Ok().body(req_body)
+}
+
+async fn manual_hello() -&gt; impl Responder {
+    HttpResponse::Ok().body(&quot;Hey there!&quot;)
+}
+
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new( || {
+        App::new()
+            .service(hello)
+            .service(echo)
+            .route(&quot;/hey&quot;, web::get().to(manual_hello))
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>HttpServer 绑定到 ip、端口，同时，提供了两个 get 方法(/,/hey)，一个 post 方法(/echo)，通过浏览器访问 localhost:8099 即可访问。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-13.36.34.png" alt="2022-11-20-13.36.34" /></p>
+<h3><a id="httpserver" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>HttpServer</h3>
+<p>HttpServer 接受的参数类型是 application factory，实现了 Send + Sync。</p>
+<p>bind，为 server 绑定 ip 和端口。<br />
+bind 成功后，<code>HttpServer::run()</code> 返回一个 server 实例。<br />
+server 必须使用 await 或者在多线程中才能启动 http 服务器。<br />
+server 默认启动的线程数与 CPU 个数相等，可以通过 <code>HttpServer::workers()</code> 改变线程数。</p>
+<h3><a id="scope" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>scope</h3>
+<p>scope 相当于请求路径的前缀</p>
+<pre class="line-numbers"><code class="language-rust">#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new().service(
+            web::scope(&quot;/app&quot;)
+                .route(&quot;/hey&quot;, web::get().to(manual_hello)),
+        )
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>这样的话在请求 localhost:8099/hey 就请求不到了，这样要请求的路径是 localhost:8099/app/hey</p>
+<h3><a id="shared-mutable-state" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Shared Mutable State</h3>
+<p>相当于全局变量、多个线程之间共享的。</p>
+<p><code>web::Data&lt;T&gt;</code>,T 是 Arc 类型。<br />
+Arc 和 Mutex 结合使用，实现在多线程间共享数据。</p>
+<pre class="line-numbers"><code class="language-rust">use std::sync::Mutex;
+
+use actix_web::{App, HttpServer, web};
+
+struct AppStateWithCounter {
+    counter: Mutex&lt;i32&gt;, // &lt;- Mutex is necessary to mutate safely across threads
+}
+
+async fn index(data: web::Data&lt;AppStateWithCounter&gt;) -&gt; String {
+    let mut counter = data.counter.lock().unwrap(); // &lt;- get counter's MutexGuard
+    *counter += 1; // &lt;- access counter inside MutexGuard
+
+    format!(&quot;Request number: {counter}&quot;) // &lt;- response with count
+}
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    // Note: web::Data created _outside_ HttpServer::new closure
+    let counter = web::Data::new(AppStateWithCounter {
+        counter: Mutex::new(0),
+    });
+
+    HttpServer::new(move || {
+        // move counter into the closure
+        App::new()
+            .app_data(counter.clone()) // &lt;- register the created data
+            .route(&quot;/&quot;, web::get().to(index))
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>浏览器请求 localhost:8099,每次刷新 counter+1；</p>
+<h3><a id="%E8%BF%94%E5%9B%9Ejson" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>返回 json</h3>
+<p>一般 web 应用服务端接口返回的数据都是 json 格式，<br />
+actix-web 中如何实现返回 json格式的数据:</p>
+<p>cargo.toml添加依赖</p>
+<pre class="line-numbers"><code class="language-rust">serde = { version = &quot;1.0&quot;, features = [&quot;derive&quot;] }
+serde_json = { version = &quot;1.0.2&quot;, optional = true }
+</code></pre>
+<p>main.rs</p>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web};
+use actix_web::web::Json;
+use serde::{ser, Serialize};
+
+#[derive(Serialize)]
+pub struct JsonSuccess&lt;T: ser::Serialize&gt; {
+    pub code: u32,
+    pub data: Option&lt;T&gt;,
+    pub error: Option&lt;String&gt;,
+}
+
+#[derive(Serialize)]
+pub struct JsonError {
+    pub code: u32,
+    pub data: Option&lt;String&gt;,
+    pub error: Option&lt;String&gt;,
+}
+
+pub fn success&lt;T: ser::Serialize&gt;(r: Option&lt;T&gt;) -&gt; HttpResponse {
+    HttpResponse::Ok().json(JsonSuccess {
+        code: 0,
+        data: r,
+        error: None,
+    })
+}
+
+pub fn error(err: Option&lt;String&gt;) -&gt; HttpResponse {
+    HttpResponse::Ok().json(JsonError {
+        code: 1,
+        data: None,
+        error: err,
+    })
+}
+
+
+#[get(&quot;/&quot;)]
+async fn hello() -&gt; HttpResponse {
+    success(Option::from(&quot;Hello&quot;))
+}
+
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .service(hello)
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-14.58.01.png" alt="2022-11-20-14.58.01" /></p>
+<h3><a id="%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>接收请求参数</h3>
+<h4><a id="path" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Path</h4>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web,Result};
+use actix_web::web::Json;
+use serde::{ser, Serialize};
+
+/// extract path info from &quot;/users/{user_id}/{friend}&quot; url
+/// {user_id} - deserializes to a u32
+/// {friend} - deserializes to a String
+#[get(&quot;/users/{user_id}/{friend}&quot;)] // &lt;- define path parameters
+async fn index(path: web::Path&lt;(u32, String)&gt;) -&gt; HttpResponse {
+    let (user_id, friend) = path.into_inner();
+    success(Some(format!(&quot;Welcome {}, user_id {}!&quot;, friend, user_id)))
+}
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| App::new().service(index))
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002319375457.jpg" alt="" /></p>
+<p>web::Path&lt;(u32,String)&gt; 接收这个 get(&quot;/users/{user_id}/{friend}&quot;) 请求的两个参数</p>
+<p>将这两个参数定义为 struct 也是可以的</p>
+<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
+struct Info {
+    user_id: u32,
+    friend: String,
+}
+
+/// extract path info using serde
+#[get(&quot;/users/{user_id}/{friend}&quot;)] // &lt;- define path parameters
+async fn index(path: web::Path&lt;(u32, String)&gt;) -&gt; HttpResponse {
+    let (user_id, friend) = path.into_inner();
+    success(Some(format!(&quot;Welcome {}, user_id {}!&quot;, friend, user_id)))
+}
+</code></pre>
+<h4><a id="get%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>get 请求，接收参数</h4>
+<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
+struct Info {
+    username: String,
+    age:i32
+}
+
+#[get(&quot;/&quot;)]
+async fn index(info: web::Query&lt;Info&gt;) -&gt; HttpResponse {
+    success(Some(format!(&quot;Welcome {}!,age = {}&quot;, info.username,info.age)))
+}
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002323120371.jpg" alt="" /></p>
+<h4><a id="post%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6-json" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>post 请求，接收 json</h4>
+<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
+struct Info {
+    username: String,
+    age:i32
+}
+
+#[post(&quot;/&quot;)]
+async fn index(info: web::Json&lt;Info&gt;) -&gt; HttpResponse {
+    success(Some(format!(&quot;Welcome {}!,age = {}&quot;, info.username,info.age)))
+}
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002325332089.jpg" alt="" /></p>
+<h3><a id="middleware" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>middleware</h3>
+<p>middleware 系统可以让我们针对请求或者响应添加自定义操作。</p>
+<ol>
+<li>Pre-process the Request：可以在请求时做前置处理</li>
+<li>Post-process a Response：在响应时做后置处理</li>
+<li>Modify application state：修改 state</li>
+<li>Access external services (redis, logging, sessions)：访问外部服务</li>
+</ol>
+<blockquote>
+<p>如果有多个中间件，后添加的会先执行。</p>
+</blockquote>
+<p>类似 Java 中的 AOP，只不过这个中间件只是针对 Controller 的。</p>
+<p>自定义 middleware 要实现 Service和 Transform 两个 trait。<br />
+先用 wrap_fn 做一个简单的 middleware：</p>
+<p>cargo.toml添加依赖</p>
+<pre class="line-numbers"><code class="language-plain_text">futures-util = &quot;0.3&quot;
+</code></pre>
+<p>main.rs</p>
+<pre class="line-numbers"><code class="language-rust">#[get(&quot;/{name}&quot;)]
+async fn hello(path:web::Path&lt;String&gt;) -&gt; HttpResponse {
+    let name = path.to_owned();
+    success(Option::from(format!(&quot;Hello {}&quot;,name)))
+}
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .wrap_fn(|req, srv| {
+                // Pre-process the Request
+                println!(&quot;Hi from start. You requested: {}&quot;, req.path());
+                srv.call(req).map(|res| {
+                    // Post-process a Response
+                    println!(&quot;Hi from response&quot;);
+                    res
+                })
+            })
+            .service(hello)
+    })
+    .bind((&quot;127.0.0.1&quot;, 8099))?
+    .run()
+    .await
+}
+</code></pre>
+<p>请求 <a href="http://localhost:8099/tom">http://localhost:8099/tom</a><br />
+控制台会打印出<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/17002343077452.jpg" alt="" /></p>
+<p>接下来，做一个比较常见的中间件--鉴权中间件。</p>
+<pre class="line-numbers"><code class="language-rust">impl&lt;S, B&gt; Service&lt;ServiceRequest&gt; for AuthMiddleWare&lt;S&gt;
+where
+    S: Service&lt;ServiceRequest, Response = ServiceResponse&lt;B&gt;, Error = Error&gt;,
+    S::Future: 'static,
+    B: 'static,
+{
+    type Response = ServiceResponse&lt;B&gt;;
+    type Error = Error;
+    type Future = LocalBoxFuture&lt;'static, Result&lt;Self::Response, Self::Error&gt;&gt;;
+
+    forward_ready!(service);
+
+    fn call(&amp;self, req: ServiceRequest) -&gt; Self::Future {
+        let value = HeaderValue::from_str(&quot;&quot;).unwrap();
+        let token: &amp;HeaderValue = req.headers().get(&quot;token&quot;).unwrap_or(&amp;value);
+        if token.len() &gt; 0 || req.path().to_string() == &quot;/login&quot; {
+            let fut: &lt;S as Service&lt;ServiceRequest&gt;&gt;::Future = self.service.call(req);
+            Box::pin(async move {
+                let res = fut.await;
+                res
+            })
+        } else {
+            Box::pin(async move { Err(ErrorUnauthorized(&quot;PLEASE LOGIN&quot;)) })
+        }
+    }
+}
+
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::timed::Timed)
+            .wrap(middleware::auth::Auth)
+            .service(hello1)
+            .service(hello2)
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>这里是写了两个 middleware，一个打印接口耗时，一个鉴权，代码篇幅较多，放在了 <a href="https://github.com/hitolz/rust-web">github</a>。</p>
+<p>浏览器访问 hello1，由于没有 token，所以鉴权不通过，而通过 postman 访问 hello2，header 上加上 token，就可以请求通过。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/17003662230269.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17003658655736.jpg" alt="" /></p>
+<h2><a id="%E5%B0%8F%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>小结</h2>
+<p>第一部分关于 web 框架就介绍到这里了，主要介绍了 actix-web 的使用：如何写一个接口、如何接收参数、如何返回 json 、如何通过中间件鉴权。</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[wasm 初体验]]></title>
@@ -1022,9 +1389,14 @@ public static void agentmain(String args, Instrumentation inst) {}
 </li>
 <li><a href="#%E9%9B%86%E5%90%88">集合</a>
 <ul>
-<li><a href="#vec">Vec</a></li>
+<li><a href="#vec">Vec</a>
+<ul>
+<li><a href="#vec%E5%A6%82%E4%BD%95%E9%81%8D%E5%8E%86">vec 如何遍历</a></li>
+</ul>
+</li>
 <li><a href="#hashmap">HashMap</a></li>
 <li><a href="#hashset">HashSet</a></li>
+<li><a href="#btreemap%E3%80%81linkedhashmap">BTreeMap、LinkedHashMap</a></li>
 </ul>
 </li>
 <li><a href="#%E6%B3%9B%E5%9E%8B">泛型</a></li>
@@ -1055,7 +1427,10 @@ public static void agentmain(String args, Instrumentation inst) {}
 <li><a href="#refcell%E5%92%8C-box%E7%9A%84%E5%8C%BA%E5%88%AB">RefCell 和 Box 的区别</a></li>
 <li><a href="#%E5%8C%85%E7%AE%A1%E7%90%86">包管理</a></li>
 <li><a href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95">单元测试</a></li>
+<li><a href="#%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95">集成测试</a></li>
+<li><a href="#bench">bench</a></li>
 <li><a href="#arc">Arc</a></li>
+<li><a href="#mutex">Mutex</a></li>
 <li><a href="#rwlock">RwLock</a></li>
 <li><a href="#%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F">时间格式</a></li>
 <li><a href="#%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F">策略模式</a></li>
@@ -1063,6 +1438,7 @@ public static void agentmain(String args, Instrumentation inst) {}
 <li><a href="#channel">channel</a></li>
 <li><a href="#rayon">rayon</a></li>
 <li><a href="#%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%EF%BC%8C%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8">&lt;'_&gt; 是什么意思，什么作用</a></li>
+<li><a href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">生命周期</a></li>
 <li><a href="#%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88">函数指针</a></li>
 <li><a href="#%E9%97%AD%E5%8C%85%E4%B8%8Efn%E3%80%81fnmut%E3%80%81fnonce">闭包与Fn、FnMut、FnOnce</a></li>
 <li><a href="#%E5%AE%8F">宏</a>
@@ -1072,7 +1448,6 @@ public static void agentmain(String args, Instrumentation inst) {}
 <li><a href="#%E5%87%BD%E6%95%B0%E5%AE%8F">函数宏</a></li>
 </ul>
 </li>
-<li><a href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AAderive%E5%AE%8F">自定义一个 derive 宏</a></li>
 <li><a href="#%E5%AE%9E%E7%8E%B0kafka%E7%9A%84%E5%B7%A5%E5%85%B7%E5%8C%85%EF%BC%8C%E5%8F%91%E5%B8%83%E5%88%B0-crate-io">实现 kafka 的工具包，发布到 crate.io</a></li>
 </ul>
 </div>
@@ -1485,6 +1860,48 @@ let 向量的变量名称 = vec![val1,val2,...]
 <li>contains():判断向量中是否包含某个值</li>
 <li>len():返回向量中元素个数</li>
 </ol>
+<h4><a id="vec%E5%A6%82%E4%BD%95%E9%81%8D%E5%8E%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>vec 如何遍历</h4>
+<p>在 Rust 中，可以使用迭代器（iterator）来遍历 <code>Vec</code> 类型的向量。迭代器提供了一种简洁和安全的方式来遍历集合元素。</p>
+<p>有多种方法可以遍历 <code>Vec</code> 的元素。下面是几个常用的示例：</p>
+<ol>
+<li>使用 <code>for</code> 循环：</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">let vec = vec![1, 2, 3, 4, 5];
+
+for element in &amp;vec {
+    println!(&quot;{}&quot;, element);
+}
+</code></pre>
+<p>在上面的示例中，我们使用 <code>for</code> 循环遍历了 <code>vec</code> 中的每个元素，并打印出来。</p>
+<ol start="2">
+<li>使用 <code>iter()</code> 方法和 <code>for</code> 循环：</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">let vec = vec![1, 2, 3, 4, 5];
+
+for element in vec.iter() {
+    println!(&quot;{}&quot;, element);
+}
+</code></pre>
+<p>这里我们调用 <code>iter()</code> 方法获取一个迭代器，然后使用 <code>for</code> 循环遍历迭代器中的每个元素。</p>
+<ol start="3">
+<li>使用 <code>iter_mut()</code> 方法和 <code>for</code> 循环（可变迭代）：</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">let mut vec = vec![1, 2, 3, 4, 5];
+
+for element in vec.iter_mut() {
+    *element *= 2; // 修改元素的值
+}
+
+println!(&quot;{:?}&quot;, vec); // 打印修改后的向量
+</code></pre>
+<p>在这个示例中，我们使用 <code>iter_mut()</code> 方法获取一个可变迭代器，然后使用 <code>for</code> 循环遍历可变迭代器中的每个元素。我们在循环体内修改了每个元素的值，并打印出修改后的向量。</p>
+<pre class="line-numbers"><code class="language-rust">let vec = vec![10, 20, 30, 40, 50];
+
+for (index, element) in vec.iter().enumerate() {
+    println!(&quot;Index: {}, Element: {}&quot;, index, element);
+}
+</code></pre>
+<p>这些示例展示了几种常用的遍历 <code>Vec</code> 的方法。你可以根据具体的需求选择适合的方法来遍历和操作 <code>Vec</code> 中的元素。</p>
 <h3><a id="hashmap" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>HashMap</h3>
 <pre class="line-numbers"><code class="language-rust">let mut 变量名称 = HashMap::new();
 
@@ -1522,6 +1939,8 @@ fn main() {
 <pre class="line-numbers"><code class="language-rust">let mut 变量名称 = HashSet::new();
 
 </code></pre>
+<h3><a id="btreemap%E3%80%81linkedhashmap" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>BTreeMap、LinkedHashMap</h3>
+<p>HashMap 是一个哈希映射，它使用哈希函数对键进行索引，因此它不会按照插入顺序保存元素。</p>
 <h2><a id="%E6%B3%9B%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>泛型</h2>
 <p>Rust 语言中的泛型主要包含 泛型集合、泛型结构体、泛型函数、范型枚举 和 特质 。</p>
 <p>Rust 使用使用 <T> 语法来实现泛型, 其中 T 可以是任意数据类型。</p>
@@ -1941,6 +2360,18 @@ fn it_works(){
     assert_eq!(result,4);
 }
 </code></pre>
+<h2><a id="%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>集成测试</h2>
+<p>cargo 在与 src 同级别的 tests 目录寻找集成测试。</p>
+<p>tests/xxx.rs</p>
+<pre class="line-numbers"><code class="language-rust">#[test]
+fn it_works(){
+    let result = 2 + 2;
+    assert_eq!(result,4);
+}
+</code></pre>
+<p>tests 目录中的每一个 Rust 源文件都被编译成一个单独的 crate。</p>
+<h2><a id="bench" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>bench</h2>
+<p>针对性能测试，能够返回该 test 执行的时间。ns 级别。</p>
 <h2><a id="arc" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Arc</h2>
 <p>Arc（Atomic Reference Counted）是 Rust 标准库中的一种类型，它实现了原子引用计数（Atomic Reference Counting）。Arc 可以在多个线程间共享数据，而不必担心数据安全。</p>
 <p>Arc 使用了一个内部计数器，来记录有多少个引用指向该数据。当最后一个引用被销毁时，Arc 会自动销毁数据。</p>
@@ -1962,6 +2393,7 @@ fn main() {
 </code></pre>
 <p>在上面的代码中，我们创建了一个用于存储整数的 vector，并用 Arc 包装它。然后在循环中，我们创建了五个线程，每个线程都有一个对该 vector 的引用。当最后一个引用被销毁时，Arc 会自动销毁 vector。</p>
 <p>Arc 是一种非常有用的工具，特别是当你需要在多个线程间共享数据时，可以替代手写的计数器。</p>
+<h2><a id="mutex" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mutex</h2>
 <h2><a id="rwlock" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RwLock</h2>
 <p>RwLock 是 Rust 标准库中的一种类型，用于实现读写锁。读写锁是一种线程同步机制，它可以同时允许多个读线程读取共享数据，但是只允许一个写线程对共享数据进行修改。</p>
 <pre class="line-numbers"><code class="language-rust">use std::sync::{Arc, RwLock};
@@ -2290,6 +2722,57 @@ fn main() {
 </code></pre>
 <p>在这个例子中，我们定义了一个函数 <code>print_str()</code>，该函数接受一个字符串引用，并在控制台上打印出它。在 <code>main()</code> 函数中，我们首先定义了一个字符串 <code>s</code>，然后获取它的引用 <code>s2</code>，并将其传递给 <code>print_str()</code> 函数。 接下来我们将参数转换为 <code>&amp;str</code> 类型。在这个过程中，我们使用了 <code>&lt;'_&gt;</code> 标记来表示一个匿名生命周期，此时 Rust 编译器会自动确定 <code>s</code> 和 <code>s2</code> 的实际生命周期，从而使得该代码更简洁，更易于阅读和维护。</p>
 <p>总之， <code>&lt;'_&gt;</code> 适用于匿名生命周期，可以让代码更简洁，并且让 Rust 编译器自动确定实际生命周期。如果您不需要手动编写生命周期标记，并且可以让编译器自动确定生命周期，则可以使用 <code>&lt;'_&gt;</code> 来代替具体的生命周期名称。</p>
+<h2><a id="%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>生命周期</h2>
+<p>在Rust中，生命周期（lifetimes）是一种用于管理引用的机制，确保引用在其所引用的数据有效时才被使用。生命周期注解（lifetimes annotations）是Rust语言的一部分，用于明确指定引用的有效范围，以避免悬垂引用（dangling references）和使用已经被释放的数据的错误。</p>
+<p>生命周期注解通常以撇号（'）后跟一个标识符的形式表示，例如<code>'a</code>。这些标识符可以是任意名称，但通常使用单个字母来表示生命周期的名称。在函数签名、结构体定义和trait实现等地方，可以使用生命周期注解来指定引用的有效范围。</p>
+<p>以下是一些常见的生命周期注解用法：</p>
+<ol>
+<li>函数签名中的生命周期注解：</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">fn foo&lt;'a&gt;(x: &amp;'a i32) -&gt; &amp;'a i32 {
+    // 函数体
+    x
+}
+</code></pre>
+<p>在这个例子中，<code>'a</code>是一个生命周期注解，用于指定参数<code>x</code>和返回值之间的关系。它表示返回的引用的生命周期与参数<code>x</code>的生命周期相同。</p>
+<ol start="2">
+<li>结构体中的生命周期注解：</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">struct Foo&lt;'a&gt; {
+    x: &amp;'a i32,
+    y: &amp;'a i32,
+}
+
+impl&lt;'a&gt; Foo&lt;'a&gt; {
+    fn new(x: &amp;'a i32, y: &amp;'a i32) -&gt; Foo&lt;'a&gt; {
+        Foo { x, y }
+    }
+}
+</code></pre>
+<p>在这个例子中，<code>'a</code>是一个生命周期注解，用于指定结构体<code>Foo</code>中两个引用字段<code>x</code>和<code>y</code>的生命周期。</p>
+<ol start="3">
+<li>Trait中的生命周期注解：</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">trait Bar&lt;'a&gt; {
+    fn baz(&amp;'a self);
+}
+</code></pre>
+<p>在这个例子中，<code>'a</code>是一个生命周期注解，用于指定实现<code>Bar</code> trait的类型中<code>self</code>引用的生命周期。</p>
+<p>需要注意的是，生命周期注解并不会创建新的生命周期，而是用于指定引用之间的关系。它们帮助编译器在编译时进行静态检查，以确保引用的有效性。生命周期注解的具体使用方式取决于代码的上下文和需求。</p>
+<p>一般来说，如果一个生命周期参数出现在另一个生命周期参数之前，那么前者的生命周期比后者更长。这种关系可以通过'a: 'b的语法来表示，其中'a是较长的生命周期，'b是较短的生命周期。<br />
+下面是一些示例来说明生命周期大小关系的表示方法：</p>
+<pre class="line-numbers"><code class="language-rust">fn foo&lt;'a, 'b&gt;(x: &amp;'a i32, y: &amp;'b i32) {
+    // ...
+}
+</code></pre>
+<p>在这个例子中，'a和'b是两个生命周期参数。如果我们想表示'a比'b更长的关系，可以使用'a: 'b：</p>
+<pre class="line-numbers"><code class="language-rust">fn foo&lt;'a, 'b&gt;(x: &amp;'a i32, y: &amp;'b i32) {
+    // 'a: 'b 表示 'a 比 'b 更长
+    // ...
+}
+</code></pre>
+<p>这表示x的生命周期'a比y的生命周期'b更长。换句话说，x的引用可以存在于y的引用之外。</p>
+<p><code>'a:'b</code> 表示 a 的生命周期 &gt;= b 的生命周期。</p>
 <h2><a id="%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数指针</h2>
 <p>将普通函数传递至其他函数<br />
 函数在传递的过程中会被强制转换成 fn 类型，fn 就是函数指针。</p>
@@ -2369,9 +2852,10 @@ fn main() {
 <p>允许创建新的属性，而不是为 derive 属性生成代码。<br />
 derive 只能被用于结构体和枚举，而属性则可以同时被用于其他条目，比如函数等。</p>
 <h3><a id="%E5%87%BD%E6%95%B0%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数宏</h3>
-<h2><a id="%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AAderive%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>自定义一个 derive 宏</h2>
-<p>实现一个宏，达到的效果是，在任意类型上标注 #[derive(HelloMacro)]，得到 hello_macro 函数的默认实现</p>
-<pre class="line-numbers"><code class="language-rust">use hello_macro::HelloMacro;
+<!--## 自定义一个 derive 宏
+实现一个宏，达到的效果是，在任意类型上标注 #[derive(HelloMacro)]，得到 hello_macro 函数的默认实现
+```rust
+use hello_macro::HelloMacro;
 use hello_macro_derive::HelloMacro;
 
 #[derive(HelloMacro)]
@@ -2382,9 +2866,11 @@ fn main() {
 }
 
 打印出 “Hello, Macro! My name is Pancakes!”
-</code></pre>
-<p>首先，创建一个新的代码包</p>
+```
+
+首先，创建一个新的代码包-->
 <h2><a id="%E5%AE%9E%E7%8E%B0kafka%E7%9A%84%E5%B7%A5%E5%85%B7%E5%8C%85%EF%BC%8C%E5%8F%91%E5%B8%83%E5%88%B0-crate-io" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>实现 kafka 的工具包，发布到 crate.io</h2>
+<p><a href="https://crates.io/crates/simple-kafka">https://crates.io/crates/simple-kafka</a></p>
 <p><a href="media/16748079623338/Rust%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.pdf">Rust学习路线图.pdf</a></p>
 <p><img src="http://hitol.blog.cdn.updev.cn/mweb/16854298066353.jpg" alt="" /></p>
 
@@ -2472,6 +2958,7 @@ fn main() {
 <h2><a id="workspace" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>workspace</h2>
 <p>如何使用工作空间来管理代码目录结构，通过一个例子来说明一下。<br />
 在这个例子中，创建了一个 add 工作空间，这个空间中有一个二进制包 adder，有一个 lib 包 add-one，adder 依赖 add-one。</p>
+<p>workspace 通过 members 组织起来，类似于父 pom 中的 module。</p>
 <p>下面是操作步骤</p>
 <ol>
 <li>
@@ -2723,14 +3210,38 @@ posts::table.find(id).first(connection).unwrap()
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[actix-web]]></title>
+    <title type="html"><![CDATA[Rust web 开发-1.web 框架]]></title>
     <link href="http://blog.hitol.top/16689222220789.html"/>
     <updated>2022-11-20T13:30:22+08:00</updated>
     <id>http://blog.hitol.top/16689222220789.html</id>
     <content type="html"><![CDATA[
-<p>actix-web 是 rust 中的一个 web 框架，本篇文章简单介绍下 actix-web 的使用。</p>
-<h2><a id="getting-started" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
-<p><a href="https://actix.rs/docs/getting-started">https://actix.rs/docs/getting-started</a></p>
+<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+<ol>
+<li>web 框架</li>
+<li>数据库/orm</li>
+<li>config</li>
+<li>log</li>
+<li>线程池</li>
+<li>kafka</li>
+<li>redis</li>
+<li>打包成 docker 镜像</li>
+<li>gracefully shutdown</li>
+</ol>
+<hr />
+<p>本文介绍第一部分，web 框架。<br />
+目前比较出名的 web 框架有</p>
+<ol>
+<li><a href="https://github.com/tokio-rs/axum">axum</a></li>
+<li><a href="https://github.com/SergioBenitez/Rocket">Rocket</a></li>
+<li><a href="https://github.com/actix/actix-web">actix-web</a></li>
+<li><a href="https://github.com/hyperium/hyper">Hyper</a></li>
+<li><a href="https://github.com/http-rs/tide">Tide</a></li>
+<li><a href="https://github.com/seanmonstar/warp">Warp</a></li>
+</ol>
+<p>接下来主要介绍一下 actix-web，其他框架待后面有时间再介绍。</p>
+<h2><a id="actix-web" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>actix-web</h2>
+<p>actix-web 服务端的逻辑都是建立在 App 实例上的，通过 App 实例为所有资源和中间件注册路由，存储同一范围内所有线程共享的状态。<br />
+接下来从零开始实现一个 actix-web 示例。</p>
 <ol>
 <li>创建rust 工程</li>
 </ol>
@@ -2778,8 +3289,14 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 </code></pre>
 <p>HttpServer 绑定到 ip、端口，同时，提供了两个 get 方法(/,/hey)，一个 post 方法(/echo)，通过浏览器访问 localhost:8099 即可访问。<br />
 <img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-13.36.34.png" alt="2022-11-20-13.36.34" /></p>
-<h2><a id="scope" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>scope</h2>
-<p>scope 就相当于请求路径的前缀</p>
+<h3><a id="httpserver" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>HttpServer</h3>
+<p>HttpServer 接受的参数类型是 application factory，实现了 Send + Sync。</p>
+<p>bind，为 server 绑定 ip 和端口。<br />
+bind 成功后，<code>HttpServer::run()</code> 返回一个 server 实例。<br />
+server 必须使用 await 或者在多线程中才能启动 http 服务器。<br />
+server 默认启动的线程数与 CPU 个数相等，可以通过 <code>HttpServer::workers()</code> 改变线程数。</p>
+<h3><a id="scope" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>scope</h3>
+<p>scope 相当于请求路径的前缀</p>
 <pre class="line-numbers"><code class="language-rust">#[actix_web::main]
 async fn main() -&gt; std::io::Result&lt;()&gt; {
     HttpServer::new(|| {
@@ -2794,8 +3311,10 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 }
 </code></pre>
 <p>这样的话在请求 localhost:8099/hey 就请求不到了，这样要请求的路径是 localhost:8099/app/hey</p>
-<h2><a id="state" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>state</h2>
+<h3><a id="shared-mutable-state" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Shared Mutable State</h3>
 <p>相当于全局变量、多个线程之间共享的。</p>
+<p><code>web::Data&lt;T&gt;</code>,T 是 Arc 类型。<br />
+Arc 和 Mutex 结合使用，实现在多线程间共享数据。</p>
 <pre class="line-numbers"><code class="language-rust">use std::sync::Mutex;
 
 use actix_web::{App, HttpServer, web};
@@ -2829,8 +3348,10 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
         .await
 }
 </code></pre>
-<p>浏览器请求 localhost:8099,每次刷新都会导致 counter+1；</p>
-<h2><a id="%E8%BF%94%E5%9B%9Ejson" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>返回 json</h2>
+<p>浏览器请求 localhost:8099,每次刷新 counter+1；</p>
+<h3><a id="%E8%BF%94%E5%9B%9Ejson" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>返回 json</h3>
+<p>一般 web 应用服务端接口返回的数据都是 json 格式，<br />
+actix-web 中如何实现返回 json格式的数据:</p>
 <p>cargo.toml添加依赖</p>
 <pre class="line-numbers"><code class="language-rust">serde = { version = &quot;1.0&quot;, features = [&quot;derive&quot;] }
 serde_json = { version = &quot;1.0.2&quot;, optional = true }
@@ -2838,44 +3359,43 @@ serde_json = { version = &quot;1.0.2&quot;, optional = true }
 <p>main.rs</p>
 <pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web};
 use actix_web::web::Json;
-use serde::Serialize;
+use serde::{ser, Serialize};
 
-#[derive(Debug, Serialize)]
-pub struct Response&lt;T: Serialize&gt; {
-    pub ok: bool,
-    pub code: Option&lt;i32&gt;,
+#[derive(Serialize)]
+pub struct JsonSuccess&lt;T: ser::Serialize&gt; {
+    pub code: u32,
     pub data: Option&lt;T&gt;,
     pub error: Option&lt;String&gt;,
 }
 
-impl&lt;T: Serialize&gt; Response&lt;T&gt; {
-    pub fn success(data: Option&lt;T&gt;) -&gt; Response&lt;T&gt; {
-        Response {
-            ok: true,
-            code: Some(0),
-            data,
-            error: None,
-        }
-    }
+#[derive(Serialize)]
+pub struct JsonError {
+    pub code: u32,
+    pub data: Option&lt;String&gt;,
+    pub error: Option&lt;String&gt;,
+}
 
-    pub fn error(err: Option&lt;String&gt;) -&gt; Response&lt;T&gt; {
-        Response {
-            ok: false,
-            code: Some(-1),
-            data: None,
-            error: err,
-        }
-    }
+pub fn success&lt;T: ser::Serialize&gt;(r: Option&lt;T&gt;) -&gt; HttpResponse {
+    HttpResponse::Ok().json(JsonSuccess {
+        code: 0,
+        data: r,
+        error: None,
+    })
+}
+
+pub fn error(err: Option&lt;String&gt;) -&gt; HttpResponse {
+    HttpResponse::Ok().json(JsonError {
+        code: 1,
+        data: None,
+        error: err,
+    })
 }
 
 
 #[get(&quot;/&quot;)]
-async fn hello() -&gt; impl Responder {
-    let response = Response::success(Option::from(&quot;Hello&quot;));
-    println!(&quot;{:?}&quot;, response);
-    Json(response)
+async fn hello() -&gt; HttpResponse {
+    success(Option::from(&quot;Hello&quot;))
 }
-
 
 
 #[actix_web::main]
@@ -2888,11 +3408,170 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
         .run()
         .await
 }
+
 </code></pre>
 <p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-14.58.01.png" alt="2022-11-20-14.58.01" /></p>
-<hr />
-<p><a href="https://juejin.cn/post/7108743876659118117">https://juejin.cn/post/7108743876659118117</a><br />
-<a href="https://web.veaba.me/rust/actix-web/#application">https://web.veaba.me/rust/actix-web/#application</a></p>
+<h3><a id="%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>接收请求参数</h3>
+<h4><a id="path" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Path</h4>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web,Result};
+use actix_web::web::Json;
+use serde::{ser, Serialize};
+
+/// extract path info from &quot;/users/{user_id}/{friend}&quot; url
+/// {user_id} - deserializes to a u32
+/// {friend} - deserializes to a String
+#[get(&quot;/users/{user_id}/{friend}&quot;)] // &lt;- define path parameters
+async fn index(path: web::Path&lt;(u32, String)&gt;) -&gt; HttpResponse {
+    let (user_id, friend) = path.into_inner();
+    success(Some(format!(&quot;Welcome {}, user_id {}!&quot;, friend, user_id)))
+}
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| App::new().service(index))
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002319375457.jpg" alt="" /></p>
+<p>web::Path&lt;(u32,String)&gt; 接收这个 get(&quot;/users/{user_id}/{friend}&quot;) 请求的两个参数</p>
+<p>将这两个参数定义为 struct 也是可以的</p>
+<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
+struct Info {
+    user_id: u32,
+    friend: String,
+}
+
+/// extract path info using serde
+#[get(&quot;/users/{user_id}/{friend}&quot;)] // &lt;- define path parameters
+async fn index(path: web::Path&lt;(u32, String)&gt;) -&gt; HttpResponse {
+    let (user_id, friend) = path.into_inner();
+    success(Some(format!(&quot;Welcome {}, user_id {}!&quot;, friend, user_id)))
+}
+</code></pre>
+<h4><a id="get%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>get 请求，接收参数</h4>
+<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
+struct Info {
+    username: String,
+    age:i32
+}
+
+#[get(&quot;/&quot;)]
+async fn index(info: web::Query&lt;Info&gt;) -&gt; HttpResponse {
+    success(Some(format!(&quot;Welcome {}!,age = {}&quot;, info.username,info.age)))
+}
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002323120371.jpg" alt="" /></p>
+<h4><a id="post%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6-json" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>post 请求，接收 json</h4>
+<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
+struct Info {
+    username: String,
+    age:i32
+}
+
+#[post(&quot;/&quot;)]
+async fn index(info: web::Json&lt;Info&gt;) -&gt; HttpResponse {
+    success(Some(format!(&quot;Welcome {}!,age = {}&quot;, info.username,info.age)))
+}
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002325332089.jpg" alt="" /></p>
+<h3><a id="middleware" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>middleware</h3>
+<p>middleware 系统可以让我们针对请求或者响应添加自定义操作。</p>
+<ol>
+<li>Pre-process the Request：可以在请求时做前置处理</li>
+<li>Post-process a Response：在响应时做后置处理</li>
+<li>Modify application state：修改 state</li>
+<li>Access external services (redis, logging, sessions)：访问外部服务</li>
+</ol>
+<blockquote>
+<p>如果有多个中间件，后添加的会先执行。</p>
+</blockquote>
+<p>类似 Java 中的 AOP，只不过这个中间件只是针对 Controller 的。</p>
+<p>自定义 middleware 要实现 Service和 Transform 两个 trait。<br />
+先用 wrap_fn 做一个简单的 middleware：</p>
+<p>cargo.toml添加依赖</p>
+<pre class="line-numbers"><code class="language-plain_text">futures-util = &quot;0.3&quot;
+</code></pre>
+<p>main.rs</p>
+<pre class="line-numbers"><code class="language-rust">#[get(&quot;/{name}&quot;)]
+async fn hello(path:web::Path&lt;String&gt;) -&gt; HttpResponse {
+    let name = path.to_owned();
+    success(Option::from(format!(&quot;Hello {}&quot;,name)))
+}
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .wrap_fn(|req, srv| {
+                // Pre-process the Request
+                println!(&quot;Hi from start. You requested: {}&quot;, req.path());
+                srv.call(req).map(|res| {
+                    // Post-process a Response
+                    println!(&quot;Hi from response&quot;);
+                    res
+                })
+            })
+            .service(hello)
+    })
+    .bind((&quot;127.0.0.1&quot;, 8099))?
+    .run()
+    .await
+}
+</code></pre>
+<p>请求 <a href="http://localhost:8099/tom">http://localhost:8099/tom</a><br />
+控制台会打印出<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/17002343077452.jpg" alt="" /></p>
+<p>接下来，做一个比较常见的中间件--鉴权中间件。</p>
+<pre class="line-numbers"><code class="language-rust">impl&lt;S, B&gt; Service&lt;ServiceRequest&gt; for AuthMiddleWare&lt;S&gt;
+where
+    S: Service&lt;ServiceRequest, Response = ServiceResponse&lt;B&gt;, Error = Error&gt;,
+    S::Future: 'static,
+    B: 'static,
+{
+    type Response = ServiceResponse&lt;B&gt;;
+    type Error = Error;
+    type Future = LocalBoxFuture&lt;'static, Result&lt;Self::Response, Self::Error&gt;&gt;;
+
+    forward_ready!(service);
+
+    fn call(&amp;self, req: ServiceRequest) -&gt; Self::Future {
+        let value = HeaderValue::from_str(&quot;&quot;).unwrap();
+        let token: &amp;HeaderValue = req.headers().get(&quot;token&quot;).unwrap_or(&amp;value);
+        if token.len() &gt; 0 || req.path().to_string() == &quot;/login&quot; {
+            let fut: &lt;S as Service&lt;ServiceRequest&gt;&gt;::Future = self.service.call(req);
+            Box::pin(async move {
+                let res = fut.await;
+                res
+            })
+        } else {
+            Box::pin(async move { Err(ErrorUnauthorized(&quot;PLEASE LOGIN&quot;)) })
+        }
+    }
+}
+
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::timed::Timed)
+            .wrap(middleware::auth::Auth)
+            .service(hello1)
+            .service(hello2)
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>这里是写了两个 middleware，一个打印接口耗时，一个鉴权，代码篇幅较多，放在了 <a href="https://github.com/hitolz/rust-web">github</a>。</p>
+<p>浏览器访问 hello1，由于没有 token，所以鉴权不通过，而通过 postman 访问 hello2，header 上加上 token，就可以请求通过。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/17003662230269.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17003658655736.jpg" alt="" /></p>
+<h2><a id="%E5%B0%8F%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>小结</h2>
+<p>第一部分关于 web 框架就介绍到这里了，主要介绍了 actix-web 的使用：如何写一个接口、如何接收参数、如何返回 json 、如何通过中间件鉴权。</p>
 
 ]]></content>
   </entry>
@@ -5218,72 +5897,6 @@ brew services start mongodb-community</p>
 docker run -di --name=my_mongo -p 27017:27017 mongo</p>
 <hr />
 <p><a href="https://docs.mongoing.com/">https://docs.mongoing.com/</a></p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[武侠，古龙。]]></title>
-    <link href="http://blog.hitol.top/16323051276549.html"/>
-    <updated>2021-09-22T18:05:27+08:00</updated>
-    <id>http://blog.hitol.top/16323051276549.html</id>
-    <content type="html"><![CDATA[
-<p>黄昏，街边，小卖部。<br />
-人，男人，两个男人，一老一少，隔着柜台伫立着。<br />
-“是你？”<br />
-“是我。”<br />
-“你来了。”<br />
-“我来了。”<br />
-“你不该来。”<br />
-“我已经来了。”<br />
-“你毕竟还是来了。”<br />
-“我毕竟还是来了。”<br />
-沉默，良久的沉默。仿佛泥塑木雕的两人，对峙着，那夕阳却越发斜了。</p>
-<p>“你来干什么？”老者最终打破沉默。<br />
-“打酱油。”干脆利落，一字一顿，没有半点迟疑。<br />
-老者沉吟少顷，缓缓道：“打多少钱一斤的？”<br />
-“一块。”<br />
-依然干脆利落，不带一丝犹豫。</p>
-<p>那人的脸色已变了，道：“你知道我这里从不卖一块钱一斤的酱油。”</p>
-<p>“我只要一块钱一斤的酱油。”</p>
-<p>“可当真？”</p>
-<p>“当真！”<br />
-卖酱油的盯着眼前的这个人，他非常年轻，<br />
-但是他的眼睛，任何人看了都不会忘记，<br />
-那是夜一样的宁静，海一般的深邃。<br />
-他知道眼前的少年决非常人，<br />
-但他也知道，一块钱一斤的酱油，<br />
-他是决不会卖的。<br />
-周围还是那么寂静，<br />
-死一样的寂静。<br />
-夕阳已渐渐要落下去了，<br />
-他看了看远处的夕阳，<br />
-觉得说不出的恐惧。</p>
-<p>他苦笑道：“你一定要买一块钱一斤的么？”<br />
-“一定！”<br />
-“若我不卖给你呢？”<br />
-“你大可试试！”<br />
-沉默，死一样的沉默。<br />
-许久，他抬眼望着少年，咬牙道：“好，我就卖你一斤酱油，一块钱，只是你莫要对外人提起！”</p>
-<p>他接过少年手中的酱油瓶和一块钱。<br />
-瓶子是冷的，一如老者的内心；钱币却微微发烫，一如少年的手心。<br />
-片刻过后，少年接过了他递回的酱油瓶，转身向门口走去。<br />
-这一仗，他胜了，胜得彻彻底底。<br />
-少年脸上掠过一丝得意。<br />
-卖酱油的人却从背后叫住了他：“你以为你真的胜过我了么？”<br />
-少年的身子微微一震，脚步已顿。<br />
-“很明显，我已经以这么低的价钱打到了酱油。”<br />
-“不错。”<br />
-“那我岂非已胜过了你。”<br />
-“只可惜你算漏了一点。”<br />
-少年忽然转过身来，脸上的肌肉微微抽搐，<br />
-他似乎意识到了什么，但已经晚了。<br />
-卖酱油的人只轻轻一笑，道：“我的酱油本是卖八毛钱一斤的。”<br />
-少年脸上恢复淡然的表情，转过身去，“我这一元是假钞”</p>
-<p>少年的身子逐渐远去.....</p>
-<hr />
-<p>看完权当一乐。<br />
-很早之前在知乎看的，今天看笔记翻到了。侵删。</p>
 
 ]]></content>
   </entry>

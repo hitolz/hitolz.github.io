@@ -129,82 +129,78 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032826647218.html">
+                <a class="clearlink" href="16032826948500.html">
                 
-                  <h1>Spring Boot 增加缓存功能</h1>
+                  <h1>Docker 安装 MySQL数据库 实现主从复制</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<pre class="line-numbers"><code class="language-plain_text">spring.jpa.properties.hibernate.show_sql=true，开启hibernate对sql语句的打印
+                        	<p>安装mysql镜像，并启动两个容器，分别命名为master\slave1</p>
+<pre class="line-numbers"><code class="language-plain_text">docker pull mysql
+
+docker run --name master -p 3307:3306 -e MYSQL_ROOT_PASSWORD=masterRoot -d mysql
+
+docker run --name slave1 -p 3308:3306 -e MYSQL_ROOT_PASSWORD=slave1Root -d mysql
+
 </code></pre>
-<p>单元测试中，用userRepository 查询两次相同内容。</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729123926.jpg" alt="" /><br />
-运行一下，会看到在控制台打出了两条sql，说明是查了两次库。</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729221221.jpg" alt="" /></p>
-<p>增加缓存：<br />
-pom中添加依赖：</p>
-<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-boot-starter-cache&lt;/artifactId&gt;
-&lt;/dependency&gt;
+<p>--</p>
+<p>查看master的ip</p>
+<pre class="line-numbers"><code class="language-plain_text">docker inspect --format='{{.NetworkSettings.IPAddress}}'  f7e6499911c8
 </code></pre>
-<p>SpringBoot主类中添加注解 <code>@EnableCaching</code><br />
-UserRepository 类添加注解<code>@CacheConfig(cacheNames = &quot;users&quot;)</code><br />
-findByName方法添加注解<code>@Cacheable</code></p>
-<p>org.springframework.data.redis.serializer.SerializationException:?</p>
-<p>缓存对象需要实现序列化接口.<code>UserDO implements Serializable</code></p>
-<p>在次运行就会出现</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374555362360.jpg" alt="" style="width:1076px;" />可以看到，第二次请求的时候就没有打印出sql语句。</p>
-<p>注解：</p>
-<ul>
-<li>
-<p>@CacheConfig：<br />
-主要配置该类中会用到的一些公用的缓存配置。<br />
-cacheNames 配置了数据访问对象中返回的内容将存储于名为users的数组中。<br />
-<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374561374912.jpg" alt="" /></p>
-</li>
-<li>
-<p>@Cacheable：<br />
-配置了findByName的函数返回值将会被加入到缓存。同时在查询时，会先查询缓存，若不存在才会查询数据库。<br />
-<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374562984908.jpg" alt="" /></p>
-</li>
-<li>
-<p><code>cacheNames</code>、<code>value</code>：用于指定缓存存储的集合名。两个参数等效。</p>
-</li>
-<li>
-<p><code>key</code>：缓存对象存储在Map集合中的key值，非必需，缺省按照函数的所有参数组合作为key值，若自己配置需使用SpEL表达式，比如：@Cacheable(key = &quot;#p0&quot;)：使用函数第一个参数作为缓存的key值，更多关于SpEL表达式的详细内容可参考<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#cache">官方文档</a></p>
-</li>
-<li>
-<p><code>condition</code>:缓存对象的条件，非必需，也需使用SpEL表达式，只有满足表达式条件的内容才会被缓存，比如：@Cacheable(key = &quot;#p0&quot;, condition = &quot;#p0.length() &lt; 3&quot;)，表示只有当第一个参数的长度小于3的时候才会被缓存，若做此配置上面的AAA用户就不会被缓存，读者可自行实验尝试。</p>
-</li>
-<li>
-<p><code>unless</code>:另外一个缓存条件参数，非必需，需使用SpEL表达式。它不同于condition参数的地方在于它的判断时机，该条件是在函数被调用之后才做判断的，所以它可以通过对result进行判断。</p>
-</li>
-<li>
-<p><code>keyGenerator</code>:用于指定key生成器，非必需。若需要指定一个自定义的key生成器，我们需要去实现org.springframework.cache.interceptor.KeyGenerator接口，并使用该参数来指定。需要注意的是：该参数与key是互斥的</p>
-</li>
-<li>
-<p><code>cacheManager</code>:用于指定使用哪个缓存管理器，非必需。只有当有多个时才需要使用</p>
-</li>
-<li>
-<p><code>cacheResolver</code>:用于指定使用那个缓存解析器，非必需。需通过org.springframework.cache.interceptor.CacheResolver接口来实现自己的缓存解析器，并用该参数指定。</p>
-</li>
-</ul>
-<p>CacheManager</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374571943253.jpg" alt="" /></p>
-<p>在Spring Boot中通过@EnableCaching注解自动化配置合适的缓存管理器（CacheManager），Spring Boot根据下面的顺序去侦测缓存提供者：</p>
-<ul>
-<li>Generic</li>
-<li>JCache (JSR-107)</li>
-<li>EhCache 2.x</li>
-<li>Hazelcast</li>
-<li>Infinispan</li>
-<li>Redis</li>
-<li>Guava</li>
-<li>Simple</li>
-</ul>
-<p>可以通过配置属性spring.cache.type来强制指定</p>
+<p>172.17.0.3</p>
+<p>--</p>
+<p>修改master配置文件my.cnf<br />
+在[mysqld]配置中添加两个配置</p>
+<pre class="line-numbers"><code class="language-plain_text">log-bin         = mysql-bin
+server-id		= 1
+</code></pre>
+<p>修改slave1配置文件my.cnf<br />
+在[mysqld]配置中添加两个配置</p>
+<pre class="line-numbers"><code class="language-plain_text">log-bin         = mysql-bin
+server-id		= 2
+</code></pre>
+<p>--</p>
+<p>在master数据库中创建用来同步数据的用户</p>
+<pre class="line-numbers"><code class="language-plain_text">CREATE USER 'slave'@'%' IDENTIFIED BY '123456';
+GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'slave'@'%';  
+</code></pre>
+<p><code>REPLICATION SLAVE</code> 常用于建立复制时所需要用到的用户权限，也就是slave server必须被master server授权具有该权限的用户，才能通过该用户复制。<br />
+并且&quot;SHOW SLAVE HOSTS&quot;这条命令和REPLICATION SLAVE权限有关，否则执行时会报错：</p>
+<blockquote>
+<p>ERROR 1227 (42000): Access denied; you need (at least one of) the REPLICATION SLAVE privilege(s) for this operation</p>
+</blockquote>
+<p><code>REPLICATION CLIEN</code>T 不可用于建立复制，有该权限时，只是多了可以使用如&quot;SHOW SLAVE STATUS&quot;、&quot;SHOW MASTER STATUS&quot;等命令。</p>
+<p>--</p>
+<pre class="line-numbers"><code class="language-plain_text">mysql&gt; show master status
+    -&gt; ;
++------------------+----------+--------------+------------------+-------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++------------------+----------+--------------+------------------+-------------------+
+| mysql-bin.000001 |      156 |              |                  |                   |
++------------------+----------+--------------+------------------+-------------------+
+1 row in set (0.01 sec)
+ 
+mysql&gt; 
+</code></pre>
+<p>--</p>
+<p>在slave1中执行</p>
+<pre class="line-numbers"><code class="language-plain_text">change master to master_host='172.17.0.3', master_user='slave', master_password='123456', master_port=3306, master_log_file='mysql-bin.000001', master_log_pos=156, master_connect_retry=30;  
+</code></pre>
+<p>这里需要注意下，<code>master_host</code>用master容器的ip，<code>master_port</code>是3306，<code>master_log_file</code>是上面master的<code>show master status</code>的File，<code>master_log_pos</code>则是Position。</p>
+<p>我一开始以为master_port是主机映射到master容器的端口3307，搞了半天也搞不通。</p>
+<p>--<br />
+主从同步完成。</p>
+<p>--</p>
+<p>TODO<br />
+读写分离</p>
+<hr />
+<p>建议用 compose，有几点改进：</p>
+<ol>
+<li>配置文件改好挂进去，而不是启动容器之后再改</li>
+<li>把数据通过数据卷挂出来，容器没了数据不丢</li>
+<li>compose 下可以用 link 参数，这个参数将容器名/容器 ip 写到 hosts 里，这样就不用去找 ip 了</li>
+</ol>
 
                         
                       </div>
@@ -213,12 +209,10 @@ cacheNames 配置了数据访问对象中返回的内容将存储于名为users�
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/10/21 20:17 下午</span>
+                    <span class="date">2020/10/21 20:18 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
-          				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          					    <span class="posted-in"><a href='Docker.html'>Docker</a></span>
           				   
                     
 
@@ -328,6 +322,12 @@ cacheNames 配置了数据访问对象中返回的内容将存储于名为users�
 	      
 		      
 			      <li class="post">
+			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="16892187258215.html">wasm 初体验</a>
 			      </li>
 		     
@@ -347,12 +347,6 @@ cacheNames 配置了数据访问对象中返回的内容将存储于名为users�
 		      
 			      <li class="post">
 			        <a href="16748079623338.html">rust 快速入门指南</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16727524082529.html">rust 包管理与工作空间</a>
 			      </li>
 		     
 		  
