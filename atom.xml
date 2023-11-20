@@ -4,7 +4,7 @@
   <title><![CDATA[非著名Java程序员]]></title>
   <link href="http://blog.hitol.top/atom.xml" rel="self"/>
   <link href="http://blog.hitol.top/"/>
-  <updated>2023-11-17T23:37:42+08:00</updated>
+  <updated>2023-11-20T17:20:40+08:00</updated>
   <id>http://blog.hitol.top/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -13,11 +13,295 @@
   <generator uri="http://www.mweb.im/">MWeb</generator>
   
   <entry>
+    <title type="html"><![CDATA[rust web 开发-2. 数据库/orm]]></title>
+    <link href="http://blog.hitol.top/17002146115226.html"/>
+    <updated>2023-11-17T17:50:11+08:00</updated>
+    <id>http://blog.hitol.top/17002146115226.html</id>
+    <content type="html"><![CDATA[
+<div class="mweb_toc"><ul>
+<li><a href="#sqlx">sqlx</a></li>
+<li><a href="#orm">orm</a>
+<ul>
+<li><a href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0%E5%88%9D%E5%A7%8B%E5%8C%96">数据库连接池初始化</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+<ol>
+<li>web 框架</li>
+<li>数据库/orm</li>
+<li>config</li>
+<li>log</li>
+<li>线程池</li>
+<li>kafka</li>
+<li>redis</li>
+<li>打包成 docker 镜像</li>
+<li>gracefully shutdown</li>
+</ol>
+<hr />
+<p>本文介绍第二部分，数据库及 orm。<br />
+主要介绍 Rust 如何使用 sqlx 连接 MySQL，orm 选用了 rbatis。</p>
+<p>准备 MySQL 数据库，简单的一个表结构</p>
+<pre class="line-numbers"><code class="language-sql">CREATE TABLE `user` (
+	`id` bigint NOT NULL AUTO_INCREMENT,
+	`user_name` varchar(32) DEFAULT NULL,
+	`password` varchar(64) DEFAULT NULL,
+	PRIMARY KEY (`id`)
+);
+</code></pre>
+<p>接下来分别使用 sqlx 和 rbatis 进行  CRUD 操作。</p>
+<h2><a id="sqlx" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>sqlx</h2>
+<p>添加依赖</p>
+<pre class="line-numbers"><code class="language-plain_text">sqlx = { version = &quot;0.7.2&quot;, features = [
+    &quot;runtime-async-std-native-tls&quot;,
+    &quot;mysql&quot;,
+    &quot;chrono&quot;,
+] }
+</code></pre>
+<p>sqlx 连接数据库的链接格式：<code>mysql://{user}:{password}@{IP}:{port}/{database name}</code><br />
+例如我本地的数据库地址：<code>mysql://root:12345678@localhost:3306/rust_web</code></p>
+<p>连接 MySQL</p>
+<pre class="line-numbers"><code class="language-rust">use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
+
+pub async fn get_mysql_pool() -&gt; Pool&lt;MySql&gt; {
+    let database_url = &quot;mysql://root:12345678@localhost:3306/rust_web&quot;;
+    MySqlPoolOptions::new().connect(database_url).await.unwrap()
+}
+</code></pre>
+<p>api</p>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{get, post, web, HttpResponse, Scope};
+use serde::{Deserialize, Serialize};
+
+use crate::{db::get_mysql_pool, success};
+
+// 定义路由，对外暴露的接口
+pub fn routes() -&gt; Scope {
+    web::scope(&quot;/users&quot;)
+        .service(add_user)
+        .service(query_user)
+        .service(update_user)
+        .service(delete_user)
+}
+
+// 定义实体
+#[derive(Debug, Deserialize, Clone, Serialize, Default,sqlx::FromRow)]
+#[serde(rename_all = &quot;camelCase&quot;)]
+pub struct User {
+    pub id: Option&lt;i64&gt;,
+    pub user_name: Option&lt;String&gt;,
+    pub password: Option&lt;String&gt;,
+}
+
+#[post(&quot;/add&quot;)]
+pub async fn add_user(user: web::Json&lt;User&gt;) -&gt; HttpResponse {
+    let user = user.to_owned();
+    let id = save_user(user).await.unwrap();
+    success(Some(id))
+}
+// insert
+async fn save_user(user: User) -&gt; Result&lt;u64, sqlx::Error&gt; {
+    // 获取数据库连接池
+    let pool = get_mysql_pool().await;
+    let sql = &quot;insert into user(user_name, password) values (?,?)&quot;;
+    let result = sqlx::query(sql)
+        .bind(user.user_name)
+        .bind(user.password)
+        .execute(&amp;pool)
+        .await?;
+    let id = result.last_insert_id();
+    Ok(id)
+}
+
+// update
+#[post(&quot;/update/{id}&quot;)]
+pub async fn update_user(id: web::Path&lt;i64&gt;, user: web::Json&lt;User&gt;) -&gt; HttpResponse {
+    let user = user.to_owned();
+
+    let sql = &quot;update user set user_name =?, password =? where id = ?&quot;;
+    sqlx::query(sql)
+        .bind(user.user_name)
+        .bind(user.password)
+        .bind(id.into_inner())
+        .execute(&amp;get_mysql_pool().await)
+        .await.unwrap();
+    success(Some(1))
+}
+
+// select
+#[get(&quot;/query/{id}&quot;)]
+pub async fn query_user(id:web::Path&lt;i64&gt;) -&gt; HttpResponse {
+    let sql = &quot;select * from user where id = ?&quot;;
+    let result = sqlx::query_as::&lt;_,User&gt;(sql).bind(id.into_inner()).fetch_optional(&amp;get_mysql_pool().await).await.unwrap();
+    success(result)
+}
+
+// delete
+#[post(&quot;/delete/{id}&quot;)]
+pub async fn delete_user(id:web::Path&lt;i64&gt;) -&gt; HttpResponse {
+    let sql = &quot;delete from user where id = ?&quot;;
+    sqlx::query(sql).bind(id.into_inner()).execute(&amp;get_mysql_pool().await).await.unwrap();
+    success(Some(1))
+}
+</code></pre>
+<p>服务启动之后测试：<br />
+新增 user：</p>
+<pre class="line-numbers"><code class="language-bash">curl -X &quot;POST&quot; &quot;http://localhost:8099/users/add&quot; \
+     -H 'token: 1' \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -d $'{
+  &quot;password&quot;: &quot;3456789&quot;,
+  &quot;userName&quot;: &quot;张三&quot;
+}'
+</code></pre>
+<p>查询 user：</p>
+<pre class="line-numbers"><code class="language-bash">curl &quot;http://localhost:8099/users/query/1&quot; \
+     -H 'token: 1'
+</code></pre>
+<p>修改 user：</p>
+<pre class="line-numbers"><code class="language-bash">curl -X &quot;POST&quot; &quot;http://localhost:8099/users/update/1&quot; \
+     -H 'token: 1' \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -d $'{
+  &quot;password&quot;: &quot;987654&quot;,
+  &quot;userName&quot;: &quot;lisi&quot;
+}'
+</code></pre>
+<p>删除 user：</p>
+<pre class="line-numbers"><code class="language-bash">curl -X &quot;POST&quot; &quot;http://localhost:8099/users/delete/2&quot; \
+     -H 'token: 1'
+</code></pre>
+<h2><a id="orm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>orm</h2>
+<p>orm 目前我使用过的有两个，一个是 Diesel，一个是 rbatis。</p>
+<p>Diesel 可以看以前写过的一篇文章，<a href="https://blog.hitol.top/16669473309292.html">https://blog.hitol.top/16669473309292.html</a><br />
+本篇文章主要介绍一下 rbatis。</p>
+<p>添加依赖</p>
+<pre class="line-numbers"><code class="language-plain_text"># rbatis
+rbs = { version = &quot;4.3&quot; }
+rbatis = { version = &quot;4.3&quot; }
+rbdc-mysql = { version = &quot;4.3&quot; }
+</code></pre>
+<p>创建 rbatis</p>
+<pre class="line-numbers"><code class="language-rust">use rbatis::RBatis;
+use rbdc_mysql::MysqlDriver;
+
+pub async fn get_rb() -&gt; RBatis {
+    let database_url = &quot;mysql://root:12345678@localhost:3306/rust_web&quot;;
+    let rb = RBatis::new();
+    rb.init(MysqlDriver {}, database_url).unwrap();
+    rb
+}
+</code></pre>
+<p>在 User 实体定义的文件中调用 <code>crud!</code> 宏。</p>
+<blockquote>
+<p>crud!(User {});//crud = insert+select_by_column+update_by_column+delete_by_column</p>
+</blockquote>
+<p>宏调用之后就可以直接使用 User::insert、User::update、User::select、User::delete。</p>
+<pre class="line-numbers"><code class="language-rust">#[derive(Debug, Deserialize, Clone, Serialize, Default, sqlx::FromRow)]
+#[serde(rename_all = &quot;camelCase&quot;)]
+pub struct User {
+    pub id: Option&lt;i64&gt;,
+    pub user_name: Option&lt;String&gt;,
+    pub password: Option&lt;String&gt;,
+}
+
+crud!(User {}); // crud
+
+#[post(&quot;/add&quot;)]
+pub async fn add_user(user: web::Json&lt;User&gt;) -&gt; HttpResponse {
+    let user = user.to_owned();
+    // let id = save_user(user).await.unwrap();
+    let id = save_user_rb(user).await;
+    success(Some(id))
+}
+
+async fn save_user_rb(user: User) -&gt; i64 {
+    let rbatis = get_rb().await;
+    let x = User::insert(&amp;rbatis, &amp;user).await;
+    let x = x.unwrap();
+    i64::from(x.last_insert_id)
+}
+
+//update: User::update_by_column(&amp;get_rb().await, &amp;user, &quot;id&quot;).await;
+//select: User::select_by_column(&amp;get_rb().await, &quot;id&quot;,id.into_inner()).await.unwrap();
+//delete: User::delete_by_column(&amp;get_rb().await, &quot;id&quot;, id.into_inner()).await;
+</code></pre>
+<h3><a id="%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0%E5%88%9D%E5%A7%8B%E5%8C%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数据库连接池初始化</h3>
+<p>需要注意点是数据库连接池现在是每次调用都会初始化，为了演示连接数据库。要改为只初始化一次，可以使用lazy_static宏来延迟初始化静态变量。lazy_static宏允许在首次访问变量时执行初始化代码。</p>
+<pre class="line-numbers"><code class="language-rust">use lazy_static::*;
+use rbatis::RBatis;
+use rbdc_mysql::MysqlDriver;
+use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
+use std::{sync::Mutex, time::Duration};
+
+lazy_static! {
+    static ref MYSQL_POOL: Mutex&lt;Vec&lt;Pool&lt;MySql&gt;&gt;&gt; = Mutex::new(vec![]);
+}
+
+lazy_static! {
+    static ref RB: Mutex&lt;RBatis&gt; = Mutex::new(RBatis::new());
+}
+
+pub async fn init_db(database_url: String) {
+    let pool = MySqlPoolOptions::new()
+        .max_connections(20)
+        .min_connections(5)
+        .idle_timeout(Some(Duration::from_secs(30)))
+        .connect(&amp;database_url)
+        .await
+        .unwrap();
+
+    let mut pools = MYSQL_POOL.lock().unwrap();
+    (*pools).push(pool);
+
+    let rbatis = RBatis::new();
+    rbatis.init(MysqlDriver {}, &amp;database_url).unwrap();
+    let mut rb = RB.lock().unwrap();
+    *rb = rbatis;
+
+}
+
+pub async fn get_mysql_pool() -&gt; Pool&lt;MySql&gt; {
+    let pools = MYSQL_POOL.lock().unwrap();
+    unsafe { (*pools).get_unchecked(0).to_owned() }
+}
+
+pub async fn get_rb() -&gt; RBatis {
+    RB.lock().unwrap().clone()
+}
+</code></pre>
+<p>本篇文章代码在 <a href="https://github.com/hitolz/rust-web/tree/db_orm">github</a></p>
+<p>我在项目中用的话一般是 sqlx + rbatis 一起使用，简单的 sql 用 rbatis 自动生成的，复杂一些的 sql 就使用 sqlx 自己手写……</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Rust web 开发-1.web 框架]]></title>
     <link href="http://blog.hitol.top/17002145985395.html"/>
     <updated>2023-11-17T17:49:58+08:00</updated>
     <id>http://blog.hitol.top/17002145985395.html</id>
     <content type="html"><![CDATA[
+<div class="mweb_toc"><ul>
+<li><a href="#actix-web">actix-web</a>
+<ul>
+<li><a href="#httpserver">HttpServer</a></li>
+<li><a href="#scope">scope</a></li>
+<li><a href="#shared-mutable-state">Shared Mutable State</a></li>
+<li><a href="#%E8%BF%94%E5%9B%9Ejson">返回 json</a></li>
+<li><a href="#%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0">接收请求参数</a>
+<ul>
+<li><a href="#path">Path</a></li>
+<li><a href="#get%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6%E5%8F%82%E6%95%B0">get 请求，接收参数</a></li>
+<li><a href="#post%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6-json">post 请求，接收 json</a></li>
+</ul>
+</li>
+<li><a href="#middleware">middleware</a></li>
+</ul>
+</li>
+<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
+</ul>
+</div>
 <p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
 <li>web 框架</li>
@@ -369,7 +653,7 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
         .await
 }
 </code></pre>
-<p>这里是写了两个 middleware，一个打印接口耗时，一个鉴权，代码篇幅较多，放在了 <a href="https://github.com/hitolz/rust-web">github</a>。</p>
+<p>这里是写了两个 middleware，一个打印接口耗时，一个鉴权，代码篇幅较多，放在了 <a href="https://github.com/hitolz/rust-web/tree/actix_web">github</a>。</p>
 <p>浏览器访问 hello1，由于没有 token，所以鉴权不通过，而通过 postman 访问 hello2，header 上加上 token，就可以请求通过。<br />
 <img src="http://hitol.blog.cdn.updev.cn/mweb/17003662230269.jpg" alt="" /></p>
 <p><img src="http://hitol.blog.cdn.updev.cn/mweb/17003658655736.jpg" alt="" /></p>
@@ -5614,289 +5898,6 @@ public class GraphQLProvider {
 <hr />
 <p><a href="http://graphql.js.cool/learn/">http://graphql.js.cool/learn/</a></p>
 <p><a href="https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/">https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/</a></p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[mongoDB]]></title>
-    <link href="http://blog.hitol.top/16345641979115.html"/>
-    <updated>2021-10-18T21:36:37+08:00</updated>
-    <id>http://blog.hitol.top/16345641979115.html</id>
-    <content type="html"><![CDATA[
-<div class="mweb_toc"><ul>
-<li><a href="#%E6%A6%82%E5%BF%B5">概念</a>
-<ul>
-<li><a href="#%E6%95%B0%E6%8D%AE%E5%BA%93">数据库</a></li>
-<li><a href="#%E9%9B%86%E5%90%88">集合</a></li>
-<li><a href="#%E6%96%87%E6%A1%A3">文档</a></li>
-</ul>
-</li>
-<li><a href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B">数据类型</a></li>
-<li><a href="#%E6%93%8D%E4%BD%9C">操作</a>
-<ul>
-<li><a href="#%E6%9F%A5%E8%AF%A2%E6%96%87%E6%A1%A3">查询文档</a></li>
-<li><a href="#%E6%8F%92%E5%85%A5%E6%96%87%E6%A1%A3">插入文档</a></li>
-<li><a href="#%E6%9B%B4%E6%96%B0%E6%96%87%E6%A1%A3">更新文档</a></li>
-</ul>
-</li>
-<li><a href="#%E5%88%A0%E9%99%A4%E6%96%87%E6%A1%A3">删除文档</a></li>
-<li><a href="#gridfs">GridFS</a></li>
-<li><a href="#%E5%AE%89%E8%A3%85">安装</a>
-<ul>
-<li><a href="#mac%E5%AE%89%E8%A3%85">mac 安装</a></li>
-<li><a href="#docker%E5%AE%89%E8%A3%85">Docker 安装</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<h2><a id="%E6%A6%82%E5%BF%B5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>概念</h2>
-<table>
-<thead>
-<tr>
-<th>SQL术语/概念</th>
-<th>MongoDB术语/概念</th>
-<th>解释/说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>database</td>
-<td>database</td>
-<td>数据库</td>
-</tr>
-<tr>
-<td>table</td>
-<td>collection</td>
-<td>数据库表/集合</td>
-</tr>
-<tr>
-<td>row</td>
-<td>document</td>
-<td>数据记录行/文档</td>
-</tr>
-<tr>
-<td>column</td>
-<td>field</td>
-<td>数据字段/域</td>
-</tr>
-<tr>
-<td>index</td>
-<td>index</td>
-<td>索引</td>
-</tr>
-<tr>
-<td>table joins</td>
-<td></td>
-<td>表连接,MongoDB不支持</td>
-</tr>
-<tr>
-<td>primary key</td>
-<td>primary key</td>
-<td>主键,MongoDB自动将_id字段设置为主键</td>
-</tr>
-</tbody>
-</table>
-<p><img src="http://hitol.blog.cdn.updev.cn/2021-10-18-16341942000243.jpg" alt="" /></p>
-<h3><a id="%E6%95%B0%E6%8D%AE%E5%BA%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数据库</h3>
-<p>数据库的概念跟关系型数据库(如 MySQL)中是一样的。<br />
-一个 mongoDB 中可以建立多个数据库。<br />
-默认数据库为 db。</p>
-<p>命令</p>
-<pre class="line-numbers"><code class="language-plain_text">show dbs # 查看所有数据库
-
-db # 查看当前连接的数据库
-
-use xx # 连接到 xx 数据库,如果数据库不存在，则创建数据库
-</code></pre>
-<h3><a id="%E9%9B%86%E5%90%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>集合</h3>
-<p>集合类似于关系型数据库中的 table。<br />
-集合存在于数据库中，没有固定结构，这意味着可以在集合中插入不同的文档，但是一般情况下文档都有一定的关联性。</p>
-<h3><a id="%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>文档</h3>
-<p>文档类似于关系型数据库中的 行。<br />
-文档是一组 键值对</p>
-<h2><a id="%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数据类型</h2>
-<table>
-<thead>
-<tr>
-<th>数据类型</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>String</td>
-<td>字符串。存储数据常用的数据类型。在 MongoDB 中，UTF-8 编码的字符串才是合法的。</td>
-</tr>
-<tr>
-<td>Integer</td>
-<td>整型数值。用于存储数值。根据你所采用的服务器，可分为 32 位或 64 位。</td>
-</tr>
-<tr>
-<td>Boolean</td>
-<td>布尔值。用于存储布尔值（真/假）</td>
-</tr>
-<tr>
-<td>Double</td>
-<td>双精度浮点值。用于存储浮点值。</td>
-</tr>
-<tr>
-<td>Min/Max keys</td>
-<td>将一个值与 BSON（二进制的 JSON）元素的最低值和最高值相对比</td>
-</tr>
-<tr>
-<td>Array</td>
-<td>用于将数组或列表或多个值存储为一个键</td>
-</tr>
-<tr>
-<td>Timestamp</td>
-<td>时间戳。记录文档修改或添加的具体时间。</td>
-</tr>
-<tr>
-<td>Object</td>
-<td>用于内嵌文档</td>
-</tr>
-<tr>
-<td>Null</td>
-<td>用于创建空值</td>
-</tr>
-<tr>
-<td>Symbol</td>
-<td>符号。该数据类型基本上等同于字符串类型，但不同的是，它一般用于采用特殊符号类型的语言。</td>
-</tr>
-<tr>
-<td>Date</td>
-<td>日期时间。用 UNIX 时间格式来存储当前日期或时间。你可以指定自己的日期时间：创建 Date 对象，传入年月日信息。</td>
-</tr>
-<tr>
-<td>Object ID</td>
-<td>对象 ID。用于创建文档的 ID。</td>
-</tr>
-<tr>
-<td>Binary Data</td>
-<td>二进制数据。用于存储二进制数据。</td>
-</tr>
-<tr>
-<td>Code</td>
-<td>代码类型。用于在文档中存储 JavaScript 代码。</td>
-</tr>
-<tr>
-<td>Regular expression</td>
-<td>正则表达式类型。用于存储正则表达式。</td>
-</tr>
-</tbody>
-</table>
-<h2><a id="%E6%93%8D%E4%BD%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>操作</h2>
-<h3><a id="%E6%9F%A5%E8%AF%A2%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>查询文档</h3>
-<p>语法：</p>
-<pre class="line-numbers"><code class="language-plain_text">db.collection.find(query, projection)
-query ：可选，使用查询操作符指定查询条件
-projection ：可选，使用投影操作符指定返回的键。查询时返回文档中所有键值， 只需省略该参数即可（默认省略）。
-
-</code></pre>
-<p>例子：</p>
-<pre class="line-numbers"><code class="language-plain_text">查询所有: 
-db.chat_calls.find()
-
-按条件查询:
-db.chat_calls.find({&quot;machine_id&quot;:&quot;GV2_T1&quot;,&quot;call_uuid&quot;:&quot;01QJI91IMKENL3L8A0Q11B5AES00007V&quot;})
-
-只返回具体字段:
-db.chat_calls.find({&quot;machine_id&quot;:&quot;GV2_T1&quot;,&quot;call_uuid&quot;:&quot;01QJI91IMKENL3L8A0Q11B5AES00007V&quot;}, { _id:0,machine_id:1})
-
-</code></pre>
-<h3><a id="%E6%8F%92%E5%85%A5%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>插入文档</h3>
-<p>语法:</p>
-<pre class="line-numbers"><code class="language-plain_text">db.COLLECTION_NAME.insert(document)
-或
-db.COLLECTION_NAME.save(document)
-</code></pre>
-<p>例子:</p>
-<pre class="line-numbers"><code class="language-plain_text">db.chat_calls.insert(
-{&quot;machine_id&quot;:&quot;test&quot;,&quot;call_uuid&quot;:&quot;test&quot;})
-</code></pre>
-<h3><a id="%E6%9B%B4%E6%96%B0%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>更新文档</h3>
-<p>语法:</p>
-<pre class="line-numbers"><code class="language-plain_text">db.collection.update(
-   &lt;query&gt;,
-   &lt;update&gt;,
-   {
-     upsert: &lt;boolean&gt;,
-     multi: &lt;boolean&gt;,
-     writeConcern: &lt;document&gt;
-   }
-)
-
-query : update的查询条件，类似sql update查询内where后面的。
-update : update的对象和一些更新的操作符（如$,$inc...）等，也可以理解为sql update查询内set后面的
-upsert : 可选，这个参数的意思是，如果不存在update的记录，是否插入objNew,true为插入，默认是false，不插入。
-multi : 可选，mongodb 默认是false,只更新找到的第一条记录，如果这个参数为true,就把按条件查出来多条记录全部更新。
-writeConcern :可选，抛出异常的级别。
-</code></pre>
-<p>例子:</p>
-<pre class="line-numbers"><code class="language-plain_text">db.chat_calls.update(
-	{&quot;machine_id&quot;:&quot;test&quot;,&quot;call_uuid&quot;:&quot;test&quot;}, 
-	{
-		$set:{&quot;machine_id&quot;:&quot;test111&quot;}
-	}
-)
-运算符 $set,将 machine_id 修改为 test111
-</code></pre>
-<p>save() 方法，通过 _id 主键存在则更新，如果不存在则新增。</p>
-<pre class="line-numbers"><code class="language-plain_text">db.collection.save(
-   &lt;document&gt;,
-   {
-     writeConcern: &lt;document&gt;
-   }
-)
-</code></pre>
-<h2><a id="%E5%88%A0%E9%99%A4%E6%96%87%E6%A1%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>删除文档</h2>
-<p>db.collection.deleteOne()<br />
-db.collection.deleteMany()</p>
-<p>语法：</p>
-<pre class="line-numbers"><code class="language-plain_text">db.collection.deleteOne(
-   &lt;filter&gt;,
-   {
-      writeConcern: &lt;document&gt;,
-      collation: &lt;document&gt;,
-      hint: &lt;document|string&gt;       
-   }
-)
-
-
-db.collection.deleteMany(
-   &lt;filter&gt;,
-   {
-      writeConcern: &lt;document&gt;,
-      collation: &lt;document&gt;
-   }
-)
-
-</code></pre>
-<p>例子:</p>
-<pre class="line-numbers"><code class="language-plain_text">db.chat_calls.deleteOne({&quot;machine_id&quot;:&quot;test&quot;})
-</code></pre>
-<h1><a id="gridfs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>GridFS</h1>
-<p>GridFS 用于存储和恢复那些超过16M（BSON文件限制）的文件(如：图片、音频、视频等)。</p>
-<p>GridFS 也是文件存储的一种方式，但是它是存储在MonoDB的集合中。</p>
-<p>GridFS 可以更好的存储大于16M的文件。</p>
-<p>GridFS 会将大文件对象分割成多个小的chunk(文件片段),一般为256k/个,每个chunk将作为MongoDB的一个文档(document)被存储在chunks集合中。</p>
-<p>GridFS 用两个集合来存储一个文件：fs.files与fs.chunks。</p>
-<pre class="line-numbers"><code class="language-plain_text">gridfs = GridFS(db_client.get_database(db_name), collection=collection)
-</code></pre>
-<h1><a id="%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>安装</h1>
-<h2><a id="mac%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>mac 安装</h2>
-<p>brew tap mongodb/brew<br />
-brew install mongodb-community</p>
-<p>检验安装完成</p>
-<p>mongod -version</p>
-<p>作为mac os 的服务启动<br />
-brew services start mongodb-community</p>
-<h2><a id="docker%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Docker 安装</h2>
-<p>docker pull mongo<br />
-docker run -di --name=my_mongo -p 27017:27017 mongo</p>
-<hr />
-<p><a href="https://docs.mongoing.com/">https://docs.mongoing.com/</a></p>
 
 ]]></content>
   </entry>

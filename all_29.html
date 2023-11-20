@@ -129,191 +129,147 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16173443661607.html">
+                <a class="clearlink" href="16176922961413.html">
                 
-                  <h1>ibatis 升级到 MyBatis</h1>
+                  <h1>搭建 RocketMQ 集群</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<div class="mweb_toc"><ul>
-<li><a href="#1%E3%80%81%E6%B7%BB%E5%8A%A0-mybatis%E4%BE%9D%E8%B5%96">1、添加 mybatis 依赖</a></li>
-<li><a href="#2%E3%80%81%E9%85%8D%E7%BD%AE-mybatis">2、配置 mybatis</a>
+                        	<p>使用两台虚拟机搭建出 双主-双从 集群<br />
+A 192.168.153.131<br />
+B 192.168.153.132</p>
+<p>官网地址<br />
+<a href="http://rocketmq.apache.org/docs/quick-start/">http://rocketmq.apache.org/docs/quick-start/</a></p>
+<p>先从上面下载下来最新的 RocketMQ 安装包，最新的是 rocketmq-all-4.8.0-bin-release</p>
+<p>解压后进入到 conf 文件夹下，官方已经创建好了简单的集群配置文件。</p>
 <ul>
-<li><a href="#%E9%85%8D%E7%BD%AEdatasource">配置 dataSource</a></li>
-<li><a href="#%E9%85%8D%E7%BD%AEsqlsessionfactory">配置 sqlSessionFactory</a></li>
-<li><a href="#%E9%85%8D%E7%BD%AEmapperscannerconfigurer">配置 MapperScannerConfigurer</a></li>
-<li><a href="#%E9%85%8D%E7%BD%AEtransactionmanager">配置 transactionManager</a></li>
+<li>2m-2s-async :2个master，2个slave，async异步复制</li>
+<li>2m-2s-sync :2个master，2个slave，sync同步双写</li>
+<li>2m-noslave :2个master,没有slave</li>
 </ul>
-</li>
-<li><a href="#3%E3%80%81%E9%85%8D%E7%BD%AE-mybatis-generater%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81">3、配置 mybatis-generater 自动生成代码</a>
-<ul>
-<li><a href="#pom%E6%96%87%E4%BB%B6%E4%B8%AD%E5%A2%9E%E5%8A%A0%E6%8F%92%E4%BB%B6">pom 文件中增加插件</a></li>
-<li><a href="#mybatis-generatorconfig-xml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">mybatis-generatorConfig.xml 配置文件</a></li>
-</ul>
-</li>
-<li><a href="#4%E3%80%81%E5%B0%86-ibatis%E7%9A%84-sqlmap%E6%96%87%E4%BB%B6%E8%BD%AC%E6%8D%A2%E4%B8%BA-mapper%E6%96%87%E4%BB%B6%EF%BC%8C%E4%B8%8E%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E7%9A%84%E4%BB%A3%E7%A0%81%E5%90%88%E5%B9%B6">4、将 ibatis 的 SqlMap 文件 转换为 mapper 文件，与自动生成的代码合并</a></li>
-<li><a href="#5%E3%80%81%E4%BF%AE%E6%94%B9-service%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%88%B0%E7%9A%84-dao%E4%B8%BA%E6%96%B0%E7%94%9F%E6%88%90%E7%9A%84-mybatis%E5%AF%B9%E5%BA%94%E7%9A%84-dao">5、修改 service 中使用到的 dao 为新生成的 mybatis 对应的 dao</a></li>
-</ul>
-</div>
-<h2><a id="1%E3%80%81%E6%B7%BB%E5%8A%A0-mybatis%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1、添加 mybatis 依赖</h2>
-<pre class="line-numbers"><code class="language-plain_text">&lt;!--mybatis--&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
-    &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
-    &lt;version&gt;3.4.6&lt;/version&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
-    &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
-    &lt;version&gt;1.3.2&lt;/version&gt;
-&lt;/dependency&gt;
+<p>首先在每台机器上启动 nameServer</p>
+<pre class="line-numbers"><code class="language-plain_text">nohub sh bin/mqnamesrv &amp;
+</code></pre>
+<p>然后配置 Broker，每台机器上都要分别配置一个 Master 角色的 Broker 和一个 Slave 角色的 Broker，并互为主备。</p>
+<p>A 机器启动 broker-a master, broker-b slave<br />
+B 机器启动 broker-a slave, broker-b master</p>
+<p>启动</p>
+<pre class="line-numbers"><code class="language-plain_text">nohub sh bin/mqbroker -c conf/2m-2s-async/broker-xxx.properties
+</code></pre>
+<p>然后在安装 console ，最终效果如图：<br />
+<img src="http://hitol.blog.cdn.updev.cn/16177202877632.jpg" alt="" /></p>
+<p>配置文件：<br />
+broker-a-master</p>
+<pre class="line-numbers"><code class="language-plain_text">brokerClusterName=DefaultCluster
+brokerName=broker-a
+brokerId=0
+deleteWhen=04
+fileReservedTime=48
+brokerRole=ASYNC_MASTER
+flushDiskType=ASYNC_FLUSH
+
+namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
+listenPort=10911
+defaultTopicQueueNums=8
+#是否允许 Broker 自动创建Topic，生产建议关闭
+autoCreateTopicEnable=true
+#是否允许 Broker 自动创建订阅组，生产建议关闭
+autoCreateSubscriptionGroup=true
+#存储路径
+storePathRootDir=~/mq/data/store-a
+#commitLog 存储路径 
+storePathCommitLog=~/mq/data/store-a/commitlog
+#消费队列存储路径存储路径
+storePathConsumeQueue=~/mq/data/store-a/consumequeue
+#消息索引存储路径
+storePathIndex=~/mq/data/store-a/index
+#checkpoint 文件存储路径
+storeCheckpoint=~/mq/data/store-a/checkpoint
+</code></pre>
+<p>broker-b-slave</p>
+<pre class="line-numbers"><code class="language-plain_text">brokerClusterName=DefaultCluster
+brokerName=broker-b
+brokerId=1
+deleteWhen=04
+fileReservedTime=48
+brokerRole=SLAVE
+flushDiskType=ASYNC_FLUSH
+
+namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
+listenPort=11011
+defaultTopicQueueNums=8
+#是否允许 Broker 自动创建Topic，生产建议关闭
+autoCreateTopicEnable=true
+#是否允许 Broker 自动创建订阅组，生产建议关闭
+autoCreateSubscriptionGroup=true
+#存储路径
+storePathRootDir=~/mq/data/store-b
+#commitLog 存储路径 
+storePathCommitLog=~/mq/data/store-b/commitlog
+#消费队列存储路径存储路径
+storePathConsumeQueue=~/mq/data/store-b/consumequeue
+#消息索引存储路径
+storePathIndex=~/mq/data/store-b/index
+#checkpoint 文件存储路径
+storeCheckpoint=~/mq/data/store-b/checkpoint
+</code></pre>
+<p>broker-b-master</p>
+<pre class="line-numbers"><code class="language-plain_text">brokerClusterName=DefaultCluster
+brokerName=broker-b
+brokerId=0
+deleteWhen=04
+fileReservedTime=48
+brokerRole=ASYNC_MASTER
+flushDiskType=ASYNC_FLUSH
+
+namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
+listenPort=10911
+#每个topic对应队列的数量，默认为4，实际应参考consumer实例的数量，值过小不利于consumer负载均衡
+defaultTopicQueueNums=8
+#是否允许 Broker 自动创建Topic，生产建议关闭
+autoCreateTopicEnable=true
+#是否允许 Broker 自动创建订阅组，生产建议关闭
+autoCreateSubscriptionGroup=true
+#存储路径
+storePathRootDir=~/mq/data/store-b
+#commitLog 存储路径 
+storePathCommitLog=~/mq/data/store-b/commitlog
+#消费队列存储路径存储路径
+storePathConsumeQueue=~/mq/data/store-b/consumequeue
+#消息索引存储路径
+storePathIndex=~/mq/data/store-b/index
+#checkpoint 文件存储路径
+storeCheckpoint=~/mq/data/store-b/checkpoint
 
 </code></pre>
-<h2><a id="2%E3%80%81%E9%85%8D%E7%BD%AE-mybatis" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2、配置 mybatis</h2>
-<h3><a id="%E9%85%8D%E7%BD%AEdatasource" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 dataSource</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;bean id=&quot;dataSource&quot; class=&quot;org.apache.commons.dbcp.BasicDataSource&quot;&gt;
-	&lt;property name=&quot;driverClassName&quot;  value=&quot;com.mysql.jdbc.Driver&quot; /&gt;
-	&lt;property name=&quot;url&quot;              value=&quot;${xxx}&quot; /&gt;
-	&lt;property name=&quot;username&quot;         value=&quot;${xxx}&quot; /&gt;
-	&lt;property name=&quot;password&quot;         value=&quot;${xxx}&quot; /&gt;
-    &lt;property name=&quot;maxActive&quot; value=&quot;50&quot; /&gt;
-    &lt;property name=&quot;maxIdle&quot; value=&quot;20&quot; /&gt;
-    &lt;property name=&quot;maxWait&quot; value=&quot;3000&quot; /&gt;
-    &lt;property name=&quot;removeAbandoned&quot; value=&quot;true&quot; /&gt;
-    &lt;property name=&quot;removeAbandonedTimeout&quot; value=&quot;60&quot; /&gt;
-    &lt;property name=&quot;logAbandoned&quot; value=&quot;true&quot; /&gt;
-    &lt;property name=&quot;validationQuery&quot; value=&quot;select 1 from dual&quot; /&gt;
-    &lt;property name=&quot;testOnBorrow&quot; value=&quot;true&quot; /&gt;
-&lt;/bean&gt;
+<p>broker-a-slave</p>
+<pre class="line-numbers"><code class="language-plain_text">brokerClusterName=DefaultCluster
+brokerName=broker-a
+brokerId=1
+deleteWhen=04
+fileReservedTime=48
+brokerRole=SLAVE
+flushDiskType=ASYNC_FLUSH
+
+namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
+listenPort=11011
+defaultTopicQueueNums=8
+#是否允许 Broker 自动创建Topic，生产建议关闭
+autoCreateTopicEnable=true
+#是否允许 Broker 自动创建订阅组，生产建议关闭
+autoCreateSubscriptionGroup=true
+#存储路径
+storePathRootDir=~/mq/data/store-a
+#commitLog 存储路径 
+storePathCommitLog=~/mq/data/store-a/commitlog
+#消费队列存储路径存储路径
+storePathConsumeQueue=~/mq/data/store-a/consumequeue
+#消息索引存储路径
+storePathIndex=~/mq/data/store-a/index
+#checkpoint 文件存储路径
+storeCheckpoint=~/mq/data/store-a/checkpoint
 </code></pre>
-<h3><a id="%E9%85%8D%E7%BD%AEsqlsessionfactory" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 sqlSessionFactory</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;bean id=&quot;sqlSessionFactory&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;
-	  p:dataSource-ref=&quot;dataSource&quot;
-	  p:configLocation=&quot;classpath:mybatis-config.xml&quot;
-	  p:typeAliasesPackage=&quot;com.acc.ac.core.common.model&quot;
-	  p:mapperLocations=&quot;classpath:mapper/*.xml&quot;/&gt;
-</code></pre>
-<p>configLocation:<br />
-typeAliasesPackage: 实体类对应的包<br />
-mapperLocations: mapper.xml 文件存放位置。</p>
-<h3><a id="%E9%85%8D%E7%BD%AEmapperscannerconfigurer" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 MapperScannerConfigurer</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;bean class=&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;
-	  p:sqlSessionFactoryBeanName=&quot;sqlSessionFactory&quot;
-	  p:basePackage=&quot;com.acc.ac.core.dao&quot;/&gt;
-</code></pre>
-<p>配置之后会自动扫描 basePackage 包下的 mapper interface，加到 Spring 容器中。</p>
-<h3><a id="%E9%85%8D%E7%BD%AEtransactionmanager" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 transactionManager</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;bean id=&quot;transactionManager&quot; class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;
-	  p:dataSource-ref=&quot;dataSource&quot;/&gt;
-</code></pre>
-<h2><a id="3%E3%80%81%E9%85%8D%E7%BD%AE-mybatis-generater%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3、配置 mybatis-generater 自动生成代码</h2>
-<h3><a id="pom%E6%96%87%E4%BB%B6%E4%B8%AD%E5%A2%9E%E5%8A%A0%E6%8F%92%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>pom 文件中增加插件</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;build&gt;
-    &lt;plugins&gt;
-        &lt;plugin&gt;
-            &lt;groupId&gt;org.mybatis.generator&lt;/groupId&gt;
-            &lt;artifactId&gt;mybatis-generator-maven-plugin&lt;/artifactId&gt;
-            &lt;version&gt;1.3.5&lt;/version&gt;
-            &lt;configuration&gt;
-                &lt;!-- 在控制台打印执行日志 --&gt;
-                &lt;verbose&gt;true&lt;/verbose&gt;
-                &lt;!-- 重复生成时会覆盖之前的文件--&gt;
-                &lt;overwrite&gt;true&lt;/overwrite&gt;
-                &lt;configurationFile&gt;src/main/resources/META-INF/mybatis-generatorConfig.xml&lt;/configurationFile&gt;
-            &lt;/configuration&gt;
-            &lt;dependencies&gt;
-                &lt;dependency&gt;
-                    &lt;groupId&gt;mysql&lt;/groupId&gt;
-                    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
-                    &lt;version&gt;5.1.43&lt;/version&gt;
-                &lt;/dependency&gt;
-            &lt;/dependencies&gt;
-        &lt;/plugin&gt;
-    &lt;/plugins&gt;
-&lt;/build&gt;
-</code></pre>
-<h3><a id="mybatis-generatorconfig-xml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>mybatis-generatorConfig.xml 配置文件</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE generatorConfiguration
-        PUBLIC &quot;-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN&quot;
-        &quot;http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd&quot;&gt;
-&lt;generatorConfiguration&gt;
-
-    &lt;!--defaultModelType=&quot;flat&quot; 大数据字段，不分表 --&gt;
-    &lt;context id=&quot;Mysql&quot; targetRuntime=&quot;MyBatis3Simple&quot; defaultModelType=&quot;flat&quot;&gt;
-        &lt;property name=&quot;autoDelimitKeywords&quot; value=&quot;true&quot; /&gt;
-        &lt;property name=&quot;beginningDelimiter&quot; value=&quot;`&quot; /&gt;
-        &lt;property name=&quot;endingDelimiter&quot; value=&quot;`&quot; /&gt;
-        &lt;property name=&quot;javaFileEncoding&quot; value=&quot;utf-8&quot; /&gt;
-        &lt;plugin type=&quot;org.mybatis.generator.plugins.SerializablePlugin&quot; /&gt;
-
-        &lt;plugin type=&quot;org.mybatis.generator.plugins.ToStringPlugin&quot; /&gt;
-
-        &lt;!-- 注释 --&gt;
-        &lt;commentGenerator &gt;
-            &lt;property name=&quot;suppressAllComments&quot; value=&quot;false&quot;/&gt;&lt;!-- 是否取消注释 --&gt;
-            &lt;property name=&quot;suppressDate&quot; value=&quot;true&quot; /&gt; &lt;!-- 是否生成注释代时间戳--&gt;
-        &lt;/commentGenerator&gt;
-
-        &lt;!--数据库链接地址账号密码--&gt;
-        &lt;!--数据库链接地址账号密码--&gt;
-        &lt;jdbcConnection driverClass=&quot;com.mysql.jdbc.Driver&quot;
-                        connectionURL=&quot;jdbc:mysql://localhost:3306/ac_core_dev?characterEncoding=utf-8&quot;
-                        userId=&quot;root&quot;
-                        password=&quot;root&quot;&gt;
-        &lt;/jdbcConnection&gt;
-
-        &lt;!-- 类型转换 --&gt;
-        &lt;javaTypeResolver&gt;
-            &lt;!-- 是否使用bigDecimal， false可自动转化以下类型（Long, Integer, Short, etc.） --&gt;
-            &lt;property name=&quot;forceBigDecimals&quot; value=&quot;false&quot;/&gt;
-        &lt;/javaTypeResolver&gt;
-
-        &lt;!--生成Model类存放位置--&gt;
-        &lt;javaModelGenerator targetPackage=&quot;com.acc.ac.core.model&quot; targetProject=&quot;src/main/java&quot;&gt;
-            &lt;property name=&quot;enableSubPackages&quot; value=&quot;true&quot;/&gt;
-            &lt;property name=&quot;trimStrings&quot; value=&quot;true&quot;/&gt;
-        &lt;/javaModelGenerator&gt;
-
-        &lt;!-- 生成mapxml文件 --&gt;
-        &lt;sqlMapGenerator targetPackage=&quot;mapper&quot;
-                         targetProject=&quot;src/main/resources/META-INF&quot; &gt;
-            &lt;property name=&quot;enableSubPackages&quot; value=&quot;true&quot; /&gt;
-        &lt;/sqlMapGenerator&gt;
-
-        &lt;!-- 生成mapxml对应client，也就是接口dao --&gt;
-        &lt;javaClientGenerator targetPackage=&quot;com.acc.ac.core.dao&quot; targetProject=&quot;src/main/java&quot; type=&quot;XMLMAPPER&quot; &gt;
-            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
-        &lt;/javaClientGenerator&gt;
-
-
-        &lt;table tableName=&quot;ac_cfg_sys&quot; enableCountByExample=&quot;true&quot; enableUpdateByExample=&quot;true&quot;
-               enableDeleteByExample=&quot;true&quot; enableSelectByExample=&quot;true&quot; selectByExampleQueryId=&quot;true&quot;&gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;Mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;
-
-    &lt;/context&gt;
-&lt;/generatorConfiguration&gt;
-</code></pre>
-<h2><a id="4%E3%80%81%E5%B0%86-ibatis%E7%9A%84-sqlmap%E6%96%87%E4%BB%B6%E8%BD%AC%E6%8D%A2%E4%B8%BA-mapper%E6%96%87%E4%BB%B6%EF%BC%8C%E4%B8%8E%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E7%9A%84%E4%BB%A3%E7%A0%81%E5%90%88%E5%B9%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4、将 ibatis 的 SqlMap 文件 转换为 mapper 文件，与自动生成的代码合并</h2>
-<p>插件 <a href="https://github.com/mybatis/ibatis2mybatis">https://github.com/mybatis/ibatis2mybatis</a></p>
-<p>将 build.xml 用 idea 打开，选择 Ant build。</p>
-<ul>
-<li>
-<p>destination文件夹：第一个区域为目标文件夹，即最后得到的Mybatis mapper文件都会在该目录下；</p>
-</li>
-<li>
-<p>source文件夹：第二个区域为源文件夹，也就是将我们需要转换的Ibatis mapper文件放在该目录下即可；</p>
-</li>
-<li>
-<p>Ant Build：第三个区域为Ant Build区（如果IntelliJ上没有出现这个，可以通过右上角箭头所指?按钮搜索Ant Build即可出现），我们需要将左侧根目录下build.xml文件拖放到Ant Build区域才会出现图中所示的migrate to mybatis3以及绿色的运行按钮。</p>
-</li>
-</ul>
-<h2><a id="5%E3%80%81%E4%BF%AE%E6%94%B9-service%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%88%B0%E7%9A%84-dao%E4%B8%BA%E6%96%B0%E7%94%9F%E6%88%90%E7%9A%84-mybatis%E5%AF%B9%E5%BA%94%E7%9A%84-dao" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>5、修改 service 中使用到的 dao 为新生成的 mybatis 对应的 dao</h2>
-<p>体力活</p>
-<hr />
-<p><a href="https://blog.csdn.net/zcyzsy/article/details/88912019">https://blog.csdn.net/zcyzsy/article/details/88912019</a></p>
 
                         
                       </div>
@@ -322,10 +278,10 @@ mapperLocations: mapper.xml 文件存放位置。</p>
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/04/02 14:19 下午</span>
+                    <span class="date">2021/04/06 14:58 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          					    <span class="posted-in"><a href='RocketMQ.html'>RocketMQ</a></span>
           				   
                     
 
@@ -375,7 +331,7 @@ mapperLocations: mapper.xml 文件存放位置。</p>
 
 
 
-<a target="_blank" class="github" target="_blank" href="https://github.com/hitolz/hitolz.github.io" title="GitHub">GitHub</a>
+<a target="_blank" class="github" target="_blank" href="https://github.com/hitolz" title="GitHub">GitHub</a>
 
   <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
                 
@@ -435,6 +391,12 @@ mapperLocations: mapper.xml 文件存放位置。</p>
 	      
 		      
 			      <li class="post">
+			        <a href="17002146115226.html">rust web 开发-2. 数据库/orm</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
 			      </li>
 		     
@@ -454,12 +416,6 @@ mapperLocations: mapper.xml 文件存放位置。</p>
 		      
 			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16748079623338.html">rust 快速入门指南</a>
 			      </li>
 		     
 		  

@@ -156,7 +156,27 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+      <div class="mweb_toc"><ul>
+<li><a href="#actix-web">actix-web</a>
+<ul>
+<li><a href="#httpserver">HttpServer</a></li>
+<li><a href="#scope">scope</a></li>
+<li><a href="#shared-mutable-state">Shared Mutable State</a></li>
+<li><a href="#%E8%BF%94%E5%9B%9Ejson">返回 json</a></li>
+<li><a href="#%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0">接收请求参数</a>
+<ul>
+<li><a href="#path">Path</a></li>
+<li><a href="#get%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6%E5%8F%82%E6%95%B0">get 请求，接收参数</a></li>
+<li><a href="#post%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6-json">post 请求，接收 json</a></li>
+</ul>
+</li>
+<li><a href="#middleware">middleware</a></li>
+</ul>
+</li>
+<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
+</ul>
+</div>
+<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
 <li>web 框架</li>
 <li>数据库/orm</li>
@@ -507,7 +527,7 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
         .await
 }
 </code></pre>
-<p>这里是写了两个 middleware，一个打印接口耗时，一个鉴权，代码篇幅较多，放在了 <a href="https://github.com/hitolz/rust-web">github</a>。</p>
+<p>这里是写了两个 middleware，一个打印接口耗时，一个鉴权，代码篇幅较多，放在了 <a href="https://github.com/hitolz/rust-web/tree/actix_web">github</a>。</p>
 <p>浏览器访问 hello1，由于没有 token，所以鉴权不通过，而通过 postman 访问 hello2，header 上加上 token，就可以请求通过。<br />
 <img src="http://hitol.blog.cdn.updev.cn/mweb/17003662230269.jpg" alt="" /></p>
 <p><img src="http://hitol.blog.cdn.updev.cn/mweb/17003658655736.jpg" alt="" /></p>
@@ -522,6 +542,9 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
       <div class="row">
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="17002146115226.html" 
+          title="Previous Post: rust web 开发-2. 数据库/orm">&laquo; rust web 开发-2. 数据库/orm</a>
       
         </p>
         </div>
@@ -566,7 +589,7 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 
 
 
-<a target="_blank" class="github" target="_blank" href="https://github.com/hitolz/hitolz.github.io" title="GitHub">GitHub</a>
+<a target="_blank" class="github" target="_blank" href="https://github.com/hitolz" title="GitHub">GitHub</a>
 
   <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
                 
@@ -626,6 +649,12 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 	      
 		      
 			      <li class="post">
+			        <a href="17002146115226.html">rust web 开发-2. 数据库/orm</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
 			      </li>
 		     
@@ -645,12 +674,6 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 		      
 			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16748079623338.html">rust 快速入门指南</a>
 			      </li>
 		     
 		  

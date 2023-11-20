@@ -129,205 +129,370 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16672061401168.html">
+                <a class="clearlink" href="16689222220789.html">
                 
-                  <h1>rust 所有权</h1>
+                  <h1>Rust web 开发-1.web 框架</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<blockquote>
-<p>所有权可以说是Rust中最为独特的一个功能了。正是所有权概念和相关工具的引入，Rust才能够在没有垃圾回收机制的前提下保障内存安全。因此，正确地了解所有权概念及其在Rust中的实现方式，对于所有Rust开发者来讲都是十分重要的。在本章中，我们会详细地讨论所有权及其相关功能：借用、切片，以及Rust在内存中布局数据的方式。</p>
-</blockquote>
-<p>所有权就是指一个东西归属谁。Rust 中一个变量对应一个值，变量就称为这个值的所有者。</p>
-<pre class="line-numbers"><code class="language-rust">lex x = 5;
-</code></pre>
-<p>这句话的意思就是，5这个数字所在的内存块的所有者是 x。</p>
-<h2><a id="%E6%89%80%E6%9C%89%E6%9D%83%E8%A7%84%E5%88%99" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>所有权规则</h2>
+                        	<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
-<li>Rust 中的每一个值都有一个对应的变量作为它的所有者</li>
-<li>在同一时间内，值有且仅有一个所有者</li>
-<li>当所有者离开自己的作用域时，它持有的值就会被释放掉</li>
+<li>web 框架</li>
+<li>数据库/orm</li>
+<li>config</li>
+<li>log</li>
+<li>线程池</li>
+<li>kafka</li>
+<li>redis</li>
+<li>打包成 docker 镜像</li>
+<li>gracefully shutdown</li>
 </ol>
-<h2><a id="%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BA%92%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%9A%E7%A7%BB%E5%8A%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>变量和数据交互的方式：移动</h2>
-<p>把一个变量赋值给另一个变量</p>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let x = 5;
-    let y = x;
-    println!(&quot;x = {}, y = {}&quot;, x, y);
-
-
-    let s1 = String::from(&quot;hello&quot;);
-    let s2 = s1;
-    println!(&quot;s1 = {}, s2 = {}&quot;, s1, s2);
-}
+<hr />
+<p>本文介绍第一部分，web 框架。<br />
+目前比较出名的 web 框架有</p>
+<ol>
+<li><a href="https://github.com/tokio-rs/axum">axum</a></li>
+<li><a href="https://github.com/SergioBenitez/Rocket">Rocket</a></li>
+<li><a href="https://github.com/actix/actix-web">actix-web</a></li>
+<li><a href="https://github.com/hyperium/hyper">Hyper</a></li>
+<li><a href="https://github.com/http-rs/tide">Tide</a></li>
+<li><a href="https://github.com/seanmonstar/warp">Warp</a></li>
+</ol>
+<p>接下来主要介绍一下 actix-web，其他框架待后面有时间再介绍。</p>
+<h2><a id="actix-web" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>actix-web</h2>
+<p>actix-web 服务端的逻辑都是建立在 App 实例上的，通过 App 实例为所有资源和中间件注册路由，存储同一范围内所有线程共享的状态。<br />
+接下来从零开始实现一个 actix-web 示例。</p>
+<ol>
+<li>创建rust 工程</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">cargo new hello-world
 </code></pre>
-<p>这段代码的作用就是 把一个变量赋值给另一个变量。</p>
-<p>整数是已知固定大小的简单值，x y 两个值 5 会同时被推入到当前的栈中。</p>
-<p>然而，将 s1 赋值给 s2 时，便复制了一次 String 的数据，这意味着我们复制了它存储在栈上的指针、长度及容量字段，没有复制指针指向的堆数据。此时的内存布局应该是这样：</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-10-31-16.48.47.png" alt="2022-10-31-16.48.47" /></p>
-<p>为了确保内存安全，避免复制分配的内存，Rust 在这种场景下回简单的将 s1 废弃，不再视其为一个有效的变量。<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/2022-10-31-17.03.02.png" alt="2022-10-31-17.03.02" /></p>
-<p>也就解释了这段代码执行为什么报错</p>
-<pre class="line-numbers"><code class="language-plain_text">error[E0382]: borrow of moved value: `s1`
-  --&gt; src/main.rs:11:34
-   |
-8  |     let s1 = String::from(&quot;hello&quot;);
-   |         -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait
-9  |     let s2 = s1;
-   |              -- value moved here
-10 |
-11 |     println!(&quot;s1 = {}, s2 = {}&quot;, s1, s2);
-   |                                  ^^ value borrowed here after move
-   |
-   = note: this error originates in the macro `$crate::format_args_nl` which comes from the expansion of the macro `println` (in Nightly builds, run with -Z macro-backtrace for more info)
+<ol start="2">
+<li>Cargo.toml 添加依赖</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">[dependencies]
+actix-web=&quot;4&quot;
 </code></pre>
-<p>总的来说 移动(move) 这种变量和数据交互方式，仅仅是将栈上的数据移动了，堆数据还是同一个，并且将移动前的变量 s1 设置为失效，意味着 s1 和堆数据之间的绑定关系已经不存在了(相当于一个野指针?)。所以移动后在访问 s1 是不被允许的。</p>
-<h2><a id="%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BA%92%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%9A%E5%85%8B%E9%9A%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>变量和数据交互的方式：克隆</h2>
-<pre class="line-numbers"><code class="language-rust">let mut s1 = String::from(&quot;hello&quot;);
-// let s2 = s1;
-let s2 = s1.clone();
+<ol start="3">
+<li>使用 actix-web<br />
+在 src/main.rs 中编写如下代码</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
-s1.push_str(&quot;, world&quot;);
-println!(&quot;s1 = {}, s2 = {}&quot;, s1, s2);
-</code></pre>
-<p>克隆 = 深度 copy 堆上的数据。s1、s2 是两个独立的变量，指向的堆数据也不是同一个，所以在 clone 后对 s1 进行修改，s2 还是不变的。</p>
-<p>trait ：Copy 、Drop</p>
-<p>当一种类型拥有了 Copy 这种 trait，那么它的变量就可以在赋值给其他变量之后保持可用性。</p>
-<p>如果一种类型实现了 Drop，那么 Rust 就不允许它再实现 Copy。</p>
-<h2><a id="%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%8E%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>所有权与函数</h2>
-<p>将值传递给函数在语义上类似于对变量进行赋值，会触发移动或者复制，就像赋值语句一样。</p>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let x = 5;
-    show(x);
-    println!(&quot;x = {}&quot;, x);
-
-    let s1 = String::from(&quot;hello&quot;);
-    show_str(s1);
-    println!(&quot;函数外部 s1 = {}&quot;, s1)
+#[get(&quot;/&quot;)]
+async fn hello() -&gt; impl Responder {
+    HttpResponse::Ok().body(&quot;Hello world!&quot;)
 }
 
-fn show(x: i32) {
-    println!(&quot;函数内部 x = {}&quot;, x)
+#[post(&quot;/echo&quot;)]
+async fn echo(req_body: String) -&gt; impl Responder {
+    HttpResponse::Ok().body(req_body)
 }
 
-fn show_str(s: String) {
-    println!(&quot;函数内部 s1 = {}&quot;, s)
+async fn manual_hello() -&gt; impl Responder {
+    HttpResponse::Ok().body(&quot;Hey there!&quot;)
+}
+
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new( || {
+        App::new()
+            .service(hello)
+            .service(echo)
+            .route(&quot;/hey&quot;, web::get().to(manual_hello))
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>HttpServer 绑定到 ip、端口，同时，提供了两个 get 方法(/,/hey)，一个 post 方法(/echo)，通过浏览器访问 localhost:8099 即可访问。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-13.36.34.png" alt="2022-11-20-13.36.34" /></p>
+<h3><a id="httpserver" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>HttpServer</h3>
+<p>HttpServer 接受的参数类型是 application factory，实现了 Send + Sync。</p>
+<p>bind，为 server 绑定 ip 和端口。<br />
+bind 成功后，<code>HttpServer::run()</code> 返回一个 server 实例。<br />
+server 必须使用 await 或者在多线程中才能启动 http 服务器。<br />
+server 默认启动的线程数与 CPU 个数相等，可以通过 <code>HttpServer::workers()</code> 改变线程数。</p>
+<h3><a id="scope" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>scope</h3>
+<p>scope 相当于请求路径的前缀</p>
+<pre class="line-numbers"><code class="language-rust">#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new().service(
+            web::scope(&quot;/app&quot;)
+                .route(&quot;/hey&quot;, web::get().to(manual_hello)),
+        )
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>这样的话在请求 localhost:8099/hey 就请求不到了，这样要请求的路径是 localhost:8099/app/hey</p>
+<h3><a id="shared-mutable-state" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Shared Mutable State</h3>
+<p>相当于全局变量、多个线程之间共享的。</p>
+<p><code>web::Data&lt;T&gt;</code>,T 是 Arc 类型。<br />
+Arc 和 Mutex 结合使用，实现在多线程间共享数据。</p>
+<pre class="line-numbers"><code class="language-rust">use std::sync::Mutex;
+
+use actix_web::{App, HttpServer, web};
+
+struct AppStateWithCounter {
+    counter: Mutex&lt;i32&gt;, // &lt;- Mutex is necessary to mutate safely across threads
+}
+
+async fn index(data: web::Data&lt;AppStateWithCounter&gt;) -&gt; String {
+    let mut counter = data.counter.lock().unwrap(); // &lt;- get counter's MutexGuard
+    *counter += 1; // &lt;- access counter inside MutexGuard
+
+    format!(&quot;Request number: {counter}&quot;) // &lt;- response with count
+}
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    // Note: web::Data created _outside_ HttpServer::new closure
+    let counter = web::Data::new(AppStateWithCounter {
+        counter: Mutex::new(0),
+    });
+
+    HttpServer::new(move || {
+        // move counter into the closure
+        App::new()
+            .app_data(counter.clone()) // &lt;- register the created data
+            .route(&quot;/&quot;, web::get().to(index))
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>浏览器请求 localhost:8099,每次刷新 counter+1；</p>
+<h3><a id="%E8%BF%94%E5%9B%9Ejson" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>返回 json</h3>
+<p>一般 web 应用服务端接口返回的数据都是 json 格式，<br />
+actix-web 中如何实现返回 json格式的数据:</p>
+<p>cargo.toml添加依赖</p>
+<pre class="line-numbers"><code class="language-rust">serde = { version = &quot;1.0&quot;, features = [&quot;derive&quot;] }
+serde_json = { version = &quot;1.0.2&quot;, optional = true }
+</code></pre>
+<p>main.rs</p>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web};
+use actix_web::web::Json;
+use serde::{ser, Serialize};
+
+#[derive(Serialize)]
+pub struct JsonSuccess&lt;T: ser::Serialize&gt; {
+    pub code: u32,
+    pub data: Option&lt;T&gt;,
+    pub error: Option&lt;String&gt;,
+}
+
+#[derive(Serialize)]
+pub struct JsonError {
+    pub code: u32,
+    pub data: Option&lt;String&gt;,
+    pub error: Option&lt;String&gt;,
+}
+
+pub fn success&lt;T: ser::Serialize&gt;(r: Option&lt;T&gt;) -&gt; HttpResponse {
+    HttpResponse::Ok().json(JsonSuccess {
+        code: 0,
+        data: r,
+        error: None,
+    })
+}
+
+pub fn error(err: Option&lt;String&gt;) -&gt; HttpResponse {
+    HttpResponse::Ok().json(JsonError {
+        code: 1,
+        data: None,
+        error: err,
+    })
+}
+
+
+#[get(&quot;/&quot;)]
+async fn hello() -&gt; HttpResponse {
+    success(Option::from(&quot;Hello&quot;))
+}
+
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .service(hello)
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
 }
 
 </code></pre>
-<p>string 类型变量当做参数传递给函数后，变量的所有权会移动到函数的作用域内，main 函数中就不在持有当前变量的所有权了，所以当调用 show_str 之后在访问 s1就会报错。</p>
-<p>从另一个方面来理解，函数执行结束后会销毁变量对应的内存空间，然后在 main 函数中访问一个已经移除调的内存空间报错也是合情合理的。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-14.58.01.png" alt="2022-11-20-14.58.01" /></p>
+<h3><a id="%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>接收请求参数</h3>
+<h4><a id="path" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Path</h4>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web,Result};
+use actix_web::web::Json;
+use serde::{ser, Serialize};
+
+/// extract path info from &quot;/users/{user_id}/{friend}&quot; url
+/// {user_id} - deserializes to a u32
+/// {friend} - deserializes to a String
+#[get(&quot;/users/{user_id}/{friend}&quot;)] // &lt;- define path parameters
+async fn index(path: web::Path&lt;(u32, String)&gt;) -&gt; HttpResponse {
+    let (user_id, friend) = path.into_inner();
+    success(Some(format!(&quot;Welcome {}, user_id {}!&quot;, friend, user_id)))
+}
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| App::new().service(index))
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002319375457.jpg" alt="" /></p>
+<p>web::Path&lt;(u32,String)&gt; 接收这个 get(&quot;/users/{user_id}/{friend}&quot;) 请求的两个参数</p>
+<p>将这两个参数定义为 struct 也是可以的</p>
+<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
+struct Info {
+    user_id: u32,
+    friend: String,
+}
+
+/// extract path info using serde
+#[get(&quot;/users/{user_id}/{friend}&quot;)] // &lt;- define path parameters
+async fn index(path: web::Path&lt;(u32, String)&gt;) -&gt; HttpResponse {
+    let (user_id, friend) = path.into_inner();
+    success(Some(format!(&quot;Welcome {}, user_id {}!&quot;, friend, user_id)))
+}
+</code></pre>
+<h4><a id="get%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>get 请求，接收参数</h4>
+<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
+struct Info {
+    username: String,
+    age:i32
+}
+
+#[get(&quot;/&quot;)]
+async fn index(info: web::Query&lt;Info&gt;) -&gt; HttpResponse {
+    success(Some(format!(&quot;Welcome {}!,age = {}&quot;, info.username,info.age)))
+}
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002323120371.jpg" alt="" /></p>
+<h4><a id="post%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6-json" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>post 请求，接收 json</h4>
+<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
+struct Info {
+    username: String,
+    age:i32
+}
+
+#[post(&quot;/&quot;)]
+async fn index(info: web::Json&lt;Info&gt;) -&gt; HttpResponse {
+    success(Some(format!(&quot;Welcome {}!,age = {}&quot;, info.username,info.age)))
+}
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002325332089.jpg" alt="" /></p>
+<h3><a id="middleware" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>middleware</h3>
+<p>middleware 系统可以让我们针对请求或者响应添加自定义操作。</p>
+<ol>
+<li>Pre-process the Request：可以在请求时做前置处理</li>
+<li>Post-process a Response：在响应时做后置处理</li>
+<li>Modify application state：修改 state</li>
+<li>Access external services (redis, logging, sessions)：访问外部服务</li>
+</ol>
 <blockquote>
-<p>赋值并不是唯一涉及移动的操作。值在作为参数传递或从函数返回时也会被移动。</p>
+<p>如果有多个中间件，后添加的会先执行。</p>
 </blockquote>
-<pre class="line-numbers"><code class="language-plain_text">error[E0382]: borrow of moved value: `s1`
- --&gt; src/main.rs:8:30
-  |
-6 |     let s1 = String::from(&quot;hello&quot;);
-  |         -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait
-7 |     show_str(s1);
-  |              -- value moved here
-8 |     println!(&quot;函数内部 s1 = {}&quot;, s1)
-  |                                  ^^ value borrowed here after move
-  |
-  = note: this error originates in the macro `$crate::format_args_nl` which comes from the expansion of the macro `println` (in Nightly builds, run with -Z macro-backtrace for more info)
+<p>类似 Java 中的 AOP，只不过这个中间件只是针对 Controller 的。</p>
+<p>自定义 middleware 要实现 Service和 Transform 两个 trait。<br />
+先用 wrap_fn 做一个简单的 middleware：</p>
+<p>cargo.toml添加依赖</p>
+<pre class="line-numbers"><code class="language-plain_text">futures-util = &quot;0.3&quot;
 </code></pre>
-<h2><a id="%E5%BC%95%E7%94%A8%E4%B8%8E%E5%80%9F%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>引用与借用</h2>
-<p>如果我们想在函数结束后还想要使用变量，可以将变量的引用传递到参数中。</p>
-<p>引用允许在不获取所有权的情况下使用值。</p>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let x = 5;
-    show(x);
-    println!(&quot;x = {}&quot;, x);
-
-    let s1 = String::from(&quot;hello&quot;);
-    show_str(&amp;s1);
-    println!(&quot;函数外部 s1 = {}&quot;, s1)
+<p>main.rs</p>
+<pre class="line-numbers"><code class="language-rust">#[get(&quot;/{name}&quot;)]
+async fn hello(path:web::Path&lt;String&gt;) -&gt; HttpResponse {
+    let name = path.to_owned();
+    success(Option::from(format!(&quot;Hello {}&quot;,name)))
 }
 
-fn show(x: i32) {
-    println!(&quot;函数内部 x = {}&quot;, x)
-}
-
-fn show_str(s: &amp;String) {
-    println!(&quot;函数内部 s1 = {}&quot;, s)
-}
-
-</code></pre>
-<p>修改点</p>
-<ol>
-<li>show_str(&amp;s1);传递参数，传的是 s1 的引用</li>
-<li>fn show_str(s: &amp;String) 修改为 String 的引用类型</li>
-</ol>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-10-31-17.38.00.png" alt="2022-10-31-17.38.00" /></p>
-<p>&amp;s1，指在不转移所有权的前提下，创建一个指向 s1 值的引用，引用不持有 s1 的所有权，所以在函数结束时，原 s1 仍然可用。<br />
-函数签名中的 &amp; 用来表名参数 s 的类型是一个引用。s 并不持有指向值的所有权，在函数结束时不会销毁指向值。</p>
-<p><strong>通过引用传递参数给函数的方法也被称为借用。</strong></p>
-<h2><a id="%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>可变引用</h2>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let mut s1 = String::from(&quot;hello&quot;);
-    show_str(&amp;mut s1);
-    println!(&quot;函数外部 s1 = {}&quot;, s1)
-}
-
-fn show_str(s: &amp;mut String) {
-    println!(&quot;函数内部 s1 = {}&quot;, s);
-    s.push_str(&quot;, world&quot;);
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .wrap_fn(|req, srv| {
+                // Pre-process the Request
+                println!(&quot;Hi from start. You requested: {}&quot;, req.path());
+                srv.call(req).map(|res| {
+                    // Post-process a Response
+                    println!(&quot;Hi from response&quot;);
+                    res
+                })
+            })
+            .service(hello)
+    })
+    .bind((&quot;127.0.0.1&quot;, 8099))?
+    .run()
+    .await
 }
 </code></pre>
-<p>mut 表示可变的，变量使用 mut，引用使用 &amp;mut。<br />
-通过 mut 关键字将变量或者引用声明为可变的。<br />
-可以在函数内部修改其引用变量的值。<br />
-一个变量可以有多个不可变引用，但是只能有一个<strong>可变引用</strong>。<br />
-一个变量不能同时有不可变引用和可变引用。</p>
-<h2><a id="%E6%82%AC%E5%9E%82%E5%BC%95%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>悬垂引用</h2>
-<p>这类指针指向曾经存在某处内存地址，但该内存已经被释放掉甚至被重新分配另作他用了。</p>
-<p>这不就是野指针？</p>
-<p>rust 语言中 ，编译器会 确保引用永远不会进入这种悬垂状态。</p>
-<p>假如当前持有某一个数据的引用，编译器保证这个数据不会在引用被销毁前离开自己的作用域。</p>
-<p>创造一个悬垂引用的例子：</p>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let x = dangle();
-    println!(&quot;x = {}&quot;, x)
+<p>请求 <a href="http://localhost:8099/tom">http://localhost:8099/tom</a><br />
+控制台会打印出<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/17002343077452.jpg" alt="" /></p>
+<p>接下来，做一个比较常见的中间件--鉴权中间件。</p>
+<pre class="line-numbers"><code class="language-rust">impl&lt;S, B&gt; Service&lt;ServiceRequest&gt; for AuthMiddleWare&lt;S&gt;
+where
+    S: Service&lt;ServiceRequest, Response = ServiceResponse&lt;B&gt;, Error = Error&gt;,
+    S::Future: 'static,
+    B: 'static,
+{
+    type Response = ServiceResponse&lt;B&gt;;
+    type Error = Error;
+    type Future = LocalBoxFuture&lt;'static, Result&lt;Self::Response, Self::Error&gt;&gt;;
+
+    forward_ready!(service);
+
+    fn call(&amp;self, req: ServiceRequest) -&gt; Self::Future {
+        let value = HeaderValue::from_str(&quot;&quot;).unwrap();
+        let token: &amp;HeaderValue = req.headers().get(&quot;token&quot;).unwrap_or(&amp;value);
+        if token.len() &gt; 0 || req.path().to_string() == &quot;/login&quot; {
+            let fut: &lt;S as Service&lt;ServiceRequest&gt;&gt;::Future = self.service.call(req);
+            Box::pin(async move {
+                let res = fut.await;
+                res
+            })
+        } else {
+            Box::pin(async move { Err(ErrorUnauthorized(&quot;PLEASE LOGIN&quot;)) })
+        }
+    }
 }
 
-fn dangle() -&gt; &amp;String {
-    let s = String::from(&quot;hello&quot;);
-    return &amp;s;
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::timed::Timed)
+            .wrap(middleware::auth::Auth)
+            .service(hello1)
+            .service(hello2)
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
 }
 </code></pre>
-<p>dangle 函数，返回 String 的引用，函数内部，声明了一个字符串 s，返回给调用者 s 的引用，看着貌似没什么问题。</p>
-<p>由于变量 s 创建在函数内，所以它会在函数执行完毕时随之释放，但是我们的代码依旧返回指向 s 的引用，这个引用指向的是一个无效的内存地址。</p>
-<pre class="line-numbers"><code class="language-plain_text">error[E0106]: missing lifetime specifier
- --&gt; src/main.rs:6:16
-  |
-6 | fn dangle() -&gt; &amp;String {
-  |                ^ expected named lifetime parameter
-  |
-  = help: this function's return type contains a borrowed value, but there is no value for it to be borrowed from
-help: consider using the `'static` lifetime
-  |
-6 | fn dangle() -&gt; &amp;'static String {
-  |                 +++++++
-
-</code></pre>
-<h2><a id="%E5%88%87%E7%89%87" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>切片</h2>
-<p>切片也是不持有所有权的数据类型。<br />
-切片：集合中某一段连续的元素序列，而不是整个集合。</p>
-<p>字符串字面量就是切片。</p>
-<h2><a id="%E6%80%BB%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>总结</h2>
-<p>所有权是 Rust 区别于其他编程语言的一个重要部分。<br />
-变量称为其对应的内存块的所有者，变量拥有所有权。</p>
-<p>所有权发生移动的几个方式</p>
-<ol>
-<li>变量赋值给其他变量</li>
-<li>变量当做参数传递到函数</li>
-<li>函数返回值赋值给变量</li>
-</ol>
-<p>作用域可以简单理解为{}，大括号内部称为一个作用域。<br />
-当变量离开作用域时，变量会自动释放其所有权。</p>
-<p>所有权只会发生在堆上分配的数据，栈上分配的数据没有所有权的概念。</p>
+<p>这里是写了两个 middleware，一个打印接口耗时，一个鉴权，代码篇幅较多，放在了 <a href="https://github.com/hitolz/rust-web">github</a>。</p>
+<p>浏览器访问 hello1，由于没有 token，所以鉴权不通过，而通过 postman 访问 hello2，header 上加上 token，就可以请求通过。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/17003662230269.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17003658655736.jpg" alt="" /></p>
+<h2><a id="%E5%B0%8F%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>小结</h2>
+<p>第一部分关于 web 框架就介绍到这里了，主要介绍了 actix-web 的使用：如何写一个接口、如何接收参数、如何返回 json 、如何通过中间件鉴权。</p>
 
                         
                       </div>
@@ -336,7 +501,7 @@ help: consider using the `'static` lifetime
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2022/10/31 16:49 下午</span>
+                    <span class="date">2022/11/10 13:30 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='rust.html'>rust</a></span>
@@ -389,7 +554,7 @@ help: consider using the `'static` lifetime
 
 
 
-<a target="_blank" class="github" target="_blank" href="https://github.com/hitolz/hitolz.github.io" title="GitHub">GitHub</a>
+<a target="_blank" class="github" target="_blank" href="https://github.com/hitolz" title="GitHub">GitHub</a>
 
   <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
                 
@@ -449,6 +614,12 @@ help: consider using the `'static` lifetime
 	      
 		      
 			      <li class="post">
+			        <a href="17002146115226.html">rust web 开发-2. 数据库/orm</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
 			      </li>
 		     
@@ -468,12 +639,6 @@ help: consider using the `'static` lifetime
 		      
 			      <li class="post">
 			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16748079623338.html">rust 快速入门指南</a>
 			      </li>
 		     
 		  
