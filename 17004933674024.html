@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  MySQL - 非著名Java程序员
+  Rust web 开发-3.config - 非著名Java程序员
   
   </title>
   
@@ -119,145 +119,213 @@
         
        
 
- <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+ <script>
+  let summary_gpt_article_content_selector = '.article-content';
+  let summary_gpt_key = '12356';
+  let summary_gpt_domain = 'https://ai-summary.hitol.top';
+</script>
+<link rel="stylesheet" href="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.css" />
+<script src="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.v0.0.6.js"></script>
+<script type="text/javascript">
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="16291932023474.html">
-                
-                  <h1>MVCC</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<div class="mweb_toc"><ul>
-<li><a href="#%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86">重点知识</a></li>
-<li><a href="#%E4%BE%8B%E5%AD%90">例子</a>
-<ul>
-<li><a href="#%E5%B0%9D%E8%AF%95%E5%9B%9E%E7%AD%94%E4%B8%8B">尝试回答下</a></li>
-<li><a href="#%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90">详细分析</a></li>
-<li><a href="#%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1a%E7%9A%84%E7%BB%93%E6%9E%9C">如何得到事务 A 的结果</a></li>
-<li><a href="#%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1b%E7%9A%84%E7%BB%93%E6%9E%9C">如何得到事务 B 的结果</a></li>
-</ul>
-</li>
-<li><a href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E7%9A%84%E8%83%BD%E5%8A%9B%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84">事务的可重复读的能力是怎么实现的</a></li>
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>Rust web 开发-3.config</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2023/11/20 23:16 下午</span>
+
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='rust.html'>rust</a></span>
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <div class="mweb_toc"><ul>
+<li><a href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">配置文件</a></li>
+<li><a href="#%E5%AE%9A%E4%B9%89%E5%AE%9E%E4%BD%93">定义实体</a></li>
+<li><a href="#%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9">读取文件内容</a></li>
+<li><a href="#lazy-static">lazy_static</a></li>
 </ul>
 </div>
-<h2><a id="%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重点知识</h2>
-<p>MVCC 指行多版本控制。提高数据库并发，也是事务隔离的实现机制。</p>
-<p>使用 MVCC 可以做到在对同一行数据进行读写操作的时候不用加锁。这个读指的是 快照读。</p>
-<p>MVCC 是一个概念，这个概念的实现就是 快照读。<br />
-快照读操作只读取该事务开始前的数据库快照。</p>
-<p>按照可重复读的定义，一个事务启动的时候，能够看到所有已经提交的事务结果。但是之后，这个事务执行期间，其他事务的更新对它不可见。</p>
-<p>事务启动时有一个 事务 id，叫做 transaction id。是在事务开始时候向 InnoDB 申请的，严格按照申请顺序递增的。</p>
-<p>每次事务更新数据的时候都会把 transaction id 赋值给这个数据版本的事务 id，记为 row trx_id。<br />
-一行数据可能有多个版本，每个版本都有一个 row trx_id。</p>
-<p>在实现上， InnoDB为每个事务构造了一个数组，用来保存这个事务启动瞬间，当前正在“活跃”的所有事务ID。“活跃”指的就是，启动了但还没提交。</p>
-<h2><a id="%E4%BE%8B%E5%AD%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>例子</h2>
-<pre class="line-numbers"><code class="language-sql">mysql&gt; CREATE TABLE `t` (
-  `id` int(11) NOT NULL,
-  `k` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
-
-insert into t(id, k) values(1,1);
-</code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/2021-08-18-16291936408457.jpg" alt="事务A、B、C的执行流程" /></p>
-<p>问：MySQL InnoDB 默认隔离级别下，事务 A、B、C 里，K 的值分别是多少？</p>
-<h3><a id="%E5%B0%9D%E8%AF%95%E5%9B%9E%E7%AD%94%E4%B8%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>尝试回答下</h3>
-<p>事务 C 没有指定手动提交事务，所以是自动提交的，并且 C 事务先执行的，所以 K 是 2。<br />
-事务 B 在执行，由于 B 执行了 update，会以当前读的方式获取最新数据，所以 C 提交后的事务，B 是可以看到的，所以，K 是 3。</p>
-<p>事务 A 最后执行，由于是 RR 级别，可重复读，并且是当前读，所以与事务开始的时候保持一致，所以 K 是 1 。</p>
-<h3><a id="%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>详细分析</h3>
-<p>这里，我们不妨做如下假设：</p>
+<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
-<li>事务A开始前，系统里面只有一个活跃事务 ID 是99；</li>
-<li>事务 A、B、C的版本号分别是100、101、102，且当前系统里只有这四个事务；</li>
+<li>web 框架</li>
+<li>数据库/orm</li>
+<li>config</li>
+<li>log</li>
+<li>线程池</li>
+<li>kafka</li>
+<li>redis</li>
+<li>打包成 docker 镜像</li>
+<li>gracefully shutdown</li>
 </ol>
-<p>这样，事务A的视图数组就是[99,100], 事务B的视图数组是[99,100,101], 事务C的视图数组是[99,100,101,102]。</p>
-<h3><a id="%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1a%E7%9A%84%E7%BB%93%E6%9E%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何得到事务 A 的结果</h3>
-<p>简化下，只画出跟事务A查询逻辑有关的操作：<br />
-<img src="http://hitol.blog.cdn.updev.cn/2021-08-18-16291942450909.jpg" alt="事务A查询数据逻辑图" /></p>
-<p>一个数据版本，对于一个事务视图来说，除了自己的更新总是可见以外，有三种情况：</p>
-<ol>
-<li>版本未提交，不可见；</li>
-<li>版本已提交，但是是在视图创建后提交的，不可见；</li>
-<li>版本已提交，而且是在视图创建前提交的，可见。</li>
-</ol>
-<p>现在，我们用这个规则来判断图中的查询结果，事务A的查询语句的视图数组是在事务A启动的时候生成的，这时候：</p>
-<ol>
-<li>(1,3)还没提交，属于情况1，不可见；</li>
-<li>(1,2)虽然提交了，但是是在视图数组创建之后提交的，属于情况2，不可见；</li>
-<li>(1,1)是在视图数组创建之前提交的，可见。</li>
-</ol>
-<h3><a id="%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1b%E7%9A%84%E7%BB%93%E6%9E%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何得到事务 B 的结果</h3>
-<p>一条规则：更新数据都是先读后写的，而这个读，只能读当前的值，称为“当前读”<br />
-因此，在更新的时候，当前读拿到的数据是(1,2)，更新后生成了新版本的数据(1,3)，这个新版本的row trx_id是101。</p>
-<p>所以，在执行事务B查询语句的时候，一看自己的版本号是101，最新数据的版本号也是101，是自己的更新，可以直接使用，所以查询得到的k的值是3。</p>
-<h2><a id="%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E7%9A%84%E8%83%BD%E5%8A%9B%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>事务的可重复读的能力是怎么实现的</h2>
-<p>可重复读的核心就是一致性读（consistent read）；<br />
-而事务更新数据的时候，只能用当前读。<br />
-如果当前的记录的行锁被其他事务占用的话，就需要进入锁等待。</p>
-<p>而读提交的逻辑和可重复读的逻辑类似，它们最主要的区别是：</p>
-<ol>
-<li>在可重复读隔离级别下，只需要在事务开始的时候创建一致性视图，之后事务里的其他查询都共用这个一致性视图；</li>
-<li>在读提交隔离级别下，每一个语句执行前都会重新算出一个新的视图。</li>
-</ol>
-<p>这里需要说明一下，“start transaction with consistent snapshot; ”的意思是从这个语句开始，创建一个持续整个事务的一致性快照。所以，在读提交隔离级别下，这个用法就没意义了，等效于普通的start transaction。</p>
 <hr />
-<p>undo 链<br />
-read view 视图</p>
-<p>-- 《MySQL 实战 45 讲》，03、08讲。<br />
-<a href="https://juejin.cn/post/6871046354018238472#heading-3">https://juejin.cn/post/6871046354018238472#heading-3</a></p>
+<p>本文介绍第三部分，Rust 如何读取配置文件。<br />
+Rust 支持两种类型的配置文件，<code>.toml</code> 和 <code>.env</code>。</p>
+<p>本文主要介绍 toml 类型的文件。</p>
+<h2><a id="%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置文件</h2>
+<p>项目中新建一个 toml 类型的文件，例如：config.toml，放在某一个文件夹下，本文示例代码是在与 src 同级的目录 configs 下。</p>
+<pre class="line-numbers"><code class="language-toml">[app]
+host=&quot;127.0.0.1&quot;
+port=8099
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2021/08/17 17:40 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
-          				   
-                    
+[database]
+host=&quot;localhost&quot;
+port=3306
+user = &quot;root&quot;
+password = &quot;12345678&quot;
+name = &quot;rust_web&quot;
+</code></pre>
+<h2><a id="%E5%AE%9A%E4%B9%89%E5%AE%9E%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定义实体</h2>
+<pre class="line-numbers"><code class="language-rust">/// 主机,端口
+#[derive(Deserialize, Default, Debug, Clone)]
+pub struct App {
+    pub host: String,
+    pub port: u16,
+}
 
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+/// 数据库连接信息
+#[derive(Deserialize, Default, Debug, Clone)]
+pub struct Database {
+    pub host: String,
+    pub name: String,
+    pub user: String,
+    pub password: String,
+    pub port: usize,
+}
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
+#[derive(Deserialize, Default, Debug, Clone)]
+pub struct ServerConfig {
+    pub app: App,
+    pub database: Database,
+}
+
+// 为 ServerConfig 实体提供一些方法，可以比较方便的获取配置文件具体信息。
+impl ServerConfig {
+    // 使用引用比较方便，可以避免一些所有权转移问题
+    pub fn database_url(&amp;self) -&gt; String {
+        let db = &amp;self.database;
+        // &quot;mysql://root:12345678@localhost:3306/rust_web&quot;
+        format!(
+            &quot;mysql://{}:{}@{}:{}/{}&quot;,
+            db.user, db.password, db.host, db.port, db.name
+        )
+    }
+    pub fn get_app_host_port(&amp;self) -&gt; (&amp;str, u16) {
+        (&amp;self.app.host, self.app.port)
+    }
+}
+</code></pre>
+<h2><a id="%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>读取文件内容</h2>
+<pre class="line-numbers"><code class="language-rust">pub fn load_config() -&gt; ServerConfig {
+    let current_path = env!(&quot;CARGO_MANIFEST_DIR&quot;);
+    println!(&quot;current path: {}&quot;, current_path);
+    // 读取配置文件
+    let toml_file = format!(&quot;{}/configs/config.toml&quot;, current_path);
+
+    let content = fs::read_to_string(toml_file).unwrap();
+    let config: ServerConfig = toml::from_str(&amp;content).unwrap();
+    println!(&quot;config :{:?}&quot;, config);
+    config
+}
+
+// 测试代码
+#[cfg(test)]
+mod tests {
+    use super::load_config;
+
+    #[test]
+    fn test() {
+        load_config();
+    }
+}
+</code></pre>
+<p>load_config() 函数负责读取配置文件并解析为 ServerConfig 结构体。它使用了 fs::read_to_string() 函数来读取文件内容，并使用 toml::from_str() 函数将 TOML 格式的内容解析为结构体对象。</p>
+<p><code>env!(&quot;CARGO_MANIFEST_DIR&quot;)</code> 是 Rust 中的一个宏，用于获取当前 crate（即当前包）的根目录路径。在 Rust 中，每个 crate 都有一个与之关联的根目录，其中包含了 crate 的源代码、配置文件和其他相关文件。</p>
+<p><code>CARGO_MANIFEST_DIR</code> 是一个环境变量，由 Cargo 构建系统在构建过程中设置。它指示了当前 crate 的根目录路径。当使用 <code>env!(&quot;CARGO_MANIFEST_DIR&quot;)</code> 宏时，它会在编译时被展开为当前 crate 的根目录路径的字符串。</p>
+<p>在上述代码中，<code>env!(&quot;CARGO_MANIFEST_DIR&quot;)</code> 用于获取当前 crate 的根目录路径，并结合其他路径信息构建配置文件的完整路径。这样可以确保代码在不同环境下都能正确地找到配置文件并加载配置信息。</p>
+<h2><a id="lazy-static" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>lazy_static</h2>
+<p>使用 lazy_static 宏，确保配置文件只会加载一次，避免了重复加载配置文件的开销。</p>
+<pre class="line-numbers"><code class="language-rust">lazy_static! {
+    pub static ref SERVER_CONFIG: ServerConfig = load_config();
+}
+</code></pre>
+<p>lazy_static 块中定义的变量 SERVER_CONFIG，其访问属性为 pub，允许外部文件访问。<br />
+相当于一个全局变量，在其他文件中使用非常方便，例如：<code>let database_url = config::SERVER_CONFIG.database_url();</code></p>
+<p>main.rs</p>
+<pre class="line-numbers"><code class="language-rust">#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    let database_url = config::SERVER_CONFIG.database_url();
+    let (host,port) = config::SERVER_CONFIG.get_app_host_port();
+    db::init_db(database_url).await;
+
+    println!(&quot;app started http://{}:{}&quot;,host,port);
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::timed::Timed)
+            .wrap(middleware::auth::Auth)
+            .service(hello1)
+            .service(hello2)
+            .service(api::user::routes())
+    })
+    .bind((host,port))?
+    .run()
+    .await
+}
+</code></pre>
+<p>本文代码在 <a href="https://github.com/hitolz/rust-web/tree/config">github</a>。</p>
 
 
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			 <a href="MySQL_1.html">&raquo; Next Page</a> 
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="17002146115226.html" 
+          title="Next Post: Rust web 开发-2. 数据库/orm">Rust web 开发-2. 数据库/orm &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">
@@ -430,6 +498,8 @@ Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
 
 
 
+
+<script src="asset/prism.js"></script>
 
 
 <style type="text/css">

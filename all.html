@@ -129,20 +129,18 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="17002146115226.html">
+                <a class="clearlink" href="17004933674024.html">
                 
-                  <h1>rust web 开发-2. 数据库/orm</h1>
+                  <h1>Rust web 开发-3.config</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
                         	<div class="mweb_toc"><ul>
-<li><a href="#sqlx">sqlx</a></li>
-<li><a href="#orm">orm</a>
-<ul>
-<li><a href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0%E5%88%9D%E5%A7%8B%E5%8C%96">数据库连接池初始化</a></li>
-</ul>
-</li>
+<li><a href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">配置文件</a></li>
+<li><a href="#%E5%AE%9A%E4%B9%89%E5%AE%9E%E4%BD%93">定义实体</a></li>
+<li><a href="#%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9">读取文件内容</a></li>
+<li><a href="#lazy-static">lazy_static</a></li>
 </ul>
 </div>
 <p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
@@ -158,238 +156,121 @@
 <li>gracefully shutdown</li>
 </ol>
 <hr />
-<p>本文介绍第二部分，数据库及 orm。<br />
-主要介绍 Rust 如何使用 sqlx 连接 MySQL，orm 选用了 rbatis。</p>
-<p>准备 MySQL 数据库，简单的一个表结构</p>
-<pre class="line-numbers"><code class="language-sql">CREATE TABLE `user` (
-	`id` bigint NOT NULL AUTO_INCREMENT,
-	`user_name` varchar(32) DEFAULT NULL,
-	`password` varchar(64) DEFAULT NULL,
-	PRIMARY KEY (`id`)
-);
+<p>本文介绍第三部分，Rust 如何读取配置文件。<br />
+Rust 支持两种类型的配置文件，<code>.toml</code> 和 <code>.env</code>。</p>
+<p>本文主要介绍 toml 类型的文件。</p>
+<h2><a id="%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置文件</h2>
+<p>项目中新建一个 toml 类型的文件，例如：config.toml，放在某一个文件夹下，本文示例代码是在与 src 同级的目录 configs 下。</p>
+<pre class="line-numbers"><code class="language-toml">[app]
+host=&quot;127.0.0.1&quot;
+port=8099
+
+[database]
+host=&quot;localhost&quot;
+port=3306
+user = &quot;root&quot;
+password = &quot;12345678&quot;
+name = &quot;rust_web&quot;
 </code></pre>
-<p>接下来分别使用 sqlx 和 rbatis 进行  CRUD 操作。</p>
-<h2><a id="sqlx" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>sqlx</h2>
-<p>添加依赖</p>
-<pre class="line-numbers"><code class="language-plain_text">sqlx = { version = &quot;0.7.2&quot;, features = [
-    &quot;runtime-async-std-native-tls&quot;,
-    &quot;mysql&quot;,
-    &quot;chrono&quot;,
-] }
-</code></pre>
-<p>sqlx 连接数据库的链接格式：<code>mysql://{user}:{password}@{IP}:{port}/{database name}</code><br />
-例如我本地的数据库地址：<code>mysql://root:12345678@localhost:3306/rust_web</code></p>
-<p>连接 MySQL</p>
-<pre class="line-numbers"><code class="language-rust">use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
-
-pub async fn get_mysql_pool() -&gt; Pool&lt;MySql&gt; {
-    let database_url = &quot;mysql://root:12345678@localhost:3306/rust_web&quot;;
-    MySqlPoolOptions::new().connect(database_url).await.unwrap()
-}
-</code></pre>
-<p>api</p>
-<pre class="line-numbers"><code class="language-rust">use actix_web::{get, post, web, HttpResponse, Scope};
-use serde::{Deserialize, Serialize};
-
-use crate::{db::get_mysql_pool, success};
-
-// 定义路由，对外暴露的接口
-pub fn routes() -&gt; Scope {
-    web::scope(&quot;/users&quot;)
-        .service(add_user)
-        .service(query_user)
-        .service(update_user)
-        .service(delete_user)
+<h2><a id="%E5%AE%9A%E4%B9%89%E5%AE%9E%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定义实体</h2>
+<pre class="line-numbers"><code class="language-rust">/// 主机,端口
+#[derive(Deserialize, Default, Debug, Clone)]
+pub struct App {
+    pub host: String,
+    pub port: u16,
 }
 
-// 定义实体
-#[derive(Debug, Deserialize, Clone, Serialize, Default,sqlx::FromRow)]
-#[serde(rename_all = &quot;camelCase&quot;)]
-pub struct User {
-    pub id: Option&lt;i64&gt;,
-    pub user_name: Option&lt;String&gt;,
-    pub password: Option&lt;String&gt;,
+/// 数据库连接信息
+#[derive(Deserialize, Default, Debug, Clone)]
+pub struct Database {
+    pub host: String,
+    pub name: String,
+    pub user: String,
+    pub password: String,
+    pub port: usize,
 }
 
-#[post(&quot;/add&quot;)]
-pub async fn add_user(user: web::Json&lt;User&gt;) -&gt; HttpResponse {
-    let user = user.to_owned();
-    let id = save_user(user).await.unwrap();
-    success(Some(id))
-}
-// insert
-async fn save_user(user: User) -&gt; Result&lt;u64, sqlx::Error&gt; {
-    // 获取数据库连接池
-    let pool = get_mysql_pool().await;
-    let sql = &quot;insert into user(user_name, password) values (?,?)&quot;;
-    let result = sqlx::query(sql)
-        .bind(user.user_name)
-        .bind(user.password)
-        .execute(&amp;pool)
-        .await?;
-    let id = result.last_insert_id();
-    Ok(id)
+#[derive(Deserialize, Default, Debug, Clone)]
+pub struct ServerConfig {
+    pub app: App,
+    pub database: Database,
 }
 
-// update
-#[post(&quot;/update/{id}&quot;)]
-pub async fn update_user(id: web::Path&lt;i64&gt;, user: web::Json&lt;User&gt;) -&gt; HttpResponse {
-    let user = user.to_owned();
-
-    let sql = &quot;update user set user_name =?, password =? where id = ?&quot;;
-    sqlx::query(sql)
-        .bind(user.user_name)
-        .bind(user.password)
-        .bind(id.into_inner())
-        .execute(&amp;get_mysql_pool().await)
-        .await.unwrap();
-    success(Some(1))
-}
-
-// select
-#[get(&quot;/query/{id}&quot;)]
-pub async fn query_user(id:web::Path&lt;i64&gt;) -&gt; HttpResponse {
-    let sql = &quot;select * from user where id = ?&quot;;
-    let result = sqlx::query_as::&lt;_,User&gt;(sql).bind(id.into_inner()).fetch_optional(&amp;get_mysql_pool().await).await.unwrap();
-    success(result)
-}
-
-// delete
-#[post(&quot;/delete/{id}&quot;)]
-pub async fn delete_user(id:web::Path&lt;i64&gt;) -&gt; HttpResponse {
-    let sql = &quot;delete from user where id = ?&quot;;
-    sqlx::query(sql).bind(id.into_inner()).execute(&amp;get_mysql_pool().await).await.unwrap();
-    success(Some(1))
+// 为 ServerConfig 实体提供一些方法，可以比较方便的获取配置文件具体信息。
+impl ServerConfig {
+    // 使用引用比较方便，可以避免一些所有权转移问题
+    pub fn database_url(&amp;self) -&gt; String {
+        let db = &amp;self.database;
+        // &quot;mysql://root:12345678@localhost:3306/rust_web&quot;
+        format!(
+            &quot;mysql://{}:{}@{}:{}/{}&quot;,
+            db.user, db.password, db.host, db.port, db.name
+        )
+    }
+    pub fn get_app_host_port(&amp;self) -&gt; (&amp;str, u16) {
+        (&amp;self.app.host, self.app.port)
+    }
 }
 </code></pre>
-<p>服务启动之后测试：<br />
-新增 user：</p>
-<pre class="line-numbers"><code class="language-bash">curl -X &quot;POST&quot; &quot;http://localhost:8099/users/add&quot; \
-     -H 'token: 1' \
-     -H 'Content-Type: application/json; charset=utf-8' \
-     -d $'{
-  &quot;password&quot;: &quot;3456789&quot;,
-  &quot;userName&quot;: &quot;张三&quot;
-}'
-</code></pre>
-<p>查询 user：</p>
-<pre class="line-numbers"><code class="language-bash">curl &quot;http://localhost:8099/users/query/1&quot; \
-     -H 'token: 1'
-</code></pre>
-<p>修改 user：</p>
-<pre class="line-numbers"><code class="language-bash">curl -X &quot;POST&quot; &quot;http://localhost:8099/users/update/1&quot; \
-     -H 'token: 1' \
-     -H 'Content-Type: application/json; charset=utf-8' \
-     -d $'{
-  &quot;password&quot;: &quot;987654&quot;,
-  &quot;userName&quot;: &quot;lisi&quot;
-}'
-</code></pre>
-<p>删除 user：</p>
-<pre class="line-numbers"><code class="language-bash">curl -X &quot;POST&quot; &quot;http://localhost:8099/users/delete/2&quot; \
-     -H 'token: 1'
-</code></pre>
-<h2><a id="orm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>orm</h2>
-<p>orm 目前我使用过的有两个，一个是 Diesel，一个是 rbatis。</p>
-<p>Diesel 可以看以前写过的一篇文章，<a href="https://blog.hitol.top/16669473309292.html">https://blog.hitol.top/16669473309292.html</a><br />
-本篇文章主要介绍一下 rbatis。</p>
-<p>添加依赖</p>
-<pre class="line-numbers"><code class="language-plain_text"># rbatis
-rbs = { version = &quot;4.3&quot; }
-rbatis = { version = &quot;4.3&quot; }
-rbdc-mysql = { version = &quot;4.3&quot; }
-</code></pre>
-<p>创建 rbatis</p>
-<pre class="line-numbers"><code class="language-rust">use rbatis::RBatis;
-use rbdc_mysql::MysqlDriver;
+<h2><a id="%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>读取文件内容</h2>
+<pre class="line-numbers"><code class="language-rust">pub fn load_config() -&gt; ServerConfig {
+    let current_path = env!(&quot;CARGO_MANIFEST_DIR&quot;);
+    println!(&quot;current path: {}&quot;, current_path);
+    // 读取配置文件
+    let toml_file = format!(&quot;{}/configs/config.toml&quot;, current_path);
 
-pub async fn get_rb() -&gt; RBatis {
-    let database_url = &quot;mysql://root:12345678@localhost:3306/rust_web&quot;;
-    let rb = RBatis::new();
-    rb.init(MysqlDriver {}, database_url).unwrap();
-    rb
+    let content = fs::read_to_string(toml_file).unwrap();
+    let config: ServerConfig = toml::from_str(&amp;content).unwrap();
+    println!(&quot;config :{:?}&quot;, config);
+    config
+}
+
+// 测试代码
+#[cfg(test)]
+mod tests {
+    use super::load_config;
+
+    #[test]
+    fn test() {
+        load_config();
+    }
 }
 </code></pre>
-<p>在 User 实体定义的文件中调用 <code>crud!</code> 宏。</p>
-<blockquote>
-<p>crud!(User {});//crud = insert+select_by_column+update_by_column+delete_by_column</p>
-</blockquote>
-<p>宏调用之后就可以直接使用 User::insert、User::update、User::select、User::delete。</p>
-<pre class="line-numbers"><code class="language-rust">#[derive(Debug, Deserialize, Clone, Serialize, Default, sqlx::FromRow)]
-#[serde(rename_all = &quot;camelCase&quot;)]
-pub struct User {
-    pub id: Option&lt;i64&gt;,
-    pub user_name: Option&lt;String&gt;,
-    pub password: Option&lt;String&gt;,
-}
-
-crud!(User {}); // crud
-
-#[post(&quot;/add&quot;)]
-pub async fn add_user(user: web::Json&lt;User&gt;) -&gt; HttpResponse {
-    let user = user.to_owned();
-    // let id = save_user(user).await.unwrap();
-    let id = save_user_rb(user).await;
-    success(Some(id))
-}
-
-async fn save_user_rb(user: User) -&gt; i64 {
-    let rbatis = get_rb().await;
-    let x = User::insert(&amp;rbatis, &amp;user).await;
-    let x = x.unwrap();
-    i64::from(x.last_insert_id)
-}
-
-//update: User::update_by_column(&amp;get_rb().await, &amp;user, &quot;id&quot;).await;
-//select: User::select_by_column(&amp;get_rb().await, &quot;id&quot;,id.into_inner()).await.unwrap();
-//delete: User::delete_by_column(&amp;get_rb().await, &quot;id&quot;, id.into_inner()).await;
-</code></pre>
-<h3><a id="%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0%E5%88%9D%E5%A7%8B%E5%8C%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数据库连接池初始化</h3>
-<p>需要注意点是数据库连接池现在是每次调用都会初始化，为了演示连接数据库。要改为只初始化一次，可以使用lazy_static宏来延迟初始化静态变量。lazy_static宏允许在首次访问变量时执行初始化代码。</p>
-<pre class="line-numbers"><code class="language-rust">use lazy_static::*;
-use rbatis::RBatis;
-use rbdc_mysql::MysqlDriver;
-use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
-use std::{sync::Mutex, time::Duration};
-
-lazy_static! {
-    static ref MYSQL_POOL: Mutex&lt;Vec&lt;Pool&lt;MySql&gt;&gt;&gt; = Mutex::new(vec![]);
-}
-
-lazy_static! {
-    static ref RB: Mutex&lt;RBatis&gt; = Mutex::new(RBatis::new());
-}
-
-pub async fn init_db(database_url: String) {
-    let pool = MySqlPoolOptions::new()
-        .max_connections(20)
-        .min_connections(5)
-        .idle_timeout(Some(Duration::from_secs(30)))
-        .connect(&amp;database_url)
-        .await
-        .unwrap();
-
-    let mut pools = MYSQL_POOL.lock().unwrap();
-    (*pools).push(pool);
-
-    let rbatis = RBatis::new();
-    rbatis.init(MysqlDriver {}, &amp;database_url).unwrap();
-    let mut rb = RB.lock().unwrap();
-    *rb = rbatis;
-
-}
-
-pub async fn get_mysql_pool() -&gt; Pool&lt;MySql&gt; {
-    let pools = MYSQL_POOL.lock().unwrap();
-    unsafe { (*pools).get_unchecked(0).to_owned() }
-}
-
-pub async fn get_rb() -&gt; RBatis {
-    RB.lock().unwrap().clone()
+<p>load_config() 函数负责读取配置文件并解析为 ServerConfig 结构体。它使用了 fs::read_to_string() 函数来读取文件内容，并使用 toml::from_str() 函数将 TOML 格式的内容解析为结构体对象。</p>
+<p><code>env!(&quot;CARGO_MANIFEST_DIR&quot;)</code> 是 Rust 中的一个宏，用于获取当前 crate（即当前包）的根目录路径。在 Rust 中，每个 crate 都有一个与之关联的根目录，其中包含了 crate 的源代码、配置文件和其他相关文件。</p>
+<p><code>CARGO_MANIFEST_DIR</code> 是一个环境变量，由 Cargo 构建系统在构建过程中设置。它指示了当前 crate 的根目录路径。当使用 <code>env!(&quot;CARGO_MANIFEST_DIR&quot;)</code> 宏时，它会在编译时被展开为当前 crate 的根目录路径的字符串。</p>
+<p>在上述代码中，<code>env!(&quot;CARGO_MANIFEST_DIR&quot;)</code> 用于获取当前 crate 的根目录路径，并结合其他路径信息构建配置文件的完整路径。这样可以确保代码在不同环境下都能正确地找到配置文件并加载配置信息。</p>
+<h2><a id="lazy-static" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>lazy_static</h2>
+<p>使用 lazy_static 宏，确保配置文件只会加载一次，避免了重复加载配置文件的开销。</p>
+<pre class="line-numbers"><code class="language-rust">lazy_static! {
+    pub static ref SERVER_CONFIG: ServerConfig = load_config();
 }
 </code></pre>
-<p>本篇文章代码在 <a href="https://github.com/hitolz/rust-web/tree/db_orm">github</a></p>
-<p>我在项目中用的话一般是 sqlx + rbatis 一起使用，简单的 sql 用 rbatis 自动生成的，复杂一些的 sql 就使用 sqlx 自己手写……</p>
+<p>lazy_static 块中定义的变量 SERVER_CONFIG，其访问属性为 pub，允许外部文件访问。<br />
+相当于一个全局变量，在其他文件中使用非常方便，例如：<code>let database_url = config::SERVER_CONFIG.database_url();</code></p>
+<p>main.rs</p>
+<pre class="line-numbers"><code class="language-rust">#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    let database_url = config::SERVER_CONFIG.database_url();
+    let (host,port) = config::SERVER_CONFIG.get_app_host_port();
+    db::init_db(database_url).await;
+
+    println!(&quot;app started http://{}:{}&quot;,host,port);
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::timed::Timed)
+            .wrap(middleware::auth::Auth)
+            .service(hello1)
+            .service(hello2)
+            .service(api::user::routes())
+    })
+    .bind((host,port))?
+    .run()
+    .await
+}
+</code></pre>
+<p>本文代码在 <a href="https://github.com/hitolz/rust-web/tree/config">github</a>。</p>
 
                         
                       </div>
@@ -398,7 +279,7 @@ pub async fn get_rb() -&gt; RBatis {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2023/11/17 17:50 下午</span>
+                    <span class="date">2023/11/20 23:16 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='rust.html'>rust</a></span>
@@ -511,7 +392,13 @@ pub async fn get_rb() -&gt; RBatis {
 	      
 		      
 			      <li class="post">
-			        <a href="17002146115226.html">rust web 开发-2. 数据库/orm</a>
+			        <a href="17004933674024.html">Rust web 开发-3.config</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  
@@ -530,12 +417,6 @@ pub async fn get_rb() -&gt; RBatis {
 		      
 			      <li class="post">
 			        <a href="16849954851968.html">向量数据库 Vector Database</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16761949639234.html">使用 ChatGPT 学习 Javassist</a>
 			      </li>
 		     
 		  
