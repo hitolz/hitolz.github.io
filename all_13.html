@@ -129,51 +129,83 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16505304277569.html">
+                <a class="clearlink" href="16587443411197.html">
                 
-                  <h1>Redis 过期键删除策略</h1>
+                  <h1>centos7 安装 NFS</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>redis 数据库键的过期时间都保存在过期字典中，过期字典的键是一个指针，指向键空间下的一个对象（也就是某个数据库键），过期字典的值是一个 long long 类型的整数，这个整数保存了数据库键的过期时间，一个毫秒精确度的 UNIX 时间戳。</p>
-<p>过期键的判定</p>
+                        	<p>所有机器都安装 nfs-utils。只安装 nfs-utils 即可，rpcbind 属于它的依赖，也会安装上。</p>
+<pre class="line-numbers"><code class="language-plain_text">sudo yum install nfs-utils
+</code></pre>
+<h2><a id="%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务端配置</h2>
+<h3><a id="%E8%AE%BE%E7%BD%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设置服务开机自启</h3>
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl enable rpcbind
+sudo systemctl enable nfs
+</code></pre>
+<h3><a id="%E5%90%AF%E5%8A%A8nfs%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动 NFS 服务</h3>
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl start rpcbind
+sudo systemctl start nfs
+</code></pre>
+<h3><a id="%E9%85%8D%E7%BD%AE%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置共享目录</h3>
+<p>服务启动后，配置一个共享目录，这里使用的是 /data 目录作为共享目录</p>
+<pre class="line-numbers"><code class="language-plain_text">sudo mkdir /data
+sudo chmod 755 /data
+</code></pre>
+<p>在 /etc/exports 文件中添加配置。</p>
+<pre class="line-numbers"><code class="language-plain_text">/data/     192.168.0.0/24(rw,sync,no_root_squash,no_all_squash)
+</code></pre>
 <ol>
-<li>检查给定键是否存在与过期字典中，如果存在，取得键的过期时间</li>
-<li>检查当前 UNIX 时间戳是否大于键的过期时间，如果是的话，那么键已经过期</li>
+<li>/data: 共享目录位置。</li>
+<li>192.168.0.0/24: 客户端 IP 范围，* 代表所有，即没有限制。</li>
+<li>rw: 权限设置，可读可写。</li>
+<li>sync: 同步共享目录。</li>
+<li>no_root_squash: 可以使用 root 授权。</li>
+<li>no_all_squash: 可以使用普通用户授权。</li>
 </ol>
-<p>如果一个键过期了，redis 什么时候删除它呢？</p>
-<h2><a id="%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>删除策略</h2>
-<h3><a id="%E5%AE%9A%E6%97%B6%E5%88%A0%E9%99%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定时删除</h3>
-<p>在设置键的过期时间的同时，创建一个定时器，让定时器在键的过期时间来临时，立即对键进行删除</p>
-<p>定时删除策略对内存是最友好的，通过定时器可以保证过期的键尽快的被删除，释放内存<br />
-对 CPU 是最不友好的，在过期键比较多的情况下，删除过期键这一行为会占用非常多的 CPU。会对服务器的响应时间和吞吐量造成影响。</p>
-<h3><a id="%E6%83%B0%E6%80%A7%E5%88%A0%E9%99%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>惰性删除</h3>
-<p>每次从数据库中获取键时判断它是不是过期了，如果是过期的就删掉该键。</p>
-<p>对 CPU 时间来说是最友好的，<br />
-对内存是最不友好的，如果一个键已经过期，一直没有访问的话那么这个键一直不会被删掉，其对应的内存一直不会被释放。某种程度上可以说是内存泄露。</p>
-<h3><a id="%E5%AE%9A%E6%9C%9F%E5%88%A0%E9%99%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定期删除</h3>
-<p>每隔一段时间，程序就对数据库进行一次检查，删除过期的键。</p>
-<p>定期删除策略是前面两种策略的一种整合和折中。</p>
-<p>定期删除策略每隔一段时间执行一次删除过期键的操作，并通过限制操作的时长和频率来减少操作对 CPU 带来的影响</p>
-<p>有效的减少了内存的浪费。</p>
-<p>定期删除策略的难点是确定删除操作的时长的频率</p>
-<h2><a id="rdb%E3%80%81aof%E5%92%8C%E5%A4%8D%E5%88%B6%E5%8A%9F%E8%83%BD%E5%AF%B9%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%A4%84%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RDB、AOF 和复制功能对过期键的处理</h2>
-<h3><a id="%E7%94%9F%E6%88%90rdb%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>生成 RDB 文件</h3>
-<p>在执行 SAVE 或者 BGSAVE 命令创建一个新的 RDB 文件时，程序会对数据库中的键进行检查，已过期的键不会保存到 RDB 文件中。</p>
-<h3><a id="%E8%BD%BD%E5%85%A5rdb%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>载入 RDB 文件</h3>
-<p>在启动 Redis 时，如果启用了 RDB 功能，那么服务器将对 RDB 文件进行载入：</p>
-<ol>
-<li>如果是 master，过期键不会载入</li>
-<li>如果是 slave，载入全部的，但主从服务器在进行数据同步时，从服务器上的数据会全部清空，</li>
-</ol>
-<h3><a id="aof%E8%BF%BD%E5%8A%A0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>AOF 追加</h3>
-<p>如果一个键在 AOF 中已经存在，当它过期时会往 AOF 文件中追加一条删除命令来记录该键已被删除</p>
-<h3><a id="aof%E9%87%8D%E5%86%99" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>AOF 重写</h3>
-<p>在执行 AOF 重写的过程中，程序会对数据库键进行检查，已经删除的键不会出现在重写后的文件中。</p>
-<h3><a id="%E5%A4%8D%E5%88%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>复制</h3>
-<p>从服务器的删除操作由主服务器控制<br />
-当键在主服务器上被删除时，主服务器会显示的发一条 DEL 指令到从服务器，告知从服务器删除这个过期键</p>
+<h3><a id="%E9%87%8D%E5%90%AFnfs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重启 NFS</h3>
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl restart nfs
+</code></pre>
+<p>检查本地目录</p>
+<pre class="line-numbers"><code class="language-plain_text">showmount -e localhost
+
+-- 输出
+Export list for localhost:
+/data 192.168.0.130/24
+</code></pre>
+<h2><a id="linux%E5%AE%A2%E6%88%B7%E7%AB%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Linux 客户端</h2>
+<h3><a id="%E8%AE%BE%E7%BD%AErpcbind%E6%9C%8D%E5%8A%A1%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设置 rpcbind 服务开机自启</h3>
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl enable rpcbind
+</code></pre>
+<h3><a id="%E5%90%AF%E5%8A%A8nfs%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动 NFS 服务</h3>
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl start rpcbind
+</code></pre>
+<h3><a id="%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>查看服务端共享目录</h3>
+<pre class="line-numbers"><code class="language-plain_text">showmount -e 192.168.0.130
+
+-- 输出
+Export list for 192.168.0.130:
+/data 192.168.0.130/24
+
+</code></pre>
+<h3><a id="%E6%8C%82%E8%BD%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>挂载</h3>
+<p>在客户端创建目录</p>
+<pre class="line-numbers"><code class="language-plain_text">sudo mkdir /data
+</code></pre>
+<p>挂载</p>
+<pre class="line-numbers"><code class="language-plain_text">sudo mount -t nfs 192.168.0.130:/data /data
+</code></pre>
+<h2><a id="%E6%B5%8B%E8%AF%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>测试</h2>
+<p>在随意一台机器上 /data 添加目录或者文件，在另一台机器上 /data 里查看</p>
+<h2><a id="%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>客户端自动挂载</h2>
+<p>编辑客户端文件 /etc/fstab<br />
+在最后一行添加</p>
+<pre class="line-numbers"><code class="language-plain_text">192.168.0.130:/data     /data                   nfs     defaults        0 0
+</code></pre>
+<p>由于修改了 /etc/fstab，需要重新加载 systemctl</p>
+<pre class="line-numbers"><code class="language-plain_text">sudo systemctl daemon-reload
+</code></pre>
 
                         
                       </div>
@@ -182,10 +214,10 @@
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2022/04/21 16:40 下午</span>
+                    <span class="date">2022/07/25 18:19 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='redis.html'>redis</a></span>
+          					    <span class="posted-in"><a href='kubernetes.html'>kubernetes</a></span>
           				   
                     
 
@@ -295,6 +327,12 @@
 	      
 		      
 			      <li class="post">
+			        <a href="17006367993220.html">Rust web 开发-4.log</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17004933674024.html">Rust web 开发-3.config</a>
 			      </li>
 		     
@@ -314,12 +352,6 @@
 		      
 			      <li class="post">
 			        <a href="16892187258215.html">wasm 初体验</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16849954851968.html">向量数据库 Vector Database</a>
 			      </li>
 		     
 		  

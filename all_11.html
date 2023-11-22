@@ -129,395 +129,205 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16625340324703.html">
+                <a class="clearlink" href="16626878291486.html">
                 
-                  <h1>Java 太卷了转 GO（一）</h1>
+                  <h1>Java 太卷了转 GO（二）</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<div class="mweb_toc"><ul>
-<li><a href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%A3%B0%E6%98%8E">变量的声明</a></li>
-<li><a href="#%E5%B8%B8%E9%87%8F">常量</a>
-<ul>
-<li><a href="#%E6%9E%9A%E4%B8%BE">枚举</a></li>
-<li><a href="#iota">iota</a></li>
-</ul>
-</li>
-<li><a href="#%E5%87%BD%E6%95%B0">函数</a>
-<ul>
-<li><a href="#main%E5%87%BD%E6%95%B0">main 函数</a></li>
-<li><a href="#init%E5%87%BD%E6%95%B0">init 函数</a></li>
-<li><a href="#%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F">执行顺序</a></li>
-<li><a href="#%E5%80%BC%E4%BC%A0%E9%80%92">值传递</a></li>
-<li><a href="#%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92%EF%BC%88%E6%8C%87%E9%92%88%E4%BC%A0%E9%80%92%EF%BC%89">引用传递（指针传递）</a></li>
-</ul>
-</li>
-<li><a href="#defer">defer</a></li>
-<li><a href="#%E6%95%B0%E7%BB%84">数组</a>
-<ul>
-<li><a href="#%E5%88%87%E7%89%87">切片</a></li>
-<li><a href="#append%E5%92%8C-copy%E5%87%BD%E6%95%B0">append 和 copy 函数</a></li>
-</ul>
-</li>
-<li><a href="#map">map</a></li>
-<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93">结构体</a></li>
-<li><a href="#%E7%BB%A7%E6%89%BF">继承</a>
-<ul>
-<li><a href="#method">method</a></li>
-<li><a href="#method%E7%BB%A7%E6%89%BF">method 继承</a></li>
-</ul>
-</li>
-<li><a href="#interface">interface</a></li>
-</ul>
-</div>
-<p>GO 的一些基础用法，帮助 Java 程序员快速转 GO。</p>
-<h2><a id="%E5%8F%98%E9%87%8F%E7%9A%84%E5%A3%B0%E6%98%8E" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>变量的声明</h2>
+                        	<p>上一篇文章简单的学习了 GO 的基础语法，本篇文章用 GO 的框架开发一个短链应用。</p>
+<p>短链应用功能：</p>
 <ol>
-<li>第一种，指定变量类型，声明后若不赋值，使用默认值0。</li>
+<li>创建短链</li>
+<li>根据短链 code 重定向到原始链接</li>
 </ol>
-<pre class="line-numbers"><code class="language-go">var a int
-var a int = 10
-</code></pre>
-<ol start="2">
-<li>根据值自行判定变量类型。</li>
+<p>主要用到的框架：</p>
+<ol>
+<li>ORM 框架 gorm<br />
+<a href="https://gorm.io/zh_CN/docs/index.html">https://gorm.io/zh_CN/docs/index.html</a></li>
+<li>Web 框架 gin<br />
+<a href="https://gin-gonic.com/zh-cn/docs/">https://gin-gonic.com/zh-cn/docs/</a></li>
 </ol>
-<pre class="line-numbers"><code class="language-go">var a = 10
-</code></pre>
-<ol start="3">
-<li>第三种，省略var, 注意 :=左侧的变量不应该是已经声明过的，否则会导致编译错误。</li>
-</ol>
-<pre class="line-numbers"><code class="language-go">a := 10
-</code></pre>
-<h2><a id="%E5%B8%B8%E9%87%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>常量</h2>
-<pre class="line-numbers"><code class="language-go">const b int = 10
-const b = 10
-</code></pre>
-<h3><a id="%E6%9E%9A%E4%B8%BE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>枚举</h3>
-<p>常量可以用作枚举</p>
-<pre class="line-numbers"><code class="language-go">const (
-    Unknown = 0
-    Female = 1
-    Male = 2
-)
-</code></pre>
-<h3><a id="iota" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>iota</h3>
-<p>它简化了常量用于增长数字的定义</p>
-<pre class="line-numbers"><code class="language-go">const (
-    CategoryBooks = iota // 0
-    CategoryHealth       // 1
-    CategoryClothing     // 2
-)
-</code></pre>
-<h2><a id="%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数</h2>
+<h2><a id="gin" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>gin</h2>
+<p>最快的 http 路由器和框架。</p>
 <pre class="line-numbers"><code class="language-go">package main
 
-import &quot;fmt&quot;
+import &quot;github.com/gin-gonic/gin&quot;
 
 func main() {
-
-	var a int = 10
-	var b int = 20
-
-	fmt.Println(&quot;1--&quot;, a, b)
-
-	swap(a, b)
-	fmt.Println(&quot;2--&quot;, a, b)
-}
-
-func swap(a int, b int) {
-	var c int = a
-	a = b
-	b = c
+	r := gin.Default()
+	r.GET(&quot;/ping&quot;, func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			&quot;message&quot;: &quot;pong&quot;,
+		})
+	})
+	r.Run() // 监听并在 0.0.0.0:8080 上启动服务
 }
 </code></pre>
-<h3><a id="main%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>main 函数</h3>
-<p>main 函数只能出现在 package main 中。是程序的入口。</p>
-<h3><a id="init%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>init 函数</h3>
-<p>init 函数可在package main中，可在其他package中，可在同一个package中出现多次。</p>
-<h3><a id="%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>执行顺序</h3>
-<p>golang里面有两个保留的函数：init函数（能够应用于所有的package）和main函数（只能应用于package main）。这两个函数在定义时不能有任何的参数和返回值。</p>
-<p>go程序会自动调用init()和main()，所以你不需要在任何地方调用这两个函数。每个package中的init函数都是可选的，但package main就必须包含一个main函数。</p>
-<p>如果main包还导入了其它的包，那么就会在编译时将它们依次导入。有时一个包会被多个包同时导入，那么它只会被导入一次（例如很多包可能都会用到fmt包，但它只会被导入一次，因为没有必要导入多次）。</p>
-<p>当一个包被导入时，如果该包还导入了其它的包，那么会先将其它包导入进来，然后再对这些包中的包级常量和变量进行初始化，接着执行init函数（如果有的话），依次类推。</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16634751307970.jpg" alt="" /></p>
-<h3><a id="%E5%80%BC%E4%BC%A0%E9%80%92" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>值传递</h3>
-<p>值传递是指在调用函数时将实际参数复制一份传递到函数中，这样在函数中如果对参数进行修改，将不会影响到实际参数。</p>
-<p>默认情况下，Go 语言使用的是值传递，即在调用过程中不会影响到实际参数。</p>
-<p>swap 函数就是值传递的，交换两个数的操作，但是不会生效。</p>
-<h3><a id="%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92%EF%BC%88%E6%8C%87%E9%92%88%E4%BC%A0%E9%80%92%EF%BC%89" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>引用传递（指针传递）</h3>
-<p>&amp;： 取地址<br />
-*： 解引用</p>
-<pre class="line-numbers"><code class="language-go">package main
+<p>一个最简单的例子，启动后浏览器访问 <a href="http://localhost:8080/ping">http://localhost:8080/ping</a></p>
+<p>使用路由：</p>
+<pre class="line-numbers"><code class="language-go">func main() {
+	engine := gin.Default()
+	engine.Group(&quot;/&quot;)
 
-import &quot;fmt&quot;
-
-func main() {
-
-	var a int = 10
-	var b int = 20
-
-	fmt.Println(&quot;1--&quot;, a, b)
-
-	swap2(&amp;a, &amp;b)
-	fmt.Println(&quot;2--&quot;, a, b)
-}
-
-func swap2(a *int, b *int) {
-	var c = *a
-	*a = *b
-	*b = c
-}
-
-</code></pre>
-<h2><a id="defer" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>defer</h2>
-<p>defer 相当于 java 中 finally</p>
-<h2><a id="%E6%95%B0%E7%BB%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数组</h2>
-<p>var variable_name [SIZE] variable_type</p>
-<pre class="line-numbers"><code class="language-go">var nums [10]int;
-</code></pre>
-<p>如果数组长度不确定，可以使用 ... 代替数组的长度</p>
-<pre class="line-numbers"><code class="language-go">balance := [...]float32{1000.0, 2.0, 3.4, 7.0, 50.0}
-</code></pre>
-<h3><a id="%E5%88%87%E7%89%87" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>切片</h3>
-<p>var identifier []type<br />
-未指定大小的数组来定义切片,切片不需要说明长度。</p>
-<pre class="line-numbers"><code class="language-go">var slice1 []type = make([]type, len)
-
-// 也可以简写为
-
-slice1 := make([]type, len)
-
-// 直接初始化
-s :=[] int {1,2,3 }
-
-// 直接初始化切片，[]表示是切片类型，{1,2,3}初始化值依次是1,2,3.其cap=len=3
-</code></pre>
-<p>len()长度,<br />
-cap()容量，当长度等于容量时扩容为当前长度的2倍。</p>
-<h3><a id="append%E5%92%8C-copy%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>append 和 copy 函数</h3>
-<p>append 用于向切片中追加一个元素，</p>
-<pre class="line-numbers"><code class="language-go">package main
-
-
-import &quot;fmt&quot;
-
-
-func main() {
-   var numbers []int
-   printSlice(numbers)
-
-
-   /* 允许追加空切片 */
-   numbers = append(numbers, 0)
-   printSlice(numbers)
-
-
-   /* 向切片添加一个元素 */
-   numbers = append(numbers, 1)
-   printSlice(numbers)
-
-
-   /* 同时添加多个元素 */
-   numbers = append(numbers, 2,3,4)
-   printSlice(numbers)
-
-
-   /* 创建切片 numbers1 是之前切片的两倍容量*/
-   numbers1 := make([]int, len(numbers), (cap(numbers))*2)
-
-
-   /* 拷贝 numbers 的内容到 numbers1 */
-   copy(numbers1,numbers)
-   printSlice(numbers1)   
-}
-
-
-func printSlice(x []int){
-   fmt.Printf(&quot;len=%d cap=%d slice=%v\n&quot;,len(x),cap(x),x)
+	engine.GET(&quot;/ping&quot;, func(context *gin.Context) {
+		context.JSON(200, gin.H{
+			&quot;message&quot;: &quot;pong&quot;,
+		})
+	})
+	engine.Run()
 }
 </code></pre>
-<h2><a id="map" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>map</h2>
-<p>Map 是一种无序的键值对的集合。Map 最重要的一点是通过 key 来快速检索数据，key 类似于索引，指向数据的值。</p>
-<p>Map 是一种集合，所以我们可以像迭代数组和切片那样迭代它。不过，Map 是无序的，我们无法决定它的返回顺序，这是因为 Map 是使用 hash 表来实现的。</p>
-<pre class="line-numbers"><code class="language-go">/* 声明变量，默认 map 是 nil */
-var map_variable map[key_data_type]value_data_type
+<p>将接口放在程序入口 main 方法中不太合适，通常会创建多个 handler，类似于 java 中的 controller。</p>
+<h2><a id="gorm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>gorm</h2>
+<p>连接数据库</p>
+<pre class="line-numbers"><code class="language-go">// 数据库连接：&quot;用户名:密码@tcp(IP:端口)/数据库?charset=utf8&quot;
+sqlcon := &quot;root:123456@tcp(127.0.0.1:3306)/amc?charset=utf8&amp;parseTime=True&amp;loc=Local&quot;
 
-/* 使用 make 函数 */
-map_variable := make(map[key_data_type]value_data_type)
+
+DB, err := gorm.Open(mysql.Open(sqlcon), &amp;gorm.Config{
+	DisableForeignKeyConstraintWhenMigrating: true, //禁用物理外键
+})
+if err != nil {
+	log.Fatal(&quot;连接失败！&quot;)
+	return nil
+}
+// 连接池设置
+sqlDB, err := DB.DB()
+// 设置数据库最大连接数
+sqlDB.SetMaxOpenConns(500)
+// 设置数据库最大闲置数
+sqlDB.SetMaxIdleConns(20)
+// 全局禁用表名复数
+//sqlDB.SingularTable(true)
+// 调试模式，可以打印sql语句
+//sqlDB.LogMode(true)
 </code></pre>
-<h2><a id="%E7%BB%93%E6%9E%84%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体</h2>
-<pre class="line-numbers"><code class="language-go">package main
-
-import &quot;fmt&quot;
-
-// 类名大写，其他包也可以引用到。小写就不行
-type Books struct {
-	title  string
-	author string
+<h3><a id="crud" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CRUD</h3>
+<h4><a id="insert" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>insert</h4>
+<p>保存单条数据</p>
+<pre class="line-numbers"><code class="language-go">createConfig := dao.ShortLinkConfig{
+	Enable:      1,
+	OriginUrl:   &quot;http://localhost:8080&quot;,
+	ShortCode:   &quot;test&quot;,
+	CreatedTime: time.Now(),
+	UpdatedTime: time.Now(),
+}
+mysql.Db.Save(&amp;createConfig)
+</code></pre>
+<p>保存多条数据</p>
+<pre class="line-numbers"><code class="language-go">shortLinkConfigs := []dao.ShortLinkConfig{
+	{
+		Enable:      1,
+		OriginUrl:   &quot;http://localhost:8080&quot;,
+		ShortCode:   &quot;test1&quot;,
+		CreatedTime: time.Now(),
+		UpdatedTime: time.Now()},
+	{
+		Enable:      1,
+		OriginUrl:   &quot;http://localhost:8080&quot;,
+		ShortCode:   &quot;test2&quot;,
+		CreatedTime: time.Now(),
+		UpdatedTime: time.Now(),
+	},
+	{
+		Enable:      1,
+		OriginUrl:   &quot;http://localhost:8080&quot;,
+		ShortCode:   &quot;test3&quot;,
+		CreatedTime: time.Now(),
+		UpdatedTime: time.Now(),
+	},
+}
+// 批量数据一次性插入
+//mysql.Db.Create(&amp;shortLinkConfigs)
+// 分批次插入
+mysql.Db.CreateInBatches(&amp;shortLinkConfigs, 1000)
+</code></pre>
+<h4><a id="select" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>select</h4>
+<pre class="line-numbers"><code class="language-go">config := dao.ShortLinkConfig{
+	Enable: 1,
 }
 
-// 普通函数，参数是结构体
-func printBook(book Books) {
-	fmt.Printf(&quot;book = %v\n&quot;, book)
+var shortLinkConfig = dao.ShortLinkConfig{}
+
+//获取第一条记录，主键升序 select * from table ORDER BY id asc LIMIT 1
+mysql.Db.Where(&amp;config).First(&amp;shortLinkConfig)
+log.Printf(&quot;first config = %v&quot;, shortLinkConfig)
+
+shortLinkConfig = dao.ShortLinkConfig{}
+//获取最后一条记录，主键降序 select * from table ORDER BY id desc LIMIT 1
+mysql.Db.Where(&amp;config).Last(&amp;shortLinkConfig)
+log.Printf(&quot;last config = %v&quot;, shortLinkConfig)
+
+shortLinkConfig = dao.ShortLinkConfig{}
+// 获取一条记录，没有指定字段排序
+mysql.Db.Where(&amp;config).Take(&amp;shortLinkConfig)
+log.Printf(&quot;config = %v&quot;, shortLinkConfig)
+
+shortLinkConfig = dao.ShortLinkConfig{}
+mysql.Db.First(&amp;shortLinkConfig, 9)
+log.Printf(&quot;id = 9,config = %v&quot;, shortLinkConfig)
+
+// 查询多条记录
+shortLinkConfigs := make([]dao.ShortLinkConfig, 3)
+mysql.Db.Find(&amp;shortLinkConfigs, []int{8, 9, 10})
+for i, linkConfig := range shortLinkConfigs {
+	log.Printf(&quot;i = %d,config = %v&quot;, i, linkConfig)
 }
 
-// 普通函数，参数是结构体，值传递，修改不会在 main 函数中生效
-func SetTitle(book Books) {
-	book.title = &quot;Python&quot;
-}
-// 使用指针传递参数可以修改其属性值
-func SetTitle2(book *Books) {
-	book.title = &quot;Python&quot;
-}
+// 指定字段查询
+shortCode := &quot;acegf&quot;
+shortLinkConfig = dao.ShortLinkConfig{}
+mysql.Db.Where(&quot;short_code = ? and enable = 1&quot;, shortCode).First(&amp;shortLinkConfig)
+log.Printf(&quot;short_code = %s,config = %v&quot;, shortCode, shortLinkConfig)
 
-// 这个函数相当于结构体的函数，可以 book.SetAuthor() 调用。
-// 注意是个指针传递，可以写成值传递，但修改没有效果
-func (t *Books) SetAuthor() {
-	t.author = &quot;lisi&quot;
-}
+// 指定字段查询 struct,这种方式要求 struct 中的字段不能为零值，0、false 这种是不会创建查询条件的。
+shortLinkConfig = dao.ShortLinkConfig{}
+mysql.Db.Where(&amp;dao.ShortLinkConfig{ShortCode: shortCode, Enable: 0}).First(&amp;shortLinkConfig)
+log.Printf(&quot;short_code = %s,enable = 0,config = %v&quot;, shortCode, shortLinkConfig)
 
-func main() {
-	book := Books{&quot;GO&quot;, &quot;test&quot;}
-	fmt.Println(book)
-	book.title = &quot;C&quot;
-	fmt.Println(book)
-
-	java := Books{title: &quot;Java&quot;, author: &quot;22&quot;}
-	printBook(java)
-	SetTitle(java)
-	printBook(java)
-
-	SetTitle2(&amp;java)
-	java.SetAuthor()
-	printBook(java)
+// 指定字段查询 map
+shortLinkConfigs = make([]dao.ShortLinkConfig, 10)
+mysql.Db.Where(map[string]interface{}{&quot;enable&quot;: 1, &quot;short_code&quot;: shortCode}).Find(&amp;shortLinkConfigs)
+for i, linkConfig := range shortLinkConfigs {
+	log.Printf(&quot; --- i = %d,config = %v&quot;, i, linkConfig)
 }
 
 </code></pre>
-<h2><a id="%E7%BB%A7%E6%89%BF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>继承</h2>
-<h3><a id="method" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>method</h3>
-<p>method 附属在一个给定类型上，语法和函数的语法几乎一样，只是在 func 后面增加了一个 receiver(也就是 method 所依从的主体)</p>
-<p>method 给用户定义的类型添加新的行为。</p>
-<p>method 的接收者可以是普通类型，也可以是指针类型，是普通类型的时候接收的值的副本，也就是值传递，是指针类型的时候接收的是内存地址，就是引用传递。</p>
-<pre class="line-numbers"><code class="language-go">func (r receiverType) funcName(parameters) (results)
+<h4><a id="update" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>update</h4>
+<p>Save</p>
+<pre class="line-numbers"><code class="language-go">shortCode := &quot;test3&quot;
+shortLinkConfig := dao.ShortLinkConfig{}
+mysql.Db.Where(&quot;short_code = ? and enable = 1&quot;, shortCode).First(&amp;shortLinkConfig)
+log.Printf(&quot;short_code = %s,config = %v&quot;, shortCode, shortLinkConfig)
+
+shortLinkConfig.ShortCode = &quot;test5&quot;
+mysql.Db.Save(&amp;shortLinkConfig)
 </code></pre>
-<p>虽然 method 的名字一模一样，但是如果接收者不一样，那么 method 就不一样</p>
-<h3><a id="method%E7%BB%A7%E6%89%BF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>method 继承</h3>
-<p>如果匿名字段实现了一个 method，那么包含这个匿名字段的 struct 也能调用该 method</p>
-<pre class="line-numbers"><code class="language-go">package main
-
-import (
-	&quot;fmt&quot;
-)
-
-type Human struct {
-	name string
-	sex  string
-}
-
-func (t *Human) Eat() {
-	fmt.Println(&quot;eat&quot;)
-}
-
-func (t *Human) Walk() {
-	fmt.Println(&quot;walk&quot;)
-}
-
-type SuperHuman struct {
-	// 匿名字段，使得 SuperHuman 的对象也拥有 Human 的 method
-	Human
-	level int
-}
-
-// 重写 SuperHuman 的 Walk 方法。
-func (t *SuperHuman) Walk() {
-	fmt.Println(&quot;fly&quot;)
-}
-
-func main() {
-	man := Human{
-		name: &quot;zhangsan&quot;,
-		sex:  &quot;男&quot;,
-	}
-	man.Eat()
-	man.Walk()
-
-	// 创建子类对象
-	//superMan := SuperHuman{
-	//	Human{&quot;lisi&quot;, &quot;男&quot;}, 100,
-	//}
-	var superMan SuperHuman
-	superMan.level = 100
-	superMan.name = &quot;lisi&quot;
-	superMan.sex = &quot;男&quot;
-
-	superMan.Eat()
-	superMan.Walk()
-}
-
+<p>Update 更新单个列</p>
+<pre class="line-numbers"><code class="language-go">// update short_link_config set short_code = &quot;123&quot; where short_code = &quot;test5&quot; and enable = 1
+mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&quot;short_code = ? and enable = 1&quot;, shortCode).Update(&quot;short_code&quot;, &quot;123&quot;)
 </code></pre>
-<h2><a id="interface" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>interface</h2>
-<p>interface 本质上是个指针。<br />
-interface 定义了一组 method，如果某个对象实现了某个接口的所有方法，则此对象就实现了这个接口</p>
-<p>interface 是一组抽象方法的集合，必须由其他非 interface 类型实现，而不能自我实现，</p>
-<pre class="line-numbers"><code class="language-go">package main
-
-import &quot;fmt&quot;
-
-// 定义一个 interface，有两个方法 eat、run
-type Anaimal interface {
-	eat()
-	run()
-}
-
-// ======
-// 定义子类，实现 interface 中的 2个方法，必须要完全实现 interface 中的所有方法，才算是继承
-type Dog struct {
-}
-
-func (dog Dog) eat() {
-	fmt.Println(&quot;dog eat&quot;)
-}
-
-func (dog Dog) run() {
-	fmt.Println(&quot;dog run&quot;)
-}
-
-// ======
-
-type Cat struct {
-}
-
-func (cat Cat) eat() {
-	fmt.Println(&quot;cat eat&quot;)
-}
-
-func (cat Cat) run() {
-	fmt.Println(&quot;cat run&quot;)
-}
-
-// ======
-
-func main() {
-	var anaimal Anaimal
-	anaimal = new(Dog)
-	anaimal.eat()
-	anaimal.run()
-
-	anaimal = new(Cat)
-	anaimal.eat()
-	anaimal.run()
-}
+<p>更新多列,struct 方式,只会更新非零值</p>
+<pre class="line-numbers"><code class="language-go">mysql.Db.Where(&amp;dao.ShortLinkConfig{
+	Enable: 1,
+}).Updates(dao.ShortLinkConfig{
+	Enable:    0,
+	OriginUrl: &quot;http://www.123.com&quot;,
+})
 </code></pre>
-<p>以上这些就是 GO 的一些基础知识。学会了这些下面就能简单进行开发了。</p>
-<p>下一篇文章介绍下 GO 的框架，ORM 框架，Web 框架，以及用这些开发一个小应用。</p>
+<p>更新多列，map 方式</p>
+<pre class="line-numbers"><code class="language-go">mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&amp;dao.ShortLinkConfig{Enable: 1}).Updates(map[string]interface{}{&quot;origin_url&quot;: &quot;http://www.baidu.com&quot;})
+</code></pre>
+<h4><a id="delete" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>delete</h4>
+<p>根据主键删除</p>
+<pre class="line-numbers"><code class="language-go">// delete from short_link_config where id = 10
+mysql.Db.Delete(&amp;dao.ShortLinkConfig{}, 10)
+</code></pre>
 <hr />
-<p>参考网站<br />
-<a href="https://learnku.com/go/wikis">https://learnku.com/go/wikis</a><br />
-<a href="https://learnku.com/docs/the-little-go-book">https://learnku.com/docs/the-little-go-book</a><br />
-<a href="https://learnku.com/docs/the-way-to-go">https://learnku.com/docs/the-way-to-go</a><br />
-<a href="https://www.yuque.com/aceld/mo95lb/dsk886">https://www.yuque.com/aceld/mo95lb/dsk886</a><br />
-<a href="https://www.runoob.com/go/go-map.html">https://www.runoob.com/go/go-map.html</a></p>
+<p>短链应用：<br />
+github: <a href="https://github.com/hitolz/shortLink">https://github.com/hitolz/shortLink</a></p>
 
                         
                       </div>
@@ -526,7 +336,7 @@ func main() {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2022/09/07 15:00 下午</span>
+                    <span class="date">2022/09/09 09:43 上午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='GO.html'>GO</a></span>
@@ -639,6 +449,12 @@ func main() {
 	      
 		      
 			      <li class="post">
+			        <a href="17006367993220.html">Rust web 开发-4.log</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17004933674024.html">Rust web 开发-3.config</a>
 			      </li>
 		     
@@ -658,12 +474,6 @@ func main() {
 		      
 			      <li class="post">
 			        <a href="16892187258215.html">wasm 初体验</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16849954851968.html">向量数据库 Vector Database</a>
 			      </li>
 		     
 		  

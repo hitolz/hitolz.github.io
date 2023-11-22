@@ -1,0 +1,897 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+    
+  Rust web 开发-4.log - 非著名Java程序员
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="非著名Java程序员" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
+
+ 
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site:blog.hitol.top ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="_self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li id=""><a target="_self" href="about1.html">About</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; 非著名Java程序员</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="_self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li><a target="_self" href="about1.html">About</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="rust.html">rust</a></li>
+        
+            <li><a href="redis.html">redis</a></li>
+        
+            <li><a href="dubbo.html">dubbo</a></li>
+        
+            <li><a href="RocketMQ.html">RocketMQ</a></li>
+        
+            <li><a href="kubernetes.html">kubernetes</a></li>
+        
+            <li><a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html">Java并发编程的艺术</a></li>
+        
+            <li><a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html">网络协议</a></li>
+        
+            <li><a href="JVM.html">JVM</a></li>
+        
+            <li><a href="Java.html">Java</a></li>
+        
+            <li><a href="MySQL.html">MySQL</a></li>
+        
+            <li><a href="Docker.html">Docker</a></li>
+        
+            <li><a href="Spring.html">Spring</a></li>
+        
+            <li><a href="GO.html">GO</a></li>
+        
+            <li><a href="AI.html">AI</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script>
+  let summary_gpt_article_content_selector = '.article-content';
+  let summary_gpt_key = '12356';
+  let summary_gpt_domain = 'https://ai-summary.hitol.top';
+</script>
+<link rel="stylesheet" href="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.css" />
+<script src="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.v0.0.6.js"></script>
+<script type="text/javascript">
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
+</script>
+<div class="row">
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>Rust web 开发-4.log</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2023/11/22 15:06 下午</span>
+
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='Rust%20web.html'>Rust web</a></span>
+          
+              <span class="posted-in"><a href='rust.html'>rust</a></span>
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <div class="mweb_toc"><ul>
+<li><a href="#%E6%97%A5%E5%BF%97%E9%97%A8%E9%9D%A2log">日志门面 log</a>
+<ul>
+<li><a href="#%E7%AE%80%E5%8D%95%E5%B0%8F%E5%9E%8B%E7%9A%84%E6%97%A5%E5%BF%97%E5%BA%93">简单小型的日志库</a></li>
+<li><a href="#%E5%A4%8D%E6%9D%82%E7%9A%84%E5%8F%AF%E9%85%8D%E7%BD%AE%E6%A1%86%E6%9E%B6">复杂的可配置框架</a></li>
+<li><a href="#webassembly%E5%BA%93">WebAssembly 库</a></li>
+</ul>
+</li>
+<li><a href="#env-logger">env_logger</a>
+<ul>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
+<li><a href="#%E7%BC%96%E5%86%99%E6%97%A5%E5%BF%97init%E6%96%B9%E6%B3%95">编写日志 init 方法</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4%E4%BF%AE%E6%94%B9">启动命令修改</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F">修改日期格式</a></li>
+<li><a href="#%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E5%88%B0%E6%96%87%E4%BB%B6">输出日志到文件</a></li>
+</ul>
+</li>
+<li><a href="#tracing">tracing</a>
+<ul>
+<li><a href="#span%E3%80%81event%E3%80%81collector">span、event、Collector</a>
+<ul>
+<li><a href="#span">span</a></li>
+<li><a href="#event">event</a></li>
+<li><a href="#collector">Collector</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
+<li><a href="#%E7%BC%96%E5%86%99%E6%97%A5%E5%BF%97init%E6%96%B9%E6%B3%95">编写日志 init 方法</a></li>
+<li><a href="#%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E5%88%B0%E6%96%87%E4%BB%B6">输出日志到文件</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+<ol>
+<li>web 框架</li>
+<li>数据库/orm</li>
+<li>config</li>
+<li>log</li>
+<li>线程池</li>
+<li>kafka</li>
+<li>redis</li>
+<li>打包成 docker 镜像</li>
+<li>gracefully shutdown</li>
+</ol>
+<hr />
+<p>本篇介绍一下日志模块。</p>
+<h2><a id="%E6%97%A5%E5%BF%97%E9%97%A8%E9%9D%A2log" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>日志门面 log</h2>
+<p>日志门面不是说排场很大的意思，而是指相应的日志 API 已成为事实上的标准，会被其他日志框架使用。通过这种统一的门面，开发者就可以不必拘泥于日志框架的选择，未来大不了再换就是。</p>
+<blockquote>
+<p>A Rust library providing a lightweight logging facade.</p>
+</blockquote>
+<p>官方库 <a href="https://github.com/rust-lang/log">log</a>。</p>
+<p>提供了日志输出的宏： trace!、debug!、info!、warn!、error!输出对应级别的日志内容。</p>
+<p>官方库只是提供了一个接口，使用的时候还需要有具体的实现库。</p>
+<p>一些日志库：</p>
+<h3><a id="%E7%AE%80%E5%8D%95%E5%B0%8F%E5%9E%8B%E7%9A%84%E6%97%A5%E5%BF%97%E5%BA%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>简单小型的日志库</h3>
+<p>env_logger<br />
+simple_logger<br />
+simplelog<br />
+pretty_env_logger<br />
+stderrlog<br />
+flexi_logger<br />
+call_logger<br />
+std-logger<br />
+structured-logger</p>
+<h3><a id="%E5%A4%8D%E6%9D%82%E7%9A%84%E5%8F%AF%E9%85%8D%E7%BD%AE%E6%A1%86%E6%9E%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>复杂的可配置框架</h3>
+<p>log4rs<br />
+fern</p>
+<h3><a id="webassembly%E5%BA%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>WebAssembly 库</h3>
+<p>console_log</p>
+<p>本文选择其中几个库，介绍一下其用法。 介绍 env_logger 还有 《Rust 语言圣经》里介绍的 tracing。</p>
+<h2><a id="env-logger" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>env_logger</h2>
+<h3><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h3>
+<pre class="line-numbers"><code class="language-toml">log = &quot;0.4&quot;
+env_logger = &quot;0.10&quot;
+</code></pre>
+<h3><a id="%E7%BC%96%E5%86%99%E6%97%A5%E5%BF%97init%E6%96%B9%E6%B3%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>编写日志 init 方法</h3>
+<pre class="line-numbers"><code class="language-rust">fn init_log()  {
+    env_logger::init();
+}
+</code></pre>
+<p>在 main 方法第一行调用日志初始化方法，然后输出日志  <code>info!(&quot;app started http://{}:{}&quot;,host,port);</code></p>
+<pre class="line-numbers"><code class="language-rust">async fn main() -&gt; std::io::Result&lt;()&gt; {
+    init_log();
+
+    let database_url = config::SERVER_CONFIG.database_url();
+    let (host, port) = config::SERVER_CONFIG.get_app_host_port();
+    db::init_db(database_url).await;
+
+    info!(&quot;app started http://{}:{}&quot;, host, port);
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::timed::Timed)
+            .wrap(middleware::auth::Auth)
+            .service(hello1)
+            .service(hello2)
+            .service(api::user::routes())
+    })
+    .bind((host, port))?
+    .run()
+    .await
+}
+</code></pre>
+<p>要注意的一点是，启动命令不再是 <code>cargo run</code>，而是要指定一个环境变量 <code>RUST_LOG=info</code>。完整的启动命令是<code>RUST_LOG=info cargo run</code>，启动后就能够看到日志输出到控制台了。</p>
+<pre class="line-numbers"><code class="language-plain_text">[2023-11-21T07:53:56Z INFO  rust_web] app started http://127.0.0.1:8099
+[2023-11-21T07:53:56Z INFO  actix_server::builder] starting 10 workers
+[2023-11-21T07:53:56Z INFO  actix_server::server] Actix runtime found; starting in Actix runtime
+</code></pre>
+<h3><a id="%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4%E4%BF%AE%E6%94%B9" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动命令修改</h3>
+<p>如果不想每次启动时都输入这么长的命令，<code>RUST_LOG=info cargo run</code>，可以使用上一篇 config 中没有介绍的 .env 配置文件，将环境变量放在 .env 文件里。<br />
+在项目根目录创建 .env 文件然后填写</p>
+<pre class="line-numbers"><code class="language-plain_text">RUST_LOG=info
+</code></pre>
+<p>然后添加依赖</p>
+<pre class="line-numbers"><code class="language-toml">dotenv = &quot;0.15.0&quot;
+</code></pre>
+<p>main 方法启动第一行加载环境变量</p>
+<pre class="line-numbers"><code class="language-rust">use dotenv::dotenv;
+
+dotenv().ok();
+</code></pre>
+<p>这时候，直接执行 <code>cargo run</code> 启动即可。</p>
+<h3><a id="%E4%BF%AE%E6%94%B9%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改日期格式</h3>
+<p>可以看到，输出的日志日期格式是这样的<code>[2023-11-21T07:53:56Z INFO </code>，</p>
+<pre class="line-numbers"><code class="language-rust">use chrono::{FixedOffset, Utc};
+use env_logger::Builder;
+use std::io::Write;
+
+pub fn init_log() {
+    // env_logger::init();
+
+    let mut builder = Builder::from_default_env();
+    builder
+        .format(|buf, record| {
+            let timestamp = Utc::now().with_timezone(&amp;FixedOffset::east(8 * 3600));
+            writeln!(
+                buf,
+                &quot;{} [{}] [{}] {}&quot;,
+                timestamp.format(&quot;%Y-%m-%d %H:%M:%S&quot;),
+                record.level(),
+                record.module_path().unwrap(),
+                record.args()
+            )
+        })
+        .init();
+}
+</code></pre>
+<p>这时输出的日志是这样的:<code>2023-11-21 17:14:50 [INFO] [rust_web] app started http://127.0.0.1:8099</code></p>
+<h3><a id="%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E5%88%B0%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>输出日志到文件</h3>
+<pre class="line-numbers"><code class="language-rust">pub fn init_log() {
+    // env_logger::init();
+    let file = OpenOptions::new()
+        .create(true)
+        .write(true)
+        .truncate(true)
+        .open(&quot;app.log&quot;)
+        .expect(&quot;Failed to open log file&quot;);
+    let target = Box::new(file);
+
+    let mut builder = Builder::from_default_env();
+    builder
+        .format(|buf, record| {
+            let timestamp = Utc::now().with_timezone(&amp;FixedOffset::east(8 * 3600));
+            writeln!(
+                buf,
+                &quot;{} [{}] [{}] {}&quot;,
+                timestamp.format(&quot;%Y-%m-%d %H:%M:%S&quot;),
+                record.level(),
+                record.module_path().unwrap(),
+                record.args()
+            )
+        })
+        .target(Target::Pipe(target))
+        .init();
+}
+</code></pre>
+<p>env_logger 目前看来只能配置一个 target，输出到文件之后控制台就看不到日志输出了,</p>
+<p>env_logger 篇代码在 <a href="https://github.com/hitolz/rust-web/tree/log_env_logger">github</a>。</p>
+<p>接下来介绍一下 tracing。</p>
+<h2><a id="tracing" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>tracing</h2>
+<p>tracing 演示使用的还是0.1 版本，0.2 版本不是正式版本。</p>
+<p>tracing 并不是一个日志库，而是一个分布式跟踪的 SDK，用来采集监控数据的。但是它也支持 log 门面库 API，所以可以当做日志库来使用。</p>
+<h3><a id="span%E3%80%81event%E3%80%81collector" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>span、event、Collector</h3>
+<p>tracing 中最重要的三个核心概念 span、event、Collector收集器。</p>
+<h4><a id="span" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>span</h4>
+<p>span 最大的意义在于它可以记录一个过程，也就是在一段时间内发生的事件流。有开始和结束。</p>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    init_log(); // 使用 tracing_subscriber 初始化 Collector
+    let span = span!(Level::INFO, &quot;span_for_test&quot;);
+    let _enter = span.enter(); // enter 后进入该 span 的上下文
+    info!(&quot;hello from span &quot;)
+} // 离开作用域后，_enter 被 drop，对应的 span 在此结束
+</code></pre>
+<p>输出内容：<code>2023-11-22 10:40:41.669  INFO span_for_test: rust_tracing: hello from span</code></p>
+<p>使用<code>#[instrument]</code> 创建 span。<br />
+当使用了<code>#[instrument]</code> ，tracing 会为以后函数主动创立 span ，该 span 名与函数雷同，并且整个函数都在该 span 的上下文内。</p>
+<pre class="line-numbers"><code class="language-rust">#[instrument]
+fn expensive_work(secs: u64) {
+    info!(&quot;doing expensive work&quot;);
+    sleep(Duration::from_secs(secs));
+    info!(&quot;done with expensive work&quot;);
+}
+
+fn main() {
+    init_log(); // 使用 tracing_subscriber 初始化 Collector
+    let span = span!(Level::INFO, &quot;span_for_test&quot;);
+    let _enter = span.enter(); // enter 后进入该 span 的上下文
+    info!(&quot;hello from span &quot;);
+    expensive_work(2);
+} // 离开作用域后，_enter 被 drop，对应的 span 在此结束
+
+</code></pre>
+<p>输出内容为</p>
+<pre class="line-numbers"><code class="language-log">2023-11-22 10:48:13.086  INFO span_for_test: rust_tracing: hello from span     
+2023-11-22 10:48:13.086  INFO span_for_test:expensive_work{secs=2}: rust_tracing: doing expensive work    
+2023-11-22 10:48:15.091  INFO span_for_test:expensive_work{secs=2}: rust_tracing: done with expensive work 
+</code></pre>
+<h4><a id="event" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>event</h4>
+<p>event 代表了某个时间点发生的事件，跟日志类似，不同的是 event 可以产生在 span 的上下文中。</p>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    init_log(); // 使用 tracing_subscriber 初始化 Collector
+    let span = span!(Level::INFO, &quot;span_for_test&quot;);
+    let _enter = span.enter(); 
+    info!(&quot;hello from span &quot;);
+    event!(Level::INFO, &quot;event hello from span &quot;);
+    expensive_work(2);
+} 
+
+--- 输出内容与 info 一样。
+2023-11-22 10:49:47.585  INFO span_for_test: rust_tracing: hello from span     
+2023-11-22 10:49:47.585  INFO span_for_test: rust_tracing: event hello from span 
+</code></pre>
+<h4><a id="collector" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Collector</h4>
+<p>当 span 或 event 发生时，会被实现了 Collect 特征的收集器所记录或聚合，这个过程是通过通知的方式实现的：当 event 发生或者 span 开始/结束时，会调用 Collect 特征的相应方法通知 Collector。</p>
+<p>Collector 会将 span 和 event 以一定的格式输出到指定的地方，比如：stdout、stderr、文件、网络等。</p>
+<p>tracing-subscriber 提供了 Collector，可以方便的输出事件信息。</p>
+<h3><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h3>
+<pre class="line-numbers"><code class="language-plain_text">[dependencies]
+tracing = &quot;0.1&quot;
+tracing-subscriber = {version = &quot;0.3&quot;,features = [&quot;env-filter&quot;, &quot;time&quot;, &quot;local-time&quot;, ] }
+time = { version = &quot;0.3.7&quot;, features = [&quot;macros&quot;] }
+</code></pre>
+<h3><a id="%E7%BC%96%E5%86%99%E6%97%A5%E5%BF%97init%E6%96%B9%E6%B3%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>编写日志 init 方法</h3>
+<pre class="line-numbers"><code class="language-rust">use time::UtcOffset;
+use time::macros::format_description;
+use tracing_subscriber::fmt::time::OffsetTime;
+
+pub fn init_log() {
+    let local_time = OffsetTime::new(
+        UtcOffset::from_hms(8, 0, 0).unwrap(),
+        format_description!(&quot;[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]&quot;),
+    );
+    tracing_subscriber::fmt().with_timer(local_time).init();
+}
+</code></pre>
+<p>输出日志格式为 <code>2023-11-21 21:05:54.559  INFO rust_web: app started http://127.0.0.1:8099  </code></p>
+<p>tracing 的时间格式化限制了必须使用 time 库中的时间格式。</p>
+<h3><a id="%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E5%88%B0%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>输出日志到文件</h3>
+<p>tracing-appender = &quot;0.1&quot;</p>
+<pre class="line-numbers"><code class="language-rust">use time::macros::{format_description, offset};
+use tracing_subscriber::fmt::time::{FormatTime, OffsetTime};
+use tracing_subscriber::fmt::writer::MakeWriterExt;
+use tracing_subscriber::EnvFilter;
+
+// 自定义时间格式化
+struct LocalTimer;
+const fn east8() -&gt; Option&lt;chrono::FixedOffset&gt; {
+    chrono::FixedOffset::east_opt(8 * 3600)
+}
+
+impl FormatTime for LocalTimer {
+    fn format_time(&amp;self, w: &amp;mut tracing_subscriber::fmt::format::Writer&lt;'_&gt;) -&gt; std::fmt::Result {
+        let now = chrono::Utc::now().with_timezone(&amp;east8().unwrap());
+        write!(w, &quot;{}&quot;, now.format(&quot;%Y-%m-%d %H:%M:%SS&quot;))
+    }
+}
+
+pub fn init_log() {
+    let time_fmt =
+        format_description!(&quot;[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]&quot;);
+    let timer = OffsetTime::new(offset!(+8), time_fmt);
+
+    let appender = tracing_appender::rolling::daily(&quot;log/&quot;, &quot;app.log&quot;);
+    let stdout = std::io::stdout.with_max_level(tracing::Level::INFO);
+
+    tracing_subscriber::fmt()
+        .with_env_filter(EnvFilter::from_default_env())
+        .with_timer(timer)
+        // .with_timer(LocalTimer)
+        .with_writer(stdout.and(appender))
+        .with_line_number(true)
+        .with_thread_ids(true)
+        .init();
+}
+
+</code></pre>
+<p>tracing 输出到文件要用 tracing_appender</p>
+<p>tracing_appender::rolling:: 提供了几种日志切割方式，</p>
+<ol>
+<li>minutely</li>
+<li>hourly</li>
+<li>daily</li>
+<li>never</li>
+</ol>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="17004933674024.html" 
+          title="Next Post: Rust web 开发-3.config">Rust web 开发-3.config &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>非著名Java程序员</h1>
+                <div class="site-des"></div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+<a target="_blank" class="github" target="_blank" href="https://github.com/hitolz" title="GitHub">GitHub</a>
+
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="rust.html"><strong>rust</strong></a>
+        
+            <a href="redis.html"><strong>redis</strong></a>
+        
+            <a href="dubbo.html"><strong>dubbo</strong></a>
+        
+            <a href="RocketMQ.html"><strong>RocketMQ</strong></a>
+        
+            <a href="kubernetes.html"><strong>kubernetes</strong></a>
+        
+            <a href="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html"><strong>Java并发编程的艺术</strong></a>
+        
+            <a href="%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE.html"><strong>网络协议</strong></a>
+        
+            <a href="JVM.html"><strong>JVM</strong></a>
+        
+            <a href="Java.html"><strong>Java</strong></a>
+        
+            <a href="MySQL.html"><strong>MySQL</strong></a>
+        
+            <a href="Docker.html"><strong>Docker</strong></a>
+        
+            <a href="Spring.html"><strong>Spring</strong></a>
+        
+            <a href="GO.html"><strong>GO</strong></a>
+        
+            <a href="AI.html"><strong>AI</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="17006367993220.html">Rust web 开发-4.log</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17004933674024.html">Rust web 开发-3.config</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="16892187258215.html">wasm 初体验</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
+      </div>
+    </div>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+<style type="text/css">
+figure{margin: 0;padding: 0;}
+figcaption{text-align:center;}
+
+/* PrismJS 1.14.0
+ http://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javascript */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    text-shadow: 0 1px white;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+    text-shadow: none;
+    background:#b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+    text-shadow: none;
+    background: #b3d4fc;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background: #F7F7F7;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1em;
+    border-radius: .3em;
+    white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: slategray;
+}
+
+.token.punctuation {
+    color: #999;
+}
+
+.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #9a6e3a;
+    background: hsla(0, 0%, 100%, .5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #07a;
+}
+
+.token.function,
+.token.class-name {
+    color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e90;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+    .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+    }
+
+        .line-numbers-rows > span:before {
+            content: counter(linenumber);
+            color: #999;
+            display: block;
+            padding-right: 0.8em;
+            text-align: right;
+        }
+
+</style>
+
+  
+    
+
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+    <!-- <link rel="stylesheet" href="https://cdn1.tianli0.top/gh/zhheo/Post-Abstract-AI@0.11/tianli_gpt.css">
+<script>
+let tianliGPT_postSelector = '.article-content';
+let tianliGPT_key = '5Q5mpqRK5DkwT1X9Gi5e';
+</script>
+<script src="https://cdn1.tianli0.top/gh/zhheo/Post-Abstract-AI@0.11/tianli_gpt.js"></script> -->
+
+
+
+  </body>
+</html>

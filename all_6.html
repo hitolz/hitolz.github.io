@@ -129,1539 +129,325 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16748079623338.html">
+                <a class="clearlink" href="16761949639234.html">
                 
-                  <h1>rust 快速入门指南</h1>
+                  <h1>使用 ChatGPT 学习 Javassist</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<div class="mweb_toc"><ul>
-<li><a href="#%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F">定义变量</a></li>
-<li><a href="#%E5%B8%B8%E9%87%8F">常量</a></li>
-<li><a href="#%E5%AD%97%E7%AC%A6%E4%B8%B2">字符串</a></li>
-<li><a href="#u64%E3%80%81i64%E3%80%81f64">u64、i64、f64</a></li>
-<li><a href="#if">if</a></li>
-<li><a href="#match">match</a></li>
-<li><a href="#%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6">读取文件</a></li>
-<li><a href="#%E8%A7%A3%E6%9E%90json">解析 json</a></li>
-<li><a href="#%E5%BE%AA%E7%8E%AF">循环</a></li>
-<li><a href="#iter">iter</a></li>
-<li><a href="#while">while</a></li>
-<li><a href="#loop">loop</a></li>
-<li><a href="#%E5%87%BD%E6%95%B0">函数</a>
-<ul>
-<li><a href="#%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC">函数返回值 -&gt;</a></li>
-<li><a href="#%E5%8F%82%E6%95%B0%E5%80%BC%E4%BC%A0%E9%80%92">参数-值传递</a></li>
-<li><a href="#%E5%8F%82%E6%95%B0%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92">参数-引用传递</a></li>
-</ul>
-</li>
-<li><a href="#%E5%85%83%E7%BB%84tuple">元组 tuple</a>
-<ul>
-<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
-</ul>
-</li>
-<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93">结构体</a>
-<ul>
-<li><a href="#%E5%AE%9A%E4%B9%89%E7%BB%93%E6%9E%84%E4%BD%93">定义结构体</a></li>
-<li><a href="#%E5%88%9B%E5%BB%BA%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9E%E4%BE%8B">创建结构体实例</a></li>
-<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93%E4%BD%9C%E4%B8%BA%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0">结构体作为函数参数</a></li>
-<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93%E4%BD%9C%E4%B8%BA%E8%BF%94%E5%9B%9E%E5%80%BC">结构体作为返回值</a></li>
-<li><a href="#%E6%96%B9%E6%B3%95">方法</a></li>
-<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95">结构体静态方法</a></li>
-</ul>
-</li>
-<li><a href="#%E6%9E%9A%E4%B8%BE">枚举</a>
-<ul>
-<li><a href="#option%E6%9E%9A%E4%B8%BE">Option枚举</a></li>
-</ul>
-</li>
-<li><a href="#%E9%9B%86%E5%90%88">集合</a>
-<ul>
-<li><a href="#vec">Vec</a>
-<ul>
-<li><a href="#vec%E5%A6%82%E4%BD%95%E9%81%8D%E5%8E%86">vec 如何遍历</a></li>
-</ul>
-</li>
-<li><a href="#hashmap">HashMap</a></li>
-<li><a href="#hashset">HashSet</a></li>
-<li><a href="#btreemap%E3%80%81linkedhashmap">BTreeMap、LinkedHashMap</a></li>
-</ul>
-</li>
-<li><a href="#%E6%B3%9B%E5%9E%8B">泛型</a></li>
-<li><a href="#trait">Trait</a></li>
-<li><a href="#%E8%BF%AD%E4%BB%A3%E5%99%A8">迭代器</a></li>
-<li><a href="#%E9%97%AD%E5%8C%85">闭包</a></li>
-<li><a href="#%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8">闭包的使用</a></li>
-<li><a href="#%E7%BA%BF%E7%A8%8B">线程</a>
-<ul>
-<li><a href="#join">join</a></li>
-</ul>
-</li>
-<li><a href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">错误处理</a>
-<ul>
-<li><a href="#panic%E4%B8%8D%E5%8F%AF%E6%81%A2%E5%A4%8D%E9%94%99%E8%AF%AF">panic!() 不可恢复错误</a></li>
-<li><a href="#result%E6%9E%9A%E4%B8%BE%E5%92%8C%E5%8F%AF%E6%81%A2%E5%A4%8D%E9%94%99%E8%AF%AF">Result 枚举和可恢复错误</a></li>
-<li><a href="#unwrap%E5%92%8C-expect">unwrap() 和 expect()</a></li>
-</ul>
-</li>
-<li><a href="#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88">智能指针</a>
-<ul>
-<li><a href="#%E4%BD%BF%E7%94%A8box-t%E5%9C%A8%E5%A0%86%E4%B8%8A%E5%88%86%E9%85%8D%E6%95%B0%E6%8D%AE">使用 Box<T> 在堆上分配数据</a></li>
-<li><a href="#%E9%80%9A%E8%BF%87deref-trait%E5%B0%86%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E8%A7%86%E4%BD%9C%E5%B8%B8%E8%A7%84%E5%BC%95%E7%94%A8">通过 Deref trait 将智能指针视作常规引用</a></li>
-</ul>
-</li>
-<li><a href="#rc-t%E5%9F%BA%E4%BA%8E%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%9A%84%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88">Rc<T> 基于引用计数的智能指针</a></li>
-<li><a href="#refcell-t%E4%BD%BF%E7%94%A8%E4%BA%86%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%B1%BB%E5%9E%8B">RefCell<T>: 使用了内部可变性模式的类型</a></li>
-<li><a href="#refcell%E5%92%8C-box%E7%9A%84%E5%8C%BA%E5%88%AB">RefCell 和 Box 的区别</a></li>
-<li><a href="#%E5%8C%85%E7%AE%A1%E7%90%86">包管理</a></li>
-<li><a href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95">单元测试</a></li>
-<li><a href="#%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95">集成测试</a></li>
-<li><a href="#bench">bench</a></li>
-<li><a href="#arc">Arc</a></li>
-<li><a href="#mutex">Mutex</a></li>
-<li><a href="#rwlock">RwLock</a></li>
-<li><a href="#%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F">时间格式</a></li>
-<li><a href="#%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F">策略模式</a></li>
-<li><a href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1">多线程与定时任务</a></li>
-<li><a href="#channel">channel</a></li>
-<li><a href="#rayon">rayon</a></li>
-<li><a href="#%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%EF%BC%8C%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8">&lt;'_&gt; 是什么意思，什么作用</a></li>
-<li><a href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">生命周期</a></li>
-<li><a href="#%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88">函数指针</a></li>
-<li><a href="#%E9%97%AD%E5%8C%85%E4%B8%8Efn%E3%80%81fnmut%E3%80%81fnonce">闭包与Fn、FnMut、FnOnce</a></li>
-<li><a href="#%E5%AE%8F">宏</a>
-<ul>
-<li><a href="#macro-rules%E5%A3%B0%E6%98%8E%E5%AE%8F">macro_rules! 声明宏</a></li>
-<li><a href="#%E5%B1%9E%E6%80%A7%E5%AE%8F">属性宏</a></li>
-<li><a href="#%E5%87%BD%E6%95%B0%E5%AE%8F">函数宏</a></li>
-</ul>
-</li>
-<li><a href="#%E5%AE%9E%E7%8E%B0kafka%E7%9A%84%E5%B7%A5%E5%85%B7%E5%8C%85%EF%BC%8C%E5%8F%91%E5%B8%83%E5%88%B0-crate-io">实现 kafka 的工具包，发布到 crate.io</a></li>
-</ul>
-</div>
-<h2><a id="%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定义变量</h2>
-<pre class="line-numbers"><code class="language-rust">let 变量名 = 值;           // 不指定变量类型
-let 变量名:数据类型 = 值;   // 指定变量类型
+                        	<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825540.jpg" alt="" /></p>
+<h2><a id="q-javassist%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 是什么？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p>Javassist是一个开源的Java字节码操作库，它允许开发人员在运行时编辑和创建Java类。使用Javassist，开发人员可以通过修改现有类的字节码来动态地改变它们的行为，也可以使用Javassist的API来创建全新的Java类。Javassist提供了一个易于使用的API，使开发人员能够在不需要了解复杂的字节码结构的情况下轻松地创建和编辑Java类。Javassist还提供了一些高级功能，如动态代理、AOP（面向切面编程）和Java字节码的转换。由于它的灵活性和易用性，Javassist被广泛用于Java应用程序的动态编程和增强。</p>
+<h2><a id="q-javassist%E5%85%A5%E9%97%A8%E7%A4%BA%E4%BE%8B%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 入门示例？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<pre class="line-numbers"><code class="language-java">import javassist.*;
+
+public class JavassistExample {
+    public static void main(String[] args) throws Exception {
+        ClassPool pool = ClassPool.getDefault();
+        CtClass cc = pool.makeClass(&quot;MyClass&quot;);
+
+        // 添加属性
+        CtField field = new CtField(CtClass.intType, &quot;myField&quot;, cc);
+        cc.addField(field);
+
+        // 添加方法
+        CtMethod method = CtNewMethod.make(&quot;public void setMyField(int value) { this.myField = value; }&quot;, cc);
+        cc.addMethod(method);
+
+        // 输出类的字节码
+        cc.writeFile(&quot;output&quot;);
+    }
+}
+
 </code></pre>
-<p>可以包含 字母、数字 和 下划线 。</p>
-<p>变量名必须以 字母 或 下划线 开头。不能以 数字 开头。</p>
-<p>变量名是 区分大小 写的。也就是大写的 Study 和小写的 study 是两个不同的变量。</p>
-<p>let 关键字定义的变量是不可变变量<br />
-mut 表示可变，在变量前边加</p>
-<h2><a id="%E5%B8%B8%E9%87%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>常量</h2>
-<pre class="line-numbers"><code class="language-rust">const 常量名称:数据类型=值;
+<p>这个示例创建了一个名为&quot;MyClass&quot;的新类，添加了一个名为&quot;myField&quot;的int类型属性和一个名为&quot;setMyField&quot;的公共void类型方法，该方法设置myField属性的值。最后，将该类的字节码写入名为&quot;output&quot;的文件夹中。</p>
+<p>通过运行该示例，将在output文件夹中生成一个MyClass.class文件，该文件包含上述定义的类的字节码。这个示例只是Javassist的入门示例，Javassist还提供了许多其他功能，如修改现有类、动态代理等。</p>
+<h2><a id="q%E9%9C%80%E8%A6%81%E6%B7%BB%E5%8A%A0%E4%BB%80%E4%B9%88-maven%E4%BE%9D%E8%B5%96%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:需要添加什么 maven 依赖？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.javassist&lt;/groupId&gt;
+    &lt;artifactId&gt;javassist&lt;/artifactId&gt;
+    &lt;version&gt;3.28.0-GA&lt;/version&gt;
+&lt;/dependency&gt;
 </code></pre>
-<p>Rust 中，常量不能被隐藏，也不能被重复定义。</p>
-<h2><a id="%E5%AD%97%E7%AC%A6%E4%B8%B2" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>字符串</h2>
-<p>Rust 语言提供了两种字符串</p>
+<p>最新版本是 3.29.1-GA</p>
+<p>添加完 maven 依赖后运行，确实在 output 文件夹下生成了 MyClass.class<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825562.png" alt="CleanShot2023-02-1816.57.14@2x" /></p>
+<h2><a id="q%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:如何修改现有类？</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p>使用Javassist修改现有类可以通过以下步骤完成：</p>
 <ol>
-<li>Rust 核心内置的数据类型&amp;str，字符串字面量 。</li>
-<li>Rust 标准库中的一个 公开 pub 结构体。字符串对象 String。</li>
+<li>获取类池（ClassPool）对象。
+<pre class="line-numbers"><code class="language-java">ClassPool pool = ClassPool.getDefault();
+</code></pre>
+</li>
+<li>使用类池获取要修改的类的CtClass对象。
+<pre class="line-numbers"><code class="language-java">CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
+</code></pre>
+</li>
+<li>修改类的字节码，比如添加新的方法或属性，修改现有方法或属性等。下面是一个添加新方法的示例：
+<pre class="line-numbers"><code class="language-java">CtMethod newMethod = CtNewMethod.make(
+&quot;public void newMethod() { System.out.println(\&quot;This is a new method!\&quot;); }&quot;, cc);
+cc.addMethod(newMethod);
+</code></pre>
+</li>
+<li>将修改后的字节码写入class文件或者加载到当前JVM中。
+<pre class="line-numbers"><code class="language-java">cc.writeFile();
+</code></pre>
+或者
+<pre class="line-numbers"><code class="language-java">cc.toClass();
+</code></pre>
+<code>writeFile</code>方法会将修改后的字节码写入到磁盘上，<code>toClass</code>方法会将字节码加载到当前JVM中。</li>
 </ol>
-<pre class="line-numbers"><code class="language-rust">String::new() //创建一个新的空字符串,它是静态方法。
-String::from() //从具体的字符串字面量创建字符串对象。
+<p>下面是一个完整的示例，它会将现有类&quot;com.example.MyClass&quot;中的方法&quot;oldMethod&quot;修改为输出一条新的信息：</p>
+<pre class="line-numbers"><code class="language-java">import javassist.*;
 
+public class JavassistExample {
+    public static void main(String[] args) throws Exception {
+        ClassPool pool = ClassPool.getDefault();
+        CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
 
-let mut s3 = String::new();
+        CtMethod oldMethod = cc.getDeclaredMethod(&quot;oldMethod&quot;);
+        oldMethod.setBody(&quot;System.out.println(\&quot;This is a modified old method!\&quot;);&quot;);
 
-
-s3.push('O');
-s3.push('K');
-println!(&quot;{}&quot;,s3);//输出 Go语言极简一本通OK
-
-replace()
-
-len()
-
-to_string()
-
-as_str()
-
-trim()
-
-split()
-
-chars()
-
-</code></pre>
-<h2><a id="u64%E3%80%81i64%E3%80%81f64" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>u64、i64、f64</h2>
-<p>u64 是一个无符号的 64 位整数，表示范围为从 0 到 18,446,744,073,709,551,615，可用于表示不需要小数的正整数值。</p>
-<p>i64 是一个带符号的 64 位整数，表示范围为 -9,223,372,036,854,775,808 到 9,223,372,036,854,775,807，可以表示正数和负数，适用于需要保存有符号整数的场景。</p>
-<p>f64 是一个 64 位浮点数，可以表示带小数点的浮点值，并且可以表示非常小或非常大的数字，可以在一定的精度范围内表示几乎所有实数。但是由于精度限制，浮点数在进行数值计算时容易出现误差，所以需要谨慎使用。</p>
-<p>在 Rust 中，您需要根据实际的应用场景选择合适的数据类型。如果您需要保存的整数是正数且不需要超过 u64 的取值范围，那么使用 u64 可能会更合适，而如果您需要保存的整数可以是正数或者负数，使用 i64 可能更合适。如果您需要进行小数数值计算，不需要非常高的精度，那么选择 f64 可能更简单。但是如果您需要进行高精度货币计算等精确计算，建议使用 Decimal 等第三方库。</p>
-<p>需要注意的是，在 Rust 中，这三种类型之间的转换需要谨慎，因为它们的类型不兼容，并且在进行转换时，可能发生数据精度丢失等问题。对于 i64 到 f64 或者 u64 到 f64 的转换，可以使用 as 运算符。而对于 f64 到 i64 或者 f64 到 u64 的转换，需要使用 .round() 等函数将浮点数向上或向下取整，并处理溢出的情况。</p>
-<h2><a id="if" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>if</h2>
-<pre class="line-numbers"><code class="language-rust">if 条件表达式1 {
-   // 当 条件表达式1 为 true 时要执行的语句
-} else if 条件表达式2 {
-   // 当 条件表达式2 为 true 时要执行的语句
-} else {
-   // 如果 条件表达式1 和 条件表达式2 都为 false 时要执行的语句
-}
-
-let total:f32=366.00;
-if total&gt;200.00 &amp;&amp; total&lt;500.00{
-   println!(&quot;打9折,{}&quot;,total*0.9)
-}else if total&gt;500.00{
-   println!(&quot;打8折,{}&quot;,total*0.9)
-} else{
-   println!(&quot;无折扣优惠,{}&quot;,total)
-}
-//输出 打9折,329.4
-</code></pre>
-<h2><a id="match" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>match</h2>
-<pre class="line-numbers"><code class="language-rust">match variable_expression {
-   constant_expr1 =&gt; {
-      // 语句;
-   },
-   constant_expr2 =&gt; {
-      // 语句;
-   },
-   _ =&gt; {
-      // 默认
-      // 其它语句
-   }
-};
-
-let code = &quot;10010&quot;;
-let choose = match code {
-   &quot;10010&quot; =&gt; &quot;联通&quot;,
-   &quot;10086&quot; =&gt; &quot;移动&quot;,
-   _ =&gt; &quot;Unknown&quot;
-};
-println!(&quot;选择 {}&quot;, choose);
-//输出 选择 联通
-
-
-let code = &quot;80010&quot;;
-let choose = match code {
-   &quot;10010&quot; =&gt; &quot;联通&quot;,
-   &quot;10086&quot; =&gt; &quot;移动&quot;,
-   _ =&gt; &quot;Unknown&quot;
-};
-println!(&quot;选择 {}&quot;, choose);
-//输出 选择 Unknown
-</code></pre>
-<h2><a id="%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>读取文件</h2>
-<pre class="line-numbers"><code class="language-rust">let content = fs::read_to_string(&quot;json.json&quot;).unwrap();
-</code></pre>
-<h2><a id="%E8%A7%A3%E6%9E%90json" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>解析 json</h2>
-<pre class="line-numbers"><code class="language-rust">let json = serde_json::to_string(&amp;content).unwrap();
-print!(&quot;json: {}&quot;, json);
-</code></pre>
-<pre class="line-numbers"><code class="language-rust">let parsed:WebResponse = serde_json::from_str(raw_json).unwrap();
-return pased
-</code></pre>
-<h2><a id="%E5%BE%AA%E7%8E%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>循环</h2>
-<pre class="line-numbers"><code class="language-rust">for num in 1..5{
-   println!(&quot;num is {}&quot;, num);
-}
-//输出
-num is 1
-num is 2
-num is 3
-num is 4
-
-
-for num in 1..=5 {
-   println!(&quot;num is {}&quot;, num);
-}
-输出
-num is 1
-num is 2
-num is 3
-num is 4
-num is 5
-</code></pre>
-<h2><a id="iter" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>iter</h2>
-<pre class="line-numbers"><code class="language-rust">let array = vec![
-    &quot;1&quot;,
-    &quot;2&quot;,
-    &quot;3&quot;,
-];
-for name in array.iter() {
-    match name {
-        &amp;&quot;3&quot; =&gt; println!(&quot;3-{}!&quot;, name),
-        _ =&gt; println!(&quot;{}&quot;, name),
-    }
-}
-
-//输出
-1
-2
-3-3!
-</code></pre>
-<p>iter 在每次迭代的时候会从集合中借用元素，这样集合本身不会被改变，循环结束后，集合依然可以使用。</p>
-<p>into_iter会消耗集合，会remove 集合中的元素。</p>
-<pre class="line-numbers"><code class="language-rust">let array = vec![
-    &quot;1&quot;,
-    &quot;2&quot;,
-    &quot;3&quot;,
-];
-for name in array.into_iter() { // `array` moved due to this method call
-    match name {
-        &quot;3&quot; =&gt; println!(&quot;3-{}!&quot;, name),
-        _ =&gt; println!(&quot;{}&quot;, name),
-    }
-}
-println!(&quot;{:?}&quot;,array) // value  borrowed here after move
-</code></pre>
-<h2><a id="while" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>while</h2>
-<pre class="line-numbers"><code class="language-rust">while ( 条件表达式 ) {
-    // 执行业务逻辑
-}
-</code></pre>
-<pre class="line-numbers"><code class="language-rust">let mut num = 1;
-while num &lt; 20 {
-    num = num + 1;
-    println!(&quot;{}&quot;,num)
-}
-
-while 内部也是可以使用 break；
-</code></pre>
-<h2><a id="loop" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>loop</h2>
-<pre class="line-numbers"><code class="language-rust">let mut num = 1;
-loop {
-    num = num + 1;
-    if num &gt; 20{
-        break;
-    }
-    println!(&quot;{}&quot;,num)
-}
-</code></pre>
-<h2><a id="%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数</h2>
-<pre class="line-numbers"><code class="language-rust">fn 函数名称([参数:数据类型]) -&gt; 返回值 {
-   // 函数代码
-}
-
-fn hello(){
-    println!(&quot;Hello, rust!&quot;);
-}
-
-fn main() {
-    hello();
-}
-
-//输出 Hello, rust!
-</code></pre>
-<p>一个 “不” 返回值的函数。实际上会返回一个单元类型 ()</p>
-<h3><a id="%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数返回值 -&gt;</h3>
-<p>如果函数最后没有 return，那么函数会使用最后一条语句的执行结果当做返回值返回，没有分号。</p>
-<h3><a id="%E5%8F%82%E6%95%B0%E5%80%BC%E4%BC%A0%E9%80%92" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>参数-值传递</h3>
-<p>值传递 是把传递的变量的值传递给函数的 形参，所以，函数体外的变量值和函数参数是各自保存了相同的值，互不影响。因此函数内部修改函数参数的值并不会影响外部变量的值。</p>
-<p>值传递变量导致重新创建一个变量</p>
-<pre class="line-numbers"><code class="language-rust">fn double_price(mut price:i32){
-    price=price*2;
-    println!(&quot;内部的price是{}&quot;,price)
-}
-
-fn main() {
-    let mut price=99;
-    double_price(price); //输出 内部的price是198
-    println!(&quot;外部的price是{}&quot;,price); //输出 外部的price是99
-}
-</code></pre>
-<h3><a id="%E5%8F%82%E6%95%B0%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>参数-引用传递</h3>
-<p>引用传递把当前变量的内存位置传递给函数。传递的变量和函数参数都共同指向了同一个内存位置。引用传递在参数类型的前面加上 &amp; 符号。</p>
-<pre class="line-numbers"><code class="language-rust">fn 函数名称(参数: &amp;数据类型) {
-   // 执行逻辑代码
-}
-
-fn double_price2(price:&amp;mut i32){
-    *price=*price*2;
-    println!(&quot;内部的price是{}&quot;,price)
-}
-
-fn main() {
-    let mut price=88;
-    double_price2(&amp;mut price); //输出 内部的price是176
-    println!(&quot;外部的price是{}&quot;,price);//输出 外部的price是176
-}
-</code></pre>
-<h2><a id="%E5%85%83%E7%BB%84tuple" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>元组 tuple</h2>
-<p>Tuple 元组是一个 复合类型 ，可以存储多个不同类型的数据。 Rust 支持元组 tuple 类型。元组使用括号 () 来构造（construct）。函数可以使用元组来返回多个值，因为元组可以拥有任意多个值。</p>
-<p>元组一旦定义，就不能再增长或缩小，长度是固定的。元组的下标从 0 开始。</p>
-<h3><a id="%E5%AE%9A%E4%B9%89" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定义</h3>
-<pre class="line-numbers"><code class="language-rust">let tuple变量名称:(数据类型1,数据类型2,...) = (数据1，数据2，...);
-let tuple变量名称 = (数据1，数据2，...);
-</code></pre>
-<p>tuple 使用一对小括号 () 把所有元素放在一起，元素之间使用逗号 , 分隔。如果显式指定了元组的数据类型，那么数据类型的个数必须和元组的个数相同，否则会报错。</p>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let t:(&amp;str,&amp;str) = (&quot;GO&quot;,&quot;rust&quot;);
-    println!(&quot;{:?}&quot;,t);
-    println!(&quot;{}&quot;,t.0);
-    println!(&quot;{}&quot;,t.1);
-    
-    // 解构，将2个元素的元组，赋值给两个变量
-    let (go,rust) = t;
-    println!(&quot;{}&quot;,go);
-    println!(&quot;{}&quot;,rust)
-}
-</code></pre>
-<h2><a id="%E7%BB%93%E6%9E%84%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体</h2>
-<h3><a id="%E5%AE%9A%E4%B9%89%E7%BB%93%E6%9E%84%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定义结构体</h3>
-<pre class="line-numbers"><code class="language-rust">struct 结构体名称 {
-    字段1:数据类型,
-    字段2:数据类型,
-    ...
-}
-</code></pre>
-<h3><a id="%E5%88%9B%E5%BB%BA%E7%BB%93%E6%9E%84%E4%BD%93%E5%AE%9E%E4%BE%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>创建结构体实例</h3>
-<pre class="line-numbers"><code class="language-rust">let 实例名称 = 结构体名称{
-    field1:value1,
-    field2:value2
-    ...
-};
-
--------
-
-#[derive(Debug)]
-struct Study {
-    name: String,
-    target: String,
-    spend: i32,
-}
-
-fn main() {
-    let s = Study {
-        name: String::from(&quot;GO&quot;),
-        target: String::from(&quot;GOGOGO&quot;),
-        spend: 3,
-    };
-    println!(&quot;{:?}&quot;, s);
-    println!(&quot;{:?}&quot;, s.name);
-}
-
-</code></pre>
-<h3><a id="%E7%BB%93%E6%9E%84%E4%BD%93%E4%BD%9C%E4%B8%BA%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体作为函数参数</h3>
-<pre class="line-numbers"><code class="language-rust">fn show(s: Study) {
-    println!(
-        &quot;name is :{} target is {} spend is{}&quot;,
-        s.name, s.target, s.spend
-    );
-}
-</code></pre>
-<h3><a id="%E7%BB%93%E6%9E%84%E4%BD%93%E4%BD%9C%E4%B8%BA%E8%BF%94%E5%9B%9E%E5%80%BC" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体作为返回值</h3>
-<pre class="line-numbers"><code class="language-rust">fn get_instance(name: String, target: String, spend: i32) -&gt; Study {
-    return Study {
-        name,
-        target,
-        spend,
-    };
-}
-</code></pre>
-<h3><a id="%E6%96%B9%E6%B3%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>方法</h3>
-<p>方法是依附于对象的函数。<br />
-这些方法通过关键字 self 来访问对象中的数据和其他。方法在 impl 代码块中定义。</p>
-<blockquote>
-<p>与函数的区别<br />
-函数：可以直接调用，同一个程序不能出现 2 个相同的函数签名的函数，应为函数不归属任何 owner。<br />
-方法：归属某一个 owner，不同的 owner 可以有相同的方法签名。</p>
-</blockquote>
-<pre class="line-numbers"><code class="language-rust">impl 结构体{
-    fn 方法名(&amp;self,参数列表) 返回值 {
-        //方法体
+        cc.writeFile();
     }
 }
 </code></pre>
-<pre class="line-numbers"><code class="language-rust">struct User{
-    name:String,
-    age:u32
-}
+<p>注意，为了执行这个示例，你需要将&quot;com.example.MyClass&quot;这个类的字节码文件放在类路径下。</p>
+<hr />
+<p>执行前，我的 TestClass类，里面 test 方法，输出1<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825576.png" alt="CleanShot2023-02-1817.07.50@2x" /></p>
+<p>执行后<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825589.png" alt="CleanShot2023-02-1817.08.29@2x" /></p>
+<p>执行后的这个是新生成的文件，并不是覆盖掉原来的文件。</p>
+<h2><a id="q-cc-toclass%E5%92%8C-cc-writefile%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:cc.toClass() 和 cc.writeFile() 的区别</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p><code>toClass()</code> 方法会将 <code>Javassist</code> 修改后的类直接转换为 <code>java.lang.Class</code> 对象，并将该对象加载到 JVM 中，因此你可以在代码中直接使用修改后的类。如果你调用了 <code>toClass()</code> 方法，<code>Javassist</code> 会尝试在 JVM 中加载修改后的类，如果加载成功，则返回一个 <code>java.lang.Class</code> 对象，否则会抛出一个异常。</p>
+<p><code>writeFile()</code> 方法会将 <code>Javassist</code> 修改后的类写入到磁盘上的一个 .class 文件中。这个文件可以用来替换原来的类文件，或者在以后的运行中使用，以避免每次运行时重新生成修改后的类。注意，<code>writeFile()</code> 方法只是将类保存到磁盘上，并没有将其加载到 JVM 中，因此你不能直接在代码中使用修改后的类，除非你手动加载它。</p>
+<p>通常来说，<code>toClass()</code> 方法比 <code>writeFile()</code> 更方便，因为它可以直接在 JVM 中加载修改后的类，而不需要手动加载它。但是，如果你需要在多个应用程序之间共享修改后的类，或者想要在以后的运行中使用这个类，那么 <code>writeFile()</code> 方法可能更有用。</p>
+<p>需要注意的是，<code>toClass()</code> 和 <code>writeFile()</code> 方法可以结合使用，以便在将修改后的类加载到 JVM 中之前，先将它们保存到磁盘上。这样做可以避免每次运行时重新生成修改后的类。</p>
+<h2><a id="q%E4%BD%BF%E7%94%A8-javassist%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%8C%E5%9C%A8%E5%85%B6%E4%B8%AD%E6%AF%8F%E4%B8%AA%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E5%89%8D%E5%90%8E%E8%BE%93%E5%87%BA%E5%BD%93%E5%89%8D%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4%EF%BC%8C%E4%BB%A5%E6%AD%A4%E6%9D%A5%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E7%9A%84%E6%97%B6%E9%97%B4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:使用Javassist修改现有类，在其中每个方法执行前后输出当前系统时间，以此来计算方法执行的时间</h2>
+<h2><a id="a%EF%BC%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A：</h2>
+<p>回答的步骤跟上一个问题的步骤是一样的，不过示例代码不同，而且有错误，最终修改完成后的示例：</p>
+<pre class="line-numbers"><code class="language-java">import javassist.*;
 
-impl User{
-    fn get_name(&amp;self) -&gt; String {
-        return String::from(self.name.to_string())
+
+public class JavassistExample {
+    public static void main(String[] args) throws Exception {
+        modifyClass();
     }
-}
 
-fn main() {
-    let user = User{
-        name:&quot;zhangsan&quot;.to_string(),
-        age:1
-    };
-    println!(&quot;{}&quot;,user.get_name());
-}
-</code></pre>
-<h3><a id="%E7%BB%93%E6%9E%84%E4%BD%93%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>结构体静态方法</h3>
-<pre class="line-numbers"><code class="language-rust">fn 方法名(参数: 数据类型,...) -&gt; 返回值类型 {
-      // 方法体
-   }
-
-调用方式
-结构体名称::方法名(参数列表)
-
-
-impl Study {
-    fn get_instance_another(name: String, target: String, spend: i32) -&gt; Study {
-        return Study {
-            name,
-            target,
-            spend,
-        };
-    }
-}
-fn main() {
-    let s = Study::get_instance_another(&quot;GO&quot;.to_string(),&quot;GOGOGO&quot;.to_string(),3);
-    println!(&quot;{:?}&quot;, s);
-    println!(&quot;{:?}&quot;, s.name);
-}
-</code></pre>
-<h2><a id="%E6%9E%9A%E4%B8%BE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>枚举</h2>
-<pre class="line-numbers"><code class="language-rust">enum 枚举名称{
- variant1,
- variant2,
- ...
-}
-
-使用：
-枚举名称::variant
-</code></pre>
-<h3><a id="option%E6%9E%9A%E4%B8%BE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Option枚举</h3>
-<pre class="line-numbers"><code class="language-rust">enum Option&lt;T&gt; {
-   Some(T),      // 用于返回一个值
-   None          // 用于返回 null,用None来代替。
-}
-</code></pre>
-<p>Option 枚举经常用在函数中的返回值，它可以表示有返回值，也可以用于表示没有返回值。如果有返回值。可以使用返回 Some(data)，如果函数没有返回值，可以返回 None。</p>
-<h2><a id="%E9%9B%86%E5%90%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>集合</h2>
-<p>Rust 语言标准库提供了通用的数据结构的实现。包括 向量 （Vector）、哈希表（ HashMap ）、哈希集合（ HashSet ） 。</p>
-<h3><a id="vec" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Vec</h3>
-<p>Rust 在标准库中定义了结构体 Vec 用于表示一个向量。向量和数组很相似，只是数组长度是编译时就确定了，定义后就不能改变了，那要么改数组，让他支持可变长度，显然 Rust 没有这么做，它用向量这个数据结构，也是在内存中开辟一段连续的内存空间来存储元素。</p>
-<p>特点：</p>
-<ol>
-<li>向量中的元素都是相同类型元素的集合。</li>
-<li>长度可变，运行时可以增加和减少。</li>
-<li>使用索引查找元素。（索引从 0 开始）</li>
-<li>添加元素时，添加到向量尾部。</li>
-<li>向量的内存在堆上，长度可动态变化。</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">let mut 向量的变量名称 = Vec::new();
-// 使用 vec宏简化
-let 向量的变量名称 = vec![val1,val2,...]
-</code></pre>
-<p>常用方法</p>
-<ol>
-<li>new():创建一个空的向量实例</li>
-<li>push():添加到向量末尾</li>
-<li>remove():删除并返回指定的下表元素</li>
-<li>contains():判断向量中是否包含某个值</li>
-<li>len():返回向量中元素个数</li>
-</ol>
-<h4><a id="vec%E5%A6%82%E4%BD%95%E9%81%8D%E5%8E%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>vec 如何遍历</h4>
-<p>在 Rust 中，可以使用迭代器（iterator）来遍历 <code>Vec</code> 类型的向量。迭代器提供了一种简洁和安全的方式来遍历集合元素。</p>
-<p>有多种方法可以遍历 <code>Vec</code> 的元素。下面是几个常用的示例：</p>
-<ol>
-<li>使用 <code>for</code> 循环：</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">let vec = vec![1, 2, 3, 4, 5];
-
-for element in &amp;vec {
-    println!(&quot;{}&quot;, element);
-}
-</code></pre>
-<p>在上面的示例中，我们使用 <code>for</code> 循环遍历了 <code>vec</code> 中的每个元素，并打印出来。</p>
-<ol start="2">
-<li>使用 <code>iter()</code> 方法和 <code>for</code> 循环：</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">let vec = vec![1, 2, 3, 4, 5];
-
-for element in vec.iter() {
-    println!(&quot;{}&quot;, element);
-}
-</code></pre>
-<p>这里我们调用 <code>iter()</code> 方法获取一个迭代器，然后使用 <code>for</code> 循环遍历迭代器中的每个元素。</p>
-<ol start="3">
-<li>使用 <code>iter_mut()</code> 方法和 <code>for</code> 循环（可变迭代）：</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">let mut vec = vec![1, 2, 3, 4, 5];
-
-for element in vec.iter_mut() {
-    *element *= 2; // 修改元素的值
-}
-
-println!(&quot;{:?}&quot;, vec); // 打印修改后的向量
-</code></pre>
-<p>在这个示例中，我们使用 <code>iter_mut()</code> 方法获取一个可变迭代器，然后使用 <code>for</code> 循环遍历可变迭代器中的每个元素。我们在循环体内修改了每个元素的值，并打印出修改后的向量。</p>
-<pre class="line-numbers"><code class="language-rust">let vec = vec![10, 20, 30, 40, 50];
-
-for (index, element) in vec.iter().enumerate() {
-    println!(&quot;Index: {}, Element: {}&quot;, index, element);
-}
-</code></pre>
-<p>这些示例展示了几种常用的遍历 <code>Vec</code> 的方法。你可以根据具体的需求选择适合的方法来遍历和操作 <code>Vec</code> 中的元素。</p>
-<h3><a id="hashmap" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>HashMap</h3>
-<pre class="line-numbers"><code class="language-rust">let mut 变量名称 = HashMap::new();
-
-
-fn main() {
-    let mut map = HashMap::new();
-    map.insert(1,&quot;rust&quot;);
-    map.insert(2,&quot;go&quot;);
-    map.insert(3,&quot;java&quot;);
-
-    println!(&quot;len = {}&quot;,map.len());
-
-    let value = map.get(&amp;1);
-    match value {
-        Some(v) =&gt;{
-            println!(&quot;{}&quot;,v)
+    public static void modifyClass() throws Exception {
+        ClassPool cp = ClassPool.getDefault();
+        CtClass cc = cp.get(&quot;com.example.MyClass&quot;);
+        System.out.println(&quot;modifyClass &quot; + cc.getName());
+        CtMethod[] methods = cc.getDeclaredMethods();
+        for (CtMethod method : methods) {
+            String methodName = &quot;modifyClass &quot; + cc.getName() + &quot;#&quot; + method.getName();
+            System.out.println(methodName);
+            method.addLocalVariable(&quot;startNanos&quot;, CtClass.longType);
+            method.insertBefore(&quot;{ startNanos = System.nanoTime(); }&quot;);
+            method.insertAfter(&quot;System.out.println(System.nanoTime() - startNanos);&quot;);
         }
-        None =&gt;{
-            println!(&quot;none&quot;)
+        // 重新生成字节码并返回
+        cc.writeFile();
+        cc.toClass();
+    }
+}
+</code></pre>
+<h2><a id="%E8%BF%90%E8%A1%8C%E7%94%9F%E6%88%90%E7%9A%84%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行生成的代码</h2>
+<pre class="line-numbers"><code class="language-java">public class MyApp {
+    public static void main(String[] args) throws Exception {
+        // 在 Javassist 中修改 MyClass
+        JavassistExample.modifyClass();
+
+        // 已经加载到 JVM 内存中，这里使用的是修改后的类
+        MyClass cc = new MyClass();
+        cc.method1();
+    }
+}
+</code></pre>
+<h2><a id="%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改后的字节码</h2>
+<pre class="line-numbers"><code class="language-java">
+public class MyClass {
+    public MyClass() {
+    }
+
+    public void method1() {
+        long startNanos = System.nanoTime();
+        System.out.println(&quot;This is method 1&quot;);
+
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException var6) {
+            var6.printStackTrace();
         }
+
+        Object var5 = null;
+        System.out.println(System.nanoTime() - startNanos);
     }
 
-    let map2 = map.clone();
-    for x in map2 {
-        println!(&quot;{:?}&quot;,x)
-    }
+    public void method2(String name, Integer age) {
+        long startNanos = System.nanoTime();
+        System.out.println(&quot;This is method 2&quot;);
+        System.out.println(name);
+        System.out.println(age);
 
-    for (k,v) in map.iter() {
-        println!(&quot;k = {},v = {}&quot;,k,v);
-    }
-}
-</code></pre>
-<h3><a id="hashset" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>HashSet</h3>
-<p>Hashset 是相同数据类型的集合，它是没有重复值的。如果集合中已经存在相同的值，则会插入失败。</p>
-<pre class="line-numbers"><code class="language-rust">let mut 变量名称 = HashSet::new();
-
-</code></pre>
-<h3><a id="btreemap%E3%80%81linkedhashmap" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>BTreeMap、LinkedHashMap</h3>
-<p>HashMap 是一个哈希映射，它使用哈希函数对键进行索引，因此它不会按照插入顺序保存元素。</p>
-<h2><a id="%E6%B3%9B%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>泛型</h2>
-<p>Rust 语言中的泛型主要包含 泛型集合、泛型结构体、泛型函数、范型枚举 和 特质 。</p>
-<p>Rust 使用使用 <T> 语法来实现泛型, 其中 T 可以是任意数据类型。</p>
-<pre class="line-numbers"><code class="language-rust">struct 结构体名称&lt;T&gt; {
-   元素:T,
-}
-
-
-struct Data&lt;T&gt; {
-   value:T,
-}
-
-fn main() {
-    let t:Data&lt;i32&gt; = Data{value:100};
-    println!(&quot;值:{} &quot;,t.value);//输出 值:100
-    let t:Data&lt;f64&gt; = Data{value:66.00};
-    println!(&quot;值:{} &quot;,t.value);//输出 值:66
-    let t:Data&lt;String&gt; = Data{value:&quot;123&quot;.to_string()};
-    println!(&quot;值:{} &quot;,t.value);//输出 值 123
-}
-</code></pre>
-<h2><a id="trait" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Trait</h2>
-<p>可以把这个特质（traits）对标其他语言的接口，都是对行为的抽象。使用 trait关键字用来定义。特质，可以包含具体的方法，也可以包含抽象的方法。</p>
-<pre class="line-numbers"><code class="language-rust">trait some_trait {
-   // 没有任何实现的虚方法
-   fn method1(&amp;self);
-
-   // 有具体实现的普通方法
-   fn method2(&amp;self){
-      //方法的具体代码
-   }
-}
-</code></pre>
-<p>实现特质  demo</p>
-<pre class="line-numbers"><code class="language-rust">struct Book {
-    name: String,
-    id: u32,
-    author: String,
-}
-
-trait ShowBook {
-    fn Show(&amp;self);
-}
-
-impl ShowBook for Book{
-    fn Show(&amp;self) {
-        println!(&quot;Id:{},Name:{},Author:{}&quot;,self.id,self.name,self.author);
-    }
-}
-
-fn main() {
-    let book = Book{
-        id:1,
-        name: String::from(&quot;GO&quot;),
-        author: String::from(&quot;xx&quot;)
-    };
-    book.Show();
-}
-</code></pre>
-<p>泛型函数</p>
-<pre class="line-numbers"><code class="language-rust">fn 方法名&lt;T[:特质名称]&gt;(参数1:T, ...) {
-
-   // 函数实现代码
-}
-
-
-fn show2&lt;T:Display&gt;(t:T){
-    println!(&quot;{}&quot;,t);
-}
-impl Display for Book{
-    fn fmt(&amp;self, f: &amp;mut Formatter&lt;'_&gt;) -&gt; std::fmt::Result {
-        println!(&quot;Id:{},Name:{},Author:{}&quot;,self.id,self.name,self.author);
-        let r=Result::Ok(());
-        return r;
-    }
-}
-
-show2(book);
-</code></pre>
-<h2><a id="%E8%BF%AD%E4%BB%A3%E5%99%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>迭代器</h2>
-<p>迭代器 就是把集合中的所有元素按照顺序一个接一个的传递给处理逻辑。</p>
-<p>Iterator 特质有两个函数：</p>
-<ol>
-<li>一个是 iter()，用于返回一个 迭代器 对象，也称之为 项 ( items ) 。</li>
-<li>一个是 next()，用于返回迭代器中的下一个元素。如果已经迭代到集合的末尾（最后一个项后面）则返回 None。</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let array = vec![
-        &quot;1&quot;,
-        &quot;2&quot;,
-        &quot;3&quot;,
-    ];
-    let mut iter = array.iter();
-    println!(&quot;{:?}&quot;,iter.next());
-    println!(&quot;{:?}&quot;,iter.next());
-    println!(&quot;{:?}&quot;,iter.next());
-
-    for x in array {
-        println!(&quot;{:?}&quot;,x)
-    }
-}
-</code></pre>
-<h2><a id="%E9%97%AD%E5%8C%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>闭包</h2>
-<p>Rust 中的闭包（closure），也叫做 lambda 表达式或者 lambda，是一类能够捕获周围作用域中变量的函数。</p>
-<p>调用一个闭包和调用一个函数完全相同，不过调用闭包时，输入和返回类型两者都可以自动推导，而输入变量名必须指明。</p>
-<p>其他的特点包括：</p>
-<ol>
-<li>声明时使用 || 替代 () 将输入参数括起来。</li>
-<li>函数体定界符（{}）对于单个表达式是可选的，其他情况必须加上。</li>
-<li>有能力捕获外部环境的变量。</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">普通函数
-fn 函数名(参数列表) -&gt; 返回值 {
-   // 业务逻辑
-}
-
-// 闭包
-|参数列表| {
-	// 业务逻辑
-}
-// 无参数闭包
-|| {
-	// 业务逻辑
-}
-
-let 闭包变量 = |参数列表| {
-   // 闭包的具体逻辑
-}
-
-</code></pre>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let double = |x| { x * 2 };
-
-    let add = |a, b| { a + b };
-    
-    let x = add(2, 4);
-    println!(&quot;{:?}&quot;, x);
-
-    let y = double(5);
-    println!(&quot;{:?}&quot;, y);
-
-    let v = 3;
-    let add2 = |x| { v + x };
-    println!(&quot;{:?}&quot;, add2(4));
-    
-    let r = (|x| x + 1)(3); // 3 是参数，结果r是4
-}
-</code></pre>
-<p>闭包就是在一个函数内创建立即调用的另一个函数。</p>
-<p>闭包是一个匿名函数。</p>
-<p>闭包虽然没有函数名，但可以把整个闭包赋值一个变量，通过调用该变量来完成闭包的调用。</p>
-<p>闭包不用声明返回值，但它却可以有返回值。并且使用最后一条语句的执行结果作为返回值。闭包的返回值可以赋值给变量。</p>
-<p>闭包又称之为 内联函数。可以让闭包访问外层函数里的变量。</p>
-<h2><a id="%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>闭包的使用</h2>
-<p><a href="https://www.go-edu.cn/2022/07/05/rust-39-%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/">https://www.go-edu.cn/2022/07/05/rust-39-%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</a></p>
-<pre class="line-numbers"><code class="language-rust">let add = |x, y| x + y;
-let result = add(3, 4);
-println!(&quot;{}&quot;, result);
-
-------------
-闭包像普通函数一样被调用。
-fn receives_closure&lt;F&gt;(closure: F)
-    where
-        F: Fn(i32, i32) -&gt; i32,
-{
-    let result = closure(3, 5);
-    println!(&quot;闭包作为参数执行结果 =&gt; {}&quot;, result);
-}
-
-fn main() {
-    let add = |x, y| x + y;
-    receives_closure(add);
-}
-
-输出:
-闭包作为参数执行结果 =&gt; 8
-
-
-------------
-闭包捕获变量
-fn receives_closure2&lt;F&gt;(closure:F)
-    where
-        F:Fn(i32)-&gt;i32{
-    let result = closure(1);
-    println!(&quot;closure(1) =&gt; {}&quot;, result);
-}
-
-fn main() {
-    let y = 2;
-    receives_closure2(|x| x + y);
-
-    let y = 3;
-    receives_closure2(|x| x + y);
-}
-输出:
-捕获变量的结果 =&gt; 3
-捕获变量的结果 =&gt; 4
-
-
-
-
--------
-返回闭包
-fn returns_closure() -&gt; impl Fn(i32) -&gt; i32 {
-    |x| x + 6
-}
-
-fn main() {
-    let closure = returns_closure();
-    println!(&quot;返回闭包 =&gt; {}&quot;, closure(1));
-}
-输出:
-返回闭包 =&gt; 7
-
-
-
-------
-参数和返回值都有闭包
-
-</code></pre>
-<h2><a id="%E7%BA%BF%E7%A8%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>线程</h2>
-<pre class="line-numbers"><code class="language-rust">创建线程
-std::thread::spawn()
-
-//spawn() 函数的原型
-pub fn spawn&lt;F, T&gt;(f: F) -&gt; JoinHandle&lt;T&gt;
-</code></pre>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    //子线程
-    thread::spawn(|| {
-        for i in 1..10 {
-            println!(&quot;子线程 {}&quot;, i);
-            thread::sleep(Duration::from_millis(1));
+        try {
+            Thread.sleep(2000L);
+        } catch (InterruptedException var8) {
+            var8.printStackTrace();
         }
-    });
-    // 主线程
-    for i in 1..5 {
-        println!(&quot;主线程 {}&quot;, i);
-        thread::sleep(Duration::from_millis(1));
-    }
-}
 
-|| 是闭包，匿名函数，也可以使用外部函数
-
-fn a(){
-    for i in 1..10 {
-        println!(&quot;子线程 {}&quot;, i);
-        thread::sleep(Duration::from_millis(1));
-    }
-}
-
-fn main() {
-
-    thread::spawn(a);
-    // 主线程
-    for i in 1..5 {
-        println!(&quot;主线程 {}&quot;, i);
-        thread::sleep(Duration::from_millis(1));
+        Object var7 = null;
+        System.out.println(System.nanoTime() - startNanos);
     }
 }
 </code></pre>
-<h3><a id="join" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>join</h3>
-<p>上面的例子主线程结束后，子线程还没有运行完，但是子线程也结束了。如果想让子线程结束后，主线程再结束，我们就要使用Join 方法，把子线程加入主线程等待队列。</p>
-<pre class="line-numbers"><code class="language-rust">fn a(){
-    for i in 1..10 {
-        println!(&quot;子线程 {}&quot;, i);
-        thread::sleep(Duration::from_millis(1));
-    }
-}
-
-fn main() {
-
-   let handler = thread::spawn(a);
-    // 主线程
-    for i in 1..5 {
-        println!(&quot;主线程 {}&quot;, i);
-        thread::sleep(Duration::from_millis(1));
-    }
-    handler.join().unwrap();
-
-}
-</code></pre>
-<h2><a id="%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>错误处理</h2>
-<h3><a id="panic%E4%B8%8D%E5%8F%AF%E6%81%A2%E5%A4%8D%E9%94%99%E8%AF%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>panic!() 不可恢复错误</h3>
-<p>panic!() 程序立即退出，退出时调用者抛出退出原因。</p>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    panic!(&quot;出错啦&quot;);
-    println!(&quot;Hello Rust&quot;); // 不可能执行的语句
-}
-//输出
-thread 'main' panicked at '出错啦', src/main.rs:2:5
-
-</code></pre>
-<h3><a id="result%E6%9E%9A%E4%B8%BE%E5%92%8C%E5%8F%AF%E6%81%A2%E5%A4%8D%E9%94%99%E8%AF%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Result 枚举和可恢复错误</h3>
-<p>枚举的定义</p>
-<pre class="line-numbers"><code class="language-rust">enum Result&lt;T,E&gt; {
-   OK(T),
-   Err(E)
-}
-OK(T) T OK 时作为正常返回的值的数据类型。
-Err(E) E Err 时作为错误返回的错误的类型。
-</code></pre>
-<h3><a id="unwrap%E5%92%8C-expect" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>unwrap() 和 expect()</h3>
-<p>unwrap是 Result&lt;T, E&gt;的方法，在实例上调用此方法时，如果是 Ok 枚举值，就会返回 Ok 中的对象，如果是 Err 枚举值，在运行时会 panic，报错信息是 format!(“{}”, error)。其缺点是，如果在不同地方都使用 unwrap，运行时出现 panic 的时候。</p>
-<pre class="line-numbers"><code class="language-rust">fn is_even(no:i32)-&gt;Result&lt;bool,String&gt; {
-    return if no % 2 == 0 {
-        Ok(true)
-    } else {
-        Err(&quot;输入值，不是偶数&quot;.to_string())
-    }
-}
-
-let result = is_even(6).unwrap();
-println!(&quot;结果 {}&quot;,result);
-//输出 结果 true
-
-let result = is_even(11).unwrap();
-println!(&quot;结果 {}&quot;,result);
-//输出 thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: &quot;输入值，不是偶数&quot;'
-</code></pre>
-<p>expect方法的作用和unwrap类似，区别在于，expect方法接受msg: &amp;str作为参数，它在运行时的panic信息为format!(&quot;{}: {}&quot;, msg, error)，使用expect时，可以自定义报错信息，因此出现panic时比较容易定位。</p>
-<pre class="line-numbers"><code class="language-rust">let f = File::open(&quot;abc.txt&quot;).expect(&quot;无法打开该文件&quot;); // 文件不存在
-//输出 thread 'main' panicked at '无法打开该文件: Os { code: 2, kind: NotFound, message: &quot;No such file or directory&quot; }'
-</code></pre>
-<h2><a id="%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>智能指针</h2>
-<p>指针，指代那些包含内存地址的变量。这个地址被用于索引，或者说用于指向内存中的其他数据。<br />
-rust 中最常用的指针就是 引用。</p>
-<p>而智能指针则是一些数据结构，他们的行为类似于指针但拥有额外的元数据和附加功能。<br />
-引用是只借用数据的指针，而大多数智能指针本身就拥有它们指向的数据。</p>
-<p><code>String</code> 和 <code>Vec&lt;T&gt;</code> 也是智能指针。因为他们拥有一片内存区域并允许用户对其进行操作。他们还拥有元数据，例如容量，并提供额外的功能或保障。</p>
-<p>一般用结构体实现智能指针，通常会实现 Deref 和 Drop 这两个 trait。<br />
-Deref 使得智能指针结构体的实例拥有与引用一致的行为，可以编写出能够同时用于引用和智能指针的代码</p>
-<p>Drop 可以自定义智能指针离开作用域时运行的代码。</p>
-<p>常见的智能指针：</p>
-<ul>
-<li><code>Box&lt;T&gt;</code>:可用于在堆上分配值。</li>
-<li><code>Rc&lt;T&gt;</code>:允许多重所有权的引用计数类型。</li>
-<li><code>Ref&lt;T&gt;</code>和 <code>RefMut&lt;T&gt;</code>：可以通过 <code>RefCell&lt;T&gt;</code> 访问，是一种可以在运行时而不是编译时执行借用规则的类型。</li>
-</ul>
-<p>内部可变性模式，使用了这一模式的不可变类型会暴露出能够改变自己内部值的 API。</p>
-<h3><a id="%E4%BD%BF%E7%94%A8box-t%E5%9C%A8%E5%A0%86%E4%B8%8A%E5%88%86%E9%85%8D%E6%95%B0%E6%8D%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>使用 Box<T> 在堆上分配数据</h3>
-<p><code>Box&lt;T&gt;</code> 装箱，是最简单直接的一种智能指针。将数据保存在堆上，并在栈中保留一个指向堆数据的指针。<br />
-装箱使用场景：</p>
+<h2><a id="q%EF%BC%9Ajavaagent%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q：javaagent 的使用原理</h2>
+<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
+<p>Java Agent 是一种基于 JVM 的动态代理技术，它可以在应用程序启动时通过参数的方式将一个 Jar 包加载到 JVM 中，从而实现对 Java 应用程序的动态监控和控制。Java Agent 的原理是通过 Java Instrumentation API，它提供了对 Java 应用程序字节码的操作能力，可以在 Java 应用程序启动时通过 Agent 将 Java 类进行动态修改，从而实现对应用程序的监控和控制。</p>
+<p>在使用 Java Agent 时，需要编写一个代理程序，并将其打包成 Jar 文件。在代理程序中，需要实现 premain 方法，该方法会在应用程序启动时被自动调用。在 premain 方法中，可以通过 Instrumentation API 获取应用程序的类定义，并对其进行动态修改，从而实现对应用程序的增强和监控。</p>
+<p>具体而言，Java Agent 可以在 premain 方法中使用 Instrumentation API 的 addTransformer() 方法注册一个 ClassFileTransformer 对象。ClassFileTransformer 对象可以在应用程序加载类文件时对类字节码进行转换。在转换过程中，可以使用字节码操作库，比如 Javassist，ASM 或 ByteBuddy 等，来修改类字节码。通过这种方式，Java Agent 可以实现对应用程序类的增强和监控。</p>
+<p>在 Java Agent 中，还可以通过 Instrumentation API 提供的其他方法获取和修改类加载器、管理运行时代理、获取类定义信息等。这些功能可以用于实现更加复杂的增强和监控操作。</p>
+<p>总之，Java Agent 是一种非常强大的工具，可以用于实现各种应用程序的增强和监控，比如性能监控、安全审计、调试等。它通过动态修改应用程序的字节码，可以实现非侵入式的监控和增强，而且对应用程序的性能影响非常小。</p>
+<hr />
+<p>ClassFileTransformer 是 Java 中的一个接口，它是用于修改或增强字节码的核心接口之一。在 Java 应用程序启动时，通过 -javaagent 参数加载的 Java 代理会自动注册一个 ClassFileTransformer 实现，用于对 JVM 中加载的类进行字节码修改或增强操作。</p>
+<p>ClassFileTransformer 接口只有一个方法 transform，该方法接收三个参数：原始类名、类加载器、原始类字节码。该方法的返回值是一个字节数组，表示经过修改后的新的字节码。ClassFileTransformer 可以在类加载过程中的各个阶段进行字节码的修改，例如在类加载之前，类加载时，类被重新转换时等。</p>
+<hr />
+<h2><a id="javassist" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Javassist</h2>
+<p>Javassist是一个开源的分析、编辑和创建Java字节码的类库；</p>
+<p>相比ASM，Javassist提供了更加简单便捷的API，使用Javassist我们可以像写Java代码一样直接插入Java代码片段，让我们不再需要关注Java底层的字节码的和栈操作，仅需要学会如何使用Javassist的API即可实现字节码编辑。</p>
+<p>学习Javassist可以阅读官方的入门教程：<a href="http://www.javassist.org/tutorial/tutorial.html">Getting Started with Javassist</a>。</p>
+<h3><a id="api" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h3>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ClassPool</td>
+<td>ClassPool是一个存储CtClass的容器，如果调用get方法会搜索并创建一个表示该类的CtClass对象</td>
+</tr>
+<tr>
+<td>CtClass</td>
+<td>CtClass表示的是从ClassPool获取的类对象，可对该类就行读写编辑等操作</td>
+</tr>
+<tr>
+<td>CtMethod</td>
+<td>可读写的类方法对象</td>
+</tr>
+<tr>
+<td>CtConstructor</td>
+<td>可读写的类构造方法对象</td>
+</tr>
+<tr>
+<td>CtField</td>
+<td>可读写的类成员变量对象</td>
+</tr>
+</tbody>
+</table>
+<h3><a id="%E6%A0%87%E8%AF%86%E7%AC%A6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>标识符</h3>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$0, $1, $2, ...</code></td>
+<td>this和方法参数</td>
+</tr>
+<tr>
+<td><code>$args</code></td>
+<td>Object[]类型的参数数组</td>
+</tr>
+<tr>
+<td><code>$$</code></td>
+<td>所有的参数，如<code>m($$)</code>等价于<code>m($1,$2,...)</code></td>
+</tr>
+<tr>
+<td><code>$cflow(...)</code></td>
+<td>cflow变量</td>
+</tr>
+<tr>
+<td><code>$r</code></td>
+<td>返回类型，用于类型转换</td>
+</tr>
+<tr>
+<td><code>$w</code></td>
+<td>包装类型，用于类型转换</td>
+</tr>
+<tr>
+<td><code>$_</code></td>
+<td>方法返回值</td>
+</tr>
+<tr>
+<td><code>$sig</code></td>
+<td>方法签名，返回java.lang.Class[]数组类型</td>
+</tr>
+<tr>
+<td><code>$type</code></td>
+<td>返回值类型，java.lang.Class类型</td>
+</tr>
+<tr>
+<td><code>$class</code></td>
+<td>当前类，java.lang.Class类型</td>
+</tr>
+</tbody>
+</table>
+<h2><a id="agent" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Agent</h2>
+<p>JDK1.5开始，Java新增了Instrumentation(Java Agent API)和JVMTI(JVM Tool Interface)功能，允许JVM在加载某个class文件之前对其字节码进行修改，同时也支持对已加载的class(类字节码)进行重新加载(Retransform)。</p>
+<p>利用Java Agent这一特性衍生出了APM(Application Performance Management，应用性能管理)、RASP(Runtime application self-protection，运行时应用自我保护)、IAST(Interactive Application Security Testing，交互式应用程序安全测试)等相关产品，它们都无一例外的使用了Instrumentation/JVMTI的API来实现动态修改Java类字节码并插入监控或检测代码。</p>
+<p>Java Agent有两种运行模式：</p>
 <ol>
-<li>当拥有一个无法编译时确定大小的类型，但又想在一个要求固定尺寸的上下文环境中使用这个类型的值时</li>
-<li>当希望拥有一个实现了指定 trait 的类型值，但又不关心具体的类型时</li>
+<li>启动Java程序时添加-javaagent(Instrumentation API实现方式)或-agentpath/-agentlib(JVMTI的实现方式)参数，如java -javaagent:/data/XXX.jar LingXeTest。</li>
+<li>JDK1.6新增了attach(附加方式)方式，可以对运行中的Java进程附加Agent。<br />
+这两种运行方式的最大区别在于第一种方式只能在程序启动时指定Agent文件，而attach方式可以在Java程序运行后根据进程ID动态注入Agent到JVM。</li>
 </ol>
-<h3><a id="%E9%80%9A%E8%BF%87deref-trait%E5%B0%86%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E8%A7%86%E4%BD%9C%E5%B8%B8%E8%A7%84%E5%BC%95%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>通过 Deref trait 将智能指针视作常规引用</h3>
-<p>实现这个 trait 可以自定义解引用运算符的行为</p>
-<pre class="line-numbers"><code class="language-rust">use std::ops::Deref;
-
-/// 定义一个 名为 MyBox 的结构体。结构体的定义中附带了泛型参数 T，可以存储任意类型的值。
-/// MyBox 是一个拥有 T 类型单元素的元组结构体。
-struct MyBox&lt;T&gt;(T);
-
-impl&lt;T&gt; MyBox&lt;T&gt; {
-    fn new(x: T) -&gt; MyBox&lt;T&gt; {
-        MyBox(x)
-    }
-}
-
-impl&lt;T&gt; Deref for MyBox&lt;T&gt; {
-    // 定义了 Deref trait 的一个关联类型、
-    // 关联类型是一种稍微有些不同的泛型参数定义方式。
-    type Target = T;
-
-    // 返回一个指向值的引用。进而允许通过 * 访问。
-    // * -&gt; *(y.deref())
-    fn deref(&amp;self) -&gt; &amp;Self::Target {
-        &amp;self.0
-    }
-}
-
-fn main() {
-    let x = 5;
-    let y = MyBox::new(x);
-
-    assert_eq!(5, x);
-    assert_eq!(5, *y);
-}
+<p>Java Agent和普通的Java类并没有任何区别，普通的Java程序中规定了main方法为程序入口，而Java Agent则将premain（Agent模式）和agentmain（Attach模式）作为了Agent程序的入口，两者所接受的参数是完全一致的，如下：</p>
+<pre class="line-numbers"><code class="language-java">public static void premain(String args, Instrumentation inst) {}
+public static void agentmain(String args, Instrumentation inst) {}
 </code></pre>
-<p>Rust 语言把指针封装在如下两个特质Trait中。<br />
-Deref	std::ops::Deref	用于创建一个只读智能指针，例如 *v<br />
-Drop	std::ops::Drop	智能指针超出它的作用域范围时会回调该特质的 drop() 方法。 类似于其它语言的 析构函数。</p>
-<p>当一个结构体实现了以上的接口后，它们就是智能指针。</p>
-<p>Rust 提供了在 堆 上存储数据的能力并把这个能力封装到了 Box 中。</p>
-<p>这种把 栈 上数据搬到 堆 上的能力，我们称之为 装箱。<br />
-Box 指针可以把数据存储在堆（heap）上，而不是栈（stack）上。这就是装箱（box），栈（stack）还是包含指向 堆（heap） 上数据的指针。</p>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let a = 6;           // 默认保存在 栈 上
-    let b = Box::new(a); // 使用 Box 后数据会存储在堆上
-    println!(&quot;b = {}&quot;, b);// 输出 b = 6
-}
+<p>Java Agent还限制了我们必须以jar包的形式运行或加载，我们必须将编写好的Agent程序打包成一个jar文件。</p>
+<p>使用命令：</p>
+<pre class="line-numbers"><code class="language-plain_text">java -javaagent:/path/to/agent.jar -jar yourapp.jar
 </code></pre>
-<h2><a id="rc-t%E5%9F%BA%E4%BA%8E%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%9A%84%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rc<T> 基于引用计数的智能指针</h2>
-<p>某些场景下，单个值可能同时被多个所有者持有，Rust 提供了一个名为 <code>Rc&lt;T&gt;</code>的类型来支持多重所有权，RC 是 Reference counting （引用计数）的缩写。<br />
-<code>Rc&lt;T&gt;</code> 类型的实例会在内部维护一个用于记录值引用次数的计数器，从而确定这个值是否仍在使用。</p>
-<p>将堆上的一些数据分享给程序的锁哥部分同时使用，而又无法在编译期确定哪个部分会最后释放这些数据时，就可以使用 <code>Rc&lt;T&gt;</code> 类型、Rc 仅适用于单线程场景。</p>
-<p>clone Rc 会增加引用计数</p>
-<h2><a id="refcell-t%E4%BD%BF%E7%94%A8%E4%BA%86%E5%86%85%E9%83%A8%E5%8F%AF%E5%8F%98%E6%80%A7%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%B1%BB%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RefCell<T>: 使用了内部可变性模式的类型</h2>
-<p>RefCell 代表了其持有数据的唯一所有权。</p>
-<p>内部可变性，是 Rust 的设计模式之一，它允许你在只持有不可变引用的前提下对数据进行修改；通常而言，类似的行为会被借用规则所禁止。</p>
-<p>为了能够改变数据，内部可变性模式在它的数据结构中使用了 unsafe 代码来绕过 Rust 正常的可变性和借用规则。</p>
-<h2><a id="refcell%E5%92%8C-box%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RefCell 和 Box 的区别</h2>
-<p>借用规则：</p>
-<ol>
-<li>在任何给定的时间里，你要么只能拥有一个可变引用，要么只能拥有任意数量的不可变引用</li>
-<li>引用总是有效的。</li>
-</ol>
-<p>Box 会遵循这个借用规则，在使用 RefCell 时，Rust 只会在运行时检查这些规则，并在出现违反借用规则的情况下 panic</p>
-<h2><a id="%E5%8C%85%E7%AE%A1%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>包管理</h2>
-<p><a href="https://blog.hitol.top/16727524082529.html">https://blog.hitol.top/16727524082529.html</a></p>
-<h2><a id="%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>单元测试</h2>
-<pre class="line-numbers"><code class="language-rust">#[test]
-fn it_works(){
-    let result = 2 + 2;
-    assert_eq!(result,4);
-}
+<p>除此之外，Java Agent还强制要求了所有的jar文件中必须包含/META-INF/MANIFEST.MF文件，且该文件中必须定义好Premain-Class（Agent模式）或Agent-Class:（Agent模式）配置，可以通过 maven 插件实现:</p>
+<pre class="line-numbers"><code class="language-xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;
+    &lt;version&gt;3.2.0&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;archive&gt;
+            &lt;addMavenDescriptor&gt;true&lt;/addMavenDescriptor&gt;
+            &lt;index&gt;true&lt;/index&gt;
+            &lt;manifest&gt;
+                &lt;addDefaultSpecificationEntries&gt;true&lt;/addDefaultSpecificationEntries&gt;
+                &lt;addDefaultImplementationEntries&gt;true&lt;/addDefaultImplementationEntries&gt;
+            &lt;/manifest&gt;
+            &lt;manifestEntries&gt;
+                &lt;Premain-Class&gt;com.example.PreMain&lt;/Premain-Class&gt;
+                &lt;Specification-Version&gt;${project.version}&lt;/Specification-Version&gt;
+                &lt;Implementation-Version&gt;${project.version}&lt;/Implementation-Version&gt;
+            &lt;/manifestEntries&gt;
+        &lt;/archive&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;
 </code></pre>
-<h2><a id="%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>集成测试</h2>
-<p>cargo 在与 src 同级别的 tests 目录寻找集成测试。</p>
-<p>tests/xxx.rs</p>
-<pre class="line-numbers"><code class="language-rust">#[test]
-fn it_works(){
-    let result = 2 + 2;
-    assert_eq!(result,4);
-}
-</code></pre>
-<p>tests 目录中的每一个 Rust 源文件都被编译成一个单独的 crate。</p>
-<h2><a id="bench" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>bench</h2>
-<p>针对性能测试，能够返回该 test 执行的时间。ns 级别。</p>
-<h2><a id="arc" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Arc</h2>
-<p>Arc（Atomic Reference Counted）是 Rust 标准库中的一种类型，它实现了原子引用计数（Atomic Reference Counting）。Arc 可以在多个线程间共享数据，而不必担心数据安全。</p>
-<p>Arc 使用了一个内部计数器，来记录有多少个引用指向该数据。当最后一个引用被销毁时，Arc 会自动销毁数据。</p>
-<p>例如：</p>
-<pre class="line-numbers"><code class="language-rust">use std::sync::Arc;
-use std::thread;
-
-fn main() {
-    let data = Arc::new(vec![1, 2, 3, 4, 5]);
-
-    for i in 0..5 {
-        let data = data.clone();
-        thread::spawn(move || {
-            println!(&quot;Thread {}: {:?}&quot;, i, data);
-        });
-    }
-}
-
-</code></pre>
-<p>在上面的代码中，我们创建了一个用于存储整数的 vector，并用 Arc 包装它。然后在循环中，我们创建了五个线程，每个线程都有一个对该 vector 的引用。当最后一个引用被销毁时，Arc 会自动销毁 vector。</p>
-<p>Arc 是一种非常有用的工具，特别是当你需要在多个线程间共享数据时，可以替代手写的计数器。</p>
-<h2><a id="mutex" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mutex</h2>
-<h2><a id="rwlock" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>RwLock</h2>
-<p>RwLock 是 Rust 标准库中的一种类型，用于实现读写锁。读写锁是一种线程同步机制，它可以同时允许多个读线程读取共享数据，但是只允许一个写线程对共享数据进行修改。</p>
-<pre class="line-numbers"><code class="language-rust">use std::sync::{Arc, RwLock};
-use std::thread;
-
-fn main() {
-    let data = Arc::new(RwLock::new(vec![1, 2, 3, 4, 5]));
-
-    for i in 0..5 {
-        let data = data.clone();
-        thread::spawn(move || {
-            let mut data = data.write().unwrap();
-            data[i] += 1;
-        });
-    }
-
-    thread::sleep_ms(50);
-
-    let data = data.read().unwrap();
-    println!(&quot;{:?}&quot;, data);
-}
-
-</code></pre>
-<p>在上面的代码中，我们创建了一个用于存储整数的 vector，并用 RwLock 包装它。然后在循环中，我们创建了五个线程，每个线程都试图对该 vector 进行修改。由于我们使用了读写锁，因此在任意时刻只有一个线程能够修改 vector，从而避免了竞争条件的产生。</p>
-<p>RwLock 是一种非常有用的工具，特别是当你需要保护共享数据不被多个线程同时修改时，可以使用它来保证数据安全。</p>
-<h2><a id="%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>时间格式</h2>
-<pre class="line-numbers"><code class="language-rust">use chrono::{DateTime, Utc};
-
-fn main() {
-    let now: DateTime&lt;Utc&gt; = Utc::now();
-
-    println!(&quot;UTC now is: {}&quot;, now);
-    println!(&quot;UTC now in RFC 2822 is: {}&quot;, now.to_rfc2822());
-    println!(&quot;UTC now in RFC 3339 is: {}&quot;, now.to_rfc3339());
-    println!(&quot;UTC now in a custom format is: {}&quot;, now.format(&quot;%a %b %e %T %Y&quot;));
-}
-
-</code></pre>
-<h2><a id="%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>策略模式</h2>
-<p>在 Rust 中，策略模式是一种常见的设计模式，用于将算法与其实现分离开来，并在运行时动态选择不同的算法实现。</p>
-<p>以下是一个简单的示例代码，展示了如何使用策略模式来实现对两个整数进行加法、减法和乘法计算：</p>
-<pre class="line-numbers"><code class="language-rust">trait Calculator {
-    fn calculate(&amp;self, a: i32, b: i32) -&gt; i32;
-}
-
-struct AddCalculator;
-
-impl Calculator for AddCalculator {
-    fn calculate(&amp;self, a: i32, b: i32) -&gt; i32 {
-        a + b
-    }
-}
-
-struct SubtractCalculator;
-
-impl Calculator for SubtractCalculator {
-    fn calculate(&amp;self, a: i32, b: i32) -&gt; i32 {
-        a - b
-    }
-}
-
-struct MultiplyCalculator;
-
-impl Calculator for MultiplyCalculator {
-    fn calculate(&amp;self, a: i32, b: i32) -&gt; i32 {
-        a * b
-    }
-}
-
-struct Context&lt;'a&gt; {
-    calculator: Box&lt;dyn Calculator + 'a&gt;,
-}
-
-impl&lt;'a&gt; Context&lt;'a&gt; {
-    fn new(calculator: Box&lt;dyn Calculator + 'a&gt;) -&gt; Self {
-        Self { calculator }
-    }
-
-    fn set_calculator(&amp;mut self, calculator: Box&lt;dyn Calculator + 'a&gt;) {
-        self.calculator = calculator;
-    }
-
-    fn execute(&amp;self, a: i32, b: i32) -&gt; i32 {
-        self.calculator.calculate(a, b)
-    }
-}
-
-fn main() {
-    let mut context = Context::new(Box::new(AddCalculator));
-    println!(&quot;1 + 2 = {}&quot;, context.execute(1, 2));
-
-    context.set_calculator(Box::new(SubtractCalculator));
-    println!(&quot;3 - 1 = {}&quot;, context.execute(3, 1));
-
-    context.set_calculator(Box::new(MultiplyCalculator));
-    println!(&quot;2 * 4 = {}&quot;, context.execute(2, 4));
-}
-</code></pre>
-<p>在上面的代码中，首先定义了一个 Calculator trait，该 trait 包含一个用于计算两个整数的 calculate() 方法。然后，分别实现了 AddCalculator、SubtractCalculator 和 MultiplyCalculator 三种不同的计算方法，并让它们都实现了 Calculator trait。</p>
-<p>接着，定义了一个 Context 结构体，包含一个 Box<dyn Calculator> 类型的成员变量，用于保存当前选定的计算方法。定义了 new() 方法用于创建新的 Context 对象并设置默认的计算方法；定义了 set_calculator() 方法用于切换计算方法；定义了 execute() 方法用于执行具体的计算操作。</p>
-<p>最后，在 main() 函数中，创建一个 Context 对象，并使用 execute() 方法分别执行加法、减法和乘法计算。</p>
-<p>需要注意的是，采用策略模式可以解除算法与其实现之间的耦合关系，并提高代码的可扩展性和可维护性。同时，也可以根据具体需求选择不同的计算方法，从而灵活地应对各种计算场景。</p>
-<pre class="line-numbers"><code class="language-rust">#[derive(Clone, Copy)]
-struct TaskRecord {
-    code: u32,
-}
-
- trait TaskStepService {
-     fn do_task_step(task_record: &amp;TaskRecord);
-     fn retry_task_step(task_record: &amp;TaskRecord);
-}
-
-
-pub struct StepA;
-
-impl TaskStepService for StepA {
-     fn do_task_step(task_record: &amp;TaskRecord) {
-        println!(&quot;Do task step A with code {}&quot;, task_record.code);
-    }
-
-     fn retry_task_step(task_record: &amp;TaskRecord) {
-        println!(&quot;Retry task step A with code {}&quot;, task_record.code);
-    }
-}
-
-pub struct StepB;
-
-impl TaskStepService for StepB {
-     fn do_task_step(task_record: &amp;TaskRecord) {
-        println!(&quot;Do task step B with code {}&quot;, task_record.code);
-    }
-
-     fn retry_task_step(task_record: &amp;TaskRecord) {
-        println!(&quot;Retry task step B with code {}&quot;, task_record.code);
-    }
-}
-
-enum TaskStep {
-    A(StepA),
-    B(StepB),
-}
-
-impl TaskStep {
-    fn from_code(code: u32) -&gt; Option&lt;Self&gt; {
-        match code {
-            1 =&gt; Some(Self::A(StepA)),
-            2 =&gt; Some(Self::B(StepB)),
-            _ =&gt; None,
-        }
-    }
-}
-
- fn process_task_step(task_record: TaskRecord) {
-    if let Some(step) = TaskStep::from_code(task_record.code) {
-        match step {
-            TaskStep::A(service) =&gt; service.do_task_step(&amp;task_record),
-            TaskStep::B(service) =&gt; service.do_task_step(&amp;task_record),
-        }
-    } else {
-        println!(&quot;Invalid task code: {}&quot;, task_record.code);
-    }
-}
-
- fn retry_task_step(task_record: TaskRecord) {
-    if let Some(step) = TaskStep::from_code(task_record.code) {
-        match step {
-            TaskStep::A(service) =&gt; service.retry_task_step(&amp;task_record),
-            TaskStep::B(service) =&gt; service.retry_task_step(&amp;task_record),
-        }
-    } else {
-        println!(&quot;Invalid task code: {}&quot;, task_record.code);
-    }
-}
-
-pub fn main() {
-    let task_record1 = TaskRecord { code: 1 };
-    let task_record2 = TaskRecord { code: 2 };
-    let task_record3 = TaskRecord { code: 3 };
-
-    process_task_step(task_record1);
-    process_task_step(task_record2);
-    process_task_step(task_record3);
-
-    retry_task_step(task_record1);
-    retry_task_step(task_record2);
-    retry_task_step(task_record3);
-}
-报错还未解决
-</code></pre>
-<pre class="line-numbers"><code class="language-rust">struct TaskRecord {
-    code: u32,
-}
-
-trait TaskStepService {
-    fn do_task_step(&amp;self, task_record: &amp;TaskRecord) {
-        println!(&quot;default do_task_step implementation for code {}&quot;, task_record.code);
-    }
-    fn retry_task_step(&amp;self, task_record: &amp;TaskRecord) {
-        println!(&quot;default retry_task_step implementation for code {}&quot;, task_record.code);
-    }
-}
-
-struct TaskStepServiceImpl1;
-impl TaskStepService for TaskStepServiceImpl1 {
-    fn do_task_step(&amp;self, task_record: &amp;TaskRecord) {
-        println!(&quot;TaskStepServiceImpl1 do_task_step implementation for code {}&quot;, task_record.code);
-    }
-    fn retry_task_step(&amp;self, task_record: &amp;TaskRecord) {
-        println!(&quot;TaskStepServiceImpl1 retry_task_step implementation for code {}&quot;, task_record.code);
-    }
-}
-
-struct TaskStepServiceImpl2;
-impl TaskStepService for TaskStepServiceImpl2 {
-    fn do_task_step(&amp;self, task_record: &amp;TaskRecord) {
-        println!(&quot;TaskStepServiceImpl2 do_task_step implementation for code {}&quot;, task_record.code);
-    }
-    fn retry_task_step(&amp;self, task_record: &amp;TaskRecord) {
-        println!(&quot;TaskStepServiceImpl2 retry_task_step implementation for code {}&quot;, task_record.code);
-    }
-}
-
-
-fn main() {
-    let task_record = TaskRecord { code: 1 };
-
-    match task_record.code {
-        1 =&gt; {
-            let service = TaskStepServiceImpl1 {};
-            service.do_task_step(&amp;task_record);
-            service.retry_task_step(&amp;task_record);
-        },
-        2 =&gt; {
-            let service = TaskStepServiceImpl2 {};
-            service.do_task_step(&amp;task_record);
-            service.retry_task_step(&amp;task_record);
-        },
-        _ =&gt; println!(&quot;unsupported code {}&quot;, task_record.code),
-    }
-}
-
-</code></pre>
-<h2><a id="%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>多线程与定时任务</h2>
-<pre class="line-numbers"><code class="language-rust">
-use std::future::Future;
-use std::pin::Pin;
-use tokio::time::{sleep, Duration};
-
-pub async fn do_task() -&gt; Result&lt;(), Box&lt;dyn std::error::Error + Send + Sync&gt;&gt; {
-    loop {
-        println!(&quot;Running scheduled task...&quot;);
-        // 执行定时任务的代码...
-        println!(&quot;hello &quot;);
-
-        sleep(Duration::from_secs(2)).await;
-    }
-}
-
-pub fn spawn_task() -&gt; Pin&lt;Box&lt;dyn Future&lt;Output = ()&gt; + Send + Sync&gt;&gt; {
-    let fut = async move {
-        if let Err(err) = do_task().await {
-            eprintln!(&quot;Scheduled task failed: {:?}&quot;, err);
-        }
-    };
-    Box::pin(fut)
-}
-
----
-
-
-mod job;
-
-use std::collections::HashMap;
-
-use std::time::Duration;
-use tokio::time::{interval, Instant, sleep};
-
-#[actix_web::main]
-async fn main() {
-    let task = job::do_task();
-    tokio::spawn(task);
-
-    sleep(Duration::from_secs(60)).await;
-}
-</code></pre>
-<h2><a id="channel" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>channel</h2>
-<pre class="line-numbers"><code class="language-rust">use std::thread;
-use std::sync::mpsc;
-
-fn main() {
-    let (tx, rx) = mpsc::channel();
-
-    thread::spawn(move || {
-        let val = String::from(&quot;hi&quot;);
-        tx.send(val).unwrap();
-    });
-
-    let received = rx.recv().unwrap();
-    println!(&quot;Got: {}&quot;, received);
-}
-
-</code></pre>
-<h2><a id="rayon" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>rayon</h2>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16819109466507.jpg" alt="" /><br />
-工作窃取。</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16819110812309.jpg" alt="" /></p>
-<h2><a id="%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%EF%BC%8C%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>&lt;'_&gt; 是什么意思，什么作用</h2>
-<p>在 Rust 中，<code>&lt;'_&gt;</code> 用于定义匿名生命周期。</p>
-<p>生命周期是 Rust 中管理内存和引用的机制，它用于确保程序中的引用安全有效。通常，生命周期标记使用单引号 <code>'</code> 来表示。例如：</p>
-<pre class="line-numbers"><code class="language-rust">fn foo&lt;'a&gt;(x: &amp;'a i32) -&gt; &amp;'a i32 {
-    x
-}
-</code></pre>
-<p>在这个例子中，<code>&lt;'a&gt;</code> 表示 <code>foo()</code> 函数使用一个生命周期 <code>a</code>，该生命周期确保返回值 <code>&amp;'a i32</code> 的引用与参数 <code>x: &amp;'a i32</code> 的生命周期相同。</p>
-<p><code>&lt;'_&gt;</code> 是一种特殊的生命周期标记，它表示一个匿名生命周期。这意味着，Rust 编译器会自动确定匿名生命周期的实际生命周期，无需手动指定。</p>
-<p>例如，以下代码中的 <code>&lt;'_&gt;</code> 标记可以自动确定 <code>s</code> 和 <code>s2</code> 的实际生命周期，而无需指定具体的生命周期名称：</p>
-<pre class="line-numbers"><code class="language-rust">fn print_str(s: &amp;str) {
-    println!(&quot;{}&quot;, s);
-}
-
-fn main() {
-    let s = String::from(&quot;Hello, world!&quot;);
-    let s2: &amp;str = &amp;s;
-    print_str(s2);
-}
-</code></pre>
-<p>在这个例子中，我们定义了一个函数 <code>print_str()</code>，该函数接受一个字符串引用，并在控制台上打印出它。在 <code>main()</code> 函数中，我们首先定义了一个字符串 <code>s</code>，然后获取它的引用 <code>s2</code>，并将其传递给 <code>print_str()</code> 函数。 接下来我们将参数转换为 <code>&amp;str</code> 类型。在这个过程中，我们使用了 <code>&lt;'_&gt;</code> 标记来表示一个匿名生命周期，此时 Rust 编译器会自动确定 <code>s</code> 和 <code>s2</code> 的实际生命周期，从而使得该代码更简洁，更易于阅读和维护。</p>
-<p>总之， <code>&lt;'_&gt;</code> 适用于匿名生命周期，可以让代码更简洁，并且让 Rust 编译器自动确定实际生命周期。如果您不需要手动编写生命周期标记，并且可以让编译器自动确定生命周期，则可以使用 <code>&lt;'_&gt;</code> 来代替具体的生命周期名称。</p>
-<h2><a id="%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>生命周期</h2>
-<p>在Rust中，生命周期（lifetimes）是一种用于管理引用的机制，确保引用在其所引用的数据有效时才被使用。生命周期注解（lifetimes annotations）是Rust语言的一部分，用于明确指定引用的有效范围，以避免悬垂引用（dangling references）和使用已经被释放的数据的错误。</p>
-<p>生命周期注解通常以撇号（'）后跟一个标识符的形式表示，例如<code>'a</code>。这些标识符可以是任意名称，但通常使用单个字母来表示生命周期的名称。在函数签名、结构体定义和trait实现等地方，可以使用生命周期注解来指定引用的有效范围。</p>
-<p>以下是一些常见的生命周期注解用法：</p>
-<ol>
-<li>函数签名中的生命周期注解：</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">fn foo&lt;'a&gt;(x: &amp;'a i32) -&gt; &amp;'a i32 {
-    // 函数体
-    x
-}
-</code></pre>
-<p>在这个例子中，<code>'a</code>是一个生命周期注解，用于指定参数<code>x</code>和返回值之间的关系。它表示返回的引用的生命周期与参数<code>x</code>的生命周期相同。</p>
-<ol start="2">
-<li>结构体中的生命周期注解：</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">struct Foo&lt;'a&gt; {
-    x: &amp;'a i32,
-    y: &amp;'a i32,
-}
-
-impl&lt;'a&gt; Foo&lt;'a&gt; {
-    fn new(x: &amp;'a i32, y: &amp;'a i32) -&gt; Foo&lt;'a&gt; {
-        Foo { x, y }
-    }
-}
-</code></pre>
-<p>在这个例子中，<code>'a</code>是一个生命周期注解，用于指定结构体<code>Foo</code>中两个引用字段<code>x</code>和<code>y</code>的生命周期。</p>
-<ol start="3">
-<li>Trait中的生命周期注解：</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">trait Bar&lt;'a&gt; {
-    fn baz(&amp;'a self);
-}
-</code></pre>
-<p>在这个例子中，<code>'a</code>是一个生命周期注解，用于指定实现<code>Bar</code> trait的类型中<code>self</code>引用的生命周期。</p>
-<p>需要注意的是，生命周期注解并不会创建新的生命周期，而是用于指定引用之间的关系。它们帮助编译器在编译时进行静态检查，以确保引用的有效性。生命周期注解的具体使用方式取决于代码的上下文和需求。</p>
-<p>一般来说，如果一个生命周期参数出现在另一个生命周期参数之前，那么前者的生命周期比后者更长。这种关系可以通过'a: 'b的语法来表示，其中'a是较长的生命周期，'b是较短的生命周期。<br />
-下面是一些示例来说明生命周期大小关系的表示方法：</p>
-<pre class="line-numbers"><code class="language-rust">fn foo&lt;'a, 'b&gt;(x: &amp;'a i32, y: &amp;'b i32) {
-    // ...
-}
-</code></pre>
-<p>在这个例子中，'a和'b是两个生命周期参数。如果我们想表示'a比'b更长的关系，可以使用'a: 'b：</p>
-<pre class="line-numbers"><code class="language-rust">fn foo&lt;'a, 'b&gt;(x: &amp;'a i32, y: &amp;'b i32) {
-    // 'a: 'b 表示 'a 比 'b 更长
-    // ...
-}
-</code></pre>
-<p>这表示x的生命周期'a比y的生命周期'b更长。换句话说，x的引用可以存在于y的引用之外。</p>
-<p><code>'a:'b</code> 表示 a 的生命周期 &gt;= b 的生命周期。</p>
-<h2><a id="%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数指针</h2>
-<p>将普通函数传递至其他函数<br />
-函数在传递的过程中会被强制转换成 fn 类型，fn 就是函数指针。</p>
-<pre class="line-numbers"><code class="language-rust">fn add_one(x: i32) -&gt; i32 {
-    x + 1
-}
-
-fn do_twice(f: fn(i32) -&gt; i32, arg: i32) -&gt; i32 {
-    f(arg) + f(arg)
-}
-
-fn main() {
-    let answer = do_twice(add_one, 5);
-    println!(&quot;The answer is: {}&quot;, answer);
-}
-</code></pre>
-<p>fn 是一个类型而不是一个 trait。<br />
-函数指针实现了全部 3 中闭包 trait(Fn、FnMut、FnOnce)，所以可以把函数指针<br />
-用作参数传递给一个接收闭包的函数。<br />
-倾向于使用搭配闭包 trait 的泛型来编写函数，这样的函数可以同时处理闭包与普通函数。</p>
-<h2><a id="%E9%97%AD%E5%8C%85%E4%B8%8Efn%E3%80%81fnmut%E3%80%81fnonce" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>闭包与Fn、FnMut、FnOnce</h2>
-<pre class="line-numbers"><code class="language-rust">fn main() {
-    let s = String::from(&quot;closure test&quot;);
-
-    let f1 = || println!(&quot;{}&quot;, s); // 不可变借用，这里 闭包就相当于 Fn
-
-    f1();
-
-    let mut s = String::from(&quot;closure test mut&quot;);
-    // 注意由于这里是使用可变借用，因此，闭包函数的接收者也必须声明为可变借用类型
-    let mut f2 = || {
-        s.push_str(&quot;, hello!&quot;);
-        println!(&quot;{}&quot;, s);
-    };// 可变借用 -&gt; FnMut
-
-    f2();
-
-    let s = String::from(&quot;closure test value&quot;);
-
-    let f3 = move || println!(&quot;{}&quot;, s); // move语句使用相当于把s的所有权移到的闭包内部，闭包外部不能再使用该值 -&gt; FnOnce
-
-    f3();
-}
-</code></pre>
-<p>闭包底层实现机制。<br />
-Fn 不可变引用<br />
-FnMut 可变引用<br />
-FnOnce （move）</p>
-<p>Fn 继承了 FnMut，FnMut 继承了 FnOnce。</p>
-<h2><a id="%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>宏</h2>
-<p>一组相关功能的集合称谓。<br />
-macro_rules! 构造的声明宏(declarative macro) 以及3中过程宏(procedural macro):</p>
-<ol>
-<li>用于结构体或枚举的自定义 #[derive] 宏，可以指定随 derive 属性自动添加的代码</li>
-<li>用于为任意条目添加自定义属性的属性宏</li>
-<li>看起来类似于函数的函数宏，可以接收并处理一段标记序列</li>
-</ol>
-<p>宏是一种用于编写其他代码的代码编写方式，元编程范式。相当于自定义注解？</p>
-<p>derive属性是一种宏，自动生成各种 trait 的实现。</p>
-<p>宏小册：<a href="https://zjp-cn.github.io/tlborm/introduction.html">https://zjp-cn.github.io/tlborm/introduction.html</a></p>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16843984175104.jpg" alt="" /><br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/16843997515972.jpg" alt="" /></p>
-<h3><a id="macro-rules%E5%A3%B0%E6%98%8E%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>macro_rules! 声明宏</h3>
-<pre class="line-numbers"><code class="language-rust">macro_rules! my_macro {
-    ($($arg: expr), *) =&gt; {
-        // 宏的实现逻辑
-        println!(&quot;Hello, {}&quot;, $($arg), *);
-    }
-}
-
-fn main() {
-    my_macro!(&quot;World!&quot;);
-}
-
-</code></pre>
-<h3><a id="%E5%B1%9E%E6%80%A7%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>属性宏</h3>
-<p>允许创建新的属性，而不是为 derive 属性生成代码。<br />
-derive 只能被用于结构体和枚举，而属性则可以同时被用于其他条目，比如函数等。</p>
-<h3><a id="%E5%87%BD%E6%95%B0%E5%AE%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数宏</h3>
-<!--## 自定义一个 derive 宏
-实现一个宏，达到的效果是，在任意类型上标注 #[derive(HelloMacro)]，得到 hello_macro 函数的默认实现
-```rust
-use hello_macro::HelloMacro;
-use hello_macro_derive::HelloMacro;
-
-#[derive(HelloMacro)]
-struct Pancakes;
-
-fn main() {
-    Pancakes::hello_macro();
-}
-
-打印出 “Hello, Macro! My name is Pancakes!”
-```
-
-首先，创建一个新的代码包-->
-<h2><a id="%E5%AE%9E%E7%8E%B0kafka%E7%9A%84%E5%B7%A5%E5%85%B7%E5%8C%85%EF%BC%8C%E5%8F%91%E5%B8%83%E5%88%B0-crate-io" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>实现 kafka 的工具包，发布到 crate.io</h2>
-<p><a href="https://crates.io/crates/simple-kafka">https://crates.io/crates/simple-kafka</a></p>
-<p><a href="media/16748079623338/Rust%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.pdf">Rust学习路线图.pdf</a></p>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16854298066353.jpg" alt="" /></p>
+<h2><a id="%E5%B0%86%E7%9B%91%E6%8E%A7%E4%BF%A1%E6%81%AF%E8%BE%93%E5%87%BA%E5%88%B0%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>将监控信息输出到日志文件</h2>
+<p>上面的例子中已经实现了，在方法运行前后记录时间戳来监控方法执行时间。<br />
+下一步计划，将执行时间记录下来。<br />
+在下一步，记录到时序数据库中，加载到 Prometheus</p>
 
                         
                       </div>
@@ -1670,10 +456,10 @@ fn main() {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2023/01/27 16:26 下午</span>
+                    <span class="date">2023/02/12 17:42 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='rust.html'>rust</a></span>
+          					    <span class="posted-in"><a href='JVM.html'>JVM</a></span>
           				   
                     
 
@@ -1783,6 +569,12 @@ fn main() {
 	      
 		      
 			      <li class="post">
+			        <a href="17006367993220.html">Rust web 开发-4.log</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17004933674024.html">Rust web 开发-3.config</a>
 			      </li>
 		     
@@ -1802,12 +594,6 @@ fn main() {
 		      
 			      <li class="post">
 			        <a href="16892187258215.html">wasm 初体验</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16849954851968.html">向量数据库 Vector Database</a>
 			      </li>
 		     
 		  
