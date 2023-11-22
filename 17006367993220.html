@@ -189,6 +189,7 @@
 <li><a href="#%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E5%88%B0%E6%96%87%E4%BB%B6">输出日志到文件</a></li>
 </ul>
 </li>
+<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
 </ul>
 </div>
 <p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
@@ -464,6 +465,9 @@ pub fn init_log() {
 <li>daily</li>
 <li>never</li>
 </ol>
+<h2><a id="%E5%B0%8F%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>小结</h2>
+<p>tracing 是一个强大的、分布式的日志和诊断框架。它提供了一套用于在Rust应用程序中进行结构化日志记录和性能分析的工具。tracing 的主要特点是它支持异步的、事件驱动的日志记录，并提供了灵活的上下文传播机制，使你能够在不同的线程或任务之间跟踪日志记录。tracing 还支持各种日志目标和格式，并提供了丰富的插件生态系统，可以扩展其功能。tracing 适合于需要更高级的日志记录和分析需求的项目。</p>
+<p>env_logger 是一个简单易用的日志记录库，它使用环境变量来配置日志级别和输出格式。env_logger 适合于快速启动和调试，它不需要复杂的配置文件，而是依赖于环境变量来控制日志记录的行为。env_logger 提供了一些默认的日志格式和目标，但相对于 tracing，它的可定制性较低。env_logger适合于开发和调试阶段，但在生产环境中可能需要更高级的日志记录功能。</p>
 
 
     
