@@ -129,162 +129,97 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16356861657170.html">
+                <a class="clearlink" href="16394497226152.html">
                 
-                  <h1>Graphql</h1>
+                  <h1>带有参数的Spring RestTemplate GET</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h2><a id="%E7%AE%80%E4%BB%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>简介</h2>
-<p>Graphql 是一种类似于 REST 的一种 API 标准。<br />
-不是一种数据库技术。</p>
-<p>总的来说就是，后端可以根据前端需要的字段返回对应的信息，不需要修改原有接口。</p>
-<pre class="line-numbers"><code class="language-plain_text">--- 1.前端请求字段
-{
-  hero {
-    name
-  }
-}
-
---- 2.后端返回结果
-{
-  &quot;data&quot;: {
-    &quot;hero&quot;: {
-      &quot;name&quot;: &quot;R2-D2&quot;
-    }
-  }
-}
-
-
---- 1.前端请求字段
-{
-  hero {
-    name
-    # Queries can have comments!
-    friends {
-      name
-    }
-  }
-}
-
---- 2.后端返回结果
-{
-  &quot;data&quot;: {
-    &quot;hero&quot;: {
-      &quot;name&quot;: &quot;R2-D2&quot;,
-      &quot;friends&quot;: [
-        {
-          &quot;name&quot;: &quot;Luke Skywalker&quot;
-        },
-        {
-          &quot;name&quot;: &quot;Han Solo&quot;
-        },
-        {
-          &quot;name&quot;: &quot;Leia Organa&quot;
-        }
-      ]
-    }
-  }
-}
+                        	<p>使用 RestTemplate 发送 get 请求携带参数，发现有问题，对面收不到我的请求参数，</p>
+<p>一种方式是使用占位符将请求的 url 转换一下，类似于这样 <code>String url = &quot;http://api.xxx.xxx?name={name}&amp;age={age}&quot;;</code> 将请求参数拼接在链接后面，这种方式比较麻烦，后面有修改的话改动较多。</p>
+<p>还有一种方式，	使用 UriComponentsBuilder 拼接请求参数</p>
+<pre class="line-numbers"><code class="language-java">UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParams(params);
+builder.queryParam(key,value)
 </code></pre>
-<h2><a id="demo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>demo</h2>
-<p><a href="https://gitee.com/hitol/graphql-demo.git">https://gitee.com/hitol/graphql-demo.git</a></p>
-<h3><a id="dependencies" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>dependencies</h3>
-<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
-    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
-    &lt;artifactId&gt;graphql-java&lt;/artifactId&gt;
-    &lt;version&gt;11.0&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
-    &lt;artifactId&gt;graphiql-spring-boot-starter&lt;/artifactId&gt;
-    &lt;version&gt;3.10.0&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
-    &lt;artifactId&gt;graphql-java-spring-boot-starter-webmvc&lt;/artifactId&gt;
-    &lt;version&gt;1.0&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;com.google.guava&lt;/groupId&gt;
-    &lt;artifactId&gt;guava&lt;/artifactId&gt;
-    &lt;version&gt;26.0-jre&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<h3><a id="schema" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Schema</h3>
-<p>在 resources 文件夹下新建一个 schema.graphqls 文件，其内容如下</p>
-<pre class="line-numbers"><code class="language-graphql">type Query {
-  bookById(id: ID): Book 
+<p>一个工具类的 get 请求代码</p>
+<pre class="line-numbers"><code class="language-java">// 拼接字符串
+private String buildUrl(String subUrl) {
+	return String.format(&quot;%s%s&quot;, volcanoUrl, subUrl);
 }
 
-type Book {
-  id: ID
-  name: String
-  pageCount: Int
-  author: Author
+
+// 发送 get 请求
+public static &lt;T&gt; T getForEntity(String url, Class&lt;T&gt; responseType, MultiValueMap&lt;String, String&gt; headers,
+		MultiValueMap&lt;String, String&gt; params, Object requestObj) {
+	log.info(&quot;开始请求远程数据,url:{},paramMap:{},headers:{},requestObj:{}&quot;, url, params, headers,requestObj);
+	HttpEntity&lt;?&gt; requestEntity = new HttpEntity&lt;&gt;(headers);
+	if (params == null) {
+		params = new LinkedMultiValueMap&lt;&gt;();
+	}
+	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParams(params);
+	if (requestObj != null) {
+		for (Entry&lt;String, String&gt; entry : objectToMap(requestObj).entrySet()) {
+			builder.queryParam(entry.getKey(), Lists.newArrayList(entry.getValue()));
+		}
+	}
+	ResponseEntity&lt;CommonResponse&lt;T&gt;&gt; responseEntity = restTemplate.exchange(builder.build().toUri(),
+			HttpMethod.GET, requestEntity, getCommonResponseReference(responseType));
+	if (responseEntity != null &amp;&amp; responseEntity.getStatusCode() == HttpStatus.OK) {
+		CommonResponse&lt;T&gt; resp = responseEntity.getBody();
+		if (resp.isSuccess()) {
+			return resp.getData();
+		} else {
+			throw new BizException(&quot;数据请求失败,对方返回失败,&quot; + resp.getError());
+		}
+	}
+	throw new BizException(&quot;数据请求失败,网络异常,&quot; + JSON.toJSONString(responseEntity));
 }
 
-type Author {
-  id: ID
-  firstName: String
-  lastName: String
+
+
+// obj 转 map
+public static Map&lt;String, String&gt; objectToMap(Object obj) {
+	if (obj == null) {
+		return null;
+	}
+	Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();
+
+	List&lt;Field&gt; allFields = new ArrayList&lt;&gt;();
+	Class currentClass = obj.getClass();
+
+	while (currentClass != null) {
+		allFields.addAll(Arrays.asList(currentClass.getDeclaredFields()));
+		currentClass = currentClass.getSuperclass();
+	}
+
+	for (Field field : allFields) {
+		field.setAccessible(true);
+		if (Objects.isNull(field.get(obj))) {
+			continue;
+		}
+		if (field.isSynthetic()) {
+			continue;
+		}
+		Object object = field.get(obj);
+		if (object instanceof Map) {
+			map.put(field.getName(), JSON.toJSONString(object));
+		} else {
+			map.put(field.getName(), String.valueOf(field.get(obj)));
+		}
+	}
+	return map;
 }
+
+
+
+private static &lt;T&gt; ParameterizedTypeReference&lt;CommonResponse&lt;T&gt;&gt; getCommonResponseReference(Class&lt;T&gt; clazz) {
+	JavaType javaType = objectMapper.getTypeFactory().constructParametricType(CommonResponse.class, clazz);
+	return ParameterizedTypeReference.forType(javaType);
+}
+
 
 </code></pre>
-<h2><a id="graphql%E5%8A%A0%E8%BD%BD%E5%88%B0-spring" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Graphql 加载到 Spring</h2>
-<pre class="line-numbers"><code class="language-java">
-@Component
-public class GraphQLProvider {
-
-
-    @Autowired
-    GraphQLDataFetchers graphQLDataFetchers;
-
-    private GraphQL graphQL;
-
-    @PostConstruct
-    public void init() throws IOException {
-        URL url = Resources.getResource(&quot;schema.graphqls&quot;);
-        String sdl = Resources.toString(url, Charsets.UTF_8);
-        GraphQLSchema graphQLSchema = buildSchema(sdl);
-        this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
-    }
-
-    private GraphQLSchema buildSchema(String sdl) {
-        TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);
-        RuntimeWiring runtimeWiring = buildWiring();
-        SchemaGenerator schemaGenerator = new SchemaGenerator();
-        return schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
-    }
-
-    private RuntimeWiring buildWiring() {
-        return RuntimeWiring.newRuntimeWiring()
-                .type(newTypeWiring(&quot;Query&quot;)
-                        .dataFetcher(&quot;bookById&quot;, graphQLDataFetchers.getBookByIdDataFetcher()))
-                .type(newTypeWiring(&quot;Book&quot;)
-                        .dataFetcher(&quot;author&quot;, graphQLDataFetchers.getAuthorDataFetcher()))
-                .build();
-    }
-
-    @Bean
-    public GraphQL graphQL() {
-        return graphQL;
-    }
-
-}
-</code></pre>
-<p>其中对于文件的解析 最重要的方法就是 buildWiring</p>
-<p>这一块其实就是后端提供的关于 graphql 的接口。</p>
-<p>使用了一个插件，方便调试 graphiql</p>
-<p>项目启动之后浏览器中访问，<a href="http://localhost:8080/graphiql">http://localhost:8080/graphiql</a><br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/16356860055184.jpg" alt="" /></p>
-<hr />
-<p><a href="http://graphql.js.cool/learn/">http://graphql.js.cool/learn/</a></p>
-<p><a href="https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/">https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/</a></p>
 
                         
                       </div>
@@ -293,8 +228,10 @@ public class GraphQLProvider {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/10/31 21:16 下午</span>
-                    
+                    <span class="date">2021/12/14 10:42 上午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
           				   
                     
 
@@ -404,6 +341,12 @@ public class GraphQLProvider {
 	      
 		      
 			      <li class="post">
+			        <a href="17007106564695.html">Rust web 开发-5.线程池</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
 			      </li>
 		     
@@ -423,12 +366,6 @@ public class GraphQLProvider {
 		      
 			      <li class="post">
 			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16892187258215.html">wasm 初体验</a>
 			      </li>
 		     
 		  

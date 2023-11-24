@@ -1506,9 +1506,36 @@ fn main() {
 
 </code></pre>
 <h2><a id="rayon" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>rayon</h2>
+<p><a href="https://youtu.be/gof_OEv71Aw?t=1186">https://youtu.be/gof_OEv71Aw?t=1186</a></p>
 <p><img src="http://hitol.blog.cdn.updev.cn/mweb/16819109466507.jpg" alt="" /><br />
-工作窃取。</p>
+<a href="https://en.wikipedia.org/wiki/Work_stealing">工作窃取。</a></p>
+<blockquote>
+<p><a href="https://en.wikipedia.org/wiki/Work_stealing">https://en.wikipedia.org/wiki/Work_stealing</a></p>
+</blockquote>
+<p>工作窃取是多线程计算机程序的一种调度策略。它解决了在具有固定数量处理器的静态多线程计算机上执行动态多线程计算的问题，该计算可以生成新的执行线程。在执行时间、内存使用和处理器间通讯方面都很有效。</p>
+<p>在工作窃取调度器中，计算机每个处理器都有一个队列，当一个处理器队列空了的时候，它会查看其他处理器的队列并窃取工作到自己处理器上进行处理。<br />
+事实上，工作窃取即将工作分配到空闲的处理器上，只要所有处理器都有工作要做，就不会发生调度开销？</p>
 <p><img src="http://hitol.blog.cdn.updev.cn/mweb/16819110812309.jpg" alt="" /></p>
+<p>Rayon 的工作窃取算法是一种任务调度算法，用于在并行计算中动态地将任务分配给线程池中的线程。它的核心思想是线程可以从其他线程的任务队列中“窃取”任务来执行，以保持线程的高利用率。</p>
+<p>以下是简单理解 Rayon 工作窃取算法的步骤：</p>
+<ol>
+<li>
+<p>初始化线程池：在启动时，Rayon 会创建一个线程池，其中包含多个工作线程。</p>
+</li>
+<li>
+<p>任务分割：当有任务需要执行时，Rayon 将任务划分为更小的子任务，并将它们放入当前线程的任务队列中。</p>
+</li>
+<li>
+<p>任务执行：每个工作线程从自己的任务队列中获取任务并执行。当线程完成自己的任务队列中的任务后，它会尝试从其他线程的任务队列中“窃取”任务。</p>
+</li>
+<li>
+<p>工作窃取：当一个线程窃取任务时，它会选择一个空闲的线程，并从该线程的任务队列的末尾“窃取”一个任务。这样做的好处是可以避免线程空闲等待任务的情况，提高线程的利用率。</p>
+</li>
+<li>
+<p>任务终止：当一个线程完成所有的任务后，它会检查其他线程的任务队列是否还有未完成的任务。如果存在未完成的任务，线程会继续尝试窃取任务，直到所有任务完成。</p>
+</li>
+</ol>
+<p>通过工作窃取算法，Rayon 可以自动将任务分配给线程池中的线程，并且在任务执行过程中动态地平衡负载，以提高并行计算的性能和效率。这种算法的优势在于它可以自动处理任务的分配和负载均衡，使得并行计算更加简单和高效。</p>
 <h2><a id="%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%EF%BC%8C%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>&lt;'_&gt; 是什么意思，什么作用</h2>
 <p>在 Rust 中，<code>&lt;'_&gt;</code> 用于定义匿名生命周期。</p>
 <p>生命周期是 Rust 中管理内存和引用的机制，它用于确保程序中的引用安全有效。通常，生命周期标记使用单引号 <code>'</code> 来表示。例如：</p>
@@ -1798,6 +1825,12 @@ fn main() {
 	      
 		      
 			      <li class="post">
+			        <a href="17007106564695.html">Rust web 开发-5.线程池</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
 			      </li>
 		     
@@ -1817,12 +1850,6 @@ fn main() {
 		      
 			      <li class="post">
 			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16892187258215.html">wasm 初体验</a>
 			      </li>
 		     
 		  

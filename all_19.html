@@ -129,97 +129,34 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16394497226152.html">
+                <a class="clearlink" href="16400068828317.html">
                 
-                  <h1>带有参数的Spring RestTemplate GET</h1>
+                  <h1>Spring.factories</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>使用 RestTemplate 发送 get 请求携带参数，发现有问题，对面收不到我的请求参数，</p>
-<p>一种方式是使用占位符将请求的 url 转换一下，类似于这样 <code>String url = &quot;http://api.xxx.xxx?name={name}&amp;age={age}&quot;;</code> 将请求参数拼接在链接后面，这种方式比较麻烦，后面有修改的话改动较多。</p>
-<p>还有一种方式，	使用 UriComponentsBuilder 拼接请求参数</p>
-<pre class="line-numbers"><code class="language-java">UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParams(params);
-builder.queryParam(key,value)
+                        	<p>Spring 在启动加载 bean 的时候会加载所有 jar 包中的 <code>/resources/META-INF/spring.factories</code> 文件中配置的 bean。<br />
+所以我们在提供给别人工具包的时候可以在 spring.factories 文件中定义一些 bean 自动加载到使用方的 Spring 容器中。<br />
+spring.factories 中一般都是一些配置 bean，也就是使用了 @Configuration 这个注解的 bean，在这个配置 bean 中初始化一些我们的工具包需要的 bean 就比较方便了。</p>
+<p>在<code>src/main/resources/META-INF</code>下新建 spring.factories 文件<br />
+类似这种的配置：</p>
+<pre class="line-numbers"><code class="language-properties">org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.wacai.gbl.config.LinkupSmsAutoConfiguration
 </code></pre>
-<p>一个工具类的 get 请求代码</p>
-<pre class="line-numbers"><code class="language-java">// 拼接字符串
-private String buildUrl(String subUrl) {
-	return String.format(&quot;%s%s&quot;, volcanoUrl, subUrl);
-}
-
-
-// 发送 get 请求
-public static &lt;T&gt; T getForEntity(String url, Class&lt;T&gt; responseType, MultiValueMap&lt;String, String&gt; headers,
-		MultiValueMap&lt;String, String&gt; params, Object requestObj) {
-	log.info(&quot;开始请求远程数据,url:{},paramMap:{},headers:{},requestObj:{}&quot;, url, params, headers,requestObj);
-	HttpEntity&lt;?&gt; requestEntity = new HttpEntity&lt;&gt;(headers);
-	if (params == null) {
-		params = new LinkedMultiValueMap&lt;&gt;();
-	}
-	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParams(params);
-	if (requestObj != null) {
-		for (Entry&lt;String, String&gt; entry : objectToMap(requestObj).entrySet()) {
-			builder.queryParam(entry.getKey(), Lists.newArrayList(entry.getValue()));
-		}
-	}
-	ResponseEntity&lt;CommonResponse&lt;T&gt;&gt; responseEntity = restTemplate.exchange(builder.build().toUri(),
-			HttpMethod.GET, requestEntity, getCommonResponseReference(responseType));
-	if (responseEntity != null &amp;&amp; responseEntity.getStatusCode() == HttpStatus.OK) {
-		CommonResponse&lt;T&gt; resp = responseEntity.getBody();
-		if (resp.isSuccess()) {
-			return resp.getData();
-		} else {
-			throw new BizException(&quot;数据请求失败,对方返回失败,&quot; + resp.getError());
-		}
-	}
-	throw new BizException(&quot;数据请求失败,网络异常,&quot; + JSON.toJSONString(responseEntity));
-}
-
-
-
-// obj 转 map
-public static Map&lt;String, String&gt; objectToMap(Object obj) {
-	if (obj == null) {
-		return null;
-	}
-	Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();
-
-	List&lt;Field&gt; allFields = new ArrayList&lt;&gt;();
-	Class currentClass = obj.getClass();
-
-	while (currentClass != null) {
-		allFields.addAll(Arrays.asList(currentClass.getDeclaredFields()));
-		currentClass = currentClass.getSuperclass();
-	}
-
-	for (Field field : allFields) {
-		field.setAccessible(true);
-		if (Objects.isNull(field.get(obj))) {
-			continue;
-		}
-		if (field.isSynthetic()) {
-			continue;
-		}
-		Object object = field.get(obj);
-		if (object instanceof Map) {
-			map.put(field.getName(), JSON.toJSONString(object));
-		} else {
-			map.put(field.getName(), String.valueOf(field.get(obj)));
-		}
-	}
-	return map;
-}
-
-
-
-private static &lt;T&gt; ParameterizedTypeReference&lt;CommonResponse&lt;T&gt;&gt; getCommonResponseReference(Class&lt;T&gt; clazz) {
-	JavaType javaType = objectMapper.getTypeFactory().constructParametricType(CommonResponse.class, clazz);
-	return ParameterizedTypeReference.forType(javaType);
-}
-
-
-</code></pre>
+<h2><a id="%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E6%B3%A8%E8%A7%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>一些常用的注解</h2>
+<h3><a id="configuration" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Configuration</h3>
+<p>开启配置</p>
+<h3><a id="enableconfigurationproperties-xxxproperties-class-xxxproperties-class" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@EnableConfigurationProperties(xxxProperties.class,xxxProperties.class)</h3>
+<p>读取哪些配置文件<br />
+xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&quot;)</code> 读取配置文件中前缀相同的配置</p>
+<h3><a id="bean" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Bean</h3>
+<p>与下面的配置配合使用</p>
+<h3><a id="conditionalonexpression" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@ConditionalOnExpression(&quot;${} || ${}&quot;)</h3>
+<p>可以配置多个条件，满足条件的就会初始化 bean</p>
+<h3><a id="conditionalonproperty-value-xx-xx-xx-havingvalue-matchifmissing-false" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@ConditionalOnProperty(value = &quot;xx.xx.xx&quot;,havingValue = &quot;&quot;,matchIfMissing = false)</h3>
+<p>读取配置文件中的 xx.xx.xx，havingValue 的值与配置文件中的值相等则会初始化</p>
+<h3><a id="primary" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Primary</h3>
+<p>默认，首选的。 </p>
 
                         
                       </div>
@@ -228,10 +165,12 @@ private static &lt;T&gt; ParameterizedTypeReference&lt;CommonResponse&lt;T&gt;&g
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/12/14 10:42 上午</span>
+                    <span class="date">2021/12/20 21:28 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
           				   
                     
 
@@ -341,6 +280,12 @@ private static &lt;T&gt; ParameterizedTypeReference&lt;CommonResponse&lt;T&gt;&g
 	      
 		      
 			      <li class="post">
+			        <a href="17007106564695.html">Rust web 开发-5.线程池</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
 			      </li>
 		     
@@ -360,12 +305,6 @@ private static &lt;T&gt; ParameterizedTypeReference&lt;CommonResponse&lt;T&gt;&g
 		      
 			      <li class="post">
 			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16892187258215.html">wasm 初体验</a>
 			      </li>
 		     
 		  

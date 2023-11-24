@@ -129,216 +129,82 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032826244926.html">
+                <a class="clearlink" href="16032826647218.html">
                 
-                  <h1>synchronized & volatile</h1>
+                  <h1>Spring Boot 增加缓存功能</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>在Java内存模型中，保证并发安全的三个特性：原子性、有序性、可见性。</p>
-<p>CAS<br />
-compare and swap<br />
-compare and exchange<br />
-比较在交换<br />
-乐观锁的思想，是一种无锁算法。<br />
-jdk5后增加的并发包下java.util.concurrent.*下面的类使用了CAS算法实现。<br />
-例如AtomicInteger中的一个方法：</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/15951497219631.jpg" alt="15951497219631" /></p>
-<p>自旋  do while</p>
-<p>有三个参数，内存值A、旧的预期值B、新的预期值C，<br />
-当且仅当 A == B的时候，将A更新为C。</p>
-<p>ABA问题：<br />
-当前线程在CAS过程中，进行比较的时候，发现值还是原来的值，但是是经过别的线程操作之后的值，并不是初始的值。<br />
-其他线程修改数次后，最终值与初始值相等。</p>
-<p>举个不太恰当的栗子：<br />
-小明与女友分手了，半年后又和好了，但是在这半年内，虽然还是那个人，他并不知道他女友有没有跟其他人交往过。</p>
-<p>解决：加版本号、时间戳、或者加Boolean类型标记。</p>
-<p>CAS在硬件级指令<br />
-cmpxchg 前加lock（多个cpu）使这条指令为原子操作，即<br />
-lock cmpxchg 指令</p>
-<hr />
-<p>描述对象在内存中的内存布局<br />
-JOL 是个工具<br />
-IDEA插件 ：<a href="https://plugins.jetbrains.com/plugin/10953-jol-java-object-layout">https://plugins.jetbrains.com/plugin/10953-jol-java-object-layout</a></p>
-<p>布局：<br />
-markword  锁的信息都在这里 8字节<br />
-类型指针 class pointer 指向属于哪个类 4字节<br />
-实例数据 instance data 成员变量所在<br />
-对齐 padding 整体字节数不能被8整除的时候，补齐<br />
-(loss due to the next object alignment)</p>
-<pre class="line-numbers"><code class="language-plain_text">Object o = new Object();
-System.out.println(ClassLayout.parseInstance(o).toPrintable());
+                        	<pre class="line-numbers"><code class="language-plain_text">spring.jpa.properties.hibernate.show_sql=true，开启hibernate对sql语句的打印
 </code></pre>
-<p>执行上面代码，</p>
-<pre class="line-numbers"><code class="language-plain_text">java.lang.Object object internals:
- OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
-      0     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
-      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
-      8     4        (object header)                           e5 01 00 f8 (11100101 00000001 00000000 11111000) (-134217243)
-     12     4        (loss due to the next object alignment)
-Instance size: 16 bytes
-Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+<p>单元测试中，用userRepository 查询两次相同内容。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729123926.jpg" alt="" /><br />
+运行一下，会看到在控制台打出了两条sql，说明是查了两次库。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15373729221221.jpg" alt="" /></p>
+<p>增加缓存：<br />
+pom中添加依赖：</p>
+<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-cache&lt;/artifactId&gt;
+&lt;/dependency&gt;
 </code></pre>
-<p>新生成一个Object对象，占用的内存情况：<br />
-Mark Word 8字节<br />
-Class Pointer 4字节<br />
-Instance Data 0<br />
-对齐 4字节<br />
-总共16个字节。</p>
-<p>UseCompressedClassPointer<br />
-class pointer 压缩指针<br />
-64位JVM，它的指针长度就是64位，8个字节<br />
-开启压缩指针后会压缩为4个字节、</p>
-<p>UseCompressedOops<br />
-oops ordinary object pointers 普通对象指针，默认也是压缩的，4字节</p>
-<hr />
-<h3><a id="%E9%94%81%E5%8D%87%E7%BA%A7%E8%BF%87%E7%A8%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>锁升级过程</h3>
-<p>全部记录在markword中。<br />
-new - 偏向锁 - 轻量级锁（无锁、自旋锁、自适应锁）- 重量级锁</p>
-<p>第一次加锁的时候，第一个线程，对象中的markword还没有被污染，所以第一次加的锁是偏向锁（54位指向当前线程的指针），不用去操作系统申请重量级锁。</p>
-<p>发生任意竞争的时候，升级为轻量级锁，<br />
-首先撤销偏向锁状态，<br />
-每个线程的线程栈生成自己的锁记录，lock record<br />
-mark word中指向线程栈中的Lock Record的指针<br />
-使用自旋的方式去抢夺锁  CAS操作</p>
-<p>竞争激烈的时候，<br />
-自旋锁太费CPU，锁升级为重量级锁<br />
-1、自旋超过多少次，或者是超过CPU的二分之一<br />
-2、自适应自旋，JVM自己控制<br />
-用户态、内核态<br />
-用户线程想要操作硬件的时候需要内核线程完成</p>
-<p>重量级锁  队列</p>
-<p>锁降级<br />
-在GC的情况下发生，没有意义</p>
-<p>锁消除<br />
-StringBuffer  append一堆,锁会消除</p>
-<p>锁粗化</p>
-<hr />
-<h3><a id="volatile" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>volatile</h3>
-<p>内存可见性和禁止指令重排序<br />
-看一个例子</p>
-<pre class="line-numbers"><code class="language-plain_text">	Boolean running = true;
-	void m(){
-		System.out.println(&quot; m start &quot;);
-		while (running){
-			// nothing
-		}
-		System.out.printf(&quot; m end &quot;);
-	}
-
-	public static void main(String[] args) {
-		HelloVolatile t = new HelloVolatile();
-
-		new Thread(t :: m).start();
-
-		try {
-			TimeUnit.SECONDS.sleep(1);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		t.running = false;
-	}
-</code></pre>
-<p>以上这个例子，本意是有一个变量running，初始值为true，然后启动了一个线程，while(running)循环，主线程在一秒后修改了这个running变量值为false，预期结果是我们新启动的线程也会停止掉。</p>
-<p>结果显然不是这样的。因为每个线程都有自己的工作内存，当线程启动时，会将变量复制到自己的工作内存中，虽然我们在主线程中修改了变量值，但是对于新启动的线程的工作内存是不可见的。所以启动的新线程会一直运行。</p>
-<p>将running变量修饰为volatile即可出现预期情况。<br />
-某个线程修改了变量值后，会通知到主内存该值已被修改，同时其他线程持有的该变量失效，重新从主内存中读取。</p>
-<p>CPU三级缓存、主内存、线程的工作内存<br />
-8个操作</p>
-<p>MESI缓存一致性协议</p>
-<p>Modify<br />
-Exclusive<br />
-Shared<br />
-Invalid</p>
-<h4><a id="%E5%A6%82%E4%BD%95%E7%A6%81%E6%AD%A2%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92%E5%BA%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何禁止指令重排序</h4>
-<p>对象的创建过程<br />
-new<br />
-invokespecial  -- init<br />
-astore_1<br />
-return</p>
-<p>1、代码中变量用volatile修饰<br />
-2、在编译为字节码文件后，该属性的acc_flags 是ACC_VOLATILE<br />
-3、JVM的内存屏障，虚拟机看到ACC_VOLATILE后,屏障两边的指令不可以重排，保障有序</p>
-<pre class="line-numbers"><code class="language-plain_text">LoadLoad
-StoreStore
-LoadStore
-StoreLoad
-</code></pre>
-<p>4、hotspot实现<br />
-lock</p>
-<h3><a id="%E5%BC%BA%E8%BD%AF%E5%BC%B1%E8%99%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>强软弱虚</h3>
-<p>强引用 Object o = new Object();  当没有任何引用指向该对象内存的时候，才会被垃圾回收<br />
-软引用  适合做缓存，当内存不够用的时候，会优先回收软引用的对象。</p>
-<p>弱引用 gc的时候会直接被回收，一次性，当加载的时候会用到<br />
-虚引用 get不到。作用：管理堆外内存。NIO中 DirectByreBuffer</p>
-<h3><a id="threadlocal" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ThreadLocal</h3>
-<p>每个线程独自拥有</p>
-<h3><a id="dcl%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>DCL 单例模式</h3>
-<h3><a id="%E7%BC%93%E5%AD%98%E8%A1%8Ccache-line" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>缓存行 cache line</h3>
-<p>举个栗子：</p>
-<pre class="line-numbers"><code class="language-plain_text">public static class T{
-	private long a1,a2,a3,a4,a5,a6,a7;
-	public volatile long x = 0L;
-}
-public static T[] arr = new T[2];
-
-static {
-	arr[0] = new T();
-	arr[1] = new T();
-}
-
-public static void main(String[] args) throws InterruptedException {
-	Thread t1 = new Thread(()-&gt;{
-		for (int i = 0; i &lt; 10000000; i++) {
-			arr[0].x = i;
-		}
-	});
-
-	Thread t2 = new Thread(()-&gt;{
-		for (int i = 0; i &lt; 10000000; i++) {
-			arr[1].x = i;
-		}
-	});
-
-	long start = System.currentTimeMillis();
-
-	t1.start();
-	t2.start();
-
-	t1.join();
-	t2.join();
-
-	System.out.println(System.currentTimeMillis() - start);
-}
-</code></pre>
-<p>类T中有7个long类型的变量是没有用到的，但是如果把这7个变量去掉，执行的时间会大大增加。</p>
-<p>去掉后 执行时间 大概200多毫秒<br />
-没有去掉 执行时间 大概是 80多毫秒</p>
-<p>这是因为缓存行的大小一般是64字节，CPU与内存交换数据中是以缓存行为单位的；多了7个long类型的变量，数组中的两个元素不在同一个缓存行上，两个线程就不用相互通知对方进行数据修改。</p>
-<hr />
-<p>markword中记录了哪些信息？<br />
-4字节 分代年龄 最大15</p>
-<p>CMS辣鸡回收器 年龄为6后转入老年代</p>
-<hr />
-<p>面试题<br />
-Q：请描述synchronized 和reentrantlock的底层实现及重入的底层原理</p>
-<p>Q：请描述锁的四种状态和升级过程</p>
-<p>Q: CAS的ABA问题如何解决</p>
-<p>Q：请谈一下你对volatile的理解</p>
-<p>Q: volatile的可见性和禁止指令重排序是如何实现的</p>
-<p>Q: CAS是什么</p>
-<p>Q: 请描述一下对象的创建过程</p>
-<p>Q：对象在内存中的内存布局</p>
-<p>Q：DCL单例为什么要加volatile</p>
-<p>Q: 解释一下锁的四种状态</p>
-<p>Q: Object o = new Object()在内存中占了多少字节</p>
-<p>Q:请描述synchronized和RenntrantLock的异同</p>
-<p>Q:聊聊你对as-if-serial和happens-brfore语义的理解</p>
-<p>Q:你了解ThreadLocal吗，你知道ThreadLocal如何解决内存泄露问题吗</p>
-<p>Q：请描述下锁的分类以及JDK中的应用</p>
-<p>HashTable和CurrentHashMap的线程安全实现的区别</p>
+<p>SpringBoot主类中添加注解 <code>@EnableCaching</code><br />
+UserRepository 类添加注解<code>@CacheConfig(cacheNames = &quot;users&quot;)</code><br />
+findByName方法添加注解<code>@Cacheable</code></p>
+<p>org.springframework.data.redis.serializer.SerializationException:?</p>
+<p>缓存对象需要实现序列化接口.<code>UserDO implements Serializable</code></p>
+<p>在次运行就会出现</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374555362360.jpg" alt="" style="width:1076px;" />可以看到，第二次请求的时候就没有打印出sql语句。</p>
+<p>注解：</p>
+<ul>
+<li>
+<p>@CacheConfig：<br />
+主要配置该类中会用到的一些公用的缓存配置。<br />
+cacheNames 配置了数据访问对象中返回的内容将存储于名为users的数组中。<br />
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374561374912.jpg" alt="" /></p>
+</li>
+<li>
+<p>@Cacheable：<br />
+配置了findByName的函数返回值将会被加入到缓存。同时在查询时，会先查询缓存，若不存在才会查询数据库。<br />
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374562984908.jpg" alt="" /></p>
+</li>
+<li>
+<p><code>cacheNames</code>、<code>value</code>：用于指定缓存存储的集合名。两个参数等效。</p>
+</li>
+<li>
+<p><code>key</code>：缓存对象存储在Map集合中的key值，非必需，缺省按照函数的所有参数组合作为key值，若自己配置需使用SpEL表达式，比如：@Cacheable(key = &quot;#p0&quot;)：使用函数第一个参数作为缓存的key值，更多关于SpEL表达式的详细内容可参考<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#cache">官方文档</a></p>
+</li>
+<li>
+<p><code>condition</code>:缓存对象的条件，非必需，也需使用SpEL表达式，只有满足表达式条件的内容才会被缓存，比如：@Cacheable(key = &quot;#p0&quot;, condition = &quot;#p0.length() &lt; 3&quot;)，表示只有当第一个参数的长度小于3的时候才会被缓存，若做此配置上面的AAA用户就不会被缓存，读者可自行实验尝试。</p>
+</li>
+<li>
+<p><code>unless</code>:另外一个缓存条件参数，非必需，需使用SpEL表达式。它不同于condition参数的地方在于它的判断时机，该条件是在函数被调用之后才做判断的，所以它可以通过对result进行判断。</p>
+</li>
+<li>
+<p><code>keyGenerator</code>:用于指定key生成器，非必需。若需要指定一个自定义的key生成器，我们需要去实现org.springframework.cache.interceptor.KeyGenerator接口，并使用该参数来指定。需要注意的是：该参数与key是互斥的</p>
+</li>
+<li>
+<p><code>cacheManager</code>:用于指定使用哪个缓存管理器，非必需。只有当有多个时才需要使用</p>
+</li>
+<li>
+<p><code>cacheResolver</code>:用于指定使用那个缓存解析器，非必需。需通过org.springframework.cache.interceptor.CacheResolver接口来实现自己的缓存解析器，并用该参数指定。</p>
+</li>
+</ul>
+<p>CacheManager</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-15374571943253.jpg" alt="" /></p>
+<p>在Spring Boot中通过@EnableCaching注解自动化配置合适的缓存管理器（CacheManager），Spring Boot根据下面的顺序去侦测缓存提供者：</p>
+<ul>
+<li>Generic</li>
+<li>JCache (JSR-107)</li>
+<li>EhCache 2.x</li>
+<li>Hazelcast</li>
+<li>Infinispan</li>
+<li>Redis</li>
+<li>Guava</li>
+<li>Simple</li>
+</ul>
+<p>可以通过配置属性spring.cache.type来强制指定</p>
 
                         
                       </div>
@@ -350,7 +216,9 @@ Q：请描述synchronized 和reentrantlock的底层实现及重入的底层原�
                     <span class="date">2020/10/21 20:17 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='JVM.html'>JVM</a></span>
+          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
           				   
                     
 
@@ -460,6 +328,12 @@ Q：请描述synchronized 和reentrantlock的底层实现及重入的底层原�
 	      
 		      
 			      <li class="post">
+			        <a href="17007106564695.html">Rust web 开发-5.线程池</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
 			      </li>
 		     
@@ -479,12 +353,6 @@ Q：请描述synchronized 和reentrantlock的底层实现及重入的底层原�
 		      
 			      <li class="post">
 			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16892187258215.html">wasm 初体验</a>
 			      </li>
 		     
 		  

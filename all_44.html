@@ -129,402 +129,216 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032824477332.html">
+                <a class="clearlink" href="16032826244926.html">
                 
-                  <h1>HashMap</h1>
+                  <h1>synchronized & volatile</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>JDK1.7 数组+链表<br />
-JDK1.8 及以后，数组+链表/红黑树<br />
-链表长度&gt;=8后转红黑树</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/16007817861971.jpg" alt="16007817861971" /></p>
-<p>key是唯一的，value可以重复<br />
-允许存储null键，null值</p>
-<p>底层结构<br />
-数组，数组中每一项是一个链表<br />
-<img src="http://hitol.blog.cdn.updev.cn/16007819446406.jpg" alt="16007819446406" /></p>
+                        	<p>在Java内存模型中，保证并发安全的三个特性：原子性、有序性、可见性。</p>
+<p>CAS<br />
+compare and swap<br />
+compare and exchange<br />
+比较在交换<br />
+乐观锁的思想，是一种无锁算法。<br />
+jdk5后增加的并发包下java.util.concurrent.*下面的类使用了CAS算法实现。<br />
+例如AtomicInteger中的一个方法：</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/15951497219631.jpg" alt="15951497219631" /></p>
+<p>自旋  do while</p>
+<p>有三个参数，内存值A、旧的预期值B、新的预期值C，<br />
+当且仅当 A == B的时候，将A更新为C。</p>
+<p>ABA问题：<br />
+当前线程在CAS过程中，进行比较的时候，发现值还是原来的值，但是是经过别的线程操作之后的值，并不是初始的值。<br />
+其他线程修改数次后，最终值与初始值相等。</p>
+<p>举个不太恰当的栗子：<br />
+小明与女友分手了，半年后又和好了，但是在这半年内，虽然还是那个人，他并不知道他女友有没有跟其他人交往过。</p>
+<p>解决：加版本号、时间戳、或者加Boolean类型标记。</p>
+<p>CAS在硬件级指令<br />
+cmpxchg 前加lock（多个cpu）使这条指令为原子操作，即<br />
+lock cmpxchg 指令</p>
 <hr />
-<p>put</p>
-<p>put方法，key存在的话会覆盖原值，返回旧值，key不存在的话，存放进数组中，返回null</p>
-<p>put的时候，先对key的hashCode做了hash运算，通过hash后的值获取该key应该存放在数组中哪个下标位置处（indexFor方法，将得到的hash值h，通过<code>h &amp; (length-1)</code>计算得出这个key应该在数组中的哪个位置），然后遍历该位置处的链表，替换原值，如果在链表中没有存在该key，则新增到链表的头部。</p>
+<p>描述对象在内存中的内存布局<br />
+JOL 是个工具<br />
+IDEA插件 ：<a href="https://plugins.jetbrains.com/plugin/10953-jol-java-object-layout">https://plugins.jetbrains.com/plugin/10953-jol-java-object-layout</a></p>
+<p>布局：<br />
+markword  锁的信息都在这里 8字节<br />
+类型指针 class pointer 指向属于哪个类 4字节<br />
+实例数据 instance data 成员变量所在<br />
+对齐 padding 整体字节数不能被8整除的时候，补齐<br />
+(loss due to the next object alignment)</p>
+<pre class="line-numbers"><code class="language-plain_text">Object o = new Object();
+System.out.println(ClassLayout.parseInstance(o).toPrintable());
+</code></pre>
+<p>执行上面代码，</p>
+<pre class="line-numbers"><code class="language-plain_text">java.lang.Object object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           e5 01 00 f8 (11100101 00000001 00000000 11111000) (-134217243)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+</code></pre>
+<p>新生成一个Object对象，占用的内存情况：<br />
+Mark Word 8字节<br />
+Class Pointer 4字节<br />
+Instance Data 0<br />
+对齐 4字节<br />
+总共16个字节。</p>
+<p>UseCompressedClassPointer<br />
+class pointer 压缩指针<br />
+64位JVM，它的指针长度就是64位，8个字节<br />
+开启压缩指针后会压缩为4个字节、</p>
+<p>UseCompressedOops<br />
+oops ordinary object pointers 普通对象指针，默认也是压缩的，4字节</p>
 <hr />
-<p>get<br />
-get的时候也是要先对key进行hash运算，得出hash值，获取该值在数组中的下标位置，然后遍历数组该位置的链表，hash值相同并且key值相同，返回链表该处的值。</p>
+<h3><a id="%E9%94%81%E5%8D%87%E7%BA%A7%E8%BF%87%E7%A8%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>锁升级过程</h3>
+<p>全部记录在markword中。<br />
+new - 偏向锁 - 轻量级锁（无锁、自旋锁、自适应锁）- 重量级锁</p>
+<p>第一次加锁的时候，第一个线程，对象中的markword还没有被污染，所以第一次加的锁是偏向锁（54位指向当前线程的指针），不用去操作系统申请重量级锁。</p>
+<p>发生任意竞争的时候，升级为轻量级锁，<br />
+首先撤销偏向锁状态，<br />
+每个线程的线程栈生成自己的锁记录，lock record<br />
+mark word中指向线程栈中的Lock Record的指针<br />
+使用自旋的方式去抢夺锁  CAS操作</p>
+<p>竞争激烈的时候，<br />
+自旋锁太费CPU，锁升级为重量级锁<br />
+1、自旋超过多少次，或者是超过CPU的二分之一<br />
+2、自适应自旋，JVM自己控制<br />
+用户态、内核态<br />
+用户线程想要操作硬件的时候需要内核线程完成</p>
+<p>重量级锁  队列</p>
+<p>锁降级<br />
+在GC的情况下发生，没有意义</p>
+<p>锁消除<br />
+StringBuffer  append一堆,锁会消除</p>
+<p>锁粗化</p>
 <hr />
-<p>hash<br />
-对key的值再做一次hash，是为了让其分布更加散列，计算得出的数组下标分布更加均匀。</p>
-<hr />
-<p>hashMap的容量，为什么是2的n次幂</p>
-<p>1、位运算比模运算快的多，<br />
-2、length如果是2的幂，length - 1就是一个奇数，并且这个数字转换为二进制低位都是1，在做&amp;运算的时候，分布的更加散列，<br />
-3、只有当length是2的幂的时候，h &amp; (length - 1) 与 h % length 结果是一致的，</p>
-<p>做了个实验说明第二点--分布的更加散列</p>
-<pre class="line-numbers"><code class="language-plain_text">public class Main {
-	public static void main(String[] args) {
-		// hashMap容量
-//		int initialCapacity = 63;
-		int initialCapacity = 64;
-//		int initialCapacity = 66;
-
-		for (int i = 1; i &lt; 100; i++) {
-			// hashMap中的hash算法
-			int hash = hash(i);
-			System.out.println( i + &quot;--在数组中的下标--&quot; + ((initialCapacity - 1) &amp; hash));
+<h3><a id="volatile" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>volatile</h3>
+<p>内存可见性和禁止指令重排序<br />
+看一个例子</p>
+<pre class="line-numbers"><code class="language-plain_text">	Boolean running = true;
+	void m(){
+		System.out.println(&quot; m start &quot;);
+		while (running){
+			// nothing
 		}
+		System.out.printf(&quot; m end &quot;);
 	}
-	static final int hash(Object key) {
-		int h;
-		return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);
+
+	public static void main(String[] args) {
+		HelloVolatile t = new HelloVolatile();
+
+		new Thread(t :: m).start();
+
+		try {
+			TimeUnit.SECONDS.sleep(1);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		t.running = false;
 	}
+</code></pre>
+<p>以上这个例子，本意是有一个变量running，初始值为true，然后启动了一个线程，while(running)循环，主线程在一秒后修改了这个running变量值为false，预期结果是我们新启动的线程也会停止掉。</p>
+<p>结果显然不是这样的。因为每个线程都有自己的工作内存，当线程启动时，会将变量复制到自己的工作内存中，虽然我们在主线程中修改了变量值，但是对于新启动的线程的工作内存是不可见的。所以启动的新线程会一直运行。</p>
+<p>将running变量修饰为volatile即可出现预期情况。<br />
+某个线程修改了变量值后，会通知到主内存该值已被修改，同时其他线程持有的该变量失效，重新从主内存中读取。</p>
+<p>CPU三级缓存、主内存、线程的工作内存<br />
+8个操作</p>
+<p>MESI缓存一致性协议</p>
+<p>Modify<br />
+Exclusive<br />
+Shared<br />
+Invalid</p>
+<h4><a id="%E5%A6%82%E4%BD%95%E7%A6%81%E6%AD%A2%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92%E5%BA%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何禁止指令重排序</h4>
+<p>对象的创建过程<br />
+new<br />
+invokespecial  -- init<br />
+astore_1<br />
+return</p>
+<p>1、代码中变量用volatile修饰<br />
+2、在编译为字节码文件后，该属性的acc_flags 是ACC_VOLATILE<br />
+3、JVM的内存屏障，虚拟机看到ACC_VOLATILE后,屏障两边的指令不可以重排，保障有序</p>
+<pre class="line-numbers"><code class="language-plain_text">LoadLoad
+StoreStore
+LoadStore
+StoreLoad
+</code></pre>
+<p>4、hotspot实现<br />
+lock</p>
+<h3><a id="%E5%BC%BA%E8%BD%AF%E5%BC%B1%E8%99%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>强软弱虚</h3>
+<p>强引用 Object o = new Object();  当没有任何引用指向该对象内存的时候，才会被垃圾回收<br />
+软引用  适合做缓存，当内存不够用的时候，会优先回收软引用的对象。</p>
+<p>弱引用 gc的时候会直接被回收，一次性，当加载的时候会用到<br />
+虚引用 get不到。作用：管理堆外内存。NIO中 DirectByreBuffer</p>
+<h3><a id="threadlocal" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ThreadLocal</h3>
+<p>每个线程独自拥有</p>
+<h3><a id="dcl%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>DCL 单例模式</h3>
+<h3><a id="%E7%BC%93%E5%AD%98%E8%A1%8Ccache-line" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>缓存行 cache line</h3>
+<p>举个栗子：</p>
+<pre class="line-numbers"><code class="language-plain_text">public static class T{
+	private long a1,a2,a3,a4,a5,a6,a7;
+	public volatile long x = 0L;
+}
+public static T[] arr = new T[2];
+
+static {
+	arr[0] = new T();
+	arr[1] = new T();
+}
+
+public static void main(String[] args) throws InterruptedException {
+	Thread t1 = new Thread(()-&gt;{
+		for (int i = 0; i &lt; 10000000; i++) {
+			arr[0].x = i;
+		}
+	});
+
+	Thread t2 = new Thread(()-&gt;{
+		for (int i = 0; i &lt; 10000000; i++) {
+			arr[1].x = i;
+		}
+	});
+
+	long start = System.currentTimeMillis();
+
+	t1.start();
+	t2.start();
+
+	t1.join();
+	t2.join();
+
+	System.out.println(System.currentTimeMillis() - start);
 }
 </code></pre>
-<p>举了3个数字，63-单数，64-2的幂，66-偶数，来说明只有2的幂的时候，分布的才会更加散列，</p>
-<ul>
-<li>当初始容量为64时，i在数组中的分布情况：</li>
-</ul>
-<details>
-<summary>展开查看</summary>
-```
-1--在数组中的下标--1
-2--在数组中的下标--2
-3--在数组中的下标--3
-4--在数组中的下标--4
-5--在数组中的下标--5
-6--在数组中的下标--6
-7--在数组中的下标--7
-8--在数组中的下标--8
-9--在数组中的下标--9
-10--在数组中的下标--10
-11--在数组中的下标--11
-12--在数组中的下标--12
-13--在数组中的下标--13
-14--在数组中的下标--14
-15--在数组中的下标--15
-16--在数组中的下标--16
-17--在数组中的下标--17
-18--在数组中的下标--18
-19--在数组中的下标--19
-20--在数组中的下标--20
-21--在数组中的下标--21
-22--在数组中的下标--22
-23--在数组中的下标--23
-24--在数组中的下标--24
-25--在数组中的下标--25
-26--在数组中的下标--26
-27--在数组中的下标--27
-28--在数组中的下标--28
-29--在数组中的下标--29
-30--在数组中的下标--30
-31--在数组中的下标--31
-32--在数组中的下标--32
-33--在数组中的下标--33
-34--在数组中的下标--34
-35--在数组中的下标--35
-36--在数组中的下标--36
-37--在数组中的下标--37
-38--在数组中的下标--38
-39--在数组中的下标--39
-40--在数组中的下标--40
-41--在数组中的下标--41
-42--在数组中的下标--42
-43--在数组中的下标--43
-44--在数组中的下标--44
-45--在数组中的下标--45
-46--在数组中的下标--46
-47--在数组中的下标--47
-48--在数组中的下标--48
-49--在数组中的下标--49
-50--在数组中的下标--50
-51--在数组中的下标--51
-52--在数组中的下标--52
-53--在数组中的下标--53
-54--在数组中的下标--54
-55--在数组中的下标--55
-56--在数组中的下标--56
-57--在数组中的下标--57
-58--在数组中的下标--58
-59--在数组中的下标--59
-60--在数组中的下标--60
-61--在数组中的下标--61
-62--在数组中的下标--62
-63--在数组中的下标--63
-64--在数组中的下标--0
-65--在数组中的下标--1
-66--在数组中的下标--2
-67--在数组中的下标--3
-68--在数组中的下标--4
-69--在数组中的下标--5
-70--在数组中的下标--6
-71--在数组中的下标--7
-72--在数组中的下标--8
-73--在数组中的下标--9
-74--在数组中的下标--10
-75--在数组中的下标--11
-76--在数组中的下标--12
-77--在数组中的下标--13
-78--在数组中的下标--14
-79--在数组中的下标--15
-80--在数组中的下标--16
-81--在数组中的下标--17
-82--在数组中的下标--18
-83--在数组中的下标--19
-84--在数组中的下标--20
-85--在数组中的下标--21
-86--在数组中的下标--22
-87--在数组中的下标--23
-88--在数组中的下标--24
-89--在数组中的下标--25
-90--在数组中的下标--26
-91--在数组中的下标--27
-92--在数组中的下标--28
-93--在数组中的下标--29
-94--在数组中的下标--30
-95--在数组中的下标--31
-96--在数组中的下标--32
-97--在数组中的下标--33
-98--在数组中的下标--34
-99--在数组中的下标--35
-```</details>
-<ul>
-<li>当初始容量为63的时候，i在数组中的分布情况</li>
-</ul>
-<details>
-<summary>展开查看</summary>
-```
-1--在数组中的下标--0
-2--在数组中的下标--2
-3--在数组中的下标--2
-4--在数组中的下标--4
-5--在数组中的下标--4
-6--在数组中的下标--6
-7--在数组中的下标--6
-8--在数组中的下标--8
-9--在数组中的下标--8
-10--在数组中的下标--10
-11--在数组中的下标--10
-12--在数组中的下标--12
-13--在数组中的下标--12
-14--在数组中的下标--14
-15--在数组中的下标--14
-16--在数组中的下标--16
-17--在数组中的下标--16
-18--在数组中的下标--18
-19--在数组中的下标--18
-20--在数组中的下标--20
-21--在数组中的下标--20
-22--在数组中的下标--22
-23--在数组中的下标--22
-24--在数组中的下标--24
-25--在数组中的下标--24
-26--在数组中的下标--26
-27--在数组中的下标--26
-28--在数组中的下标--28
-29--在数组中的下标--28
-30--在数组中的下标--30
-31--在数组中的下标--30
-32--在数组中的下标--32
-33--在数组中的下标--32
-34--在数组中的下标--34
-35--在数组中的下标--34
-36--在数组中的下标--36
-37--在数组中的下标--36
-38--在数组中的下标--38
-39--在数组中的下标--38
-40--在数组中的下标--40
-41--在数组中的下标--40
-42--在数组中的下标--42
-43--在数组中的下标--42
-44--在数组中的下标--44
-45--在数组中的下标--44
-46--在数组中的下标--46
-47--在数组中的下标--46
-48--在数组中的下标--48
-49--在数组中的下标--48
-50--在数组中的下标--50
-51--在数组中的下标--50
-52--在数组中的下标--52
-53--在数组中的下标--52
-54--在数组中的下标--54
-55--在数组中的下标--54
-56--在数组中的下标--56
-57--在数组中的下标--56
-58--在数组中的下标--58
-59--在数组中的下标--58
-60--在数组中的下标--60
-61--在数组中的下标--60
-62--在数组中的下标--62
-63--在数组中的下标--62
-64--在数组中的下标--0
-65--在数组中的下标--0
-66--在数组中的下标--2
-67--在数组中的下标--2
-68--在数组中的下标--4
-69--在数组中的下标--4
-70--在数组中的下标--6
-71--在数组中的下标--6
-72--在数组中的下标--8
-73--在数组中的下标--8
-74--在数组中的下标--10
-75--在数组中的下标--10
-76--在数组中的下标--12
-77--在数组中的下标--12
-78--在数组中的下标--14
-79--在数组中的下标--14
-80--在数组中的下标--16
-81--在数组中的下标--16
-82--在数组中的下标--18
-83--在数组中的下标--18
-84--在数组中的下标--20
-85--在数组中的下标--20
-86--在数组中的下标--22
-87--在数组中的下标--22
-88--在数组中的下标--24
-89--在数组中的下标--24
-90--在数组中的下标--26
-91--在数组中的下标--26
-92--在数组中的下标--28
-93--在数组中的下标--28
-94--在数组中的下标--30
-95--在数组中的下标--30
-96--在数组中的下标--32
-97--在数组中的下标--32
-98--在数组中的下标--34
-99--在数组中的下标--34
-```
-</details>
-<ul>
-<li>当初始容量为66的时候，分布情况：</li>
-</ul>
-<details>
-<summary>展开查看</summary>
-```
-1--在数组中的下标--1
-2--在数组中的下标--0
-3--在数组中的下标--1
-4--在数组中的下标--0
-5--在数组中的下标--1
-6--在数组中的下标--0
-7--在数组中的下标--1
-8--在数组中的下标--0
-9--在数组中的下标--1
-10--在数组中的下标--0
-11--在数组中的下标--1
-12--在数组中的下标--0
-13--在数组中的下标--1
-14--在数组中的下标--0
-15--在数组中的下标--1
-16--在数组中的下标--0
-17--在数组中的下标--1
-18--在数组中的下标--0
-19--在数组中的下标--1
-20--在数组中的下标--0
-21--在数组中的下标--1
-22--在数组中的下标--0
-23--在数组中的下标--1
-24--在数组中的下标--0
-25--在数组中的下标--1
-26--在数组中的下标--0
-27--在数组中的下标--1
-28--在数组中的下标--0
-29--在数组中的下标--1
-30--在数组中的下标--0
-31--在数组中的下标--1
-32--在数组中的下标--0
-33--在数组中的下标--1
-34--在数组中的下标--0
-35--在数组中的下标--1
-36--在数组中的下标--0
-37--在数组中的下标--1
-38--在数组中的下标--0
-39--在数组中的下标--1
-40--在数组中的下标--0
-41--在数组中的下标--1
-42--在数组中的下标--0
-43--在数组中的下标--1
-44--在数组中的下标--0
-45--在数组中的下标--1
-46--在数组中的下标--0
-47--在数组中的下标--1
-48--在数组中的下标--0
-49--在数组中的下标--1
-50--在数组中的下标--0
-51--在数组中的下标--1
-52--在数组中的下标--0
-53--在数组中的下标--1
-54--在数组中的下标--0
-55--在数组中的下标--1
-56--在数组中的下标--0
-57--在数组中的下标--1
-58--在数组中的下标--0
-59--在数组中的下标--1
-60--在数组中的下标--0
-61--在数组中的下标--1
-62--在数组中的下标--0
-63--在数组中的下标--1
-64--在数组中的下标--64
-65--在数组中的下标--65
-66--在数组中的下标--64
-67--在数组中的下标--65
-68--在数组中的下标--64
-69--在数组中的下标--65
-70--在数组中的下标--64
-71--在数组中的下标--65
-72--在数组中的下标--64
-73--在数组中的下标--65
-74--在数组中的下标--64
-75--在数组中的下标--65
-76--在数组中的下标--64
-77--在数组中的下标--65
-78--在数组中的下标--64
-79--在数组中的下标--65
-80--在数组中的下标--64
-81--在数组中的下标--65
-82--在数组中的下标--64
-83--在数组中的下标--65
-84--在数组中的下标--64
-85--在数组中的下标--65
-86--在数组中的下标--64
-87--在数组中的下标--65
-88--在数组中的下标--64
-89--在数组中的下标--65
-90--在数组中的下标--64
-91--在数组中的下标--65
-92--在数组中的下标--64
-93--在数组中的下标--65
-94--在数组中的下标--64
-95--在数组中的下标--65
-96--在数组中的下标--64
-97--在数组中的下标--65
-98--在数组中的下标--64
-99--在数组中的下标--65
-```
-</details>
-<p>tableSizeFor 这个方法保证了hashMap中的容量始终是2的幂。<br />
-这个方法是计算得到一个比传过来的参数值大的，最近的2的幂。</p>
+<p>类T中有7个long类型的变量是没有用到的，但是如果把这7个变量去掉，执行的时间会大大增加。</p>
+<p>去掉后 执行时间 大概200多毫秒<br />
+没有去掉 执行时间 大概是 80多毫秒</p>
+<p>这是因为缓存行的大小一般是64字节，CPU与内存交换数据中是以缓存行为单位的；多了7个long类型的变量，数组中的两个元素不在同一个缓存行上，两个线程就不用相互通知对方进行数据修改。</p>
 <hr />
-<p>resize -- 扩容</p>
-<p>初始容量是16，负载因子是0.75，阈值时16*0.75 = 12<br />
-当hashMap的容量大于12的时候，就会触发扩容。</p>
+<p>markword中记录了哪些信息？<br />
+4字节 分代年龄 最大15</p>
+<p>CMS辣鸡回收器 年龄为6后转入老年代</p>
 <hr />
-<p>不是线程安全的</p>
-<p>--<br />
-jdk1.8 为什么长度&gt;=8后转红黑树</p>
-<hr />
-<p>两个对象的hashCode相同会发生什么？</p>
-<p>两个对象的hashCode相同时，应该要放在数组同一个下标位置，接着HashMap会遍历链表中的key值，若有key值相同的元素，则覆盖并返回原值，如果没有相同的key，则将该值添加在链表的表头。</p>
-<hr />
-<p>如果两个对象的hashCode相同，如何获取值的？</p>
-<p>如果两个对象hashCode相同，则遍历链表中的key，获取链表中存储的值。</p>
-<hr />
-<p>为什么负载因子是0.75?<br />
-空间与时间的折中。<br />
-泊松分布</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/15905513158045.jpg" alt="15905513158045" /></p>
-<hr />
-<p>TODO<br />
-进制转换、位运算复习</p>
+<p>面试题<br />
+Q：请描述synchronized 和reentrantlock的底层实现及重入的底层原理</p>
+<p>Q：请描述锁的四种状态和升级过程</p>
+<p>Q: CAS的ABA问题如何解决</p>
+<p>Q：请谈一下你对volatile的理解</p>
+<p>Q: volatile的可见性和禁止指令重排序是如何实现的</p>
+<p>Q: CAS是什么</p>
+<p>Q: 请描述一下对象的创建过程</p>
+<p>Q：对象在内存中的内存布局</p>
+<p>Q：DCL单例为什么要加volatile</p>
+<p>Q: 解释一下锁的四种状态</p>
+<p>Q: Object o = new Object()在内存中占了多少字节</p>
+<p>Q:请描述synchronized和RenntrantLock的异同</p>
+<p>Q:聊聊你对as-if-serial和happens-brfore语义的理解</p>
+<p>Q:你了解ThreadLocal吗，你知道ThreadLocal如何解决内存泄露问题吗</p>
+<p>Q：请描述下锁的分类以及JDK中的应用</p>
+<p>HashTable和CurrentHashMap的线程安全实现的区别</p>
 
                         
                       </div>
@@ -533,10 +347,10 @@ jdk1.8 为什么长度&gt;=8后转红黑树</p>
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/10/21 20:14 下午</span>
+                    <span class="date">2020/10/21 20:17 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          					    <span class="posted-in"><a href='JVM.html'>JVM</a></span>
           				   
                     
 
@@ -646,6 +460,12 @@ jdk1.8 为什么长度&gt;=8后转红黑树</p>
 	      
 		      
 			      <li class="post">
+			        <a href="17007106564695.html">Rust web 开发-5.线程池</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
 			      </li>
 		     
@@ -665,12 +485,6 @@ jdk1.8 为什么长度&gt;=8后转红黑树</p>
 		      
 			      <li class="post">
 			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="16892187258215.html">wasm 初体验</a>
 			      </li>
 		     
 		  

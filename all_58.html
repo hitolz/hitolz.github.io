@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  Graphql - 非著名Java程序员
+  非著名Java程序员
   
   </title>
   
@@ -119,228 +119,75 @@
         
        
 
- <script>
-  let summary_gpt_article_content_selector = '.article-content';
-  let summary_gpt_key = '12356';
-  let summary_gpt_domain = 'https://ai-summary.hitol.top';
-</script>
-<link rel="stylesheet" href="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.css" />
-<script src="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.v0.0.6.js"></script>
-<script type="text/javascript">
-  $(function(){
-    $('#menu_item_index').addClass('is_active');
-  });
+ <script type="text/javascript">
+	$(function(){
+		$('#menu_item_index').addClass('is_active');
+	});
 </script>
 <div class="row">
-  <div class="large-8 medium-8 columns">
-      <div class="markdown-body article-wrap">
-       <div class="article">
-          
-          <h1>Graphql</h1>
-     
-        <div class="read-more clearfix">
-          <span class="date">2021/10/31 21:16 下午</span>
-
-          
-           
-         
-          <span class="comments">
-            
-
-            
-          </span>
-
-        </div>
-      </div><!-- article -->
-
-      <div class="article-content">
-      <h2><a id="%E7%AE%80%E4%BB%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>简介</h2>
-<p>Graphql 是一种类似于 REST 的一种 API 标准。<br />
-不是一种数据库技术。</p>
-<p>总的来说就是，后端可以根据前端需要的字段返回对应的信息，不需要修改原有接口。</p>
-<pre class="line-numbers"><code class="language-plain_text">--- 1.前端请求字段
-{
-  hero {
-    name
-  }
-}
-
---- 2.后端返回结果
-{
-  &quot;data&quot;: {
-    &quot;hero&quot;: {
-      &quot;name&quot;: &quot;R2-D2&quot;
-    }
-  }
-}
-
-
---- 1.前端请求字段
-{
-  hero {
-    name
-    # Queries can have comments!
-    friends {
-      name
-    }
-  }
-}
-
---- 2.后端返回结果
-{
-  &quot;data&quot;: {
-    &quot;hero&quot;: {
-      &quot;name&quot;: &quot;R2-D2&quot;,
-      &quot;friends&quot;: [
-        {
-          &quot;name&quot;: &quot;Luke Skywalker&quot;
-        },
-        {
-          &quot;name&quot;: &quot;Han Solo&quot;
-        },
-        {
-          &quot;name&quot;: &quot;Leia Organa&quot;
-        }
-      ]
-    }
-  }
-}
+	<div class="large-8 medium-8 columns">
+		<div class="markdown-body home-categories">
+		
+			<div class="article">
+                <a class="clearlink" href="16652372971274.html">
+                
+                  <h1>git 操作</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2><a id="git-commit%E5%90%8E%E6%92%A4%E9%94%80" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>git commit 后撤销</h2>
+<pre class="line-numbers"><code class="language-plain_text">git reset --soft HEAD^ 
 </code></pre>
-<h2><a id="demo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>demo</h2>
-<p><a href="https://gitee.com/hitol/graphql-demo.git">https://gitee.com/hitol/graphql-demo.git</a></p>
-<h3><a id="dependencies" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>dependencies</h3>
-<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
-    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
-    &lt;artifactId&gt;graphql-java&lt;/artifactId&gt;
-    &lt;version&gt;11.0&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
-    &lt;artifactId&gt;graphiql-spring-boot-starter&lt;/artifactId&gt;
-    &lt;version&gt;3.10.0&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
-    &lt;artifactId&gt;graphql-java-spring-boot-starter-webmvc&lt;/artifactId&gt;
-    &lt;version&gt;1.0&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;com.google.guava&lt;/groupId&gt;
-    &lt;artifactId&gt;guava&lt;/artifactId&gt;
-    &lt;version&gt;26.0-jre&lt;/version&gt;
-&lt;/dependency&gt;
+<p>仅仅是撤回commit操作，您写的代码仍然保留。</p>
+<h2><a id="gitignore%E6%9B%B4%E6%96%B0%E5%90%8E%E5%A6%82%E4%BD%95%E7%94%9F%E6%95%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>.gitignore 更新后如何生效</h2>
+<p>git 修改了 .gitignore 后执行</p>
+<pre class="line-numbers"><code class="language-plain_text">git rm -r --cached .
+git add .
+git commit -m &quot;.gitignore&quot;
 </code></pre>
-<h3><a id="schema" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Schema</h3>
-<p>在 resources 文件夹下新建一个 schema.graphqls 文件，其内容如下</p>
-<pre class="line-numbers"><code class="language-graphql">type Query {
-  bookById(id: ID): Book 
-}
+<p>就先把所有文件从版本控制中移除，然后再重新加回来。 提交上传后，就发现新的.gitignore就此生效了，不该有的文件不再被传来传去了。</p>
 
-type Book {
-  id: ID
-  name: String
-  pageCount: Int
-  author: Author
-}
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2020/10/08 21:54 下午</span>
+                    
+          				   
+                    
 
-type Author {
-  id: ID
-  firstName: String
-  lastName: String
-}
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
 
-</code></pre>
-<h2><a id="graphql%E5%8A%A0%E8%BD%BD%E5%88%B0-spring" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Graphql 加载到 Spring</h2>
-<pre class="line-numbers"><code class="language-java">
-@Component
-public class GraphQLProvider {
-
-
-    @Autowired
-    GraphQLDataFetchers graphQLDataFetchers;
-
-    private GraphQL graphQL;
-
-    @PostConstruct
-    public void init() throws IOException {
-        URL url = Resources.getResource(&quot;schema.graphqls&quot;);
-        String sdl = Resources.toString(url, Charsets.UTF_8);
-        GraphQLSchema graphQLSchema = buildSchema(sdl);
-        this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
-    }
-
-    private GraphQLSchema buildSchema(String sdl) {
-        TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);
-        RuntimeWiring runtimeWiring = buildWiring();
-        SchemaGenerator schemaGenerator = new SchemaGenerator();
-        return schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
-    }
-
-    private RuntimeWiring buildWiring() {
-        return RuntimeWiring.newRuntimeWiring()
-                .type(newTypeWiring(&quot;Query&quot;)
-                        .dataFetcher(&quot;bookById&quot;, graphQLDataFetchers.getBookByIdDataFetcher()))
-                .type(newTypeWiring(&quot;Book&quot;)
-                        .dataFetcher(&quot;author&quot;, graphQLDataFetchers.getAuthorDataFetcher()))
-                .build();
-    }
-
-    @Bean
-    public GraphQL graphQL() {
-        return graphQL;
-    }
-
-}
-</code></pre>
-<p>其中对于文件的解析 最重要的方法就是 buildWiring</p>
-<p>这一块其实就是后端提供的关于 graphql 的接口。</p>
-<p>使用了一个插件，方便调试 graphiql</p>
-<p>项目启动之后浏览器中访问，<a href="http://localhost:8080/graphiql">http://localhost:8080/graphiql</a><br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/16356860055184.jpg" alt="" /></p>
-<hr />
-<p><a href="http://graphql.js.cool/learn/">http://graphql.js.cool/learn/</a></p>
-<p><a href="https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/">https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/</a></p>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+              
 
 
-    
-
-      </div>
-
-      <div class="row">
-        <div class="large-6 columns">
-        <p class="text-left" style="padding:15px 0px;">
-      
-          <a href="16394497226152.html" 
-          title="Previous Post: 带有参数的Spring RestTemplate GET">&laquo; 带有参数的Spring RestTemplate GET</a>
-      
-        </p>
-        </div>
-        <div class="large-6 columns">
-      <p class="text-right" style="padding:15px 0px;">
-      
-          <a  href="16345641979115.html" 
-          title="Next Post: mongoDB">mongoDB &raquo;</a>
-      
-      </p>
-        </div>
-      </div>
-      <div class="comments-wrap">
-        <div class="share-comments">
-          
-
-          
-
-          
-        </div>
-      </div>
-    </div><!-- article-wrap -->
-  </div><!-- large 8 -->
-
-
-
+			<div class="row">
+			  <div class="large-6 columns">
+			  <p class="text-left" style="padding-top:25px;">
+			   <a href="all_57.html">&laquo; Prev Page</a>  
+			  </p>
+			  </div>
+			  <div class="large-6 columns">
+			<p class="text-right" style="padding-top:25px;">
+			
+			</p>
+			  </div>
+			</div>
+		</div>
+	</div><!-- large 8 -->
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">
@@ -513,8 +360,6 @@ Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
 
 
 
-
-<script src="asset/prism.js"></script>
 
 
 <style type="text/css">
