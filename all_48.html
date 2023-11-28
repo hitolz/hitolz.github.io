@@ -129,112 +129,83 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032822998588.html">
+                <a class="clearlink" href="16032824286367.html">
                 
-                  <h1>AOP及自定义注解实现Redis缓存</h1>
+                  <h1>Mysql 根据时间戳、时间按年月日分组统计</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h2><a id="%E8%83%8C%E6%99%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>背景</h2>
-<p>现在程序中是直接查询数据库数据的，Redis只是用来生成一些不重复id用的，现在要把Redis利用起来，缓存一些配置信息，提高程序运行及响应时间。</p>
-<h2><a id="%E8%AE%BE%E8%AE%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设计</h2>
-<ul>
-<li>在Dao层查询数据库之前，先查一下是否在Redis缓存中，如果存在的话直接取Redis中的数据，如果不存在，在去查询数据库，然后将本次查询结果根据查询条件放到缓存中。</li>
-<li>Redis在系统启动的时候先去清空配置信息。</li>
-<li>提供刷新缓存、删除缓存的方法</li>
-</ul>
-<h2><a id="%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%89%8D" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>实现之前</h2>
-<p>在Dao层中每个查询配置信息的方法中，增加查询缓存及设置缓存的方法。<br />
-但是Dao层中的方法太多了。。。一个个加比较枯燥、主要是显得比较low，然后要想个方案实现。</p>
-<h2><a id="%E6%96%B9%E6%A1%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>方案</h2>
-<p>很自然就想到了AOP，环绕通知，<br />
-在目标方法执行之前先查询缓存，如果有就返回了，如果没有再去执行目标方法，<br />
-在执行目标方法之后将查询条件及内容放到Redis中。<br />
-自定义一个注解，被这个注解修饰的方法需要实现AOP。</p>
-<h2><a id="%E5%AE%9E%E7%8E%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>实现</h2>
-<p>定义一个缓存注解，被这个注解修饰的方法，会执行切面中的方法。</p>
-<pre class="line-numbers"><code class="language-plain_text">/**
- * redis缓存注解
- * @author hitol
- * @version $Id: RedisCache.java, v 0.1 2020年3月19日 下午8:26:48 hitol Exp $
- */
-@Documented
-@Target({java.lang.annotation.ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface RedisCache {
-	String redisKey() default &quot;&quot;;
-
-	String cacheInfo() default &quot;&quot;;
-
-	Class&lt;?&gt; className() default String.class;
-}
-
-
+                        	<pre class="line-numbers"><code class="language-plain_text">SELECT DATE_FORMAT(create_time,'%Y%u') weeks,COUNT(id) COUNT FROM table GROUP BY weeks; 
+SELECT DATE_FORMAT(create_time,'%Y%m%d') days,COUNT(id) COUNT FROM table GROUP BY days; 
+SELECT DATE_FORMAT(create_time,'%Y%m') months,COUNT(id) COUNT FROM table GROUP BY months;
+SELECT DATE_FORMAT(create_time,'%Y') years,COUNT(id) COUNT FROM table GROUP BY years;
 </code></pre>
-<p>定义缓存切面，使用环绕通知.</p>
-<pre class="line-numbers"><code class="language-plain_text">/**
- * 缓存切面
- * @author hitol
- * @version $Id: CacheAop.java, v 0.1 2020年3月20日 下午6:49:10 hitol Exp $
- */
-@Aspect
-@Component
-public class CacheAop {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CacheAop.class);
-
-    @Pointcut(&quot;@annotation(com.acc.ac.core.util.redis.RedisCache)&quot;)
-    public void getCacheInfo() {
-        LOGGER.info(&quot;切入点&quot;);
-    }
-
-    @Around(&quot;getCacheInfo()&quot;)
-    public Object doBefore(ProceedingJoinPoint joinPoint) throws Throwable {
-
-        // 接口的参数
-        Object[] args = joinPoint.getArgs();
-        String arg = &quot;&quot;;
-        if (args.length &gt; 0){
-            arg = (String) args[0];
-        }
-
-        // 得到被代理的方法
-        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-
-        // 得到被代理的方法上的注解
-        RedisCache annotation = method.getAnnotation(RedisCache.class);
-
-        Class&lt;?&gt; className = annotation.className();
-        String redisKey = annotation.redisKey() + arg;
-        Class returnType = method.getReturnType();
-
-        LOGGER.info(&quot;key = {},查询Redis缓存&quot;, redisKey);
-        String cacheInfo = RedisUtils.getString(redisKey);
-
-        if (StringUtils.isNotBlank(cacheInfo)) {
-            LOGGER.info(&quot;key = {},在Redis缓存中.&quot;, redisKey);
-
-            if (&quot;java.util.List&quot;.equals(returnType.getName())){
-                return JSONObject.parseArray(cacheInfo,className);
-            }
-
-            return JSONObject.parseObject(cacheInfo, returnType);
-        }
-        LOGGER.info(&quot;key = {},没有在Redis缓存中查询到.&quot;, redisKey);
-        Object result = joinPoint.proceed(args);
-        cacheInfo = JSONObject.toJSONString(result);
-
-        if (StringUtils.isNotBlank(cacheInfo)) {
-            RedisUtils.setString(redisKey, cacheInfo);
-        }
-
-        return JSONObject.parseObject(cacheInfo, returnType);
-
-    }
-}
-</code></pre>
-<p>完成。</p>
+<p>函数：<code>DATE_FORMAT</code><br />
+作用：根据format字符串格式化date值。<br />
+语法：<code>DATE_FORMAT(date,format)</code></p>
+<p>下列修饰符可以被用在format字符串中：<br />
+%M 月名字(January……December)<br />
+%W 星期名字(Sunday……Saturday)<br />
+%D 有英语前缀的月份的日期(1st, 2nd, 3rd, 等等。）<br />
+%Y 年, 数字, 4 位<br />
+%y 年, 数字, 2 位<br />
+%a 缩写的星期名字(Sun……Sat)<br />
+%d 月份中的天数, 数字(00……31)<br />
+%e 月份中的天数, 数字(0……31)<br />
+%m 月, 数字(01……12)<br />
+%c 月, 数字(1……12)<br />
+%b 缩写的月份名字(Jan……Dec)<br />
+%j 一年中的天数(001……366)<br />
+%H 小时(00……23)<br />
+%k 小时(0……23)<br />
+%h 小时(01……12)<br />
+%I 小时(01……12)<br />
+%l 小时(1……12)<br />
+%i 分钟, 数字(00……59)<br />
+%r 时间,12 小时(hh:mm:ss [AP]M)<br />
+%T 时间,24 小时(hh:mm:ss)<br />
+%S 秒(00……59)<br />
+%s 秒(00……59)<br />
+%p AM或PM<br />
+%w 一个星期中的天数(0=Sunday ……6=Saturday ）<br />
+%U 星期(0……52), 这里星期天是星期的第一天<br />
+%u 星期(0……52), 这里星期一是星期的第一天<br />
+%% 一个文字“%”。</p>
+<p> </p>
+<p>函数：<code>FROM_UNIXTIME</code><br />
+作用：将MYSQL中以INT(11)存储的时间以&quot;YYYY-MM-DD&quot;格式来显示。<br />
+语法：<code>FROM_UNIXTIME(unix_timestamp,format)</code></p>
+<p>返回表示 <code>Unix</code> 时间标记的一个字符串，根据format字符串格式化。format可以包含与<code>DATE_FORMAT()</code>函数列出的条目同样的修饰符。</p>
+<p>根据format字符串格式化date值。<br />
+下列修饰符可以被用在format字符串中：</p>
+<p>%M 月名字(January……December)<br />
+%W 星期名字(Sunday……Saturday)<br />
+%D 有英语前缀的月份的日期(1st, 2nd, 3rd, 等等。）<br />
+%Y 年, 数字, 4 位<br />
+%y 年, 数字, 2 位<br />
+%a 缩写的星期名字(Sun……Sat)<br />
+%d 月份中的天数, 数字(00……31)<br />
+%e 月份中的天数, 数字(0……31)<br />
+%m 月, 数字(01……12)<br />
+%c 月, 数字(1……12)<br />
+%b 缩写的月份名字(Jan……Dec)<br />
+%j 一年中的天数(001……366)<br />
+%H 小时(00……23)<br />
+%k 小时(0……23)<br />
+%h 小时(01……12)<br />
+%I 小时(01……12)<br />
+%l 小时(1……12)<br />
+%i 分钟, 数字(00……59)<br />
+%r 时间,12 小时(hh:mm:ss [AP]M)<br />
+%T 时间,24 小时(hh:mm:ss)<br />
+%S 秒(00……59)<br />
+%s 秒(00……59)<br />
+%p AM或PM<br />
+%w 一个星期中的天数(0=Sunday ……6=Saturday ）<br />
+%U 星期(0……52), 这里星期天是星期的第一天<br />
+%u 星期(0……52), 这里星期一是星期的第一天<br />
+%% 一个文字“%”。</p>
 
                         
                       </div>
@@ -243,10 +214,10 @@ public class CacheAop {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/10/21 20:11 下午</span>
+                    <span class="date">2020/10/21 20:13 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
           				   
                     
 
@@ -369,6 +340,12 @@ public class CacheAop {
 	      
 		      
 			      <li class="post">
+			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17007106564695.html">Rust web 开发-5.线程池</a>
 			      </li>
 		     
@@ -388,12 +365,6 @@ public class CacheAop {
 		      
 			      <li class="post">
 			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
 			      </li>
 		     
 		  

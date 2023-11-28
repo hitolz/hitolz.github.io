@@ -129,48 +129,77 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032821146100.html">
+                <a class="clearlink" href="16032821893434.html">
                 
-                  <h1>MySQL聚集索引和二级索引</h1>
+                  <h1>Spring事务管理</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>数据库中B+树索引分为聚集索引(clustered index)和辅助索引(secondary index，也被称作二级索引、非聚集索引)，其内部都是B+树，即高度平衡的，叶子节点存放所有数据，不同的是叶子节点存放的是否是一整行的数据。</p>
-<hr />
-<p>聚集索引：InnoDB存储引擎中，按照每张表的主键构建的一棵B+树，叶子节点存放的即为行记录数据。<br />
-InnoDB存储引擎中是必须要有一个聚集索引的，如果没有显示指定哪一字段是主键，则选择表中第一个不允许为NULL的唯一索引当作是聚集索引，如果还是没有，就采用InnoDB为每行数据内置的6字节的rowid作为聚集索引。<br />
-一般聚集索引是自增主键。</p>
-<hr />
-<p>辅助索引：叶子节点并不包含行记录的全部数据，叶子节点除了包含键值以外，每个叶子节点中的索引行中还包含了一个书签(bookmark)，该书签用来告诉InnoDB存储引擎哪里可以找多与索引相对应的行数据。由于InnoDB存储引擎表是索引组织表，因此 辅助索引的书签就是相应行数据的聚集索引键。</p>
-<p>当通过辅助索引来寻找数据时，先查到主键，然后通过主键索引来找到一个完整的行记录。</p>
-<hr />
-<p>回表问题：<br />
-当通过二级索引去查询数据，先查询辅助索引树，得到主键值，再通过聚集索引树查询，得到最终结果。</p>
-<p>回到主键索引树搜索的过程，称为回表。</p>
-<p>如果在一棵高度为3的辅助索引树中查找数据，那需要对这棵辅助索引遍历3次找到指定主键，如果聚集索引树的高度同样为3，那么还需要对聚集索引树进行3次查找，最终得到一个完整的行数据所在的页，一共需要6次逻辑IO访问得到最终的数据页。</p>
-<pre class="line-numbers"><code class="language-plain_text">CREATE TABLE `user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) COLLATE utf8_bin NOT NULL,
-  `age` int(11) NOT NULL,
-  `sex` varchar(2) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_name` (`name`)
-) ENGINE=InnoDB  
+                        	<p><code>@Transactional</code> 保证事务一致性。<br />
+当出现异常时，会回滚</p>
+<p>隔离级别：<br />
+隔离级别是指多个并发事务之间的隔离程度。与开发相关的场景主要包括：脏读取、重复读、幻读。</p>
+<pre class="line-numbers"><code class="language-plain_text">package org.springframework.transaction.annotation;
+
+public enum Isolation {
+    DEFAULT(-1),
+    READ_UNCOMMITTED(1),
+    READ_COMMITTED(2),
+    REPEATABLE_READ(4),
+    SERIALIZABLE(8);
+
+    private final int value;
+
+    private Isolation(int value) {
+        this.value = value;
+    }
+
+    public int value() {
+        return this.value;
+    }
+}
 </code></pre>
-<p>例如，这么一个表结构，两个查询语句</p>
-<pre class="line-numbers"><code class="language-plain_text">select id,name from user where name = 'zhangsan1';
-select id,name,age from user where name = 'zhangsan1';
+<p>Isolation枚举类中定义了5个表示隔离级别的值</p>
+<p>DEFAULT 默认值，表示使用底层数据库的默认隔离级别。对大部分数据库而言，就是READ_COMMITED</p>
+<p>READ_UNCOMMITED：该隔离级别表示，一个事务可以读取另一个事务修改但是还未提交的数据。不能防止脏读和不可重复读。很少使用。</p>
+<p>READ_COMMITED:该隔离级别表示，只能读取另一个事务已经提交的数据。该事务级别可以防止脏读，也是大多数情况下的推荐值。</p>
+<p>REPEATABLE_READ:该隔离级别表示一个事务在整个过程中可以多次重复执行某个查询，并返回相同结果。在多次查询之间有新增的值会被忽略。可以防止不可重复读和脏读。</p>
+<p>SERIALIZABLE：所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，该级别可以防止脏读、不可重复读以及幻读。但是这将严重影响程序的性能。通常情况下也不会用到该级别</p>
+<p>指定方法：</p>
+<pre class="line-numbers"><code class="language-plain_text">@Transactional(isolation = Isolation.DEFAULT)
 </code></pre>
-<p>用EXPLAIN看一下执行计划，</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-09-17-16000042425726.jpg" alt="" style="width:1110px;" /><br />
-可以看到，第一个查询语句用到了索引，而第二个查询语句只是多了1个字段，</p>
-<p>Extra参数中Using index，表示相应的select操作中使用了覆盖索引（Covering Index），避免访问了表的数据行，效率不错。如果同时出现using where，表明索引被用来执行索引键值的查找；如果没有同时出现using where，表明索引用来读取数据而非执行查找动作。</p>
-<p>覆盖索引含义是所查询的列是和建立的索引字段和个数是一一对应的。那么回表问题的解决方案就是 将所用到的字段建立联合索引，覆盖索引。</p>
-<hr />
-<p>B+ 树 与 B树的区别？<br />
-区别在 B 树的节点，无论是不是叶子几点，都存有 key 和 data，而 B+ 树的中间节点只有 key，data 存在叶子节点上。这样 B+ 树的中间节点就能存更多的 key，使得树更矮，减少 IO 次数。</p>
-<p>B+ 树的叶子几点构成一个有序链表，方便区间查找和搜索。而 B 树需要一次次的递归遍历查找。</p>
+<p>传播行为：</p>
+<pre class="line-numbers"><code class="language-plain_text">package org.springframework.transaction.annotation;
+
+public enum Propagation {
+    REQUIRED(0),
+    SUPPORTS(1),
+    MANDATORY(2),
+    REQUIRES_NEW(3),
+    NOT_SUPPORTED(4),
+    NEVER(5),
+    NESTED(6);
+
+    private final int value;
+
+    private Propagation(int value) {
+        this.value = value;
+    }
+
+    public int value() {
+        return this.value;
+    }
+}
+</code></pre>
+<p>Propagation枚举类中定义了6个表示传播行为的枚举值：<br />
+REQUIRED：如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。<br />
+SUPPORTS：如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式继续运行。<br />
+MANDATORY：如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常。<br />
+REQUIRES_NEW：创建一个新的事务，如果当前存在事务，则把当前事务挂起。<br />
+NOT_SUPPORTED：以非事务方式运行，如果当前存在事务，则把当前事务挂起。<br />
+NEVER：以非事务方式运行，如果当前存在事务，则抛出异常。<br />
+NESTED：如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于REQUIRED</p>
 
                         
                       </div>
@@ -179,10 +208,12 @@ select id,name,age from user where name = 'zhangsan1';
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/10/21 20:08 下午</span>
+                    <span class="date">2020/10/21 20:09 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
+          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
           				   
                     
 
@@ -305,6 +336,12 @@ select id,name,age from user where name = 'zhangsan1';
 	      
 		      
 			      <li class="post">
+			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17007106564695.html">Rust web 开发-5.线程池</a>
 			      </li>
 		     
@@ -324,12 +361,6 @@ select id,name,age from user where name = 'zhangsan1';
 		      
 			      <li class="post">
 			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
 			      </li>
 		     
 		  

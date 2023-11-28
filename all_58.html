@@ -129,24 +129,161 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16652372971274.html">
+                <a class="clearlink" href="16032812571910.html">
                 
-                  <h1>git 操作</h1>
+                  <h1>Spring IOC 容器 bean 加载过程</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h2><a id="git-commit%E5%90%8E%E6%92%A4%E9%94%80" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>git commit 后撤销</h2>
-<pre class="line-numbers"><code class="language-plain_text">git reset --soft HEAD^ 
+                        	<div class="mweb_toc"><ul>
+<li><a href="#refresh%E6%96%B9%E6%B3%95">refresh方法</a></li>
+<li><a href="#bean%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90">bean 加载过程分析</a>
+<ul>
+<li><a href="#xml%E6%96%B9%E5%BC%8F">xml 方式</a></li>
+<li><a href="#%E6%B3%A8%E8%A7%A3%E6%96%B9%E5%BC%8F">注解方式</a></li>
+<li><a href="#beanfactory-getbean">BeanFactory.getBean</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96">三级缓存解决循环依赖</a></li>
+</ul>
+</div>
+<p>本文主要内容：分析 Spring 加载 bean 的过程，重点分析下 Spring 解决循环依赖的三级缓存。</p>
+<h2><a id="refresh%E6%96%B9%E6%B3%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>refresh方法</h2>
+<p>IoC 初始化过程中核心方法 refresh ：</p>
+<p>org.springframework.context.support.AbstractApplicationContext#refresh ：</p>
+<pre class="line-numbers"><code class="language-plain_text">public void refresh() throws BeansException, IllegalStateException {
+	synchronized (this.startupShutdownMonitor) {
+		// Prepare this context for refreshing.
+		// 刷新上下文
+		prepareRefresh();
+
+		// Tell the subclass to refresh the internal bean factory.
+		// 在子类中启动 refreshBeanFactory。 该方法执行完成之后，xml中的bean已经加载完成,但是 注解方式的bean 在
+		// invokeBeanFactoryPostProcessors 加载
+		ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+
+		// Prepare the bean factory for use in this context.
+		prepareBeanFactory(beanFactory);
+
+		try {
+			// Allows post-processing of the bean factory in context subclasses.
+			// 设置BeanFactory的后置处理
+			postProcessBeanFactory(beanFactory);
+
+			// Invoke factory processors registered as beans in the context.
+			// 调用BeanFactory的后处理器，这些后处理器是在Bean定义中项容器注册的，这里面会实例化 后置处理器的bean对象
+			invokeBeanFactoryPostProcessors(beanFactory);
+
+			// Register bean processors that intercept bean creation.
+			// 注册Bean的后处理器，在Bean创建过程中调用
+			registerBeanPostProcessors(beanFactory);
+
+			// Initialize message source for this context.
+			// 对上下文中的消息源进行初始化
+			initMessageSource();
+
+			// Initialize event multicaster for this context.
+			// 初始化上下文中的事件机制
+			initApplicationEventMulticaster();
+
+			// Initialize other special beans in specific context subclasses.
+			// 初始化其他特殊Bean
+			onRefresh();
+
+			// Check for listener beans and register them.
+			// 检查监听Bean并且将这些Bean向容器注册
+			registerListeners();
+
+			// Instantiate all remaining (non-lazy-init) singletons.
+			// 实例化所有的单例bean
+			finishBeanFactoryInitialization(beanFactory);
+
+			// Last step: publish corresponding event.
+			// 发布容器事件，结束Refresh过程。
+			finishRefresh();
+		}
+
+		catch (BeansException ex) {
+			if (logger.isWarnEnabled()) {
+				logger.warn(&quot;Exception encountered during context initialization - &quot; +
+						&quot;cancelling refresh attempt: &quot; + ex);
+			}
+
+			// Destroy already created singletons to avoid dangling resources.
+			// 为防止Bean资源占用，在异常处理中，销毁已经在前面过程中生成的单例bean
+			destroyBeans();
+
+			// Reset 'active' flag.
+			// 重置 active 标志
+			cancelRefresh(ex);
+
+			// Propagate exception to caller.
+			throw ex;
+		}
+
+		finally {
+			// Reset common introspection caches in Spring's core, since we
+			// might not ever need metadata for singleton beans anymore...
+			resetCommonCaches();
+		}
+	}
+}
 </code></pre>
-<p>仅仅是撤回commit操作，您写的代码仍然保留。</p>
-<h2><a id="gitignore%E6%9B%B4%E6%96%B0%E5%90%8E%E5%A6%82%E4%BD%95%E7%94%9F%E6%95%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>.gitignore 更新后如何生效</h2>
-<p>git 修改了 .gitignore 后执行</p>
-<pre class="line-numbers"><code class="language-plain_text">git rm -r --cached .
-git add .
-git commit -m &quot;.gitignore&quot;
+<h2><a id="bean%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>bean 加载过程分析</h2>
+<p>xml 方式(ClassPathXmlApplicationContext) 和 注解方式(AnnotationConfigApplicationContext) 启动 Spring 容器，bean 加载过程处理方式不太一样</p>
+<h3><a id="xml%E6%96%B9%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>xml 方式</h3>
+<p>xml 方式加载过程主要是 obtainFreshBeanFactory 这个方法，先通过文件流读取 xml 文件中的信息，loadBeanDefinitions 方法解析 xml 文件，将其中的内容加载成 beanDefinition，放到 beanDefinitionMap 中，通过 BeanFactory.getBean 方法生产bean</p>
+<h3><a id="%E6%B3%A8%E8%A7%A3%E6%96%B9%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>注解方式</h3>
+<p>注解方式加载过程主要是 invokeBeanFactoryPostProcessors 这个方法，AnnotationConfigApplicationContext 在 new AnnotatedBeanDefinitionReader 的时候会注册一些 bean 后置处理器</p>
+<ul>
+<li>ConfigurationClassPostProcessor</li>
+<li>AutowiredAnnotationBeanPostProcessor</li>
+<li>CommonAnnotationBeanPostProcessor</li>
+</ul>
+<p>通过 BeanFactory.getBean 方法生产bean</p>
+<h3><a id="beanfactory-getbean" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>BeanFactory.getBean</h3>
+<p>BeanFactory 中最重要的方法就是 getBean，这个方法既可以获取 bean、也可以生产 bean，获取 bean 是从缓存中去拿，如果缓存中没有在去生产 bean 。</p>
+<h2><a id="%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>三级缓存解决循环依赖</h2>
+<p>假设这么一个场景</p>
+<pre class="line-numbers"><code class="language-java">class A{
+	@Autowired
+	private B b;
+
+}
+
+class B{
+	@Autowired
+	private A a;
+}
 </code></pre>
-<p>就先把所有文件从版本控制中移除，然后再重新加回来。 提交上传后，就发现新的.gitignore就此生效了，不该有的文件不再被传来传去了。</p>
+<p>A 依赖 B，B 又依赖 A，但是 Spring 却没有出现 循环依赖，其解决方式是通过 三个缓存 map 。</p>
+<pre class="line-numbers"><code class="language-java">一级缓存，存的是实例化、初始化完成的 bean，最终的 bean，可以直接拿来用的
+private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap&lt;&gt;(256);
+
+二级缓存，存放的是完成实例化，但是还未进行初始化的 bean
+private final Map&lt;String, Object&gt; earlySingletonObjects = new HashMap&lt;&gt;(16);
+
+三级缓存，进入实例化阶段的单例 bean
+private final Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories = new HashMap&lt;&gt;(16);
+</code></pre>
+<p>通过一个流程图来看下 A、B 两个类在 IOC 加载创建 bean 的流程，注意，图中省略了好多步骤、细节部分，但是不影响主流程。<br />
+<img src="http://hitol.blog.cdn.updev.cn/2021-08-01-Spring-IOC16032812571910.png" alt="Spring-IOC16032812571910" /></p>
+<p>竖向表示当前方法的执行顺序，横向表示进入到该方法。</p>
+<p>这个流程图分为了 三列，第一列创建 bean A 的流程，在创建 A 的时候发现要依赖 B，第二列就是创建 bena B 的流程，在创建 B 的时候又发现依赖 A，第三列就是 创建 B 的时候 创建 A 的流程。</p>
+<p>图中用颜色标注的是表示用到三级缓存的地方。</p>
+<ol>
+<li>第一个是在获取缓存的方法 getSingleton 中，先从第一级缓存去查找，如果没有则去第二级缓存中查找，没有再去第三级缓存中查找，如果第三级缓存中查到了，将其从第三级缓存中删掉，放到第二级缓存中。</li>
+<li>第二个用到缓存的地方是 doCreateBean 中，bean 通过反射获取到实例后，先放入到第三级缓存中</li>
+<li>第三个是 doCreateBean 完成后，bean 都初始化好，放入到第一级缓存中</li>
+</ol>
+<p>创建 A 的时候发现要依赖 B，于是递归调用 getBean(B) 去创建 B，这个时候三个缓存中只有第三级缓存中有 A</p>
+<p>创建 B 的时候发现要依赖 A，于是递归调用 getBean(A)去创建 A ，这个时候第三级缓存中有 A、B，于是从第三级缓存中取出 bean A，放到二级缓存中去，接着执行创建 B 的流程，B 初始化完成后，将 B 放到第一级缓存</p>
+<p>然后在执行创建 A 的流程，初始化实例 A，完事后将 A 也加入到第一级缓存中。<br />
+<img src="http://hitol.blog.cdn.updev.cn/2021-08-01-16277856258251.jpg" alt="" /></p>
+<p>每个步骤对应的三个缓存中的内容：</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2021-08-02-16278669180573.jpg" alt="" /></p>
+<p>以上；</p>
 
                         
                       </div>
@@ -155,8 +292,10 @@ git commit -m &quot;.gitignore&quot;
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/10/08 21:54 下午</span>
-                    
+                    <span class="date">2020/10/21 19:54 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
           				   
                     
 
@@ -182,7 +321,7 @@ git commit -m &quot;.gitignore&quot;
 			  </div>
 			  <div class="large-6 columns">
 			<p class="text-right" style="padding-top:25px;">
-			
+			 <a href="all_59.html">&raquo; Next Page</a> 
 			</p>
 			  </div>
 			</div>
@@ -279,6 +418,12 @@ git commit -m &quot;.gitignore&quot;
 	      
 		      
 			      <li class="post">
+			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17007106564695.html">Rust web 开发-5.线程池</a>
 			      </li>
 		     
@@ -298,12 +443,6 @@ git commit -m &quot;.gitignore&quot;
 		      
 			      <li class="post">
 			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
 			      </li>
 		     
 		  

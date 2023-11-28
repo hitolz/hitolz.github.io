@@ -129,100 +129,307 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16218450358247.html">
+                <a class="clearlink" href="16233986869859.html">
                 
-                  <h1>Spring Cloud Stream 整合 RocketMQ</h1>
+                  <h1>MyBatis-Plus 简单使用</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h2><a id="spring-cloud-stream%E4%BB%8B%E7%BB%8D" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spring Cloud Stream 介绍</h2>
-<p>Spring Cloud Stream 是一个用于构建基于消息的微服务应用框架。它基于 SpringBoot 来创建具有生产级别的单机 Spring 应用，并且使用 Spring Integration 与 Broker 进行连接。</p>
-<p>Spring Cloud Stream 提供了消息中间件配置的统一抽象，推出了 publish-subscribe、consumer groups、partition 这些统一的概念。</p>
-<p>Spring Cloud Stream 内部有两个概念：Binder 和 Binding。</p>
-<p>Binder: 跟外部消息中间件集成的组件，用来创建 Binding，各消息中间件都有自己的 Binder 实现。</p>
-<p>比如 Kafka 的实现 KafkaMessageChannelBinder，RabbitMQ 的实现 RabbitMessageChannelBinder 以及 RocketMQ 的实现 RocketMQMessageChannelBinder。</p>
-<p>Binding: 包括 Input Binding 和 Output Binding。</p>
-<p>Binding 在消息中间件与应用程序提供的 Provider 和 Consumer 之间提供了一个桥梁，实现了开发者只需使用应用程序的 Provider 或 Consumer 生产或消费数据即可，屏蔽了开发者与底层消息中间件的接触。</p>
-<h2><a id="%E6%95%B4%E5%90%88rocketmq" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>整合 RocketMQ</h2>
-<h3><a id="spring-boot%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spring Boot 项目添加依赖</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;spring.boot.version&gt;2.2.5.RELEASE&lt;/spring.boot.version&gt;
-&lt;spring.alibaba.cloud.version&gt;2.2.1.RELEASE&lt;/spring.alibaba.cloud.version&gt;
-
+                        	<p>MyBatis-Plus 是 MyBatis 的一个增强工具，目的是为了简化开发，提高效率。</p>
+<h2><a id="springboot%E9%9B%86%E6%88%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>SpringBoot 集成</h2>
+<h3><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h3>
+<pre class="line-numbers"><code class="language-plain_text">&lt;springboot.version&gt;2.3.0.RELEASE&lt;/springboot.version&gt;
 
 &lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-stream-rocketmq&lt;/artifactId&gt;
-    &lt;version&gt;${spring.alibaba.cloud.version}&lt;/version&gt;
+    &lt;groupId&gt;com.baomidou&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-plus-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;3.3.1&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.baomidou&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-plus-generator&lt;/artifactId&gt;
+    &lt;version&gt;3.3.1&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;!-- --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.velocity&lt;/groupId&gt;
+    &lt;artifactId&gt;velocity-engine-core&lt;/artifactId&gt;
+    &lt;version&gt;2.3&lt;/version&gt;
 &lt;/dependency&gt;
 
 </code></pre>
-<h3><a id="%E6%B7%BB%E5%8A%A0%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加配置</h3>
-<p>application.yml 中添加配置</p>
-<pre class="line-numbers"><code class="language-plain_text">spring:
-  cloud:
-    stream:
-      bindings:
-        # output 相当于生产者
-        output:
-          # 目的地。这里使用 RocketMQ Topic
-          destination: test111
-          content-type: application/json
+<h3><a id="%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>代码生成</h3>
+<p><code>mybatis-plus-generator</code> 代码生成器可以生成 <code>controller</code>、<code>entity</code>、<code>mapper</code>、<code>service</code>、<code>mapper.xml</code>，只要定义好了表结构，使用代码生成器生成代码，即可使用 CRUD</p>
+<details>
+<MAXmary>代码生成工具demo</MAXmary>
+<pre class="line-numbers"><code class="language-plain_text">public class CreateCode {
 
-        # input 相当于消费者
-        input:
-          # 目的地。这里使用 RocketMQ Topic
-          destination: test111
-          content-type: application/json
-          # rocket mq 的消费者必须要有 group，不然启动失败
-          group: test
+	public static void main(String[] args) {
+		String packageName = &quot;com.hitol.mybatisplusdemo&quot;;
+		String projectPath = System.getProperty(&quot;user.dir&quot;) + &quot;/src/main/java&quot;;
 
-      rocketmq:
-        binder:
-          # rocket mq 地址
-          name-server: 127.0.0.1:9876
-          # enable-msg-trace: true
-</code></pre>
-<h3><a id="%E5%8F%91%E9%80%81%E4%B8%8E%E6%8E%A5%E6%94%B6%E6%B6%88%E6%81%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>发送与接收消息</h3>
-<p>Source</p>
-<pre class="line-numbers"><code class="language-plain_text">public interface Source {
+		// 代码生成器
+		AutoGenerator mpg = new AutoGenerator();
 
-	String OUTPUT = &quot;output&quot;;
-	String INPUT = &quot;input&quot;;
+		// 全局配置
+		GlobalConfig gc = new GlobalConfig();
+		// 生成的代码放哪里
+		gc.setOutputDir(projectPath);
+		gc.setAuthor(&quot;hitol&quot;);
+		gc.setOpen(false);
 
-	@Output(Source.OUTPUT)
-	MessageChannel output();
+		gc.setBaseResultMap(true);// XML ResultMap
+		gc.setBaseColumnList(true);// XML columList
+		//gc.setMapperName(&quot;%sDao&quot;);
+		gc.setServiceName(&quot;%sService&quot;);
+		gc.setServiceImplName(&quot;%sServiceImpl&quot;);
+		mpg.setGlobalConfig(gc);
 
-	@Input(Source.INPUT)
-	SubscribableChannel input();
+		// 数据源配置
+		DataSourceConfig dsc = new DataSourceConfig();
+		dsc.setUrl(&quot;jdbc:mysql://localhost:3306/book?useUnicode=true&amp;useSSL=false&quot; +
+				&quot;&amp;characterEncoding=utf8&quot;);
+		dsc.setDriverName(&quot;com.mysql.jdbc.Driver&quot;);
+		dsc.setUsername(&quot;root&quot;);
+		dsc.setPassword(&quot;123456&quot;);
+		mpg.setDataSource(dsc);
+
+		// 包配置
+		PackageConfig pc = new PackageConfig();
+		pc.setModuleName(&quot;&quot;);
+		// 工程的包名
+		pc.setParent(packageName);
+		mpg.setPackageInfo(pc);
+
+		//要想输出xml文件，需要额外自定义添加进去
+		String templatePath = &quot;/templates/mapper.xml.vm&quot;;
+		InjectionConfig cfg = new InjectionConfig() {
+			@Override
+			public void initMap() {
+			}
+		};
+		// 自定义输出配置
+		List&lt;FileOutConfig&gt; focList = new ArrayList&lt;FileOutConfig&gt;();
+//		// 自定义配置会被优先输出,可以生成 xml 文件
+//		focList.add(new FileOutConfig(templatePath) {
+//			@Override
+//			public String outputFile(TableInfo tableInfo) {
+//				// 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
+//				return System.getProperty(&quot;user.dir&quot;)  + &quot;/src/main/resources/mapper/&quot; + pc.getModuleName()
+//						+ &quot;/&quot; + tableInfo.getEntityName() + &quot;Mapper.xml&quot;;
+//			}
+//		});
+
+		cfg.setFileOutConfigList(focList);
+		mpg.setCfg(cfg);
+
+		// 配置模板
+		TemplateConfig templateConfig = new TemplateConfig();
+		templateConfig.setXml(null);
+		mpg.setTemplate(templateConfig);
+
+		// 策略配置
+		StrategyConfig strategy = new StrategyConfig();
+		// 这个配置是强制所有字段都有 TableField 注解
+		strategy.entityTableFieldAnnotationEnable(true);
+		//strategy.setInclude(可选择要生成的表名，多个英文逗号分割);
+		strategy.setNaming(NamingStrategy.underline_to_camel);
+		strategy.setColumnNaming(NamingStrategy.underline_to_camel);
+		strategy.setControllerMappingHyphenStyle(true);
+
+		mpg.setStrategy(strategy);
+		mpg.setTemplateEngine(new VelocityTemplateEngine());
+		mpg.execute();
+		System.out.println(&quot;完成&quot;);
+	}
 
 }
 
 </code></pre>
-<p>发送消息</p>
-<pre class="line-numbers"><code class="language-plain_text">@Autowired
-private Source source;
+</details>
+<h3><a id="test" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Test</h3>
+<pre class="line-numbers"><code class="language-plain_text">List&lt;Book&gt; list = bookService.list();
+System.out.println(JSONObject.toJSONString(list));
 
-@Override
-public void send(String msg) {
-	Message&lt;String&gt; message = MessageBuilder.withPayload(msg)
-			.build();
-	source.output().send(message);
+Book book = bookService.getById(1);
+System.out.println(JSONObject.toJSONString(book));
+
+LambdaQueryWrapper&lt;Book&gt; queryWrapper = new QueryWrapper&lt;Book&gt;().lambda();
+queryWrapper.eq(Book::getBookName,&quot;xxxx1&quot;);
+Book one = bookService.getOne(queryWrapper);
+System.out.println(JSONObject.toJSONString(one));
+</code></pre>
+<h2><a id="%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>多数据源配置</h2>
+<p>通过多个 config 来配置多个数据源，每个 config 中通过指定不同的 basePackages、sqlSessionTemplateRef 实现多数据源。</p>
+<p>主数据源中的 @Bean 需要加注解 Primary，在 Spring 加载过程中会优先加载 Primary 标注的 bean。</p>
+<details>
+<MAXmary>第一个数据源</MAXmary>
+<pre class="line-numbers"><code class="language-plain_text">@Configuration
+@MapperScan(basePackages = &quot;com.hitol.mybatisplusdemo.mapper&quot;,
+		sqlSessionTemplateRef=&quot;ds1SqlSessionTemplate&quot;)
+public class MyBatisPlusConfig {
+
+	/**
+	 * mybatis-plus分页插件&lt;br&gt;
+	 * 文档：https://mp.baomidou.com/guide/page.html &lt;br&gt;
+	 */
+	@Bean
+	public PaginationInterceptor paginationInterceptor() {
+		// paginationInterceptor.setLimit(你的最大单页限制数量，默认 500 条，小于 0 如 -1 不受限制);
+		return new PaginationInterceptor();
+	}
+
+
+	/**
+	 *	主数据源 ds1数据源
+	 */
+	@Primary
+	@Bean(&quot;ds1SqlSessionFactory&quot;)
+	public SqlSessionFactory ds1SqlSessionFactory(@Qualifier(&quot;ds1DataSource&quot;) DataSource dataSource) throws Exception {
+		MybatisSqlSessionFactoryBean sessionFactoryBean = new MybatisSqlSessionFactoryBean();
+		sessionFactoryBean.setDataSource(dataSource);
+		sessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(&quot;classpath*:mapper/general/*.xml&quot;));
+		return sessionFactoryBean.getObject();
+
+	}
+
+	@Primary
+	@Bean(name = &quot;ds1TransactionManager&quot;)
+	public DataSourceTransactionManager ds1TransactionManager(@Qualifier(&quot;ds1DataSource&quot;) DataSource dataSource) {
+		return new DataSourceTransactionManager(dataSource);
+	}
+
+	@Primary
+	@Bean(name = &quot;ds1SqlSessionTemplate&quot;)
+	public SqlSessionTemplate ds1SqlSessionTemplate(@Qualifier(&quot;ds1SqlSessionFactory&quot;) SqlSessionFactory sqlSessionFactory) {
+		return new SqlSessionTemplate(sqlSessionFactory);
+	}
+
+	//JdbcTemplate主数据源ds1数据源
+	@Primary
+	@Bean(name = &quot;ds1JdbcTemplate&quot;)
+	public JdbcTemplate ds1JdbcTemplate(@Qualifier(&quot;ds1DataSource&quot;) DataSource dataSource) {
+		return new JdbcTemplate(dataSource);
+	}
+	//主数据源配置 ds1数据源
+	@Primary
+	@Bean(name = &quot;ds1DataSourceProperties&quot;)
+	@ConfigurationProperties(prefix = &quot;spring.datasource.ds1&quot;)
+	public DataSourceProperties ds1DataSourceProperties() {
+		return new DataSourceProperties();
+	}
+
+	//主数据源 ds1数据源
+	@Primary
+	@Bean(name = &quot;ds1DataSource&quot;)
+	public DataSource ds1DataSource(@Qualifier(&quot;ds1DataSourceProperties&quot;) DataSourceProperties dataSourceProperties) {
+		return dataSourceProperties.initializeDataSourceBuilder().build();
+	}
+
+}
+
+</code></pre>
+</details>
+<details>
+<MAXmary>第二个数据源</MAXmary>
+<pre class="line-numbers"><code class="language-plain_text">@Configuration
+@MapperScan(basePackages = &quot;com.hitol.mybatisplusdemo.chinespoetry.mapper&quot;,
+		sqlSessionTemplateRef=&quot;ds2SqlSessionTemplate&quot;)
+public class MyBatisPlusConfig2 {
+
+	/**
+	 * mybatis-plus分页插件&lt;br&gt;
+	 * 文档：https://mp.baomidou.com/guide/page.html &lt;br&gt;
+	 */
+	@Bean(&quot;paginationInterceptor2&quot;)
+	public PaginationInterceptor paginationInterceptor() {
+		// paginationInterceptor.setLimit(你的最大单页限制数量，默认 500 条，小于 0 如 -1 不受限制);
+		return new PaginationInterceptor();
+	}
+
+
+
+	/**
+	 *	主数据源 ds2数据源
+	 */
+	@Bean(&quot;ds2SqlSessionFactory&quot;)
+	public SqlSessionFactory ds2SqlSessionFactory(@Qualifier(&quot;ds2DataSource&quot;) DataSource dataSource) throws Exception {
+		MybatisSqlSessionFactoryBean sessionFactoryBean = new MybatisSqlSessionFactoryBean();
+		sessionFactoryBean.setDataSource(dataSource);
+		sessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(&quot;classpath*:mapper/general/*.xml&quot;));
+		return sessionFactoryBean.getObject();
+
+	}
+
+
+	@Bean(name = &quot;ds2TransactionManager&quot;)
+	public DataSourceTransactionManager ds2TransactionManager(@Qualifier(&quot;ds2DataSource&quot;) DataSource dataSource) {
+		return new DataSourceTransactionManager(dataSource);
+	}
+
+
+	@Bean(name = &quot;ds2SqlSessionTemplate&quot;)
+	public SqlSessionTemplate ds2SqlSessionTemplate(@Qualifier(&quot;ds2SqlSessionFactory&quot;) SqlSessionFactory sqlSessionFactory) {
+		return new SqlSessionTemplate(sqlSessionFactory);
+	}
+
+	//JdbcTemplate ds2数据源
+	@Bean(name = &quot;ds2JdbcTemplate&quot;)
+	public JdbcTemplate ds2JdbcTemplate(@Qualifier(&quot;ds2DataSource&quot;) DataSource dataSource) {
+		return new JdbcTemplate(dataSource);
+	}
+	//数据源配置 ds2数据源
+	@Bean(name = &quot;ds2DataSourceProperties&quot;)
+	@ConfigurationProperties(prefix = &quot;spring.datasource.ds2&quot;)
+	public DataSourceProperties ds2DataSourceProperties() {
+		return new DataSourceProperties();
+	}
+
+	//数据源 ds2数据源
+	@Bean(name = &quot;ds2DataSource&quot;)
+	public DataSource ds2DataSource(@Qualifier(&quot;ds2DataSourceProperties&quot;) DataSourceProperties dataSourceProperties) {
+		return dataSourceProperties.initializeDataSourceBuilder().build();
+	}
+
+}
+
+</code></pre>
+</details>
+<h2><a id="%E8%B8%A9%E5%9D%91%E4%B9%90%E8%A7%82%E9%94%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>踩坑-乐观锁</h2>
+<p>官网上的示例:</p>
+<pre class="line-numbers"><code class="language-plain_text">@Bean
+public MybatisPlusInterceptor mybatisPlusInterceptor() {
+    MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+    interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
+    return interceptor;
+}
+
+</code></pre>
+<p>根据官方文档配置后，一般情况下可以正常使用的，但是如果自己生成了 sqlSessionFactory 需要将乐观锁拦截器添加下</p>
+<pre class="line-numbers"><code class="language-plain_text">public MyOptimisticLockerInterceptor optimisticLockerInterceptor(@Qualifier(&quot;ds1SqlSessionFactory&quot;) SqlSessionFactory sqlSessionFactory) {
+    MyOptimisticLockerInterceptor myOptimisticLockerInterceptor = new MyOptimisticLockerInterceptor();
+    sqlSessionFactory.getConfiguration().addInterceptor(myOptimisticLockerInterceptor);
+    return myOptimisticLockerInterceptor;
+}
+    
+</code></pre>
+<h2><a id="%E8%B8%A9%E5%9D%91%E8%87%AA%E5%8A%A8%E5%A1%AB%E5%85%85%E5%8A%9F%E8%83%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>踩坑-自动填充功能</h2>
+<p>官网示例：<a href="https://mp.baomidou.com/guide/auto-fill-metainfo.html">https://mp.baomidou.com/guide/auto-fill-metainfo.html</a></p>
+<p>如果自己生成了 sqlSessionFactory，需要将自定义的 handler 加到 GlobalConfig 中。</p>
+<pre class="line-numbers"><code class="language-plain_text">@Primary
+@Bean(&quot;ds1SqlSessionFactory&quot;)
+public SqlSessionFactory ds1SqlSessionFactory(@Qualifier(&quot;ds1DataSource&quot;) DataSource dataSource) throws Exception {
+    MybatisSqlSessionFactoryBean sessionFactoryBean = new MybatisSqlSessionFactoryBean();
+    sessionFactoryBean.setDataSource(dataSource);
+    sessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(&quot;classpath*:mapper/manager/*.xml&quot;));
+    GlobalConfig gc = new GlobalConfig();
+    gc.setMetaObjectHandler(metaObjectHandler());
+    sessionFactoryBean.setGlobalConfig(gc);
+    return sessionFactoryBean.getObject();
+
 }
 </code></pre>
-<p>接收消息</p>
-<pre class="line-numbers"><code class="language-plain_text">@StreamListener(value = Source.INPUT)
-public void receiveInput(String receiveMsg) {
-	System.out.println(&quot;input receive: &quot; + receiveMsg);
-}
-
-</code></pre>
-<h3><a id="%E5%90%AF%E5%8A%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动</h3>
-<p>启动类上添加注解 <code>@EnableBinding({Source.class})</code></p>
-<p><a href="https://gitee.com/hitol/spring-alibaba/tree/master/cloud-stream-rocketmq">gitee</a></p>
-<hr />
-<p><a href="https://github.com/alibaba/spring-cloud-alibaba/wiki/RocketMQ">https://github.com/alibaba/spring-cloud-alibaba/wiki/RocketMQ</a></p>
-<p><a href="https://xie.infoq.cn/article/13407cedcc683163cfce19afc">https://xie.infoq.cn/article/13407cedcc683163cfce19afc</a></p>
 
                         
                       </div>
@@ -231,8 +438,10 @@ public void receiveInput(String receiveMsg) {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/05/24 16:30 下午</span>
-                    
+                    <span class="date">2021/06/11 16:04 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
           				   
                     
 
@@ -355,6 +564,12 @@ public void receiveInput(String receiveMsg) {
 	      
 		      
 			      <li class="post">
+			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17007106564695.html">Rust web 开发-5.线程池</a>
 			      </li>
 		     
@@ -374,12 +589,6 @@ public void receiveInput(String receiveMsg) {
 		      
 			      <li class="post">
 			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
 			      </li>
 		     
 		  

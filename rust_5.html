@@ -129,285 +129,390 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16892187258215.html">
+                <a class="clearlink" href="17002145985395.html">
                 
-                  <h1>wasm 初体验</h1>
+                  <h1>Rust web 开发-1.web 框架</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
                         	<div class="mweb_toc"><ul>
-<li><a href="#hello-world">Hello World</a>
+<li><a href="#actix-web">actix-web</a>
 <ul>
-<li><a href="#1%E5%AE%89%E8%A3%85">1. 安装</a></li>
-<li><a href="#2%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%B9%E7%9B%AE">2. 初始化项目</a></li>
-<li><a href="#3%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE">3. 构建项目</a></li>
-<li><a href="#4%E7%94%9F%E6%88%90%E9%A1%B5%E9%9D%A2">4. 生成页面</a></li>
-<li><a href="#5%E9%A1%B5%E9%9D%A2%E4%BD%BF%E7%94%A8%E6%88%91%E4%BB%AC%E7%9A%84%E4%BB%A3%E7%A0%81">5. 页面使用我们的代码</a></li>
-<li><a href="#6%E5%90%AF%E5%8A%A8">6. 启动</a></li>
+<li><a href="#httpserver">HttpServer</a></li>
+<li><a href="#scope">scope</a></li>
+<li><a href="#shared-mutable-state">Shared Mutable State</a></li>
+<li><a href="#%E8%BF%94%E5%9B%9Ejson">返回 json</a></li>
+<li><a href="#%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0">接收请求参数</a>
+<ul>
+<li><a href="#path">Path</a></li>
+<li><a href="#get%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6%E5%8F%82%E6%95%B0">get 请求，接收参数</a></li>
+<li><a href="#post%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6-json">post 请求，接收 json</a></li>
 </ul>
 </li>
-<li><a href="#rust-to-wasm">Rust to wasm</a>
-<ul>
-<li><a href="#1-install-rust">1. install Rust</a></li>
-<li><a href="#2-cargo-install-wasm-pack">2. <code>cargo install wasm-pack</code></a></li>
-<li><a href="#3-cargo-new-lib-hello-wasm">3. <code>cargo new --lib hello-wasm</code></a></li>
-<li><a href="#4-lib-rs%E4%B8%AD%E7%BC%96%E5%86%99-wasm%E4%BB%A3%E7%A0%81">4. lib.rs 中编写 wasm 代码</a></li>
-<li><a href="#5-build">5. build</a></li>
-<li><a href="#6-using-the-package-on-the-web">6. Using the package on the web</a>
-<ul>
-<li><a href="#%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AAhtml%E9%A1%B5%E9%9D%A2%EF%BC%8C%E4%BD%BF%E7%94%A8-hello-wasm-js">编写一个 html 页面，使用 hello_wasm.js</a></li>
-<li><a href="#%E5%90%AF%E5%8A%A8%E4%B8%80%E4%B8%AAserver%E6%9C%8D%E5%8A%A1">启动一个 server 服务</a></li>
+<li><a href="#middleware">middleware</a></li>
 </ul>
 </li>
-<li><a href="#7-making-our-package-available-to-npm">7. Making our package available to npm</a>
-<ul>
-<li><a href="#%E9%87%8D%E6%96%B0%E7%BC%96%E8%AF%91">重新编译</a></li>
-<li><a href="#npm-link">npm link</a></li>
-<li><a href="#using-the-npm-package-on-the-web">Using the npm package on the web</a>
-<ul>
-<li><a href="#package-json">package.json</a></li>
-<li><a href="#webpack-config-js">webpack.config.js</a></li>
-<li><a href="#index-js">index.js</a></li>
-<li><a href="#index-html">index.html</a></li>
-<li><a href="#site%E7%9A%84%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84">site 的目录结构</a></li>
-<li><a href="#%E5%9C%A8site%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%AD%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4">在 site 文件夹中执行命令</a></li>
-<li><a href="#%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98">出现的问题</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#%E8%A1%A5%E5%85%85">补充</a></li>
-</ul>
-</li>
+<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
 </ul>
 </div>
-<p>WASM 不是一种编程语言🙂。简而言之，它是一种将用一种编程语言编写的代码转换为浏览器可理解的机器代码（JavaScript）的技术。</p>
-<p>WASM (WebAssembly 的缩写)被设计为其他语言的编译目标，允许服务器端代码(如 C 或 C++代码)被编译成 WASM 并在浏览器中执行。</p>
-<p>也被称作  web 汇编。</p>
-<h2><a id="hello-world" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hello World</h2>
-<h3><a id="1%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. 安装</h3>
-<pre class="line-numbers"><code class="language-plain_text">cargo install cargo-generate
-
-cargo install wasm-pack
-
-npm install npm@latest -g
-
-</code></pre>
-<h3><a id="2%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%B9%E7%9B%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. 初始化项目</h3>
-<pre class="line-numbers"><code class="language-plain_text">cargo generate --git https://github.com/rustwasm/wasm-pack-template
-</code></pre>
-<p>项目命名为 first-wasm</p>
-<h3><a id="3%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. 构建项目</h3>
-<p>项目根目录执行</p>
-<pre class="line-numbers"><code class="language-plain_text">wasm-pack build
-</code></pre>
-<p>构建完成后会生成 pkg 目录。</p>
-<h3><a id="4%E7%94%9F%E6%88%90%E9%A1%B5%E9%9D%A2" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. 生成页面</h3>
-<p>node 初始化一个前端项目，在根目录执行。</p>
-<pre class="line-numbers"><code class="language-plain_text">npm init wasm-app www
-</code></pre>
-<p>项目中会出现一个 www 目录，<br />
-进入到 www 中，安装 node 依赖</p>
-<pre class="line-numbers"><code class="language-plain_text">npm install
-</code></pre>
-<h3><a id="5%E9%A1%B5%E9%9D%A2%E4%BD%BF%E7%94%A8%E6%88%91%E4%BB%AC%E7%9A%84%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. 页面使用我们的代码</h3>
+<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
-<li>在 pkg 目录下执行</li>
+<li>web 框架</li>
+<li>数据库/orm</li>
+<li>config</li>
+<li>log</li>
+<li>线程池</li>
+<li>kafka</li>
+<li>redis</li>
+<li>打包成 docker 镜像</li>
+<li>gracefully shutdown</li>
 </ol>
-<pre class="line-numbers"><code class="language-plain_text">npm link
+<hr />
+<p>本文介绍第一部分，web 框架。<br />
+目前比较出名的 web 框架有</p>
+<ol>
+<li><a href="https://github.com/tokio-rs/axum">axum</a></li>
+<li><a href="https://github.com/SergioBenitez/Rocket">Rocket</a></li>
+<li><a href="https://github.com/actix/actix-web">actix-web</a></li>
+<li><a href="https://github.com/hyperium/hyper">Hyper</a></li>
+<li><a href="https://github.com/http-rs/tide">Tide</a></li>
+<li><a href="https://github.com/seanmonstar/warp">Warp</a></li>
+</ol>
+<p>接下来主要介绍一下 actix-web，其他框架待后面有时间再介绍。</p>
+<h2><a id="actix-web" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>actix-web</h2>
+<p>actix-web 服务端的逻辑都是建立在 App 实例上的，通过 App 实例为所有资源和中间件注册路由，存储同一范围内所有线程共享的状态。<br />
+接下来从零开始实现一个 actix-web 示例。</p>
+<ol>
+<li>创建rust 工程</li>
+</ol>
+<pre class="line-numbers"><code class="language-rust">cargo new hello-world
 </code></pre>
-<p>pkg 文件夹中会出现 package.json 文件</p>
 <ol start="2">
-<li>在 www 中执行</li>
+<li>Cargo.toml 添加依赖</li>
 </ol>
-<pre class="line-numbers"><code class="language-plain_text">npm link first-wasm
+<pre class="line-numbers"><code class="language-rust">[dependencies]
+actix-web=&quot;4&quot;
 </code></pre>
 <ol start="3">
-<li>修改 /www/index.js</li>
+<li>使用 actix-web<br />
+在 src/main.rs 中编写如下代码</li>
 </ol>
-<pre class="line-numbers"><code class="language-plain_text">import * as wasm from 'first-wasm';
+<pre class="line-numbers"><code class="language-rust">use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+
+#[get(&quot;/&quot;)]
+async fn hello() -&gt; impl Responder {
+    HttpResponse::Ok().body(&quot;Hello world!&quot;)
+}
+
+#[post(&quot;/echo&quot;)]
+async fn echo(req_body: String) -&gt; impl Responder {
+    HttpResponse::Ok().body(req_body)
+}
+
+async fn manual_hello() -&gt; impl Responder {
+    HttpResponse::Ok().body(&quot;Hey there!&quot;)
+}
+
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new( || {
+        App::new()
+            .service(hello)
+            .service(echo)
+            .route(&quot;/hey&quot;, web::get().to(manual_hello))
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>HttpServer 绑定到 ip、端口，同时，提供了两个 get 方法(/,/hey)，一个 post 方法(/echo)，通过浏览器访问 localhost:8099 即可访问。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-13.36.34.png" alt="2022-11-20-13.36.34" /></p>
+<h3><a id="httpserver" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>HttpServer</h3>
+<p>HttpServer 接受的参数类型是 application factory，实现了 Send + Sync。</p>
+<p>bind，为 server 绑定 ip 和端口。<br />
+bind 成功后，<code>HttpServer::run()</code> 返回一个 server 实例。<br />
+server 必须使用 await 或者在多线程中才能启动 http 服务器。<br />
+server 默认启动的线程数与 CPU 个数相等，可以通过 <code>HttpServer::workers()</code> 改变线程数。</p>
+<h3><a id="scope" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>scope</h3>
+<p>scope 相当于请求路径的前缀</p>
+<pre class="line-numbers"><code class="language-rust">#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new().service(
+            web::scope(&quot;/app&quot;)
+                .route(&quot;/hey&quot;, web::get().to(manual_hello)),
+        )
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>这样的话在请求 localhost:8099/hey 就请求不到了，这样要请求的路径是 localhost:8099/app/hey</p>
+<h3><a id="shared-mutable-state" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Shared Mutable State</h3>
+<p>相当于全局变量、多个线程之间共享的。</p>
+<p><code>web::Data&lt;T&gt;</code>,T 是 Arc 类型。<br />
+Arc 和 Mutex 结合使用，实现在多线程间共享数据。</p>
+<pre class="line-numbers"><code class="language-rust">use std::sync::Mutex;
+
+use actix_web::{App, HttpServer, web};
+
+struct AppStateWithCounter {
+    counter: Mutex&lt;i32&gt;, // &lt;- Mutex is necessary to mutate safely across threads
+}
+
+async fn index(data: web::Data&lt;AppStateWithCounter&gt;) -&gt; String {
+    let mut counter = data.counter.lock().unwrap(); // &lt;- get counter's MutexGuard
+    *counter += 1; // &lt;- access counter inside MutexGuard
+
+    format!(&quot;Request number: {counter}&quot;) // &lt;- response with count
+}
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    // Note: web::Data created _outside_ HttpServer::new closure
+    let counter = web::Data::new(AppStateWithCounter {
+        counter: Mutex::new(0),
+    });
+
+    HttpServer::new(move || {
+        // move counter into the closure
+        App::new()
+            .app_data(counter.clone()) // &lt;- register the created data
+            .route(&quot;/&quot;, web::get().to(index))
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
+</code></pre>
+<p>浏览器请求 localhost:8099,每次刷新 counter+1；</p>
+<h3><a id="%E8%BF%94%E5%9B%9Ejson" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>返回 json</h3>
+<p>一般 web 应用服务端接口返回的数据都是 json 格式，<br />
+actix-web 中如何实现返回 json格式的数据:</p>
+<p>cargo.toml添加依赖</p>
+<pre class="line-numbers"><code class="language-rust">serde = { version = &quot;1.0&quot;, features = [&quot;derive&quot;] }
+serde_json = { version = &quot;1.0.2&quot;, optional = true }
+</code></pre>
+<p>main.rs</p>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web};
+use actix_web::web::Json;
+use serde::{ser, Serialize};
+
+#[derive(Serialize)]
+pub struct JsonSuccess&lt;T: ser::Serialize&gt; {
+    pub code: u32,
+    pub data: Option&lt;T&gt;,
+    pub error: Option&lt;String&gt;,
+}
+
+#[derive(Serialize)]
+pub struct JsonError {
+    pub code: u32,
+    pub data: Option&lt;String&gt;,
+    pub error: Option&lt;String&gt;,
+}
+
+pub fn success&lt;T: ser::Serialize&gt;(r: Option&lt;T&gt;) -&gt; HttpResponse {
+    HttpResponse::Ok().json(JsonSuccess {
+        code: 0,
+        data: r,
+        error: None,
+    })
+}
+
+pub fn error(err: Option&lt;String&gt;) -&gt; HttpResponse {
+    HttpResponse::Ok().json(JsonError {
+        code: 1,
+        data: None,
+        error: err,
+    })
+}
+
+
+#[get(&quot;/&quot;)]
+async fn hello() -&gt; HttpResponse {
+    success(Option::from(&quot;Hello&quot;))
+}
+
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .service(hello)
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
 
 </code></pre>
-<h3><a id="6%E5%90%AF%E5%8A%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>6. 启动</h3>
-<pre class="line-numbers"><code class="language-plain_text">npm run start
-</code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16919824092381.jpg" alt="" /></p>
-<p>如果要修改 alert 显示的内容，修改 rust 代码 lib.rs 中的 greet 方法。</p>
-<h1><a id="rust-to-wasm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rust to wasm</h1>
-<p>上面的例子是使用的 cargo generate  直接生成的模板，<br />
-按照 <a href="https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm">https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm</a> 里的步骤<br />
-可以自己一步一步实现 rust 编译为 wasm。</p>
-<h2><a id="1-install-rust" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. install Rust</h2>
-<h2><a id="2-cargo-install-wasm-pack" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. <code>cargo install wasm-pack</code></h2>
-<h2><a id="3-cargo-new-lib-hello-wasm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. <code>cargo new --lib hello-wasm</code></h2>
-<h2><a id="4-lib-rs%E4%B8%AD%E7%BC%96%E5%86%99-wasm%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. lib.rs 中编写 wasm 代码</h2>
-<pre class="line-numbers"><code class="language-rust">use wasm_bindgen::prelude::*;
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-14.58.01.png" alt="2022-11-20-14.58.01" /></p>
+<h3><a id="%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>接收请求参数</h3>
+<h4><a id="path" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Path</h4>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web,Result};
+use actix_web::web::Json;
+use serde::{ser, Serialize};
 
-#[wasm_bindgen]
-extern {
-    pub fn alert(s: &amp;str);
+/// extract path info from &quot;/users/{user_id}/{friend}&quot; url
+/// {user_id} - deserializes to a u32
+/// {friend} - deserializes to a String
+#[get(&quot;/users/{user_id}/{friend}&quot;)] // &lt;- define path parameters
+async fn index(path: web::Path&lt;(u32, String)&gt;) -&gt; HttpResponse {
+    let (user_id, friend) = path.into_inner();
+    success(Some(format!(&quot;Welcome {}, user_id {}!&quot;, friend, user_id)))
 }
-    
-#[wasm_bindgen]
-pub fn greet(name: &amp;str) {
-    alert(&amp;format!(&quot;Hello, {}!&quot;, name));
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| App::new().service(index))
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
 }
 </code></pre>
-<p>添加依赖</p>
-<pre class="line-numbers"><code class="language-plain_text">[lib]
-crate-type = [&quot;cdylib&quot;, &quot;rlib&quot;]
-    
-[dependencies]
-wasm-bindgen=&quot;0.2&quot;
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002319375457.jpg" alt="" /></p>
+<p>web::Path&lt;(u32,String)&gt; 接收这个 get(&quot;/users/{user_id}/{friend}&quot;) 请求的两个参数</p>
+<p>将这两个参数定义为 struct 也是可以的</p>
+<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
+struct Info {
+    user_id: u32,
+    friend: String,
+}
+
+/// extract path info using serde
+#[get(&quot;/users/{user_id}/{friend}&quot;)] // &lt;- define path parameters
+async fn index(path: web::Path&lt;(u32, String)&gt;) -&gt; HttpResponse {
+    let (user_id, friend) = path.into_inner();
+    success(Some(format!(&quot;Welcome {}, user_id {}!&quot;, friend, user_id)))
+}
 </code></pre>
-<h2><a id="5-build" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. build</h2>
-<pre class="line-numbers"><code class="language-plain_text">wasm-pack build --target web
+<h4><a id="get%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>get 请求，接收参数</h4>
+<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
+struct Info {
+    username: String,
+    age:i32
+}
+
+#[get(&quot;/&quot;)]
+async fn index(info: web::Query&lt;Info&gt;) -&gt; HttpResponse {
+    success(Some(format!(&quot;Welcome {}!,age = {}&quot;, info.username,info.age)))
+}
 </code></pre>
-<p>现在的目录结构</p>
-<pre class="line-numbers"><code class="language-plain_text">├── Cargo.lock
-├── Cargo.toml
-├── index.html
-├── pkg
-│   ├── hello_wasm.d.ts
-│   ├── hello_wasm.js
-│   ├── hello_wasm_bg.wasm
-│   ├── hello_wasm_bg.wasm.d.ts
-│   └── package.json
-├── src
-│   └── lib.rs
-└── target
-    ├── CACHEDIR.TAG
-    ├── release
-    └── wasm32-unknown-unknown
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002323120371.jpg" alt="" /></p>
+<h4><a id="post%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6-json" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>post 请求，接收 json</h4>
+<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
+struct Info {
+    username: String,
+    age:i32
+}
+
+#[post(&quot;/&quot;)]
+async fn index(info: web::Json&lt;Info&gt;) -&gt; HttpResponse {
+    success(Some(format!(&quot;Welcome {}!,age = {}&quot;, info.username,info.age)))
+}
 </code></pre>
-<h2><a id="6-using-the-package-on-the-web" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>6. Using the package on the web</h2>
-<h3><a id="%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AAhtml%E9%A1%B5%E9%9D%A2%EF%BC%8C%E4%BD%BF%E7%94%A8-hello-wasm-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>编写一个 html 页面，使用 hello_wasm.js</h3>
-<pre class="line-numbers"><code class="language-html">&lt;!doctype html&gt;
-&lt;html lang=&quot;en-US&quot;&gt;
-  &lt;head&gt;
-    &lt;meta charset=&quot;utf-8&quot; /&gt;
-    &lt;title&gt;hello-wasm example&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;script type=&quot;module&quot;&gt;
-      import init, { greet } from &quot;./pkg/hello_wasm.js&quot;;
-      init().then(() =&gt; {
-        greet(&quot;WebAssembly&quot;);
-      });
-    &lt;/script&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
-<h3><a id="%E5%90%AF%E5%8A%A8%E4%B8%80%E4%B8%AAserver%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动一个 server 服务</h3>
-<pre class="line-numbers"><code class="language-plain_text">python3 -m http.server
-</code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16919806550698.jpg" alt="" /></p>
-<p>至此，一个简单的 wasm 就运行起来了。</p>
-<h2><a id="7-making-our-package-available-to-npm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>7. Making our package available to npm</h2>
-<h3><a id="%E9%87%8D%E6%96%B0%E7%BC%96%E8%AF%91" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重新编译</h3>
-<p>如果想要在 node 中使用 wasm，重新编译代码，使用 bundler 模式</p>
-<pre class="line-numbers"><code class="language-plain_text">wasm-pack build --target bundler
-</code></pre>
-<h3><a id="npm-link" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>npm link</h3>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002325332089.jpg" alt="" /></p>
+<h3><a id="middleware" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>middleware</h3>
+<p>middleware 系统可以让我们针对请求或者响应添加自定义操作。</p>
+<ol>
+<li>Pre-process the Request：可以在请求时做前置处理</li>
+<li>Post-process a Response：在响应时做后置处理</li>
+<li>Modify application state：修改 state</li>
+<li>Access external services (redis, logging, sessions)：访问外部服务</li>
+</ol>
 <blockquote>
-<p>Next, let's use npm link to make this package available to other JavaScript packages installed</p>
+<p>如果有多个中间件，后添加的会先执行。</p>
 </blockquote>
-<pre class="line-numbers"><code class="language-plain_text">cd pkg
-npm link
+<p>类似 Java 中的 AOP，只不过这个中间件只是针对 Controller 的。</p>
+<p>自定义 middleware 要实现 Service和 Transform 两个 trait。<br />
+先用 wrap_fn 做一个简单的 middleware：</p>
+<p>cargo.toml添加依赖</p>
+<pre class="line-numbers"><code class="language-plain_text">futures-util = &quot;0.3&quot;
 </code></pre>
-<blockquote>
-<p>We now have an npm package, written in Rust, but compiled to WebAssembly. It's ready for use from JavaScript, and doesn't require the user to have Rust installed; the code included was the WebAssembly code, not the Rust source.</p>
-</blockquote>
-<h3><a id="using-the-npm-package-on-the-web" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the npm package on the web</h3>
-<p>根目录中创建新的文件夹，site</p>
-<pre class="line-numbers"><code class="language-plain_text">mkdir site
-cd site
-npm link hello-wasm
-</code></pre>
-<p>site 文件夹中创建 package.json、webpack.config.js、index.js、index.html</p>
-<h4><a id="package-json" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>package.json</h4>
-<pre class="line-numbers"><code class="language-json">{
-  &quot;scripts&quot;: {
-    &quot;serve&quot;: &quot;webpack-dev-server&quot;
-  },
-  &quot;dependencies&quot;: {
-    &quot;hello-wasm&quot;: &quot;^0.1.0&quot;
-  },
-  &quot;devDependencies&quot;: {
-    &quot;webpack&quot;: &quot;^4.25.1&quot;,
-    &quot;webpack-cli&quot;: &quot;^3.1.2&quot;,
-    &quot;webpack-dev-server&quot;: &quot;^3.1.10&quot;
-  }
+<p>main.rs</p>
+<pre class="line-numbers"><code class="language-rust">#[get(&quot;/{name}&quot;)]
+async fn hello(path:web::Path&lt;String&gt;) -&gt; HttpResponse {
+    let name = path.to_owned();
+    success(Option::from(format!(&quot;Hello {}&quot;,name)))
+}
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .wrap_fn(|req, srv| {
+                // Pre-process the Request
+                println!(&quot;Hi from start. You requested: {}&quot;, req.path());
+                srv.call(req).map(|res| {
+                    // Post-process a Response
+                    println!(&quot;Hi from response&quot;);
+                    res
+                })
+            })
+            .service(hello)
+    })
+    .bind((&quot;127.0.0.1&quot;, 8099))?
+    .run()
+    .await
 }
 </code></pre>
-<h4><a id="webpack-config-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>webpack.config.js</h4>
-<pre class="line-numbers"><code class="language-js">const path = require(&quot;path&quot;);
-module.exports = {
-  entry: &quot;./index.js&quot;,
-  output: {
-    path: path.resolve(__dirname, &quot;dist&quot;),
-    filename: &quot;index.js&quot;,
-  },
-  mode: &quot;development&quot;,
-};
-</code></pre>
-<h4><a id="index-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>index.js</h4>
-<pre class="line-numbers"><code class="language-js">import(&quot;./node_modules/hello-wasm/hello_wasm.js&quot;).then((js) =&gt; {
-  js.greet(&quot;WebAssembly with npm&quot;);
-});
-</code></pre>
-<h4><a id="index-html" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>index.html</h4>
-<pre class="line-numbers"><code class="language-html">&lt;!doctype html&gt;
-&lt;html lang=&quot;en-US&quot;&gt;
-  &lt;head&gt;
-    &lt;meta charset=&quot;utf-8&quot; /&gt;
-    &lt;title&gt;hello-wasm example&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;script src=&quot;./index.js&quot;&gt;&lt;/script&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
-<h4><a id="site%E7%9A%84%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>site 的目录结构</h4>
-<pre class="line-numbers"><code class="language-plain_text">├── index.html
-├── index.js
-├── node_modules
-│   └── hello-wasm -&gt; ../../pkg
-├── package.json
-└── webpack.config.js
-</code></pre>
-<h4><a id="%E5%9C%A8site%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%AD%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>在 site 文件夹中执行命令</h4>
-<pre class="line-numbers"><code class="language-plain_text">npm install
-npm run serve
-</code></pre>
-<h4><a id="%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>出现的问题</h4>
-<pre class="line-numbers"><code class="language-plain_text">opensslErrorStack: [ 'error:03000086:digital envelope routines::initialization error' ],
-library: 'digital envelope routines',
-reason: 'unsupported',
-code: 'ERR_OSSL_EVP_UNSUPPORTED'
-</code></pre>
-<p>先执行这条命令，然后在运行</p>
-<pre class="line-numbers"><code class="language-plain_text">export NODE_OPTIONS=--openssl-legacy-provider
-</code></pre>
-<p>以上就是 Rust 编译为 wasm 的过程。</p>
-<hr />
-<h2><a id="%E8%A1%A5%E5%85%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>补充</h2>
-<pre class="line-numbers"><code class="language-plain_text">编译为 web
-wasm-pack build --target web
+<p>请求 <a href="http://localhost:8099/tom">http://localhost:8099/tom</a><br />
+控制台会打印出<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/17002343077452.jpg" alt="" /></p>
+<p>接下来，做一个比较常见的中间件--鉴权中间件。</p>
+<pre class="line-numbers"><code class="language-rust">impl&lt;S, B&gt; Service&lt;ServiceRequest&gt; for AuthMiddleWare&lt;S&gt;
+where
+    S: Service&lt;ServiceRequest, Response = ServiceResponse&lt;B&gt;, Error = Error&gt;,
+    S::Future: 'static,
+    B: 'static,
+{
+    type Response = ServiceResponse&lt;B&gt;;
+    type Error = Error;
+    type Future = LocalBoxFuture&lt;'static, Result&lt;Self::Response, Self::Error&gt;&gt;;
 
-编译为 bundler
-wasm-pack build --target bundler
+    forward_ready!(service);
+
+    fn call(&amp;self, req: ServiceRequest) -&gt; Self::Future {
+        let value = HeaderValue::from_str(&quot;&quot;).unwrap();
+        let token: &amp;HeaderValue = req.headers().get(&quot;token&quot;).unwrap_or(&amp;value);
+        if token.len() &gt; 0 || req.path().to_string() == &quot;/login&quot; {
+            let fut: &lt;S as Service&lt;ServiceRequest&gt;&gt;::Future = self.service.call(req);
+            Box::pin(async move {
+                let res = fut.await;
+                res
+            })
+        } else {
+            Box::pin(async move { Err(ErrorUnauthorized(&quot;PLEASE LOGIN&quot;)) })
+        }
+    }
+}
+
+
+#[actix_web::main]
+async fn main() -&gt; std::io::Result&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::timed::Timed)
+            .wrap(middleware::auth::Auth)
+            .service(hello1)
+            .service(hello2)
+    })
+        .bind((&quot;127.0.0.1&quot;, 8099))?
+        .run()
+        .await
+}
 </code></pre>
-<p>编译为 web，可以在 html 中直接引用。<br />
-编译为 bundler、nodejs，可以在 nodejs 中使用。</p>
-<p><a href="https://rustwasm.github.io/docs/wasm-pack/commands/build.html">https://rustwasm.github.io/docs/wasm-pack/commands/build.html</a><br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/16904715130997.jpg" alt="" /></p>
-<hr />
-<p><a href="https://xie.infoq.cn/article/0bb5ff2fa5d5d9db492c88a4c">https://xie.infoq.cn/article/0bb5ff2fa5d5d9db492c88a4c</a></p>
-<p><a href="https://llever.com/rustwasm-book/game-of-life/hello-world.zh.html">https://llever.com/rustwasm-book/game-of-life/hello-world.zh.html</a></p>
-<p><a href="https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm">https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm</a></p>
-<p><a href="https://rustwasm.github.io/docs/wasm-pack/introduction.html">https://rustwasm.github.io/docs/wasm-pack/introduction.html</a></p>
+<p>这里是写了两个 middleware，一个打印接口耗时，一个鉴权，代码篇幅较多，放在了 <a href="https://github.com/hitolz/rust-web/tree/actix_web">github</a>。</p>
+<p>浏览器访问 hello1，由于没有 token，所以鉴权不通过，而通过 postman 访问 hello2，header 上加上 token，就可以请求通过。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/17003662230269.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17003658655736.jpg" alt="" /></p>
+<h2><a id="%E5%B0%8F%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>小结</h2>
+<p>第一部分关于 web 框架就介绍到这里了，主要介绍了 actix-web 的使用：如何写一个接口、如何接收参数、如何返回 json 、如何通过中间件鉴权。</p>
 
                         
                       </div>
@@ -416,10 +521,12 @@ wasm-pack build --target bundler
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2023/07/13 11:25 上午</span>
+                    <span class="date">2023/11/17 17:49 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='rust.html'>rust</a></span>
+          				  
+          					    <span class="posted-in"><a href='Rust%20web.html'>Rust web</a></span>
           				   
                     
 
@@ -542,6 +649,12 @@ wasm-pack build --target bundler
 	      
 		      
 			      <li class="post">
+			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17007106564695.html">Rust web 开发-5.线程池</a>
 			      </li>
 		     
@@ -561,12 +674,6 @@ wasm-pack build --target bundler
 		      
 			      <li class="post">
 			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002145985395.html">Rust web 开发-1.web 框架</a>
 			      </li>
 		     
 		  
