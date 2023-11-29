@@ -129,14 +129,34 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="17010532478678.html">
+                <a class="clearlink" href="17007106564695.html">
                 
-                  <h1>Rust web 开发-6.kafka</h1>
+                  <h1>Rust web 开发-5.线程池</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+                        	<div class="mweb_toc"><ul>
+<li><a href="#1-1%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B">1:1 线程模型</a></li>
+<li><a href="#m-n%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B">M:N 线程模型</a></li>
+<li><a href="#rust%E5%8E%9F%E7%94%9F%E7%BA%BF%E7%A8%8B">Rust 原生线程</a>
+<ul>
+<li><a href="#demo">demo</a></li>
+</ul>
+</li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0">线程池</a></li>
+<li><a href="#rayon">rayon</a>
+<ul>
+<li><a href="#demo">demo</a></li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0">线程池</a></li>
+</ul>
+</li>
+<li><a href="#tokio">tokio</a></li>
+<li><a href="#demo">demo</a></li>
+<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
+</ul>
+</div>
+<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
 <li>web 框架</li>
 <li>数据库/orm</li>
@@ -149,64 +169,247 @@
 <li>gracefully shutdown</li>
 </ol>
 <hr />
-<p>本篇文章介绍一下 Rust 使用消息中间件 kafka。</p>
-<p>Rust 接入 kafka 的库中，使用最多的是 rdkafka。本篇文章就来介绍一下 rdkafka，以及封装一个开箱即用的 simple-kafka 库。</p>
-<h2><a id="rdkafka" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>rdkafka</h2>
-<p>rdkafka 是 Rust 的 Kafka 客户端库，提供了与 Kafka 的低级别交互。它是对 librdkafka C 库的绑定，提供了高性能和可靠性。rdkafka 提供了广泛的功能，包括生产者和消费者 API、支持各种配置选项、消息压缩、事务等。</p>
-<p>rdkafka 提供了高阶的 API：StreamConsumer、FutureProducer。</p>
-<ul>
-<li>StreamConsumer:负责自动轮询消费者的消息流。</li>
-<li>FutureProducer:为生成的每条消息返回一个 Future，Future 中可以得到消息的发送结果。</li>
-</ul>
-<pre class="line-numbers"><code class="language-toml">rdkafka = &quot;0.36.0&quot;
-</code></pre>
-<h3><a id="%E5%88%9B%E5%BB%BA%E7%94%9F%E4%BA%A7%E8%80%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>创建生产者</h3>
-<pre class="line-numbers"><code class="language-rust">fn create_producer(brokers: &amp;str) -&gt; FutureProducer {
-    info!(&quot;create kafka producer,brokers={}&quot;, brokers);
-    let producer: FutureProducer = ClientConfig::new()
-        .set(&quot;bootstrap.servers&quot;, brokers)
-        .set(&quot;message.timeout.ms&quot;, &quot;5000&quot;)
-        .set(&quot;acks&quot;, &quot;1&quot;)
-        .create()
-        .expect(&quot;Failed to create producer&quot;);
-    producer
+<p>本篇介绍一下线程池。也可以说这一部分是介绍异步任务的。<br />
+主要介绍了 rayon 和 tokio 的一小部分。<br />
+tokio 非常强大，还在学习中。</p>
+<h2><a id="1-1%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1:1 线程模型</h2>
+<p>由于操作系统提供了创建线程的 API，因此部分语言会直接调用该 API 来创建线程，因此最终程序内的线程数和该程序占用的操作系统线程数相等，一般称之为 1:1 线程模型，例如 Rust。</p>
+<h2><a id="m-n%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>M:N 线程模型</h2>
+<p>有些语言在内部实现了自己的线程模型（绿色线程、协程），程序 内部的 M 个线程最后会以某种映射方式使用 N 个操作系统线程去运行，因此称之为 M:N 线程模型，典型代表就是 Go 语言。</p>
+<p>Rust 原生的线程是 1:1 模型，有些三方库实现了 M:N 模型，比如大名鼎鼎的 tokio。</p>
+<h2><a id="rust%E5%8E%9F%E7%94%9F%E7%BA%BF%E7%A8%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rust 原生线程</h2>
+<p>使用 thread::spawn 创建线程</p>
+<pre class="line-numbers"><code class="language-rust">use std::thread;
+use std::time::Duration;
+
+fn main() {
+    thread::spawn(|| {
+        for i in 1..10 {
+            println!(&quot;hi number {} from the spawned thread!&quot;, i);
+            thread::sleep(Duration::from_millis(1));
+        }
+    });
+    // 等待线程执行完成
+    handle.join().unwrap();
+
+    for i in 1..5 {
+        println!(&quot;hi number {} from the main thread!&quot;, i);
+        thread::sleep(Duration::from_millis(1));
+    }
 }
 </code></pre>
-<h3><a id="%E5%8F%91%E9%80%81%E6%B6%88%E6%81%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>发送消息</h3>
-<p>有两个方法可以使用：send、send_result</p>
+<h3><a id="demo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>demo</h3>
+<p>线程内部的代码使用闭包来执行<br />
+main 线程一旦结束，程序就立刻结束。</p>
+<pre class="line-numbers"><code class="language-rust">#[get(&quot;/hello1&quot;)]
+async fn hello1() -&gt; HttpResponse {
+    info!(&quot;hello1 start&quot;);
+    thread::spawn(||{
+        handle();
+    });
+    info!(&quot;hello1 end&quot;);
+    success(Option::from(format!(&quot;Hello1&quot;)))
+}
+
+fn handle() {
+    info!(&quot;do something for hello1&quot;);
+    thread::sleep(time::Duration::from_secs(3));
+}
+</code></pre>
+<p>修改了原来示例中的 hello1 接口，假设其内部逻辑处理需要3秒钟，那么客户端请求过来需要等待3秒钟才有响应。</p>
+<pre class="line-numbers"><code class="language-log">2023-11-22 16:24:00.497  INFO ThreadId(15) rust_web: 16: hello1 start    
+2023-11-22 16:24:00.497  INFO ThreadId(15) rust_web: 25: do something for hello1    
+2023-11-22 16:24:03.510  INFO ThreadId(15) rust_web: 20: hello1 end    
+Request to /hello1 took 3.014134917s
+</code></pre>
+<p>将耗时的逻辑处理在子线程中执行，使接口响应更加迅速。</p>
+<pre class="line-numbers"><code class="language-log">2023-11-22 16:24:25.425  INFO ThreadId(15) rust_web: 16: hello1 start    
+2023-11-22 16:24:25.426  INFO ThreadId(15) rust_web: 20: hello1 end    
+Request to /hello1 took 878.583µs
+2023-11-22 16:24:25.426  INFO ThreadId(26) rust_web: 25: do something for hello1 
+</code></pre>
+<h2><a id="%E7%BA%BF%E7%A8%8B%E6%B1%A0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>线程池</h2>
+<p>当后端应用创建过多的线程时，可能会出现以下问题：</p>
 <ol>
 <li>
-<p><code>send</code> 方法：<code>send</code> 方法用于发送消息到 Kafka，并返回一个 <code>DeliveryFuture</code> 对象。它会尝试将消息发送到 Kafka，如果发送失败，将会在 <code>DeliveryFuture</code> 中返回一个错误。<code>send</code> 方法会在发送过程中进行重试，如果 Kafka 的生产者队列已满，可以使用 <code>queue_timeout</code> 参数来控制重试的时间。你可以将 <code>queue_timeout</code> 设置为 <code>Timeout::Never</code> 来永远重试，或者设置为 <code>Timeout::After(0)</code> 来立即返回错误。如果重试超时并且队列仍然满，<code>DeliveryFuture</code> 中将报告一个 <code>RDKafkaErrorCode::QueueFull</code> 错误。</p>
+<p>内存消耗增加：每个线程都需要一定的内存来存储线程栈、上下文和其他相关数据。如果创建了大量线程，将会消耗大量的内存资源，可能导致内存不足或增加了内存压力。</p>
 </li>
 <li>
-<p><code>send_result</code> 方法：<code>send_result</code> 方法与 <code>send</code> 方法类似，同样用于发送消息到 Kafka，并返回一个 <code>DeliveryResult</code> 对象。但是，与 <code>send</code> 方法不同的是，如果消息无法入队，<code>send_result</code> 方法会立即返回一个错误，同时返回提供的 <code>FutureRecord</code> 对象。它不会进行重试操作。</p>
+<p>上下文切换开销增加：线程之间的切换会导致上下文切换开销。当线程数量增加时，操作系统需要频繁地进行线程调度和切换，这会增加CPU的负载和上下文切换的开销，可能导致系统性能下降。</p>
+</li>
+<li>
+<p>系统资源竞争：创建过多的线程可能导致系统资源的竞争。例如，如果每个线程都需要访问共享的数据库连接、文件句柄或其他资源，那么线程之间可能会发生竞争条件，导致性能下降、数据不一致或死锁等问题。</p>
+</li>
+<li>
+<p>调试和维护困难：线程数量过多会增加代码的复杂性和调试的难度。线程之间的交互和同步可能变得复杂，容易引入并发相关的bug。同时，维护大量线程的代码也会增加开发和维护的复杂性。</p>
 </li>
 </ol>
-<p>发送消息的时候需要构建一个 <code>FutureRecord</code>对象</p>
-<pre class="line-numbers"><code class="language-rust">let message_record = FutureRecord::to(TOPIC).key(&quot;1&quot;).payload(message.as_bytes());
-let result = producer.send(message_record, Timeout::After(Duration::from_secs(3))).await;
+<p>所以不能无限制的创建线程，可以使用线程池，以有限数量的线程来完成复杂业务逻辑。</p>
+<p>Rust 中常用的线程池库</p>
+<ol>
+<li>rayon: rayon 是一个简单易用的并行计算库。它可以自动将任务分配给线程池中的线程，并根据需要动态调整线程数量。rayon 的设计目标是简化并行计算的编程，并提供高性能的并行执行。它适用于数据并行的任务，如迭代、映射、过滤等。适用于 CPU 密集型任务。</li>
+<li>tokio: tokio 是一个异步运行时库，它提供了一个基于事件驱动的线程池。它使用了非阻塞的 I/O 模型和异步任务调度器，适用于构建高性能的异步应用程序。tokio 的线程池可以自动调整线程数量，并提供了丰富的异步操作和工具。它是构建网络服务器、处理并发请求和执行异步任务的常用选择。适用于 IO 密集型任务。</li>
+</ol>
+<h2><a id="rayon" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>rayon</h2>
+<p>rayon 常用来处理并行计算，类似 java 中 parallelStream。</p>
+<h3><a id="demo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>demo</h3>
+<p>添加依赖</p>
+<pre class="line-numbers"><code class="language-toml">rayon = &quot;1.8.0&quot;
 </code></pre>
-<pre class="line-numbers"><code class="language-log">2023-11-27 18:06:09.596  INFO ThreadId(25) rust_web::middleware::kafka: 54: create kafka producer,brokers=localhost:9092    
-2023-11-27 18:06:09.597  INFO ThreadId(25) rust_web::middleware::kafka: 48: send message: FutureRecord { topic: &quot;my_topic&quot;, partition: None, payload: Some([104, 101, 108, 108, 111]), key: Some(&quot;1&quot;), timestamp: None, headers: None }    
-2023-11-27 18:06:09.648  INFO ThreadId(25) rust_web::middleware::kafka: 50: send result: Ok((0, 7))    
-2023-11-27 18:06:09.648  INFO ThreadId(05) rust_web::middleware::kafka: 97: kafka consumer message. message = [Message { ptr: 0x10c6043b8, event_ptr: 0x10c604340 }]    
-2023-11-27 18:06:09.648  INFO ThreadId(05) rust_web::middleware::kafka: 111: partition = 0, offset = 7 message : &quot;hello&quot;    
-2023-11-27 18:06:09.648  INFO ThreadId(05) rust_web::middleware::kafka: 93: recv...    
+<p>并行迭代器可以很容易地将顺序迭代器转换为并行执行。<br />
+ParallelIterator trait 定义了所有并行迭代器的通用方法。<br />
+IndexedPalallelIterator trait 为支持随机访问的迭代器添加了方法。</p>
+<p>最重要的 par_iter 方法，提供了许多迭代函数的并行实现，如 map、for_each、filter、fold 等。</p>
+<p>使用并行非常简单，替换原生的迭代器即可</p>
+<pre class="line-numbers"><code class="language-plain_text">iter() -&gt; par_iter()
+iter_mut() -&gt; par_iter_mut()
+into_iter() -&gt; into_par_iter()
 </code></pre>
-<p>简单的使用 Rust 发送和接收 kafka 消息。以上代码在 <a href="https://github.com/hitolz/rust-web/tree/kafka">github</a>。</p>
-<h2><a id="simple-kafka" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>simple-kafka</h2>
-<p>基于以上代码，做了一个简化使用 rdkafka 组件的小工具 <a href="https://crates.io/crates/simple-kafka">simple-kafka</a>。<br />
-使用这个小工具之后不用再写一堆的创建生产者、消费者代码，极大的减少了 kafka 的接入工作。</p>
-<p>在 main 中，通过 tokio::spawn 线程初始化 kafka 生产者及消费者就能够在 Rust 中使用 kafka 了。</p>
-<pre class="line-numbers"><code class="language-rust">let _init_task = tokio::spawn(async {
-    let simple_kafka_config:simple_kafka::KafkaConfig = kafka_config.to_owned().into();
-    simple_kafka::kafka_init::init_producers(&amp;simple_kafka_config).await;
-    simple_kafka::kafka_init::init_consumers(&amp;simple_kafka_config,&quot;my_topic&quot;, message_handler).await;
-});
+<pre class="line-numbers"><code class="language-rust">use rayon::prelude::*;
+
+fn handle() {
+    info!(&quot;sum start&quot;);
+    let start = Instant::now();
+    let vec: Vec&lt;i32&gt; = (0..=1000).collect();
+    let sum:i32 = vec.iter().map(|x| {
+        thread::sleep(Duration::from_millis(5));
+        x
+    }).sum();
+    let elapsed_time = start.elapsed();
+    info!(&quot;0..=1000 sum = {},elapsed time {}&quot;, sum, elapsed_time);
+}
 </code></pre>
-<p>simple-kafka 在 <a href="https://github.com/hitolz/rust-web/tree/simple-kafka">github</a>。</p>
+<p>计算 0 到 1000 的累加值，每次计算线程 sleep 5毫秒。<br />
+单线程情况下共耗时 6s。</p>
+<pre class="line-numbers"><code class="language-log">2023-11-22 22:11:40.345  INFO ThreadId(26) rust_web: 44: 0..=1000 sum = 500500,elapsed time 6s285ms561µs791ns    
+</code></pre>
+<p>接下来使用 rayon 并行计算<br />
+只需要将 iter() 替换为 par_iter() 方法。</p>
+<pre class="line-numbers"><code class="language-rust">let sum:i32 = vec.par_iter().map(|x| {
+        thread::sleep(Duration::from_millis(5));
+        x
+    }).sum();
+</code></pre>
+<p>耗时为 683ms。</p>
+<pre class="line-numbers"><code class="language-log">2023-11-22 22:13:56.602  INFO ThreadId(26) rust_web: 39: 0..=1000 sum = 500500,elapsed time 683ms454µs750ns    
+</code></pre>
+<h3><a id="%E7%BA%BF%E7%A8%8B%E6%B1%A0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>线程池</h3>
+<!--join 将任务细分未两部分；
+scope 创建一个范围，可以在其中创建任意数量的并行任务；
+ThreadPoolBuilder 可以用于创建自己的线程池或自定义全局线程池。-->
+<p>创建一个线程池</p>
+<pre class="line-numbers"><code class="language-rust">let pool = rayon::ThreadPoolBuilder::new().num_threads(8).build().unwrap();
+</code></pre>
+<p>使用 install 在线程池中执行逻辑操作。</p>
+<pre class="line-numbers"><code class="language-rust">fn handle() {
+    info!(&quot;sum start&quot;);
+    let pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(1)
+        .build()
+        .unwrap();
+    pool.install(|| {
+        let start = Instant::now();
+        let vec: Vec&lt;i32&gt; = (0..=1000).collect();
+
+        let sum: i32 = vec
+            .par_iter()
+            .map(|x| {
+                thread::sleep(Duration::from_millis(5));
+                x
+            })
+            .sum();
+        let elapsed_time = start.elapsed();
+        info!(&quot;0..=1000 sum = {},elapsed time {}&quot;, sum, elapsed_time);
+    });
+}
+</code></pre>
+<p>这段代码，创建了有 1 个线程的线程池，尽管使用了 par_iter() 开启了并行计算，但是使用了 pool.install 方法，意味着这一段操作将在这个只有 1 个线程的线程池中运行。其结果也是 6s。</p>
+<p>不指定线程数的话，并行计算的线程数与 CPU 核数相同。</p>
+<p>rayon 示例代码在 <a href="https://github.com/hitolz/rust-web/tree/thread_rayon">github</a>。</p>
+<h2><a id="tokio" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>tokio</h2>
+<p>tokio 是一个事件驱动的非阻塞 IO 平台，用于编写异步应用。</p>
+<blockquote>
+<p>A reactor backed by the operating system's event queue (epoll, kqueue, IOCP, etc...).</p>
+</blockquote>
+<h2><a id="demo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>demo</h2>
+<pre class="line-numbers"><code class="language-rust">#[get(&quot;/hello1&quot;)]
+async fn hello1() -&gt; HttpResponse {
+    info!(&quot;hello1 start&quot;);
+
+    let x = tokio::spawn(async move {
+        handle(1)
+    });
+
+    let x = tokio::spawn(async move {
+        handle(11)
+    });
+
+    let x = tokio::spawn({
+        handle_async(2)
+    });
+
+    let x = tokio::spawn({
+        handle_async(22)
+    });
+
+
+    let x = tokio::task::spawn_blocking(||{
+        handle(3);
+    });
+
+    let x = tokio::task::spawn_blocking(||{
+        handle(33);
+    });
+
+    let x = tokio::task::spawn_blocking(||{
+        handle_async(4)
+    });
+
+    let x = tokio::task::spawn_blocking(||{
+        let rt = tokio::runtime::Runtime::new().unwrap();
+        rt.block_on(handle_async(44))
+    });
+
+    info!(&quot;hello1 end&quot;);
+    success(Option::from(format!(&quot;Hello1&quot;)))
+}
+
+async fn handle_async(x: i32) {
+    info!(&quot;handle start x = {} ...&quot;, x);
+    thread::sleep(Duration::from_secs(3));
+}
+
+fn handle(x: i32) {
+    info!(&quot;handle start x = {} ...&quot;, x);
+    thread::sleep(Duration::from_secs(3));
+}
+</code></pre>
+<pre class="line-numbers"><code class="language-log">2023-11-24 11:30:47.469  INFO ThreadId(25) rust_web: 22: hello1 start    
+2023-11-24 11:30:47.469  INFO ThreadId(25) rust_web: 58: hello1 end    
+Request to /hello1 took 295.333µs
+2023-11-24 11:30:47.469  INFO ThreadId(36) rust_web: 68: handle start x = 3 ...    
+2023-11-24 11:30:47.469  INFO ThreadId(37) rust_web: 68: handle start x = 33 ...    
+2023-11-24 11:30:47.469  INFO ThreadId(25) rust_web: 68: handle start x = 1 ...    
+2023-11-24 11:30:47.469  INFO ThreadId(39) rust_web: 63: handle start x = 44 ...    
+2023-11-24 11:30:50.474  INFO ThreadId(25) rust_web: 68: handle start x = 11 ...    
+2023-11-24 11:30:53.480  INFO ThreadId(25) rust_web: 63: handle start x = 2 ...    
+2023-11-24 11:30:56.485  INFO ThreadId(25) rust_web: 63: handle start x = 22 ...    
+</code></pre>
+<p>日志输出这样的，说明了什么？</p>
+<ol>
+<li>tokio::spawn 接收的是一个异步方法，如果不是异步方法，需要使用 async move 将其变为异步执行</li>
+<li>Rust 中 async 方法若要同步调用需要使用 <code>.await</code>，而 tokio::spawn 中不用 await，会自动调用</li>
+<li>tokio::spawn 或者 spawn_blocking 都不会阻塞当前线程</li>
+<li>tokio::spawn 会以当前线程执行，多个 spawn 会排队依次执行，而 spawn_blocking 会在新线程中执行，每个 spawn_blocking 都会有一个新线程</li>
+<li>spawn_blocking 中接收闭包，可以执行同步方法，异步方法不会执行，若要执行异步方法，需要 runtime block_on</li>
+</ol>
 <h2><a id="%E5%B0%8F%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>小结</h2>
-<p>以上就是 Rust 使用 kafka 的简单示例，并写了一个小工具减少配置相关的代码。</p>
+<p>rayon 适用于计算密集型，CPU 密集型，<br />
+tokio 适用于 IO 密集型<br />
+tokio::spawn 并不是创建一个新的线程，而是创建一个异步任务(Future)，将其交给 tokio runtime 执行，以当前线程去执行。<br />
+spawn_blocking 会创建一个新的线程执行。<br />
+tokio 文档中并没有介绍线程池的部分。<br />
+若是在子线程中使用 tokio 需要先获取到 runtime。</p>
 
                         
                       </div>
@@ -215,7 +418,7 @@ let result = producer.send(message_record, Timeout::After(Duration::from_secs(3)
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2023/11/27 10:47 上午</span>
+                    <span class="date">2023/11/23 11:37 上午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='Rust%20web.html'>Rust web</a></span>
@@ -349,12 +552,6 @@ let result = producer.send(message_record, Timeout::After(Duration::from_secs(3)
 		  
 		      
 			      <li class="post">
-			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -368,6 +565,12 @@ let result = producer.send(message_record, Timeout::After(Duration::from_secs(3)
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17004933674024.html">Rust web 开发-3.config</a>
 			      </li>
 		     
 		  

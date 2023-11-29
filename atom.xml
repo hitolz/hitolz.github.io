@@ -4,7 +4,7 @@
   <title><![CDATA[非著名Java程序员]]></title>
   <link href="http://blog.hitol.top/atom.xml" rel="self"/>
   <link href="http://blog.hitol.top/"/>
-  <updated>2023-11-28T17:32:44+08:00</updated>
+  <updated>2023-11-29T15:38:57+08:00</updated>
   <id>http://blog.hitol.top/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -92,16 +92,6 @@ curl &quot;http://localhost:8099/get_redis&quot; \
 <p>在 redis 中查询一下<br />
 <img src="http://hitol.blog.cdn.updev.cn/mweb/17012416698132.jpg" alt="" /></p>
 <p>以上代码在 <a href="https://github.com/hitolz/rust-web/tree/redis">github</a>。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications]]></title>
-    <link href="http://blog.hitol.top/17011777269313.html"/>
-    <updated>2023-11-28T21:22:06+08:00</updated>
-    <id>http://blog.hitol.top/17011777269313.html</id>
-    <content type="html"><![CDATA[
 
 ]]></content>
   </entry>
@@ -5994,6 +5984,117 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl apply -f kube-flannel.yml
 </code></pre>
 </details>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[k8s 部署 redis 集群]]></title>
+    <link href="http://blog.hitol.top/16459468152713.html"/>
+    <updated>2022-02-27T15:26:55+08:00</updated>
+    <id>http://blog.hitol.top/16459468152713.html</id>
+    <content type="html"><![CDATA[
+<h2><a id="redis-master" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-master</h2>
+<p>redis-master.yml</p>
+<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-master
+  labels:
+    name: redis-master
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: redis-master
+  template:
+    metadata:
+      labels:
+        name: redis-master
+    spec:
+      containers:
+      - name: master
+        image: redis
+        ports:
+        - containerPort: 6379
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master
+  labels:
+    name: redis-master
+
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    name: redis-master
+</code></pre>
+<h2><a id="redis-slave" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-slave</h2>
+<p>Dockerfile</p>
+<pre class="line-numbers"><code class="language-plain_text">FROM redis
+
+COPY run.sh /
+RUN chmod +x /run.sh
+CMD /run.sh
+</code></pre>
+<p>run.sh</p>
+<pre class="line-numbers"><code class="language-shell">if [[ ${GET_HOSTS_FROM:-dns} == &quot;env&quot; ]]; then
+  redis-server --slaveof ${REDIS_MASTER_SERVICE_HOST} 6379
+else
+  redis-server --slaveof redis-master 6379
+fi
+</code></pre>
+<p>docker build 生成镜像</p>
+<p>redis-slave.yml</p>
+<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-slave
+  labels:
+    name: redis-slave
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: redis-slave
+  template:
+    metadata:
+      labels:
+        name: redis-slave
+    spec:
+      containers:
+      - name: worker
+        image: hitol/redis-slave
+        env:
+        - name: GET_HOSTS_FROM
+          value: env
+        ports:
+        - containerPort: 6379
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-slave
+  labels:
+    name: redis-slave
+
+spec:
+  ports:
+  - port: 6379
+  selector:
+    name: redis-slave
+</code></pre>
+<h2><a id="%E9%AA%8C%E8%AF%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>验证</h2>
+<p><code>kubectl exec -it redis-master-4m5ds redis-cli</code> 往 redis 里写几条数据，然后切换到 slave pod 里看有没有。</p>
 
 ]]></content>
   </entry>
