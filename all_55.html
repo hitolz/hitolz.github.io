@@ -129,72 +129,48 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032820521240.html">
+                <a class="clearlink" href="16032821146100.html">
                 
-                  <h1>EXPLAIN</h1>
+                  <h1>MySQL聚集索引和二级索引</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>MySQL提供了一个<code>EXPLAIN</code>命令，它可以对select语句进行分析，并输出select执行的详细信息，以供开发人员针对性优化。</p>
-<p><code>EXPLAIN</code> 用法非常简单，在select语句之前加上<code>EXPLAIN</code>就行了。</p>
-<p>一个<code>EXPLAIN</code>运行结果：</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/E7DF5E07-46B2-4520-B77A-7BF3690655E0.png" alt="" /></p>
-<p>1、id表示执行的顺序<br />
-id相同，自上而下执行<br />
-id不同，id的序号会自增，id值越大，优先级越高，优先被执行</p>
-<p>2、select_type<br />
-查询的类型，主要用于区别普通查询，联合查询，子查询等复杂查询</p>
-<ul>
-<li>simple:简单的select查询,查询中不包含子查询或union查询</li>
-<li>primary:查询中若包含任何复杂的子部分,最外层查询则被标记为primary</li>
-<li>subquery: 在select 或where 列表中包含了子查询</li>
-<li>derived: 在from列表中包含的子查询被标记为derived,mysql会递归这些子查询,把结果放在临时表里</li>
-<li>union: 做第二个select出现在union之后,则被标记为union,若union包含在from子句的子查询中,外层select将被标记为derived</li>
-<li>union result: 从union表获取结果的select</li>
-</ul>
-<p>3、table<br />
-显示一行的数据关于哪张表的</p>
-<p>4、type<br />
-查询类型从最好到最差依次是:system&gt;const&gt;eq_ref&gt;ref&gt;range&gt;index&gt;All,一般情况下,得至少保证达到range级别,最好能达到ref</p>
-<ul>
-<li>system:表只有一行记录,这是const类型的特例,平时不会出现</li>
-<li>const:表示通过索引一次就找到了,const即常量,它用于比较primary key或unique索引,因为只匹配一行数据,所以效率很快,如将主键置于where条件中,mysql就能将该查询转换为一个常量</li>
-<li>eq_ref:唯一性索引扫描,对于每个索引键,表中只有一条记录与之匹配,常见于主键或唯一索引扫描</li>
-<li>ref:非唯一性索引扫描,返回匹配某个单独值的行,它可能会找到多个符合条件的行,所以他应该属于查找和扫描的混合体</li>
-<li>range:只检索给定范围的行,使用一个索引来选择行,如where语句中出现了between,&lt;,&gt;,in等查询,这种范围扫描索引比全表扫描要好，因为它只需要开始于索引的某一点，而结束于另一点，不用扫描全部索引。</li>
-<li>index:index类型只遍历索引树,这通常比All快,因为索引文件通常比数据文件小,index是从索引中读取,all从硬盘中读取</li>
-<li>all:全表扫描,是最差的一种查询类型</li>
-</ul>
-<p>5、possible_keys<br />
-显示可能应用在这张表的索引，一个或多个，查询到的索引不一定是真正用到的。</p>
-<p>6、key<br />
-实际使用的索引。</p>
-<p>7、key_len<br />
-表示索引使用的字节数，长度越短越好。key_len显示的值为索引字段的最大可能长度，并非实际使用长度。</p>
-<p>8、ref<br />
-显示索引的哪一列被使用了。</p>
-<p>9、rows<br />
-估算的值，找到所需的记录所需要读取的行数</p>
-<p>10、Extra</p>
-<ul>
-<li>Using filesort:说明mysql会对数据使用一个外部的索引排序,而不是按照表内的索引顺序进行读取,mysql中无法利用索引完成的排序操作称为&quot;文件排序&quot;</li>
-<li>Using temporary :使用了临时表保存中间结果,mysql在对查询结果排序时使用临时表,常见于order by和分组查询group by</li>
-<li>Using index:表示相应的select操作中使用了覆盖索引（Covering Index），避免访问了表的数据行，效率不错。如果同时出现using where，表明索引被用来执行索引键值的查找；如果没有同时出现using where，表明索引用来读取数据而非执行查找动作。 其中的覆盖索引含义是所查询的列是和建立的索引字段和个数是一一对应的</li>
-<li>Using where:表明使用了where过滤</li>
-<li>Using join buffer:表明使用了连接缓存,如在查询的时候会有多次join,则可能会产生临时表</li>
-<li>impossible where:表示where子句的值总是false,不能用来获取任何元祖</li>
-<li>select tables optimized away
-<ul>
-<li>在没有GROUPBY子句的情况下，基于索引优化MIN/MAX操作或者对于MyISAM存储引擎优化COUNT(*)操作，不必等到执行阶段再进行计算，查询执行计划生成的阶段即完成优化。</li>
-</ul>
-</li>
-<li>distinct
-<ul>
-<li>优化distinct操作，在找到第一匹配的元组后即停止找同样值的动作</li>
-</ul>
-</li>
-</ul>
+                        	<p>数据库中B+树索引分为聚集索引(clustered index)和辅助索引(secondary index，也被称作二级索引、非聚集索引)，其内部都是B+树，即高度平衡的，叶子节点存放所有数据，不同的是叶子节点存放的是否是一整行的数据。</p>
+<hr />
+<p>聚集索引：InnoDB存储引擎中，按照每张表的主键构建的一棵B+树，叶子节点存放的即为行记录数据。<br />
+InnoDB存储引擎中是必须要有一个聚集索引的，如果没有显示指定哪一字段是主键，则选择表中第一个不允许为NULL的唯一索引当作是聚集索引，如果还是没有，就采用InnoDB为每行数据内置的6字节的rowid作为聚集索引。<br />
+一般聚集索引是自增主键。</p>
+<hr />
+<p>辅助索引：叶子节点并不包含行记录的全部数据，叶子节点除了包含键值以外，每个叶子节点中的索引行中还包含了一个书签(bookmark)，该书签用来告诉InnoDB存储引擎哪里可以找多与索引相对应的行数据。由于InnoDB存储引擎表是索引组织表，因此 辅助索引的书签就是相应行数据的聚集索引键。</p>
+<p>当通过辅助索引来寻找数据时，先查到主键，然后通过主键索引来找到一个完整的行记录。</p>
+<hr />
+<p>回表问题：<br />
+当通过二级索引去查询数据，先查询辅助索引树，得到主键值，再通过聚集索引树查询，得到最终结果。</p>
+<p>回到主键索引树搜索的过程，称为回表。</p>
+<p>如果在一棵高度为3的辅助索引树中查找数据，那需要对这棵辅助索引遍历3次找到指定主键，如果聚集索引树的高度同样为3，那么还需要对聚集索引树进行3次查找，最终得到一个完整的行数据所在的页，一共需要6次逻辑IO访问得到最终的数据页。</p>
+<pre class="line-numbers"><code class="language-plain_text">CREATE TABLE `user` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) COLLATE utf8_bin NOT NULL,
+  `age` int(11) NOT NULL,
+  `sex` varchar(2) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_name` (`name`)
+) ENGINE=InnoDB  
+</code></pre>
+<p>例如，这么一个表结构，两个查询语句</p>
+<pre class="line-numbers"><code class="language-plain_text">select id,name from user where name = 'zhangsan1';
+select id,name,age from user where name = 'zhangsan1';
+</code></pre>
+<p>用EXPLAIN看一下执行计划，</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-09-17-16000042425726.jpg" alt="" style="width:1110px;" /><br />
+可以看到，第一个查询语句用到了索引，而第二个查询语句只是多了1个字段，</p>
+<p>Extra参数中Using index，表示相应的select操作中使用了覆盖索引（Covering Index），避免访问了表的数据行，效率不错。如果同时出现using where，表明索引被用来执行索引键值的查找；如果没有同时出现using where，表明索引用来读取数据而非执行查找动作。</p>
+<p>覆盖索引含义是所查询的列是和建立的索引字段和个数是一一对应的。那么回表问题的解决方案就是 将所用到的字段建立联合索引，覆盖索引。</p>
+<hr />
+<p>B+ 树 与 B树的区别？<br />
+区别在 B 树的节点，无论是不是叶子几点，都存有 key 和 data，而 B+ 树的中间节点只有 key，data 存在叶子节点上。这样 B+ 树的中间节点就能存更多的 key，使得树更矮，减少 IO 次数。</p>
+<p>B+ 树的叶子几点构成一个有序链表，方便区间查找和搜索。而 B 树需要一次次的递归遍历查找。</p>
 
                         
                       </div>
@@ -203,7 +179,7 @@ id不同，id的序号会自增，id值越大，优先级越高，优先被执�
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/10/21 20:07 下午</span>
+                    <span class="date">2020/10/21 20:08 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
@@ -329,6 +305,18 @@ id不同，id的序号会自增，id值越大，优先级越高，优先被执�
 	      
 		      
 			      <li class="post">
+			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -342,18 +330,6 @@ id不同，id的序号会自增，id值越大，优先级越高，优先被执�
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  

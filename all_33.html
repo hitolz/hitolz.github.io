@@ -129,191 +129,238 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16173443661607.html">
+                <a class="clearlink" href="16208119771915.html">
                 
-                  <h1>ibatis 升级到 MyBatis</h1>
+                  <h1>spring-cloud-alibaba  nacos</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
                         	<div class="mweb_toc"><ul>
-<li><a href="#1%E3%80%81%E6%B7%BB%E5%8A%A0-mybatis%E4%BE%9D%E8%B5%96">1、添加 mybatis 依赖</a></li>
-<li><a href="#2%E3%80%81%E9%85%8D%E7%BD%AE-mybatis">2、配置 mybatis</a>
+<li><a href="#nacos%E4%BD%9C%E4%B8%BA%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83">Nacos 作为注册中心</a>
 <ul>
-<li><a href="#%E9%85%8D%E7%BD%AEdatasource">配置 dataSource</a></li>
-<li><a href="#%E9%85%8D%E7%BD%AEsqlsessionfactory">配置 sqlSessionFactory</a></li>
-<li><a href="#%E9%85%8D%E7%BD%AEmapperscannerconfigurer">配置 MapperScannerConfigurer</a></li>
-<li><a href="#%E9%85%8D%E7%BD%AEtransactionmanager">配置 transactionManager</a></li>
+<li><a href="#nacos-rest%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8">Nacos REST 服务调用</a>
+<ul>
+<li><a href="#%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85">服务提供者</a>
+<ul>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
 </ul>
 </li>
-<li><a href="#3%E3%80%81%E9%85%8D%E7%BD%AE-mybatis-generater%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81">3、配置 mybatis-generater 自动生成代码</a>
+<li><a href="#%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85">服务消费者</a>
 <ul>
-<li><a href="#pom%E6%96%87%E4%BB%B6%E4%B8%AD%E5%A2%9E%E5%8A%A0%E6%8F%92%E4%BB%B6">pom 文件中增加插件</a></li>
-<li><a href="#mybatis-generatorconfig-xml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">mybatis-generatorConfig.xml 配置文件</a></li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
 </ul>
 </li>
-<li><a href="#4%E3%80%81%E5%B0%86-ibatis%E7%9A%84-sqlmap%E6%96%87%E4%BB%B6%E8%BD%AC%E6%8D%A2%E4%B8%BA-mapper%E6%96%87%E4%BB%B6%EF%BC%8C%E4%B8%8E%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E7%9A%84%E4%BB%A3%E7%A0%81%E5%90%88%E5%B9%B6">4、将 ibatis 的 SqlMap 文件 转换为 mapper 文件，与自动生成的代码合并</a></li>
-<li><a href="#5%E3%80%81%E4%BF%AE%E6%94%B9-service%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%88%B0%E7%9A%84-dao%E4%B8%BA%E6%96%B0%E7%94%9F%E6%88%90%E7%9A%84-mybatis%E5%AF%B9%E5%BA%94%E7%9A%84-dao">5、修改 service 中使用到的 dao 为新生成的 mybatis 对应的 dao</a></li>
+</ul>
+</li>
+<li><a href="#nacos-dubbo">Nacos Dubbo</a>
+<ul>
+<li><a href="#%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85">服务提供者</a>
+<ul>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
+</ul>
+</li>
+<li><a href="#%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85">服务消费者</a>
+<ul>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#nacos%E4%BD%9C%E4%B8%BA%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83">Nacos 作为配置中心</a>
+<ul>
+<li><a href="#%E5%AE%A2%E6%88%B7%E7%AB%AF">客户端</a>
+<ul>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB">环境隔离</a></li>
 </ul>
 </div>
-<h2><a id="1%E3%80%81%E6%B7%BB%E5%8A%A0-mybatis%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1、添加 mybatis 依赖</h2>
-<pre class="line-numbers"><code class="language-plain_text">&lt;!--mybatis--&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
-    &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
-    &lt;version&gt;3.4.6&lt;/version&gt;
+<p>学习下Spring Cloud Alibaba</p>
+<p>Spring Cloud Alibaba 致力于提供分布式应用服务开发的一站式解决方案。项目包含开发分布式应用服务的必需组件，方便开发者通过 Spring Cloud 编程模型轻松使用这些组件来开发分布式应用服务。</p>
+<h2><a id="nacos%E4%BD%9C%E4%B8%BA%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nacos 作为注册中心</h2>
+<p>适配 Spring Cloud 服务注册与发现标准，默认集成了 Ribbon 的支持。<br />
+<img src="http://hitol.blog.cdn.updev.cn/2020-09-27-16011860283161.jpg" alt="" /></p>
+<p>可作为配置中心、服务注册中心<br />
+Nacos 支持将注册中心(Service Registry）与配置中心(Config Center) 在一个进程合并部署或者将2者分离部署的两种模式。</p>
+<p><a href="https://nacos.io/zh-cn/docs/quick-start.html">启动nacos</a></p>
+<p><a href="https://nacos.io/zh-cn/docs/quick-start-spring-cloud.html">Nacos Spring Cloud 快速开始</a></p>
+<h3><a id="nacos-rest%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nacos REST 服务调用</h3>
+<h4><a id="%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务提供者</h4>
+<h5><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h5>
+<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
+    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
+&lt;/dependency&gt;
+        
+</code></pre>
+<h5><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h5>
+<pre class="line-numbers"><code class="language-plain_text">server:
+  port: 8070
+spring:
+  application:
+    name: service-provider
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+</code></pre>
+<p>编写测试 controller</p>
+<pre class="line-numbers"><code class="language-plain_text">@RestController
+public class EchoController {
+
+	@RequestMapping(value = &quot;/echo/{string}&quot;, method = RequestMethod.GET)
+	public String echo(@PathVariable String string) {
+		return &quot;Hello Nacos222 Discovery &quot; + string;
+	}
+}
+
+</code></pre>
+<p>启动类上添加 <code>@EnableDiscoveryClient</code></p>
+<h4><a id="%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务消费者</h4>
+<h5><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h5>
+<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;
+    &lt;version&gt;0.2.2.RELEASE&lt;/version&gt;
+    &lt;exclusions&gt;
+        &lt;exclusion&gt;
+            &lt;groupId&gt;com.alibaba.nacos&lt;/groupId&gt;
+            &lt;artifactId&gt;nacos-client&lt;/artifactId&gt;
+        &lt;/exclusion&gt;
+    &lt;/exclusions&gt;
 &lt;/dependency&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
-    &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
-    &lt;version&gt;1.3.2&lt;/version&gt;
+    &lt;groupId&gt;com.alibaba.nacos&lt;/groupId&gt;
+    &lt;artifactId&gt;nacos-client&lt;/artifactId&gt;
+    &lt;version&gt;1.1.4&lt;/version&gt;
 &lt;/dependency&gt;
 
 </code></pre>
-<h2><a id="2%E3%80%81%E9%85%8D%E7%BD%AE-mybatis" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2、配置 mybatis</h2>
-<h3><a id="%E9%85%8D%E7%BD%AEdatasource" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 dataSource</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;bean id=&quot;dataSource&quot; class=&quot;org.apache.commons.dbcp.BasicDataSource&quot;&gt;
-	&lt;property name=&quot;driverClassName&quot;  value=&quot;com.mysql.jdbc.Driver&quot; /&gt;
-	&lt;property name=&quot;url&quot;              value=&quot;${xxx}&quot; /&gt;
-	&lt;property name=&quot;username&quot;         value=&quot;${xxx}&quot; /&gt;
-	&lt;property name=&quot;password&quot;         value=&quot;${xxx}&quot; /&gt;
-    &lt;property name=&quot;maxActive&quot; value=&quot;50&quot; /&gt;
-    &lt;property name=&quot;maxIdle&quot; value=&quot;20&quot; /&gt;
-    &lt;property name=&quot;maxWait&quot; value=&quot;3000&quot; /&gt;
-    &lt;property name=&quot;removeAbandoned&quot; value=&quot;true&quot; /&gt;
-    &lt;property name=&quot;removeAbandonedTimeout&quot; value=&quot;60&quot; /&gt;
-    &lt;property name=&quot;logAbandoned&quot; value=&quot;true&quot; /&gt;
-    &lt;property name=&quot;validationQuery&quot; value=&quot;select 1 from dual&quot; /&gt;
-    &lt;property name=&quot;testOnBorrow&quot; value=&quot;true&quot; /&gt;
-&lt;/bean&gt;
+<h5><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h5>
+<pre class="line-numbers"><code class="language-plain_text">server:
+  port: 8071
+spring:
+  application:
+    name: service-consumer
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
 </code></pre>
-<h3><a id="%E9%85%8D%E7%BD%AEsqlsessionfactory" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 sqlSessionFactory</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;bean id=&quot;sqlSessionFactory&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;
-	  p:dataSource-ref=&quot;dataSource&quot;
-	  p:configLocation=&quot;classpath:mybatis-config.xml&quot;
-	  p:typeAliasesPackage=&quot;com.acc.ac.core.common.model&quot;
-	  p:mapperLocations=&quot;classpath:mapper/*.xml&quot;/&gt;
+<p>启动类上添加 <code>@EnableDiscoveryClient</code></p>
+<p>访问 <a href="http://127.0.0.1:8071/echo/123">http://127.0.0.1:8071/echo/123</a> 服务可用</p>
+<h3><a id="nacos-dubbo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nacos Dubbo</h3>
+<h4><a id="%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务提供者</h4>
+<h5><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h5>
+<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
+    &lt;artifactId&gt;dubbo&lt;/artifactId&gt;
+    &lt;version&gt;2.7.10&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
+    &lt;artifactId&gt;dubbo-registry-nacos&lt;/artifactId&gt;
+    &lt;version&gt;2.7.5&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.dubbo&lt;/groupId&gt;
+    &lt;artifactId&gt;dubbo-spring-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;2.7.5&lt;/version&gt;
+&lt;/dependency&gt;
 </code></pre>
-<p>configLocation:<br />
-typeAliasesPackage: 实体类对应的包<br />
-mapperLocations: mapper.xml 文件存放位置。</p>
-<h3><a id="%E9%85%8D%E7%BD%AEmapperscannerconfigurer" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 MapperScannerConfigurer</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;bean class=&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;
-	  p:sqlSessionFactoryBeanName=&quot;sqlSessionFactory&quot;
-	  p:basePackage=&quot;com.acc.ac.core.dao&quot;/&gt;
+<h5><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h5>
+<pre class="line-numbers"><code class="language-plain_text">dubbo:
+  application:
+    name: nacos-provider
+    version: 1.0.0
+
+  registry:
+    address: nacos://127.0.0.1:8848
+    version: 1.0.0
 </code></pre>
-<p>配置之后会自动扫描 basePackage 包下的 mapper interface，加到 Spring 容器中。</p>
-<h3><a id="%E9%85%8D%E7%BD%AEtransactionmanager" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 transactionManager</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;bean id=&quot;transactionManager&quot; class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;
-	  p:dataSource-ref=&quot;dataSource&quot;/&gt;
+<p>启动类上添加 <code>@EnableDubbo</code></p>
+<h4><a id="%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务消费者</h4>
+<h5><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h5>
+<p>与服务提供者依赖一致</p>
+<h5><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h5>
+<pre class="line-numbers"><code class="language-plain_text">dubbo:
+  application:
+    name: nacos-consumer
+    version: 1.0.0
+
+  registry:
+    address: nacos://127.0.0.1:8848
+    version: 1.0.0
 </code></pre>
-<h2><a id="3%E3%80%81%E9%85%8D%E7%BD%AE-mybatis-generater%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3、配置 mybatis-generater 自动生成代码</h2>
-<h3><a id="pom%E6%96%87%E4%BB%B6%E4%B8%AD%E5%A2%9E%E5%8A%A0%E6%8F%92%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>pom 文件中增加插件</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;build&gt;
-    &lt;plugins&gt;
-        &lt;plugin&gt;
-            &lt;groupId&gt;org.mybatis.generator&lt;/groupId&gt;
-            &lt;artifactId&gt;mybatis-generator-maven-plugin&lt;/artifactId&gt;
-            &lt;version&gt;1.3.5&lt;/version&gt;
-            &lt;configuration&gt;
-                &lt;!-- 在控制台打印执行日志 --&gt;
-                &lt;verbose&gt;true&lt;/verbose&gt;
-                &lt;!-- 重复生成时会覆盖之前的文件--&gt;
-                &lt;overwrite&gt;true&lt;/overwrite&gt;
-                &lt;configurationFile&gt;src/main/resources/META-INF/mybatis-generatorConfig.xml&lt;/configurationFile&gt;
-            &lt;/configuration&gt;
-            &lt;dependencies&gt;
-                &lt;dependency&gt;
-                    &lt;groupId&gt;mysql&lt;/groupId&gt;
-                    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
-                    &lt;version&gt;5.1.43&lt;/version&gt;
-                &lt;/dependency&gt;
-            &lt;/dependencies&gt;
-        &lt;/plugin&gt;
-    &lt;/plugins&gt;
-&lt;/build&gt;
+<p>启动类上添加 <code>@EnableDubbo</code></p>
+<h2><a id="nacos%E4%BD%9C%E4%B8%BA%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nacos 作为配置中心</h2>
+<h3><a id="%E5%AE%A2%E6%88%B7%E7%AB%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>客户端</h3>
+<h4><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h4>
+<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-config&lt;/artifactId&gt;
+    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
+&lt;/dependency&gt;
 </code></pre>
-<h3><a id="mybatis-generatorconfig-xml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>mybatis-generatorConfig.xml 配置文件</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE generatorConfiguration
-        PUBLIC &quot;-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN&quot;
-        &quot;http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd&quot;&gt;
-&lt;generatorConfiguration&gt;
-
-    &lt;!--defaultModelType=&quot;flat&quot; 大数据字段，不分表 --&gt;
-    &lt;context id=&quot;Mysql&quot; targetRuntime=&quot;MyBatis3Simple&quot; defaultModelType=&quot;flat&quot;&gt;
-        &lt;property name=&quot;autoDelimitKeywords&quot; value=&quot;true&quot; /&gt;
-        &lt;property name=&quot;beginningDelimiter&quot; value=&quot;`&quot; /&gt;
-        &lt;property name=&quot;endingDelimiter&quot; value=&quot;`&quot; /&gt;
-        &lt;property name=&quot;javaFileEncoding&quot; value=&quot;utf-8&quot; /&gt;
-        &lt;plugin type=&quot;org.mybatis.generator.plugins.SerializablePlugin&quot; /&gt;
-
-        &lt;plugin type=&quot;org.mybatis.generator.plugins.ToStringPlugin&quot; /&gt;
-
-        &lt;!-- 注释 --&gt;
-        &lt;commentGenerator &gt;
-            &lt;property name=&quot;suppressAllComments&quot; value=&quot;false&quot;/&gt;&lt;!-- 是否取消注释 --&gt;
-            &lt;property name=&quot;suppressDate&quot; value=&quot;true&quot; /&gt; &lt;!-- 是否生成注释代时间戳--&gt;
-        &lt;/commentGenerator&gt;
-
-        &lt;!--数据库链接地址账号密码--&gt;
-        &lt;!--数据库链接地址账号密码--&gt;
-        &lt;jdbcConnection driverClass=&quot;com.mysql.jdbc.Driver&quot;
-                        connectionURL=&quot;jdbc:mysql://localhost:3306/ac_core_dev?characterEncoding=utf-8&quot;
-                        userId=&quot;root&quot;
-                        password=&quot;root&quot;&gt;
-        &lt;/jdbcConnection&gt;
-
-        &lt;!-- 类型转换 --&gt;
-        &lt;javaTypeResolver&gt;
-            &lt;!-- 是否使用bigDecimal， false可自动转化以下类型（Long, Integer, Short, etc.） --&gt;
-            &lt;property name=&quot;forceBigDecimals&quot; value=&quot;false&quot;/&gt;
-        &lt;/javaTypeResolver&gt;
-
-        &lt;!--生成Model类存放位置--&gt;
-        &lt;javaModelGenerator targetPackage=&quot;com.acc.ac.core.model&quot; targetProject=&quot;src/main/java&quot;&gt;
-            &lt;property name=&quot;enableSubPackages&quot; value=&quot;true&quot;/&gt;
-            &lt;property name=&quot;trimStrings&quot; value=&quot;true&quot;/&gt;
-        &lt;/javaModelGenerator&gt;
-
-        &lt;!-- 生成mapxml文件 --&gt;
-        &lt;sqlMapGenerator targetPackage=&quot;mapper&quot;
-                         targetProject=&quot;src/main/resources/META-INF&quot; &gt;
-            &lt;property name=&quot;enableSubPackages&quot; value=&quot;true&quot; /&gt;
-        &lt;/sqlMapGenerator&gt;
-
-        &lt;!-- 生成mapxml对应client，也就是接口dao --&gt;
-        &lt;javaClientGenerator targetPackage=&quot;com.acc.ac.core.dao&quot; targetProject=&quot;src/main/java&quot; type=&quot;XMLMAPPER&quot; &gt;
-            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
-        &lt;/javaClientGenerator&gt;
-
-
-        &lt;table tableName=&quot;ac_cfg_sys&quot; enableCountByExample=&quot;true&quot; enableUpdateByExample=&quot;true&quot;
-               enableDeleteByExample=&quot;true&quot; enableSelectByExample=&quot;true&quot; selectByExampleQueryId=&quot;true&quot;&gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;Mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;
-
-    &lt;/context&gt;
-&lt;/generatorConfiguration&gt;
+<h4><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h4>
+<p>新建配置文件 bootstrap.yml，配置文件要与 nacos 里配置的 Data ID 一致。<br />
+nacos 控制台上添加配置<br />
+<img src="http://hitol.blog.cdn.updev.cn/16208113798180.jpg" alt="" /><br />
+Data ID 是 nacos-config2-dev.yml，所以在 bootstrap.yml 配置文件中这么配置</p>
+<p>Data ID 与配置文件之间的联系 <code>${prefix}-${spring.profile.active}.${file-extension}</code><br />
+prefix 默认为 spring.application.name 的值，也可以通过配置项 spring.cloud.nacos.config.prefix来配置。</p>
+<pre class="line-numbers"><code class="language-plain_text">spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+  application:
+    name: nacos-config2
+  profiles:
+    active: dev 
 </code></pre>
-<h2><a id="4%E3%80%81%E5%B0%86-ibatis%E7%9A%84-sqlmap%E6%96%87%E4%BB%B6%E8%BD%AC%E6%8D%A2%E4%B8%BA-mapper%E6%96%87%E4%BB%B6%EF%BC%8C%E4%B8%8E%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E7%9A%84%E4%BB%A3%E7%A0%81%E5%90%88%E5%B9%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4、将 ibatis 的 SqlMap 文件 转换为 mapper 文件，与自动生成的代码合并</h2>
-<p>插件 <a href="https://github.com/mybatis/ibatis2mybatis">https://github.com/mybatis/ibatis2mybatis</a></p>
-<p>将 build.xml 用 idea 打开，选择 Ant build。</p>
-<ul>
-<li>
-<p>destination文件夹：第一个区域为目标文件夹，即最后得到的Mybatis mapper文件都会在该目录下；</p>
-</li>
-<li>
-<p>source文件夹：第二个区域为源文件夹，也就是将我们需要转换的Ibatis mapper文件放在该目录下即可；</p>
-</li>
-<li>
-<p>Ant Build：第三个区域为Ant Build区（如果IntelliJ上没有出现这个，可以通过右上角箭头所指?按钮搜索Ant Build即可出现），我们需要将左侧根目录下build.xml文件拖放到Ant Build区域才会出现图中所示的migrate to mybatis3以及绿色的运行按钮。</p>
-</li>
-</ul>
-<h2><a id="5%E3%80%81%E4%BF%AE%E6%94%B9-service%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%88%B0%E7%9A%84-dao%E4%B8%BA%E6%96%B0%E7%94%9F%E6%88%90%E7%9A%84-mybatis%E5%AF%B9%E5%BA%94%E7%9A%84-dao" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>5、修改 service 中使用到的 dao 为新生成的 mybatis 对应的 dao</h2>
-<p>体力活</p>
-<hr />
-<p><a href="https://blog.csdn.net/zcyzsy/article/details/88912019">https://blog.csdn.net/zcyzsy/article/details/88912019</a></p>
+<p>通过 controller 查看配置</p>
+<pre class="line-numbers"><code class="language-plain_text">@RestController
+@RefreshScope
+@RequestMapping(&quot;/config&quot;)
+public class ConfigController {
+
+
+	@Value(&quot;${user.name}&quot;)
+	private String userName;
+
+	@Value(&quot;${user.age}&quot;)
+	private String userAge;
+
+	@RequestMapping(&quot;/get&quot;)
+	public String get() {
+		return &quot;user.name = &quot; + userName + &quot; user.age = &quot; + userAge;
+	}
+}
+</code></pre>
+<p><a href="http://127.0.0.1:8081/config/get">http://127.0.0.1:8081/config/get</a></p>
+<p>在 nacos 控制台中修改配置后，会同步刷新。</p>
+<h2><a id="%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>环境隔离</h2>
+<p>Nacos 文档中对命名空间的描述：</p>
+<blockquote>
+<p>用于进行租户粒度的配置隔离。不同的命名空间下，可以存在相同的 Group 或 Data ID 的配置。Namespace 的常用场景之一是不同环境的配置的区分隔离，例如开发测试环境和生产环境的资源（如配置、服务）隔离等。</p>
+</blockquote>
+<p>在命名空间页面中添加不同的空间。<br />
+<img src="media/16208119771915/16240064916718.jpg" alt="" /></p>
 
                         
                       </div>
@@ -322,10 +369,8 @@ mapperLocations: mapper.xml 文件存放位置。</p>
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/04/02 14:19 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+                    <span class="date">2021/05/12 17:32 下午</span>
+                    
           				   
                     
 
@@ -448,6 +493,18 @@ mapperLocations: mapper.xml 文件存放位置。</p>
 	      
 		      
 			      <li class="post">
+			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -461,18 +518,6 @@ mapperLocations: mapper.xml 文件存放位置。</p>
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  

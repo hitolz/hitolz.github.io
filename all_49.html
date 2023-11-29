@@ -129,112 +129,70 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032822998588.html">
+                <a class="clearlink" href="16032824371007.html">
                 
-                  <h1>AOP及自定义注解实现Redis缓存</h1>
+                  <h1>JVM运行时数据区域、Java内存模型、Java对象结构</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h2><a id="%E8%83%8C%E6%99%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>背景</h2>
-<p>现在程序中是直接查询数据库数据的，Redis只是用来生成一些不重复id用的，现在要把Redis利用起来，缓存一些配置信息，提高程序运行及响应时间。</p>
-<h2><a id="%E8%AE%BE%E8%AE%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设计</h2>
+                        	<p>JVM内存模型<br />
+也是JVM运行时数据区域。<br />
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.png" alt="JVM内存模型" /></p>
+<hr />
+<p>Java线程内存模型。<br />
+是一种内存规范。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-Java%E7%BA%BF%E7%A8%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8BJMM2.png" alt="Java线程内存模型JM" /></p>
+<h4><a id="%E4%B8%BB%E5%86%85%E5%AD%98%E4%B8%8E%E7%BA%BF%E7%A8%8B%E7%A7%81%E6%9C%89%E5%86%85%E5%AD%98" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>主内存与线程私有内存</h4>
+<h4><a id="cpu%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CPU三级缓存</h4>
+<h4><a id="mesi%E5%8D%8F%E8%AE%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>MESI协议</h4>
+<h4><a id="java%E6%93%8D%E4%BD%9C%E5%86%85%E5%AD%98%E7%9A%848%E4%B8%AA%E6%96%B9%E6%B3%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Java操作内存的8个方法</h4>
+<h4><a id="synchronized%E4%B8%8E-volitale" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>synchronized 与 volitale</h4>
+<hr />
+<p>Java对象结构</p>
+<p><img src="media/16032824371007/15969632678246.jpg" alt="15969632678246" /></p>
+<p>对象在内存中存储的布局可以分为3块区域：</p>
 <ul>
-<li>在Dao层查询数据库之前，先查一下是否在Redis缓存中，如果存在的话直接取Redis中的数据，如果不存在，在去查询数据库，然后将本次查询结果根据查询条件放到缓存中。</li>
-<li>Redis在系统启动的时候先去清空配置信息。</li>
-<li>提供刷新缓存、删除缓存的方法</li>
+<li>对象头 Header</li>
+<li>实例数据Instance Data</li>
+<li>对齐填充。</li>
 </ul>
-<h2><a id="%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%89%8D" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>实现之前</h2>
-<p>在Dao层中每个查询配置信息的方法中，增加查询缓存及设置缓存的方法。<br />
-但是Dao层中的方法太多了。。。一个个加比较枯燥、主要是显得比较low，然后要想个方案实现。</p>
-<h2><a id="%E6%96%B9%E6%A1%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>方案</h2>
-<p>很自然就想到了AOP，环绕通知，<br />
-在目标方法执行之前先查询缓存，如果有就返回了，如果没有再去执行目标方法，<br />
-在执行目标方法之后将查询条件及内容放到Redis中。<br />
-自定义一个注解，被这个注解修饰的方法需要实现AOP。</p>
-<h2><a id="%E5%AE%9E%E7%8E%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>实现</h2>
-<p>定义一个缓存注解，被这个注解修饰的方法，会执行切面中的方法。</p>
-<pre class="line-numbers"><code class="language-plain_text">/**
- * redis缓存注解
- * @author hitol
- * @version $Id: RedisCache.java, v 0.1 2020年3月19日 下午8:26:48 hitol Exp $
- */
-@Documented
-@Target({java.lang.annotation.ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface RedisCache {
-	String redisKey() default &quot;&quot;;
-
-	String cacheInfo() default &quot;&quot;;
-
-	Class&lt;?&gt; className() default String.class;
-}
-
-
-</code></pre>
-<p>定义缓存切面，使用环绕通知.</p>
-<pre class="line-numbers"><code class="language-plain_text">/**
- * 缓存切面
- * @author hitol
- * @version $Id: CacheAop.java, v 0.1 2020年3月20日 下午6:49:10 hitol Exp $
- */
-@Aspect
-@Component
-public class CacheAop {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CacheAop.class);
-
-    @Pointcut(&quot;@annotation(com.acc.ac.core.util.redis.RedisCache)&quot;)
-    public void getCacheInfo() {
-        LOGGER.info(&quot;切入点&quot;);
-    }
-
-    @Around(&quot;getCacheInfo()&quot;)
-    public Object doBefore(ProceedingJoinPoint joinPoint) throws Throwable {
-
-        // 接口的参数
-        Object[] args = joinPoint.getArgs();
-        String arg = &quot;&quot;;
-        if (args.length &gt; 0){
-            arg = (String) args[0];
-        }
-
-        // 得到被代理的方法
-        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-
-        // 得到被代理的方法上的注解
-        RedisCache annotation = method.getAnnotation(RedisCache.class);
-
-        Class&lt;?&gt; className = annotation.className();
-        String redisKey = annotation.redisKey() + arg;
-        Class returnType = method.getReturnType();
-
-        LOGGER.info(&quot;key = {},查询Redis缓存&quot;, redisKey);
-        String cacheInfo = RedisUtils.getString(redisKey);
-
-        if (StringUtils.isNotBlank(cacheInfo)) {
-            LOGGER.info(&quot;key = {},在Redis缓存中.&quot;, redisKey);
-
-            if (&quot;java.util.List&quot;.equals(returnType.getName())){
-                return JSONObject.parseArray(cacheInfo,className);
-            }
-
-            return JSONObject.parseObject(cacheInfo, returnType);
-        }
-        LOGGER.info(&quot;key = {},没有在Redis缓存中查询到.&quot;, redisKey);
-        Object result = joinPoint.proceed(args);
-        cacheInfo = JSONObject.toJSONString(result);
-
-        if (StringUtils.isNotBlank(cacheInfo)) {
-            RedisUtils.setString(redisKey, cacheInfo);
-        }
-
-        return JSONObject.parseObject(cacheInfo, returnType);
-
-    }
-}
-</code></pre>
-<p>完成。</p>
+<p>####对象头<br />
+对象头包括两部分信息，<br />
+第一部分 <code>Mark Word</code>，用于存储对象自身的运行时数据，主要有</p>
+<ul>
+<li>哈希码 HashCode</li>
+<li>GC分代年龄</li>
+<li>锁状态标志</li>
+<li>线程持有的锁</li>
+<li>偏向线程ID</li>
+<li>偏向时间戳</li>
+</ul>
+<p>这部分数据的长度在32位和64位的虚拟机中分别为32bit、64bit，也就是说<code>Mark Word</code>这部分占用内存8个字节。</p>
+<p>第二部分是类型指针，即这个对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例。<br />
+类型指针占用内存4个字节。</p>
+<hr />
+<p>####实例数据<br />
+是对象真真存储的有效信息，也是程序代码中所定义的各种类型的字段内容。<br />
+包含从父类继承下来的和子类中定义的。<br />
+存储顺序会受到虚拟机分配策略参数和字段在Java源码中定义顺序的影响。</p>
+<p>HotSpot虚拟机默认的分配策略为<br />
+longs/doubles<br />
+ints<br />
+shorts/charts<br />
+bytes/booleans<br />
+oops（Ordinary Object Pointers）<br />
+相同宽度的字段总是被分配到一起。</p>
+<p>####对齐填充<br />
+HotSpot VM的自动内存管理系统要求对象起始地址必须是8字节的整数倍，对象的大小必须是8字节的整数倍。<br />
+因此，当该对象的占用内存不是8的整数倍的时候需要对齐填充来补全。</p>
+<hr />
+<p>Object o = new Object()使用了多少内存?</p>
+<p>Mark Word 8<br />
+Class Pointer 4<br />
+Instance Data 0<br />
+对齐 4<br />
+总共16个字节。</p>
 
                         
                       </div>
@@ -243,10 +201,10 @@ public class CacheAop {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/10/21 20:11 下午</span>
+                    <span class="date">2020/10/21 20:13 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          					    <span class="posted-in"><a href='JVM.html'>JVM</a></span>
           				   
                     
 
@@ -369,6 +327,18 @@ public class CacheAop {
 	      
 		      
 			      <li class="post">
+			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -382,18 +352,6 @@ public class CacheAop {
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  

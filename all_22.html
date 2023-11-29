@@ -129,162 +129,34 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16356861657170.html">
+                <a class="clearlink" href="16400068828317.html">
                 
-                  <h1>Graphql</h1>
+                  <h1>Spring.factories</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h2><a id="%E7%AE%80%E4%BB%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>简介</h2>
-<p>Graphql 是一种类似于 REST 的一种 API 标准。<br />
-不是一种数据库技术。</p>
-<p>总的来说就是，后端可以根据前端需要的字段返回对应的信息，不需要修改原有接口。</p>
-<pre class="line-numbers"><code class="language-plain_text">--- 1.前端请求字段
-{
-  hero {
-    name
-  }
-}
-
---- 2.后端返回结果
-{
-  &quot;data&quot;: {
-    &quot;hero&quot;: {
-      &quot;name&quot;: &quot;R2-D2&quot;
-    }
-  }
-}
-
-
---- 1.前端请求字段
-{
-  hero {
-    name
-    # Queries can have comments!
-    friends {
-      name
-    }
-  }
-}
-
---- 2.后端返回结果
-{
-  &quot;data&quot;: {
-    &quot;hero&quot;: {
-      &quot;name&quot;: &quot;R2-D2&quot;,
-      &quot;friends&quot;: [
-        {
-          &quot;name&quot;: &quot;Luke Skywalker&quot;
-        },
-        {
-          &quot;name&quot;: &quot;Han Solo&quot;
-        },
-        {
-          &quot;name&quot;: &quot;Leia Organa&quot;
-        }
-      ]
-    }
-  }
-}
+                        	<p>Spring 在启动加载 bean 的时候会加载所有 jar 包中的 <code>/resources/META-INF/spring.factories</code> 文件中配置的 bean。<br />
+所以我们在提供给别人工具包的时候可以在 spring.factories 文件中定义一些 bean 自动加载到使用方的 Spring 容器中。<br />
+spring.factories 中一般都是一些配置 bean，也就是使用了 @Configuration 这个注解的 bean，在这个配置 bean 中初始化一些我们的工具包需要的 bean 就比较方便了。</p>
+<p>在<code>src/main/resources/META-INF</code>下新建 spring.factories 文件<br />
+类似这种的配置：</p>
+<pre class="line-numbers"><code class="language-properties">org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.wacai.gbl.config.LinkupSmsAutoConfiguration
 </code></pre>
-<h2><a id="demo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>demo</h2>
-<p><a href="https://gitee.com/hitol/graphql-demo.git">https://gitee.com/hitol/graphql-demo.git</a></p>
-<h3><a id="dependencies" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>dependencies</h3>
-<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
-    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
-    &lt;artifactId&gt;graphql-java&lt;/artifactId&gt;
-    &lt;version&gt;11.0&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
-    &lt;artifactId&gt;graphiql-spring-boot-starter&lt;/artifactId&gt;
-    &lt;version&gt;3.10.0&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;com.graphql-java&lt;/groupId&gt;
-    &lt;artifactId&gt;graphql-java-spring-boot-starter-webmvc&lt;/artifactId&gt;
-    &lt;version&gt;1.0&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;com.google.guava&lt;/groupId&gt;
-    &lt;artifactId&gt;guava&lt;/artifactId&gt;
-    &lt;version&gt;26.0-jre&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<h3><a id="schema" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Schema</h3>
-<p>在 resources 文件夹下新建一个 schema.graphqls 文件，其内容如下</p>
-<pre class="line-numbers"><code class="language-graphql">type Query {
-  bookById(id: ID): Book 
-}
-
-type Book {
-  id: ID
-  name: String
-  pageCount: Int
-  author: Author
-}
-
-type Author {
-  id: ID
-  firstName: String
-  lastName: String
-}
-
-</code></pre>
-<h2><a id="graphql%E5%8A%A0%E8%BD%BD%E5%88%B0-spring" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Graphql 加载到 Spring</h2>
-<pre class="line-numbers"><code class="language-java">
-@Component
-public class GraphQLProvider {
-
-
-    @Autowired
-    GraphQLDataFetchers graphQLDataFetchers;
-
-    private GraphQL graphQL;
-
-    @PostConstruct
-    public void init() throws IOException {
-        URL url = Resources.getResource(&quot;schema.graphqls&quot;);
-        String sdl = Resources.toString(url, Charsets.UTF_8);
-        GraphQLSchema graphQLSchema = buildSchema(sdl);
-        this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
-    }
-
-    private GraphQLSchema buildSchema(String sdl) {
-        TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);
-        RuntimeWiring runtimeWiring = buildWiring();
-        SchemaGenerator schemaGenerator = new SchemaGenerator();
-        return schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
-    }
-
-    private RuntimeWiring buildWiring() {
-        return RuntimeWiring.newRuntimeWiring()
-                .type(newTypeWiring(&quot;Query&quot;)
-                        .dataFetcher(&quot;bookById&quot;, graphQLDataFetchers.getBookByIdDataFetcher()))
-                .type(newTypeWiring(&quot;Book&quot;)
-                        .dataFetcher(&quot;author&quot;, graphQLDataFetchers.getAuthorDataFetcher()))
-                .build();
-    }
-
-    @Bean
-    public GraphQL graphQL() {
-        return graphQL;
-    }
-
-}
-</code></pre>
-<p>其中对于文件的解析 最重要的方法就是 buildWiring</p>
-<p>这一块其实就是后端提供的关于 graphql 的接口。</p>
-<p>使用了一个插件，方便调试 graphiql</p>
-<p>项目启动之后浏览器中访问，<a href="http://localhost:8080/graphiql">http://localhost:8080/graphiql</a><br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/16356860055184.jpg" alt="" /></p>
-<hr />
-<p><a href="http://graphql.js.cool/learn/">http://graphql.js.cool/learn/</a></p>
-<p><a href="https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/">https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/</a></p>
+<h2><a id="%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E6%B3%A8%E8%A7%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>一些常用的注解</h2>
+<h3><a id="configuration" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Configuration</h3>
+<p>开启配置</p>
+<h3><a id="enableconfigurationproperties-xxxproperties-class-xxxproperties-class" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@EnableConfigurationProperties(xxxProperties.class,xxxProperties.class)</h3>
+<p>读取哪些配置文件<br />
+xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&quot;)</code> 读取配置文件中前缀相同的配置</p>
+<h3><a id="bean" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Bean</h3>
+<p>与下面的配置配合使用</p>
+<h3><a id="conditionalonexpression" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@ConditionalOnExpression(&quot;${} || ${}&quot;)</h3>
+<p>可以配置多个条件，满足条件的就会初始化 bean</p>
+<h3><a id="conditionalonproperty-value-xx-xx-xx-havingvalue-matchifmissing-false" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@ConditionalOnProperty(value = &quot;xx.xx.xx&quot;,havingValue = &quot;&quot;,matchIfMissing = false)</h3>
+<p>读取配置文件中的 xx.xx.xx，havingValue 的值与配置文件中的值相等则会初始化</p>
+<h3><a id="primary" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Primary</h3>
+<p>默认，首选的。 </p>
 
                         
                       </div>
@@ -293,8 +165,12 @@ public class GraphQLProvider {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/10/31 21:16 下午</span>
-                    
+                    <span class="date">2021/12/20 21:28 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
           				   
                     
 
@@ -417,6 +293,18 @@ public class GraphQLProvider {
 	      
 		      
 			      <li class="post">
+			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -430,18 +318,6 @@ public class GraphQLProvider {
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  

@@ -4,13 +4,107 @@
   <title><![CDATA[非著名Java程序员]]></title>
   <link href="http://blog.hitol.top/atom.xml" rel="self"/>
   <link href="http://blog.hitol.top/"/>
-  <updated>2023-11-28T17:31:27+08:00</updated>
+  <updated>2023-11-28T17:32:44+08:00</updated>
   <id>http://blog.hitol.top/</id>
   <author>
     <name><![CDATA[]]></name>
     
   </author>
   <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[Rust web 开发-7.redis]]></title>
+    <link href="http://blog.hitol.top/17012416680122.html"/>
+    <updated>2023-11-29T15:07:48+08:00</updated>
+    <id>http://blog.hitol.top/17012416680122.html</id>
+    <content type="html"><![CDATA[
+<div class="mweb_toc"><ul>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
+<li><a href="#%E8%BF%9E%E6%8E%A5redis">连接 redis</a></li>
+<li><a href="#%E8%8E%B7%E5%8F%96redis%E9%93%BE%E6%8E%A5">获取 redis 链接</a></li>
+<li><a href="#%E6%89%A7%E8%A1%8Credis%E5%91%BD%E4%BB%A4">执行 redis 命令</a></li>
+</ul>
+</div>
+<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+<ol>
+<li>web 框架</li>
+<li>数据库/orm</li>
+<li>config</li>
+<li>log</li>
+<li>线程池</li>
+<li>kafka</li>
+<li>redis</li>
+<li>打包成 docker 镜像</li>
+<li>gracefully shutdown</li>
+</ol>
+<hr />
+<p>本篇介绍一下 Rust 如何使用 redis。</p>
+<p>Redis 的官方库 <a href="https://crates.io/crates/redis">https://crates.io/crates/redis</a></p>
+<h2><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h2>
+<pre class="line-numbers"><code class="language-toml">redis = &quot;0.23.3&quot;
+</code></pre>
+<h2><a id="%E8%BF%9E%E6%8E%A5redis" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>连接 redis</h2>
+<pre class="line-numbers"><code class="language-rust">let client = redis::Client::open(&quot;redis://127.0.0.1/&quot;)?;
+</code></pre>
+<h2><a id="%E8%8E%B7%E5%8F%96redis%E9%93%BE%E6%8E%A5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>获取 redis 链接</h2>
+<pre class="line-numbers"><code class="language-rust">let connection = client.get_connection().unwrap();
+</code></pre>
+<h2><a id="%E6%89%A7%E8%A1%8Credis%E5%91%BD%E4%BB%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>执行 redis 命令</h2>
+<pre class="line-numbers"><code class="language-rust">pub fn set_ex(key: String, value: String, seconds: i32) -&gt; bool {
+    get_redis_conn()
+        .set_ex::&lt;String, String, bool&gt;(key, value, seconds as usize)
+        .unwrap_or_else(|err| {
+            error!(&quot;Failed to set_ex value in Redis: {:?}&quot;, err);
+            false
+        })
+}
+
+pub fn get(key: String) -&gt; String {
+    get_redis_conn()
+        .get::&lt;String, String&gt;(key)
+        .unwrap_or_else(|err| {
+            error!(&quot;Failed to get value from Redis: {:?}&quot;, err);
+            &quot;&quot;.to_string()
+        })
+}
+</code></pre>
+<p>写了两个命令的实现，一个是 set_ex，一个是 get，api 中调用。</p>
+<pre class="line-numbers"><code class="language-rust">
+#[get(&quot;/set_redis&quot;)]
+async fn set_redis() -&gt; HttpResponse{
+    let result = middleware::redis_client::set_ex(&quot;hello&quot;.to_string(), &quot;hello&quot;.to_string(), 100);
+    success(Some(result))
+}
+
+#[get(&quot;/get_redis&quot;)]
+async fn get_redis() -&gt; HttpResponse{
+    let result = middleware::redis_client::get(&quot;hello&quot;.to_string());
+    success(Some(result))
+}
+</code></pre>
+<p>测试一下</p>
+<pre class="line-numbers"><code class="language-bash">curl &quot;http://localhost:8099/set_redis&quot; \
+     -H 'token: 1'
+
+curl &quot;http://localhost:8099/get_redis&quot; \
+    -H 'token: 1'
+</code></pre>
+<p>在 redis 中查询一下<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/17012416698132.jpg" alt="" /></p>
+<p>以上代码在 <a href="https://github.com/hitolz/rust-web/tree/redis">github</a>。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications]]></title>
+    <link href="http://blog.hitol.top/17011777269313.html"/>
+    <updated>2023-11-28T21:22:06+08:00</updated>
+    <id>http://blog.hitol.top/17011777269313.html</id>
+    <content type="html"><![CDATA[
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rust web 开发-6.kafka]]></title>
@@ -5900,214 +5994,6 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl apply -f kube-flannel.yml
 </code></pre>
 </details>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[k8s 部署 redis 集群]]></title>
-    <link href="http://blog.hitol.top/16459468152713.html"/>
-    <updated>2022-02-27T15:26:55+08:00</updated>
-    <id>http://blog.hitol.top/16459468152713.html</id>
-    <content type="html"><![CDATA[
-<h2><a id="redis-master" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-master</h2>
-<p>redis-master.yml</p>
-<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: redis-master
-  labels:
-    name: redis-master
-
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: redis-master
-  template:
-    metadata:
-      labels:
-        name: redis-master
-    spec:
-      containers:
-      - name: master
-        image: redis
-        ports:
-        - containerPort: 6379
-
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-master
-  labels:
-    name: redis-master
-
-spec:
-  ports:
-  - port: 6379
-    targetPort: 6379
-  selector:
-    name: redis-master
-</code></pre>
-<h2><a id="redis-slave" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-slave</h2>
-<p>Dockerfile</p>
-<pre class="line-numbers"><code class="language-plain_text">FROM redis
-
-COPY run.sh /
-RUN chmod +x /run.sh
-CMD /run.sh
-</code></pre>
-<p>run.sh</p>
-<pre class="line-numbers"><code class="language-shell">if [[ ${GET_HOSTS_FROM:-dns} == &quot;env&quot; ]]; then
-  redis-server --slaveof ${REDIS_MASTER_SERVICE_HOST} 6379
-else
-  redis-server --slaveof redis-master 6379
-fi
-</code></pre>
-<p>docker build 生成镜像</p>
-<p>redis-slave.yml</p>
-<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: redis-slave
-  labels:
-    name: redis-slave
-
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      name: redis-slave
-  template:
-    metadata:
-      labels:
-        name: redis-slave
-    spec:
-      containers:
-      - name: worker
-        image: hitol/redis-slave
-        env:
-        - name: GET_HOSTS_FROM
-          value: env
-        ports:
-        - containerPort: 6379
-
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-slave
-  labels:
-    name: redis-slave
-
-spec:
-  ports:
-  - port: 6379
-  selector:
-    name: redis-slave
-</code></pre>
-<h2><a id="%E9%AA%8C%E8%AF%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>验证</h2>
-<p><code>kubectl exec -it redis-master-4m5ds redis-cli</code> 往 redis 里写几条数据，然后切换到 slave pod 里看有没有。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[时间格式转换问题]]></title>
-    <link href="http://blog.hitol.top/16407431442346.html"/>
-    <updated>2021-12-29T09:59:04+08:00</updated>
-    <id>http://blog.hitol.top/16407431442346.html</id>
-    <content type="html"><![CDATA[
-<div class="mweb_toc"><ul>
-<li><a href="#%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4">各种标准时间</a>
-<ul>
-<li><a href="#%E6%A0%BC%E6%9E%97%E5%A8%81%E6%B2%BB%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4gmt">格林威治标准时间GMT</a></li>
-<li><a href="#%E5%8D%8F%E8%B0%83%E4%B8%96%E7%95%8C%E6%97%B6%E9%97%B4utc">协调世界时间UTC</a></li>
-<li><a href="#iso8601">ISO8601</a></li>
-<li><a href="#cst">CST</a></li>
-</ul>
-</li>
-<li><a href="#%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyymmdd%E4%B8%8E-yyyymmdd%E7%9A%84%E5%8C%BA%E5%88%AB">日期格式化 YYYYMMdd 与 yyyyMMdd 的区别</a></li>
-<li><a href="#%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyy-mm-dd-hh-mm-ss%E4%B8%8E-yyyy-mm-dd-hh-mm-ss%E7%9A%84%E5%8C%BA%E5%88%AB">日期格式化 yyyy-MM-dd HH:mm:SS 与 yyyy-MM-dd HH:mm:ss 的区别</a></li>
-</ul>
-</div>
-<p>在配置文件中全局的配置</p>
-<pre class="line-numbers"><code class="language-properties">spring.jackson.date-format=yyyy-MM-dd HH:mm:ss
-spring.jackson.time-zone=GMT+8
-</code></pre>
-<p>所有使用到时间格式的地方都会转换为这种格式的</p>
-<h2><a id="%E5%90%84%E7%A7%8D%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>各种标准时间</h2>
-<p><a href="https://ahuigo.github.io/b/c/shell-time#/">https://ahuigo.github.io/b/c/shell-time#/</a></p>
-<h3><a id="%E6%A0%BC%E6%9E%97%E5%A8%81%E6%B2%BB%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4gmt" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>格林威治标准时间GMT</h3>
-<p>含义：「格林威治标准时间」(Greenwich Mean Time，简称G.M.T.)以伦敦格林威治的子午线为基线，以地球自转为标准，全球都以此标准设定时间。<br />
-以下几个时间相同，但用于不同的时区/地区。</p>
-<pre class="line-numbers"><code class="language-plain_text">Wed Aug 14 08:21:05 GMT 2013 //标准GMT时间
-Wed Aug 14 16:21:05 GMT+8 2013 //东8区，即我们的北京时间
-Wed Aug 14 03:21:05 GMT-5 2013 //西5区，美国和加拿大时间
-</code></pre>
-<h3><a id="%E5%8D%8F%E8%B0%83%E4%B8%96%E7%95%8C%E6%97%B6%E9%97%B4utc" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>协调世界时间UTC</h3>
-<p>由于地球每天的自转是有些不规则的，而且正在缓慢减速，因此格林威治时间已经不再被作为标准时间使用。现在的标准时间，是由原子钟报时的协调世界时（UTC: Coordinated Universal Time）。UTC比GMT更精确严谨。</p>
-<pre class="line-numbers"><code class="language-plain_text">Wed Aug 14 08:21:05 UTC 2013 //标准UTC时间
-Wed Aug 14 16:21:05 UTC+8 2013 //东8区，即我们的北京时间
-Wed Aug 14 03:21:05 UTC-5 2013 //西5区，美国和加拿大时间
-</code></pre>
-<p>常识：<br />
-国际原子时的误差为每日数纳秒<br />
-对我们日常所使用的时间工具而言，UTC和GMT时间没有区别。</p>
-<h3><a id="iso8601" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ISO8601</h3>
-<p>moment.defaultFormat is the ISO8601 format YYYY-MM-DDTHH:mm:ssZ<br />
-ISO8601:</p>
-<pre class="line-numbers"><code class="language-plain_text">new Date(&quot;2016-01-01 11:13:00Z&quot;);      +0区
-new Date(&quot;2016-01-01T11:13:00Z&quot;);      +0区
-new Date(&quot;2016-01-01 11:13:00+08&quot;);     +8区
-new Date(&quot;2016-01-01 11:13:00+0800&quot;); +8区
-new Date(&quot;2016-01-01T11:13:00+08:00&quot;); +8区
-new Date(&quot;2016-01-01T11:13:00.333+08:00&quot;); +8区
-
-new Date(&quot;2016-01-01&quot;);                 +0区(默认)
-new Date(&quot;2016-01-01 11:13:00&quot;);        +8区(默认)
-new Date(&quot;October 13, 1975 11:13:00&quot;);  +8区(默认)
-</code></pre>
-<h3><a id="cst" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CST</h3>
-<p>CST是时区缩写，可以指下列的时区：</p>
-<p>澳洲中部时间，Central Standard Time (Australia)<br />
-中部标准时区（北美洲），Central Standard Time (North America)<br />
-北京时间，China Standard Time<br />
-古巴标准时间，Cuba Standard Time，参见北美东部时区<br />
-建议不要使用CST时间，对于以下时间，你可能不知道它到底是北京时间，还是其它时间：</p>
-<pre class="line-numbers"><code class="language-plain_text">Wed Aug 14 08:21:05 CST 2013 //北京、北美中部、古巴、澳洲中部？Who knows?
-</code></pre>
-<p>CST 转北京时间<br />
-在需要转换日期格式的字段上添加注解<code>com.fasterxml.jackson.annotation.JsonFormat</code></p>
-<pre class="line-numbers"><code class="language-plain_text">@JsonFormat(pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;,timezone = &quot;GMT+8&quot;)
-</code></pre>
-<h2><a id="%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyymmdd%E4%B8%8E-yyyymmdd%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>日期格式化 YYYYMMdd 与 yyyyMMdd 的区别</h2>
-<p>大写的 YYYY 表示这一天所在的周 所在的年份，也就是说如果当前周跨年了，这个获取到的就有问题。</p>
-<h2><a id="%E6%97%A5%E6%9C%9F%E6%A0%BC%E5%BC%8F%E5%8C%96yyyy-mm-dd-hh-mm-ss%E4%B8%8E-yyyy-mm-dd-hh-mm-ss%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>日期格式化 yyyy-MM-dd HH:mm:SS 与 yyyy-MM-dd HH:mm:ss 的区别</h2>
-<p>HH 表示按 24 小时格式返回</p>
-<p>SS 表示毫秒？<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot%202022-01-10%20at%2018.04.39@2x.png" alt="CleanShot 2022-01-10 at 18.04.39@2x" /></p>
-<p>用小写的 ss 表示秒。</p>
-<pre class="line-numbers"><code class="language-sql">select d.queue,
-       count(*) as total
-from gbl_loan a
-         join gbl_loan_type_dictionary b on a.loan_source = b.id and a.channel_id = b.channel_id
-         join gbl_collection_case c on c.loan_id = a.id
-         join gbl_assignment d on c.id = d.collection_id
-where a.loan_source = #{loanSourceId}
-  and a.active = 1
-  and c.active = 1
-  and b.tenant = #{tenant}
-  and d.queue = #{queue}
-  and d.agentId is not null
-&lt;![CDATA[
-  and a.created_time &gt; #{reportStartDate}
-  and a.created_time &lt; #{reportEndDate}
-]]&gt;
-</code></pre>
 
 ]]></content>
   </entry>

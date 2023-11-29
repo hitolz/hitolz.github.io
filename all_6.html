@@ -129,285 +129,270 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16892187258215.html">
+                <a class="clearlink" href="17002146115226.html">
                 
-                  <h1>wasm 初体验</h1>
+                  <h1>Rust web 开发-2. 数据库/orm</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
                         	<div class="mweb_toc"><ul>
-<li><a href="#hello-world">Hello World</a>
+<li><a href="#sqlx">sqlx</a></li>
+<li><a href="#orm">orm</a>
 <ul>
-<li><a href="#1%E5%AE%89%E8%A3%85">1. 安装</a></li>
-<li><a href="#2%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%B9%E7%9B%AE">2. 初始化项目</a></li>
-<li><a href="#3%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE">3. 构建项目</a></li>
-<li><a href="#4%E7%94%9F%E6%88%90%E9%A1%B5%E9%9D%A2">4. 生成页面</a></li>
-<li><a href="#5%E9%A1%B5%E9%9D%A2%E4%BD%BF%E7%94%A8%E6%88%91%E4%BB%AC%E7%9A%84%E4%BB%A3%E7%A0%81">5. 页面使用我们的代码</a></li>
-<li><a href="#6%E5%90%AF%E5%8A%A8">6. 启动</a></li>
-</ul>
-</li>
-<li><a href="#rust-to-wasm">Rust to wasm</a>
-<ul>
-<li><a href="#1-install-rust">1. install Rust</a></li>
-<li><a href="#2-cargo-install-wasm-pack">2. <code>cargo install wasm-pack</code></a></li>
-<li><a href="#3-cargo-new-lib-hello-wasm">3. <code>cargo new --lib hello-wasm</code></a></li>
-<li><a href="#4-lib-rs%E4%B8%AD%E7%BC%96%E5%86%99-wasm%E4%BB%A3%E7%A0%81">4. lib.rs 中编写 wasm 代码</a></li>
-<li><a href="#5-build">5. build</a></li>
-<li><a href="#6-using-the-package-on-the-web">6. Using the package on the web</a>
-<ul>
-<li><a href="#%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AAhtml%E9%A1%B5%E9%9D%A2%EF%BC%8C%E4%BD%BF%E7%94%A8-hello-wasm-js">编写一个 html 页面，使用 hello_wasm.js</a></li>
-<li><a href="#%E5%90%AF%E5%8A%A8%E4%B8%80%E4%B8%AAserver%E6%9C%8D%E5%8A%A1">启动一个 server 服务</a></li>
-</ul>
-</li>
-<li><a href="#7-making-our-package-available-to-npm">7. Making our package available to npm</a>
-<ul>
-<li><a href="#%E9%87%8D%E6%96%B0%E7%BC%96%E8%AF%91">重新编译</a></li>
-<li><a href="#npm-link">npm link</a></li>
-<li><a href="#using-the-npm-package-on-the-web">Using the npm package on the web</a>
-<ul>
-<li><a href="#package-json">package.json</a></li>
-<li><a href="#webpack-config-js">webpack.config.js</a></li>
-<li><a href="#index-js">index.js</a></li>
-<li><a href="#index-html">index.html</a></li>
-<li><a href="#site%E7%9A%84%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84">site 的目录结构</a></li>
-<li><a href="#%E5%9C%A8site%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%AD%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4">在 site 文件夹中执行命令</a></li>
-<li><a href="#%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98">出现的问题</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#%E8%A1%A5%E5%85%85">补充</a></li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0%E5%88%9D%E5%A7%8B%E5%8C%96">数据库连接池初始化</a></li>
 </ul>
 </li>
 </ul>
 </div>
-<p>WASM 不是一种编程语言🙂。简而言之，它是一种将用一种编程语言编写的代码转换为浏览器可理解的机器代码（JavaScript）的技术。</p>
-<p>WASM (WebAssembly 的缩写)被设计为其他语言的编译目标，允许服务器端代码(如 C 或 C++代码)被编译成 WASM 并在浏览器中执行。</p>
-<p>也被称作  web 汇编。</p>
-<h2><a id="hello-world" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hello World</h2>
-<h3><a id="1%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. 安装</h3>
-<pre class="line-numbers"><code class="language-plain_text">cargo install cargo-generate
-
-cargo install wasm-pack
-
-npm install npm@latest -g
-
-</code></pre>
-<h3><a id="2%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%B9%E7%9B%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. 初始化项目</h3>
-<pre class="line-numbers"><code class="language-plain_text">cargo generate --git https://github.com/rustwasm/wasm-pack-template
-</code></pre>
-<p>项目命名为 first-wasm</p>
-<h3><a id="3%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. 构建项目</h3>
-<p>项目根目录执行</p>
-<pre class="line-numbers"><code class="language-plain_text">wasm-pack build
-</code></pre>
-<p>构建完成后会生成 pkg 目录。</p>
-<h3><a id="4%E7%94%9F%E6%88%90%E9%A1%B5%E9%9D%A2" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. 生成页面</h3>
-<p>node 初始化一个前端项目，在根目录执行。</p>
-<pre class="line-numbers"><code class="language-plain_text">npm init wasm-app www
-</code></pre>
-<p>项目中会出现一个 www 目录，<br />
-进入到 www 中，安装 node 依赖</p>
-<pre class="line-numbers"><code class="language-plain_text">npm install
-</code></pre>
-<h3><a id="5%E9%A1%B5%E9%9D%A2%E4%BD%BF%E7%94%A8%E6%88%91%E4%BB%AC%E7%9A%84%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. 页面使用我们的代码</h3>
+<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
-<li>在 pkg 目录下执行</li>
+<li>web 框架</li>
+<li>数据库/orm</li>
+<li>config</li>
+<li>log</li>
+<li>线程池</li>
+<li>kafka</li>
+<li>redis</li>
+<li>打包成 docker 镜像</li>
+<li>gracefully shutdown</li>
 </ol>
-<pre class="line-numbers"><code class="language-plain_text">npm link
+<hr />
+<p>本文介绍第二部分，数据库及 orm。<br />
+主要介绍 Rust 如何使用 sqlx 连接 MySQL，orm 选用了 rbatis。</p>
+<p>准备 MySQL 数据库，简单的一个表结构</p>
+<pre class="line-numbers"><code class="language-sql">CREATE TABLE `user` (
+	`id` bigint NOT NULL AUTO_INCREMENT,
+	`user_name` varchar(32) DEFAULT NULL,
+	`password` varchar(64) DEFAULT NULL,
+	PRIMARY KEY (`id`)
+);
 </code></pre>
-<p>pkg 文件夹中会出现 package.json 文件</p>
-<ol start="2">
-<li>在 www 中执行</li>
-</ol>
-<pre class="line-numbers"><code class="language-plain_text">npm link first-wasm
-</code></pre>
-<ol start="3">
-<li>修改 /www/index.js</li>
-</ol>
-<pre class="line-numbers"><code class="language-plain_text">import * as wasm from 'first-wasm';
-
-</code></pre>
-<h3><a id="6%E5%90%AF%E5%8A%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>6. 启动</h3>
-<pre class="line-numbers"><code class="language-plain_text">npm run start
-</code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16919824092381.jpg" alt="" /></p>
-<p>如果要修改 alert 显示的内容，修改 rust 代码 lib.rs 中的 greet 方法。</p>
-<h1><a id="rust-to-wasm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rust to wasm</h1>
-<p>上面的例子是使用的 cargo generate  直接生成的模板，<br />
-按照 <a href="https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm">https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm</a> 里的步骤<br />
-可以自己一步一步实现 rust 编译为 wasm。</p>
-<h2><a id="1-install-rust" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. install Rust</h2>
-<h2><a id="2-cargo-install-wasm-pack" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. <code>cargo install wasm-pack</code></h2>
-<h2><a id="3-cargo-new-lib-hello-wasm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. <code>cargo new --lib hello-wasm</code></h2>
-<h2><a id="4-lib-rs%E4%B8%AD%E7%BC%96%E5%86%99-wasm%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. lib.rs 中编写 wasm 代码</h2>
-<pre class="line-numbers"><code class="language-rust">use wasm_bindgen::prelude::*;
-
-#[wasm_bindgen]
-extern {
-    pub fn alert(s: &amp;str);
-}
-    
-#[wasm_bindgen]
-pub fn greet(name: &amp;str) {
-    alert(&amp;format!(&quot;Hello, {}!&quot;, name));
-}
-</code></pre>
+<p>接下来分别使用 sqlx 和 rbatis 进行  CRUD 操作。</p>
+<h2><a id="sqlx" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>sqlx</h2>
 <p>添加依赖</p>
-<pre class="line-numbers"><code class="language-plain_text">[lib]
-crate-type = [&quot;cdylib&quot;, &quot;rlib&quot;]
-    
-[dependencies]
-wasm-bindgen=&quot;0.2&quot;
+<pre class="line-numbers"><code class="language-plain_text">sqlx = { version = &quot;0.7.2&quot;, features = [
+    &quot;runtime-async-std-native-tls&quot;,
+    &quot;mysql&quot;,
+    &quot;chrono&quot;,
+] }
 </code></pre>
-<h2><a id="5-build" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. build</h2>
-<pre class="line-numbers"><code class="language-plain_text">wasm-pack build --target web
-</code></pre>
-<p>现在的目录结构</p>
-<pre class="line-numbers"><code class="language-plain_text">├── Cargo.lock
-├── Cargo.toml
-├── index.html
-├── pkg
-│   ├── hello_wasm.d.ts
-│   ├── hello_wasm.js
-│   ├── hello_wasm_bg.wasm
-│   ├── hello_wasm_bg.wasm.d.ts
-│   └── package.json
-├── src
-│   └── lib.rs
-└── target
-    ├── CACHEDIR.TAG
-    ├── release
-    └── wasm32-unknown-unknown
-</code></pre>
-<h2><a id="6-using-the-package-on-the-web" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>6. Using the package on the web</h2>
-<h3><a id="%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AAhtml%E9%A1%B5%E9%9D%A2%EF%BC%8C%E4%BD%BF%E7%94%A8-hello-wasm-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>编写一个 html 页面，使用 hello_wasm.js</h3>
-<pre class="line-numbers"><code class="language-html">&lt;!doctype html&gt;
-&lt;html lang=&quot;en-US&quot;&gt;
-  &lt;head&gt;
-    &lt;meta charset=&quot;utf-8&quot; /&gt;
-    &lt;title&gt;hello-wasm example&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;script type=&quot;module&quot;&gt;
-      import init, { greet } from &quot;./pkg/hello_wasm.js&quot;;
-      init().then(() =&gt; {
-        greet(&quot;WebAssembly&quot;);
-      });
-    &lt;/script&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
-<h3><a id="%E5%90%AF%E5%8A%A8%E4%B8%80%E4%B8%AAserver%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动一个 server 服务</h3>
-<pre class="line-numbers"><code class="language-plain_text">python3 -m http.server
-</code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16919806550698.jpg" alt="" /></p>
-<p>至此，一个简单的 wasm 就运行起来了。</p>
-<h2><a id="7-making-our-package-available-to-npm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>7. Making our package available to npm</h2>
-<h3><a id="%E9%87%8D%E6%96%B0%E7%BC%96%E8%AF%91" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重新编译</h3>
-<p>如果想要在 node 中使用 wasm，重新编译代码，使用 bundler 模式</p>
-<pre class="line-numbers"><code class="language-plain_text">wasm-pack build --target bundler
-</code></pre>
-<h3><a id="npm-link" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>npm link</h3>
-<blockquote>
-<p>Next, let's use npm link to make this package available to other JavaScript packages installed</p>
-</blockquote>
-<pre class="line-numbers"><code class="language-plain_text">cd pkg
-npm link
-</code></pre>
-<blockquote>
-<p>We now have an npm package, written in Rust, but compiled to WebAssembly. It's ready for use from JavaScript, and doesn't require the user to have Rust installed; the code included was the WebAssembly code, not the Rust source.</p>
-</blockquote>
-<h3><a id="using-the-npm-package-on-the-web" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the npm package on the web</h3>
-<p>根目录中创建新的文件夹，site</p>
-<pre class="line-numbers"><code class="language-plain_text">mkdir site
-cd site
-npm link hello-wasm
-</code></pre>
-<p>site 文件夹中创建 package.json、webpack.config.js、index.js、index.html</p>
-<h4><a id="package-json" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>package.json</h4>
-<pre class="line-numbers"><code class="language-json">{
-  &quot;scripts&quot;: {
-    &quot;serve&quot;: &quot;webpack-dev-server&quot;
-  },
-  &quot;dependencies&quot;: {
-    &quot;hello-wasm&quot;: &quot;^0.1.0&quot;
-  },
-  &quot;devDependencies&quot;: {
-    &quot;webpack&quot;: &quot;^4.25.1&quot;,
-    &quot;webpack-cli&quot;: &quot;^3.1.2&quot;,
-    &quot;webpack-dev-server&quot;: &quot;^3.1.10&quot;
-  }
+<p>sqlx 连接数据库的链接格式：<code>mysql://{user}:{password}@{IP}:{port}/{database name}</code><br />
+例如我本地的数据库地址：<code>mysql://root:12345678@localhost:3306/rust_web</code></p>
+<p>连接 MySQL</p>
+<pre class="line-numbers"><code class="language-rust">use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
+
+pub async fn get_mysql_pool() -&gt; Pool&lt;MySql&gt; {
+    let database_url = &quot;mysql://root:12345678@localhost:3306/rust_web&quot;;
+    MySqlPoolOptions::new().connect(database_url).await.unwrap()
 }
 </code></pre>
-<h4><a id="webpack-config-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>webpack.config.js</h4>
-<pre class="line-numbers"><code class="language-js">const path = require(&quot;path&quot;);
-module.exports = {
-  entry: &quot;./index.js&quot;,
-  output: {
-    path: path.resolve(__dirname, &quot;dist&quot;),
-    filename: &quot;index.js&quot;,
-  },
-  mode: &quot;development&quot;,
-};
-</code></pre>
-<h4><a id="index-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>index.js</h4>
-<pre class="line-numbers"><code class="language-js">import(&quot;./node_modules/hello-wasm/hello_wasm.js&quot;).then((js) =&gt; {
-  js.greet(&quot;WebAssembly with npm&quot;);
-});
-</code></pre>
-<h4><a id="index-html" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>index.html</h4>
-<pre class="line-numbers"><code class="language-html">&lt;!doctype html&gt;
-&lt;html lang=&quot;en-US&quot;&gt;
-  &lt;head&gt;
-    &lt;meta charset=&quot;utf-8&quot; /&gt;
-    &lt;title&gt;hello-wasm example&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;script src=&quot;./index.js&quot;&gt;&lt;/script&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
-<h4><a id="site%E7%9A%84%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>site 的目录结构</h4>
-<pre class="line-numbers"><code class="language-plain_text">├── index.html
-├── index.js
-├── node_modules
-│   └── hello-wasm -&gt; ../../pkg
-├── package.json
-└── webpack.config.js
-</code></pre>
-<h4><a id="%E5%9C%A8site%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%AD%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>在 site 文件夹中执行命令</h4>
-<pre class="line-numbers"><code class="language-plain_text">npm install
-npm run serve
-</code></pre>
-<h4><a id="%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>出现的问题</h4>
-<pre class="line-numbers"><code class="language-plain_text">opensslErrorStack: [ 'error:03000086:digital envelope routines::initialization error' ],
-library: 'digital envelope routines',
-reason: 'unsupported',
-code: 'ERR_OSSL_EVP_UNSUPPORTED'
-</code></pre>
-<p>先执行这条命令，然后在运行</p>
-<pre class="line-numbers"><code class="language-plain_text">export NODE_OPTIONS=--openssl-legacy-provider
-</code></pre>
-<p>以上就是 Rust 编译为 wasm 的过程。</p>
-<hr />
-<h2><a id="%E8%A1%A5%E5%85%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>补充</h2>
-<pre class="line-numbers"><code class="language-plain_text">编译为 web
-wasm-pack build --target web
+<p>api</p>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{get, post, web, HttpResponse, Scope};
+use serde::{Deserialize, Serialize};
 
-编译为 bundler
-wasm-pack build --target bundler
+use crate::{db::get_mysql_pool, success};
+
+// 定义路由，对外暴露的接口
+pub fn routes() -&gt; Scope {
+    web::scope(&quot;/users&quot;)
+        .service(add_user)
+        .service(query_user)
+        .service(update_user)
+        .service(delete_user)
+}
+
+// 定义实体
+#[derive(Debug, Deserialize, Clone, Serialize, Default,sqlx::FromRow)]
+#[serde(rename_all = &quot;camelCase&quot;)]
+pub struct User {
+    pub id: Option&lt;i64&gt;,
+    pub user_name: Option&lt;String&gt;,
+    pub password: Option&lt;String&gt;,
+}
+
+#[post(&quot;/add&quot;)]
+pub async fn add_user(user: web::Json&lt;User&gt;) -&gt; HttpResponse {
+    let user = user.to_owned();
+    let id = save_user(user).await.unwrap();
+    success(Some(id))
+}
+// insert
+async fn save_user(user: User) -&gt; Result&lt;u64, sqlx::Error&gt; {
+    // 获取数据库连接池
+    let pool = get_mysql_pool().await;
+    let sql = &quot;insert into user(user_name, password) values (?,?)&quot;;
+    let result = sqlx::query(sql)
+        .bind(user.user_name)
+        .bind(user.password)
+        .execute(&amp;pool)
+        .await?;
+    let id = result.last_insert_id();
+    Ok(id)
+}
+
+// update
+#[post(&quot;/update/{id}&quot;)]
+pub async fn update_user(id: web::Path&lt;i64&gt;, user: web::Json&lt;User&gt;) -&gt; HttpResponse {
+    let user = user.to_owned();
+
+    let sql = &quot;update user set user_name =?, password =? where id = ?&quot;;
+    sqlx::query(sql)
+        .bind(user.user_name)
+        .bind(user.password)
+        .bind(id.into_inner())
+        .execute(&amp;get_mysql_pool().await)
+        .await.unwrap();
+    success(Some(1))
+}
+
+// select
+#[get(&quot;/query/{id}&quot;)]
+pub async fn query_user(id:web::Path&lt;i64&gt;) -&gt; HttpResponse {
+    let sql = &quot;select * from user where id = ?&quot;;
+    let result = sqlx::query_as::&lt;_,User&gt;(sql).bind(id.into_inner()).fetch_optional(&amp;get_mysql_pool().await).await.unwrap();
+    success(result)
+}
+
+// delete
+#[post(&quot;/delete/{id}&quot;)]
+pub async fn delete_user(id:web::Path&lt;i64&gt;) -&gt; HttpResponse {
+    let sql = &quot;delete from user where id = ?&quot;;
+    sqlx::query(sql).bind(id.into_inner()).execute(&amp;get_mysql_pool().await).await.unwrap();
+    success(Some(1))
+}
 </code></pre>
-<p>编译为 web，可以在 html 中直接引用。<br />
-编译为 bundler、nodejs，可以在 nodejs 中使用。</p>
-<p><a href="https://rustwasm.github.io/docs/wasm-pack/commands/build.html">https://rustwasm.github.io/docs/wasm-pack/commands/build.html</a><br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/16904715130997.jpg" alt="" /></p>
-<hr />
-<p><a href="https://xie.infoq.cn/article/0bb5ff2fa5d5d9db492c88a4c">https://xie.infoq.cn/article/0bb5ff2fa5d5d9db492c88a4c</a></p>
-<p><a href="https://llever.com/rustwasm-book/game-of-life/hello-world.zh.html">https://llever.com/rustwasm-book/game-of-life/hello-world.zh.html</a></p>
-<p><a href="https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm">https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm</a></p>
-<p><a href="https://rustwasm.github.io/docs/wasm-pack/introduction.html">https://rustwasm.github.io/docs/wasm-pack/introduction.html</a></p>
+<p>服务启动之后测试：<br />
+新增 user：</p>
+<pre class="line-numbers"><code class="language-bash">curl -X &quot;POST&quot; &quot;http://localhost:8099/users/add&quot; \
+     -H 'token: 1' \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -d $'{
+  &quot;password&quot;: &quot;3456789&quot;,
+  &quot;userName&quot;: &quot;张三&quot;
+}'
+</code></pre>
+<p>查询 user：</p>
+<pre class="line-numbers"><code class="language-bash">curl &quot;http://localhost:8099/users/query/1&quot; \
+     -H 'token: 1'
+</code></pre>
+<p>修改 user：</p>
+<pre class="line-numbers"><code class="language-bash">curl -X &quot;POST&quot; &quot;http://localhost:8099/users/update/1&quot; \
+     -H 'token: 1' \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -d $'{
+  &quot;password&quot;: &quot;987654&quot;,
+  &quot;userName&quot;: &quot;lisi&quot;
+}'
+</code></pre>
+<p>删除 user：</p>
+<pre class="line-numbers"><code class="language-bash">curl -X &quot;POST&quot; &quot;http://localhost:8099/users/delete/2&quot; \
+     -H 'token: 1'
+</code></pre>
+<h2><a id="orm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>orm</h2>
+<p>orm 目前我使用过的有两个，一个是 Diesel，一个是 rbatis。</p>
+<p>Diesel 可以看以前写过的一篇文章，<a href="https://blog.hitol.top/16669473309292.html">https://blog.hitol.top/16669473309292.html</a><br />
+本篇文章主要介绍一下 rbatis。</p>
+<p>添加依赖</p>
+<pre class="line-numbers"><code class="language-plain_text"># rbatis
+rbs = { version = &quot;4.3&quot; }
+rbatis = { version = &quot;4.3&quot; }
+rbdc-mysql = { version = &quot;4.3&quot; }
+</code></pre>
+<p>创建 rbatis</p>
+<pre class="line-numbers"><code class="language-rust">use rbatis::RBatis;
+use rbdc_mysql::MysqlDriver;
+
+pub async fn get_rb() -&gt; RBatis {
+    let database_url = &quot;mysql://root:12345678@localhost:3306/rust_web&quot;;
+    let rb = RBatis::new();
+    rb.init(MysqlDriver {}, database_url).unwrap();
+    rb
+}
+</code></pre>
+<p>在 User 实体定义的文件中调用 <code>crud!</code> 宏。</p>
+<blockquote>
+<p>crud!(User {});//crud = insert+select_by_column+update_by_column+delete_by_column</p>
+</blockquote>
+<p>宏调用之后就可以直接使用 User::insert、User::update、User::select、User::delete。</p>
+<pre class="line-numbers"><code class="language-rust">#[derive(Debug, Deserialize, Clone, Serialize, Default, sqlx::FromRow)]
+#[serde(rename_all = &quot;camelCase&quot;)]
+pub struct User {
+    pub id: Option&lt;i64&gt;,
+    pub user_name: Option&lt;String&gt;,
+    pub password: Option&lt;String&gt;,
+}
+
+crud!(User {}); // crud
+
+#[post(&quot;/add&quot;)]
+pub async fn add_user(user: web::Json&lt;User&gt;) -&gt; HttpResponse {
+    let user = user.to_owned();
+    // let id = save_user(user).await.unwrap();
+    let id = save_user_rb(user).await;
+    success(Some(id))
+}
+
+async fn save_user_rb(user: User) -&gt; i64 {
+    let rbatis = get_rb().await;
+    let x = User::insert(&amp;rbatis, &amp;user).await;
+    let x = x.unwrap();
+    i64::from(x.last_insert_id)
+}
+
+//update: User::update_by_column(&amp;get_rb().await, &amp;user, &quot;id&quot;).await;
+//select: User::select_by_column(&amp;get_rb().await, &quot;id&quot;,id.into_inner()).await.unwrap();
+//delete: User::delete_by_column(&amp;get_rb().await, &quot;id&quot;, id.into_inner()).await;
+</code></pre>
+<blockquote>
+<p>使用了 serde::rename_all 将实体中的字段格式从下划线转为了驼峰类型，然而使用 rbaits 会有问题，打印出的 sql 中字段也是驼峰的类型。需要注意的是本文中代码仅为演示使用，偷了个懒，数据库实体跟 VO 层用的是一个 struct 实体。在实际生产代码中应是两个实体，通过实现 From/into 转换为数据库实体即可。</p>
+</blockquote>
+<h3><a id="%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0%E5%88%9D%E5%A7%8B%E5%8C%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数据库连接池初始化</h3>
+<p>需要注意点是数据库连接池现在是每次调用都会初始化，为了演示连接数据库。要改为只初始化一次，可以使用lazy_static宏来延迟初始化静态变量。lazy_static宏允许在首次访问变量时执行初始化代码。</p>
+<pre class="line-numbers"><code class="language-rust">use lazy_static::*;
+use rbatis::RBatis;
+use rbdc_mysql::MysqlDriver;
+use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
+use std::{sync::Mutex, time::Duration};
+
+lazy_static! {
+    static ref MYSQL_POOL: Mutex&lt;Vec&lt;Pool&lt;MySql&gt;&gt;&gt; = Mutex::new(vec![]);
+}
+
+lazy_static! {
+    static ref RB: Mutex&lt;RBatis&gt; = Mutex::new(RBatis::new());
+}
+
+pub async fn init_db(database_url: String) {
+    let pool = MySqlPoolOptions::new()
+        .max_connections(20)
+        .min_connections(5)
+        .idle_timeout(Some(Duration::from_secs(30)))
+        .connect(&amp;database_url)
+        .await
+        .unwrap();
+
+    let mut pools = MYSQL_POOL.lock().unwrap();
+    (*pools).push(pool);
+
+    let rbatis = RBatis::new();
+    rbatis.init(MysqlDriver {}, &amp;database_url).unwrap();
+    let mut rb = RB.lock().unwrap();
+    *rb = rbatis;
+
+}
+
+pub async fn get_mysql_pool() -&gt; Pool&lt;MySql&gt; {
+    let pools = MYSQL_POOL.lock().unwrap();
+    unsafe { (*pools).get_unchecked(0).to_owned() }
+}
+
+pub async fn get_rb() -&gt; RBatis {
+    RB.lock().unwrap().clone()
+}
+</code></pre>
+<p>本篇文章代码在 <a href="https://github.com/hitolz/rust-web/tree/db_orm">github</a></p>
+<p>我在项目中用的话一般是 sqlx + rbatis 一起使用，简单的 sql 用 rbatis 自动生成的，复杂一些的 sql 就使用 sqlx 自己手写……</p>
 
                         
                       </div>
@@ -416,10 +401,12 @@ wasm-pack build --target bundler
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2023/07/13 11:25 上午</span>
+                    <span class="date">2023/11/17 17:50 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='rust.html'>rust</a></span>
+          				  
+          					    <span class="posted-in"><a href='Rust%20web.html'>Rust web</a></span>
           				   
                     
 
@@ -542,6 +529,18 @@ wasm-pack build --target bundler
 	      
 		      
 			      <li class="post">
+			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -555,18 +554,6 @@ wasm-pack build --target bundler
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  

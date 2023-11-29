@@ -129,75 +129,219 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16061834685059.html">
+                <a class="clearlink" href="16066274541815.html">
                 
-                  <h1>Java写一个死锁</h1>
+                  <h1>Java内存模型</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<pre class="line-numbers"><code class="language-plain_text">public class DeadLockDemo {
+                        	<div class="mweb_toc"><ul>
+<li><a href="#java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%9F%BA%E7%A1%80">Java内存模型的基础</a>
+<ul>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E9%80%9A%E4%BF%A1%E5%8F%8A%E7%BA%BF%E7%A8%8B%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E5%90%8C%E6%AD%A5%EF%BC%9F">线程之间如何通信及线程之间如何同步？</a></li>
+<li><a href="#java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%8A%BD%E8%B1%A1%E7%BB%93%E6%9E%84">Java内存模型抽象结构</a></li>
+<li><a href="#%E6%BA%90%E4%BB%A3%E7%A0%81%E5%88%B0%E6%8C%87%E4%BB%A4%E5%BA%8F%E5%88%97%E7%9A%84%E9%87%8D%E6%8E%92%E5%BA%8F">源代码到指令序列的重排序</a></li>
+</ul>
+</li>
+<li><a href="#%E9%87%8D%E6%8E%92%E5%BA%8F">重排序</a>
+<ul>
+<li><a href="#%E6%95%B0%E6%8D%AE%E4%BE%9D%E8%B5%96%E6%80%A7">数据依赖性</a></li>
+<li><a href="#as-if-serial%E8%AF%AD%E4%B9%89">as-if-serial语义</a></li>
+<li><a href="#%E7%A8%8B%E5%BA%8F%E9%A1%BA%E5%BA%8F%E8%A7%84%E5%88%99">程序顺序规则</a></li>
+</ul>
+</li>
+<li><a href="#%E9%A1%BA%E5%BA%8F%E4%B8%80%E8%87%B4%E6%80%A7">顺序一致性</a>
+<ul>
+<li><a href="#%E9%A1%BA%E5%BA%8F%E4%B8%80%E8%87%B4%E6%80%A7%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B">顺序一致性内存模型</a></li>
+</ul>
+</li>
+<li><a href="#volatile%E7%9A%84%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89">volatile的内存语义</a>
+<ul>
+<li><a href="#volatile%E5%86%99%E8%AF%BB%E7%9A%84%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89">volatile 写-读的内存语义</a></li>
+<li><a href="#volatile%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89%E7%9A%84%E5%AE%9E%E7%8E%B0">volatile 内存语义的实现</a></li>
+</ul>
+</li>
+<li><a href="#%E9%94%81%E7%9A%84%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89">锁的内存语义</a></li>
+<li><a href="#final%E5%9F%9F%E7%9A%84%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89">final域的内存语义</a>
+<ul>
+<li><a href="#final%E5%9F%9F%E7%9A%84%E9%87%8D%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99">final域的重排序规则</a></li>
+<li><a href="#%E5%86%99final%E5%9F%9F%E7%9A%84%E9%87%8D%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99">写final域的重排序规则</a></li>
+</ul>
+</li>
+<li><a href="#happens-before">happens-before</a>
+<ul>
+<li><a href="#%E5%AE%9A%E4%B9%89%EF%BC%9A">定义：</a></li>
+<li><a href="#%E8%A7%84%E5%88%99">规则</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8F%8C%E9%87%8D%E6%A3%80%E6%9F%A5%E9%94%81%E5%AE%9A%E4%B8%8E%E5%BB%B6%E8%BF%9F%E5%88%9D%E5%A7%8B%E5%8C%96">双重检查锁定与延迟初始化</a></li>
+</ul>
+</div>
+<h2><a id="java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%9F%BA%E7%A1%80" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Java内存模型的基础</h2>
+<h3><a id="%E7%BA%BF%E7%A8%8B%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E9%80%9A%E4%BF%A1%E5%8F%8A%E7%BA%BF%E7%A8%8B%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E5%90%8C%E6%AD%A5%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>线程之间如何通信及线程之间如何同步？</h3>
+<p>线程之间的通信机制有两种：共享内存和消息传递。</p>
+<p>在共享内存的并发模型里，线程之间共享程序的公共状态，通过写-读内存中的公共状态进行隐式通信。</p>
+<p>在消息传递的并发模型里，线程之间必须通过发送消息来显式进行通信。</p>
+<p>同步是指程序中用于控制不同线程间操作发生相对顺序的机制。在共享内存模型里，同步是显式进行的。在消息传递的并发模型里，同步是隐式进行的。</p>
+<p>Java的并发采用的是共享内存模型。</p>
+<h3><a id="java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%8A%BD%E8%B1%A1%E7%BB%93%E6%9E%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Java内存模型抽象结构</h3>
+<p><img src="http://hitol.blog.cdn.updev.cn/16066424225868.jpg" alt="" style="width:791px;" /></p>
+<h3><a id="%E6%BA%90%E4%BB%A3%E7%A0%81%E5%88%B0%E6%8C%87%E4%BB%A4%E5%BA%8F%E5%88%97%E7%9A%84%E9%87%8D%E6%8E%92%E5%BA%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>源代码到指令序列的重排序</h3>
+<p>在执行程序时，为了提高性能，编译器和处理器会对指令做重排序。重排序分为3种类型：</p>
+<ol>
+<li>
+<p>编译器优化的重排序<br />
+编译器在不改变单线程程序语义的前提下。</p>
+</li>
+<li>
+<p>指令级并行的重排序<br />
+如果不存在数据依赖性，处理器可以改变语句对应机器指令的执行顺序。</p>
+</li>
+<li>
+<p>内存系统的重排序</p>
+</li>
+</ol>
+<p>对于编译器重排序，JMM的编译器重排序规则会禁止特定类型的编译器重排序，<br />
+对于处理器重排序，JMM的处理器重排序规则会要求Java编译器在生成指令序列时，插入特定类型的内存屏障指令，通过内存屏障指令来禁止特定类型的处理器重排序。</p>
+<h2><a id="%E9%87%8D%E6%8E%92%E5%BA%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重排序</h2>
+<p>重排序是指编译器和处理器为了优化程序性能而对指令序列进行重新排序的一种手段。</p>
+<h3><a id="%E6%95%B0%E6%8D%AE%E4%BE%9D%E8%B5%96%E6%80%A7" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数据依赖性</h3>
+<p><img src="http://hitol.blog.cdn.updev.cn/16072223811047.jpg" alt="" /></p>
+<p>重新排序上面两个操作的执行顺序，程序的执行结果就会被改变。</p>
+<p>单线程在重排序时，会遵守数据依赖性，编译器和处理器不会改变存在数据依赖关系的两个操作的执行顺序。</p>
+<h3><a id="as-if-serial%E8%AF%AD%E4%B9%89" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>as-if-serial语义</h3>
+<p>as-if-serial语义的意思是：不管怎么重排序，单线程中程序的执行结果不能被改变。</p>
+<h3><a id="%E7%A8%8B%E5%BA%8F%E9%A1%BA%E5%BA%8F%E8%A7%84%E5%88%99" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>程序顺序规则</h3>
+<p>happens-before具有传递性</p>
+<h2><a id="%E9%A1%BA%E5%BA%8F%E4%B8%80%E8%87%B4%E6%80%A7" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>顺序一致性</h2>
+<p>如果程序是正确同步的，程序的执行将具有顺序一致性，即程序的执行结果与该程序在顺序一致性内存模型中的执行结果相同。</p>
+<h3><a id="%E9%A1%BA%E5%BA%8F%E4%B8%80%E8%87%B4%E6%80%A7%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>顺序一致性内存模型</h3>
+<p>两个特性：</p>
+<ol>
+<li>一个线程中的所有操作必须按照程序的顺序来执行</li>
+<li>所有线程都只能看到一个单一的操作执行顺序。在顺序一致性内存模型中，每个操作都必须原子执行且立刻对所有线程可见</li>
+</ol>
+<h2><a id="volatile%E7%9A%84%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>volatile的内存语义</h2>
+<p>可见性<br />
+有序性</p>
+<h3><a id="volatile%E5%86%99%E8%AF%BB%E7%9A%84%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>volatile 写-读的内存语义</h3>
+<p>当写一个volatile变量时，JMM会把该线程对应的本地内存中的共享变量值刷新到主内存。</p>
+<p>当读一个volatile变量时，JMM会把该线程对应的本地内存置为无效，线程接下来将从主内存中读取共享变量。</p>
+<h3><a id="volatile%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89%E7%9A%84%E5%AE%9E%E7%8E%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>volatile 内存语义的实现</h3>
+<p><img src="http://hitol.blog.cdn.updev.cn/16072242218081.jpg" alt="" /></p>
+<p>从表中可以看出</p>
+<ol>
+<li>当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序，这个规则确保volatile写之前的操作不会被编译器重排序到volatile写之后</li>
+<li>当第一个操作是volatile读时，不管第二个操作是什么，都不能重排序。这个规则确保volatile读之后的操作不会被编译器重排序到volatile读之前</li>
+<li>当第一个操作是volatile写，第二个操作是volatile读时不能重排序</li>
+</ol>
+<p>为了实现volatile内存语义，在编译器生成字节码时，会在指令序列中插入内存屏障来禁止特定类型的处理器重排序</p>
+<ul>
+<li>在每个volatile写操作前插入StoreStore屏障，在写操作后插入StoreLoad屏障；</li>
+<li>在每个volatile读操作前插入LoadLoad屏障，在读操作后插入LoadStore屏障；</li>
+</ul>
+<p>JMM采用了比较保守的做法，在每个volatile写的后面或者在每个volatile读的前面插入一个StoreLoad屏障。</p>
+<h2><a id="%E9%94%81%E7%9A%84%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>锁的内存语义</h2>
+<p>锁除了让临界区互斥执行外，还可以让释放锁的线程向获取同一个锁的线程发送消息。</p>
+<p>当线程释放锁时，JMM会把该线程对应的本地内存中的共享变量刷新到主内存中。</p>
+<p>当线程获取锁时，JMM会把该线程对应的本地内存置为无效，从而使得被监视器保护的临界区代码必须从主内存中读取共享变量。</p>
+<p>锁释放与volatile写有相同的内存语义，锁获取与volatile读有相同的内存语义。</p>
+<h2><a id="final%E5%9F%9F%E7%9A%84%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>final域的内存语义</h2>
+<p>对final域的读写更像是普通的变量访问。</p>
+<h3><a id="final%E5%9F%9F%E7%9A%84%E9%87%8D%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>final域的重排序规则</h3>
+<ul>
+<li>
+<p>在构造函数内对一个final域的写入，与随后把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序</p>
+</li>
+<li>
+<p>初次读一个包含final域的对象的引用，与随后初次读这个final域，这两个操作之间不能重排序</p>
+</li>
+</ul>
+<h3><a id="%E5%86%99final%E5%9F%9F%E7%9A%84%E9%87%8D%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>写final域的重排序规则</h3>
+<p>写final域的重排序规则禁止把final域的写重排序到构造函数之外。</p>
+<ol>
+<li>JMM禁止编译器把final域的写重排序到构造函数之外</li>
+<li>编译器会把在final域的写之后，构造函数return之前，插入一个StoreStore屏障，这个屏障禁止处理器把final域的写重排序到构造函数之外。</li>
+</ol>
+<h2><a id="happens-before" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>happens-before</h2>
+<h3><a id="%E5%AE%9A%E4%B9%89%EF%BC%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定义：</h3>
+<ol>
+<li>如果一个操作 happens-before 另一个操作，那么第一个操作的执行加过将对第二个操作可见，而且第一个操作的执行顺序排在第二个操作之前。-- JMM对程序员的承诺。</li>
+<li>两个操作之间存在 happens-before 关系，并不意味着Java平台的具体实现必须要按照 happens-before 关系指定的顺序来执行。如果重排序之后的执行结果，与按 happens-before 关系执行的结果一致，那么这种重排序并不非法。--JMM对编译器和处理器重排序的约束原则。</li>
+</ol>
+<h3><a id="%E8%A7%84%E5%88%99" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>规则</h3>
+<ol>
+<li>程序顺序规则：一个线程中的每个操作，happens-before于该线程中的任意后续操作</li>
+<li>监视器锁规则：对于一个锁的解锁，happens-before于随后对在合格锁的加锁</li>
+<li>volatile变量规则：对一个volatile域的写，happens-before于任意后续对这个volatile域的读</li>
+<li>传递性：如果 A happens-before B，且 B happens-before C，那么 A happens-before C</li>
+<li>start()规则：如果线程A执行操作ThreadB.start()，那么A线程的ThreadB.start()操作happens-before于线程B中的任意操作</li>
+<li>join()规则：如果线程A执行操作ThreadB.join()并成功返回，那么线程B中任意操作happens-before于线程A从ThreadB.join()操作成功返回</li>
+</ol>
+<h2><a id="%E5%8F%8C%E9%87%8D%E6%A3%80%E6%9F%A5%E9%94%81%E5%AE%9A%E4%B8%8E%E5%BB%B6%E8%BF%9F%E5%88%9D%E5%A7%8B%E5%8C%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>双重检查锁定与延迟初始化</h2>
+<p>Java程序中，有时候可能需要延迟对象的初始化操作，在使用对象时才进行初始化，但是很容易出问题。</p>
+<p>下面是使用双重检查锁定来实现延迟初始化的示例代码：</p>
+<pre class="line-numbers"><code class="language-plain_text">public class SingleTon {
+	private static SingleTon INSTANCE = null;
 
-	private static String A = &quot;A&quot;;
-	private static String B = &quot;B&quot;;
-
-
-	private void deadLock(){
-		Thread  t1 = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				synchronized (A){
-					try {
-						Thread.currentThread().sleep(2000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					synchronized (B){
-						System.out.println(&quot;t1&quot;);
-					}
-				}
-			}
-		});
-
-		Thread  t2 = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				synchronized (B){
-					synchronized (A){
-						System.out.println(&quot;t2&quot;);
-					}
-				}
-			}
-		});
-
-		t1.start();
-		t2.start();
+	private SingleTon() {
 	}
 
-	public static void main(String[] args) {
-		new DeadLockDemo().deadLock();
+	public static SingleTon getInstance() {
+		if (INSTANCE == null) {// ①
+			synchronized (SingleTon.class) {// ②
+				if (INSTANCE == null) { // ③
+					INSTANCE = new SingleTon();// 问题出在这里
+				}
+			}
+		}
+		return INSTANCE;
 	}
 }
 </code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/16061836722063.jpg" alt="" /></p>
-<p>操作系统中，死锁发生的四个条件：</p>
+<p>在线程执行到③位置处，可能INSTANCE不等于null，但INSTANCE引用的对象有可能还没完成初始化。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/16079466385431.jpg" alt="" /></p>
+<ul>
+<li>
+<p>基于volatile的解决方案<br />
+把INSTANCE声明为volatile型，就可以实现线程安全的延迟初始化。</p>
+</li>
+<li>
+<p>基于类初始化(静态内部类)的解决方案</p>
+</li>
+</ul>
+<pre class="line-numbers"><code class="language-plain_text">public class SingleTon {
+	private static SingleTon INSTANCE = null;
+
+	private static class InstanceHolder{
+		public static SingleTon instance = new SingleTon();
+	}
+	public static SingleTon getInstance() {
+		return InstanceHolder.instance;//这里将导致InstanceHolder类被初始化
+	}
+	private SingleTon() {
+	}
+
+}
+</code></pre>
+<p>根据Java语言规范，在首次发生下列任意一种情况时，一个类或接口类型T将被立即初始化</p>
+<blockquote>
+</blockquote>
 <ol>
-<li>
-<p>互斥条件<br />
-一个资源每次只能被一个进程使用</p>
-</li>
-<li>
-<p>占有且等待<br />
-一个进程因请求资源而阻塞时，对已获得的资源保持不放</p>
-</li>
-<li>
-<p>不可强行占有<br />
-进程已获得的资源，在未使用完成之前，不能强行剥夺</p>
-</li>
-<li>
-<p>循环等待<br />
-进程之间形成一种头尾相接的循环等待资源关系</p>
-</li>
+<li>T是一个类，而且一个T类型的实例被创建</li>
+<li>T是一个类，且T中声明的一个静态方法被调用</li>
+<li>T中声明的一个静态字段被赋值</li>
+<li>T中声明的一个静态字段被使用，而且这个字段不是一个常量字段</li>
+<li>T是一个顶级类，而且一个断言语句嵌套在T内部被执行。</li>
+</ol>
+<p>Java虚拟机规范规定了有且5中情况必须立即对类进行初始化</p>
+<ol>
+<li>遇到new、getstatic、putstatic或invokestatic这4条字节码指令时，如果类没有进行过初始化，则需要先出发其初始化。生成这4条指令的最常见的Java代码场景是：使用new关键字实例化对象的时候、读取或设置一个类的静态字段的时候，以及调用一个类的静态方法的时候</li>
+<li>使用java.lang.reflect包的方法对类进行反射调用的时候，如果类没有进行过初始化，则需要先出发其初始化</li>
+<li>当初始化一个类的时候，如果发现其父类还没有进行过初始化，则需要先触发其父类的初始化</li>
+<li>当虚拟机启动时，用户需要指定一个要执行的主类，虚拟机会先初始化这个主类</li>
+<li>如果一个java.lang.invoke.MethodHandle实例最后的解析结果REG_getStatic、REF_putStatic、REF_invokeStatic的方法句柄，并且这个方法句柄锁对应的类没有进行过初始化，则需要先触发其初始化。</li>
 </ol>
 
                         
@@ -207,7 +351,7 @@
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/11/24 10:04 上午</span>
+                    <span class="date">2020/11/29 13:24 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF.html'>Java并发编程的艺术</a></span>
@@ -333,6 +477,18 @@
 	      
 		      
 			      <li class="post">
+			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -346,18 +502,6 @@
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  

@@ -129,307 +129,92 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16233986869859.html">
+                <a class="clearlink" href="16291932023474.html">
                 
-                  <h1>MyBatis-Plus 简单使用</h1>
+                  <h1>MVCC</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>MyBatis-Plus 是 MyBatis 的一个增强工具，目的是为了简化开发，提高效率。</p>
-<h2><a id="springboot%E9%9B%86%E6%88%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>SpringBoot 集成</h2>
-<h3><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h3>
-<pre class="line-numbers"><code class="language-plain_text">&lt;springboot.version&gt;2.3.0.RELEASE&lt;/springboot.version&gt;
+                        	<div class="mweb_toc"><ul>
+<li><a href="#%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86">重点知识</a></li>
+<li><a href="#%E4%BE%8B%E5%AD%90">例子</a>
+<ul>
+<li><a href="#%E5%B0%9D%E8%AF%95%E5%9B%9E%E7%AD%94%E4%B8%8B">尝试回答下</a></li>
+<li><a href="#%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90">详细分析</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1a%E7%9A%84%E7%BB%93%E6%9E%9C">如何得到事务 A 的结果</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1b%E7%9A%84%E7%BB%93%E6%9E%9C">如何得到事务 B 的结果</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E7%9A%84%E8%83%BD%E5%8A%9B%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84">事务的可重复读的能力是怎么实现的</a></li>
+</ul>
+</div>
+<h2><a id="%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重点知识</h2>
+<p>MVCC 指行多版本控制。提高数据库并发，也是事务隔离的实现机制。</p>
+<p>使用 MVCC 可以做到在对同一行数据进行读写操作的时候不用加锁。这个读指的是 快照读。</p>
+<p>MVCC 是一个概念，这个概念的实现就是 快照读。<br />
+快照读操作只读取该事务开始前的数据库快照。</p>
+<p>按照可重复读的定义，一个事务启动的时候，能够看到所有已经提交的事务结果。但是之后，这个事务执行期间，其他事务的更新对它不可见。</p>
+<p>事务启动时有一个 事务 id，叫做 transaction id。是在事务开始时候向 InnoDB 申请的，严格按照申请顺序递增的。</p>
+<p>每次事务更新数据的时候都会把 transaction id 赋值给这个数据版本的事务 id，记为 row trx_id。<br />
+一行数据可能有多个版本，每个版本都有一个 row trx_id。</p>
+<p>在实现上， InnoDB为每个事务构造了一个数组，用来保存这个事务启动瞬间，当前正在“活跃”的所有事务ID。“活跃”指的就是，启动了但还没提交。</p>
+<h2><a id="%E4%BE%8B%E5%AD%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>例子</h2>
+<pre class="line-numbers"><code class="language-sql">mysql&gt; CREATE TABLE `t` (
+  `id` int(11) NOT NULL,
+  `k` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
-&lt;dependency&gt;
-    &lt;groupId&gt;com.baomidou&lt;/groupId&gt;
-    &lt;artifactId&gt;mybatis-plus-boot-starter&lt;/artifactId&gt;
-    &lt;version&gt;3.3.1&lt;/version&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;com.baomidou&lt;/groupId&gt;
-    &lt;artifactId&gt;mybatis-plus-generator&lt;/artifactId&gt;
-    &lt;version&gt;3.3.1&lt;/version&gt;
-&lt;/dependency&gt;
-&lt;!-- --&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.velocity&lt;/groupId&gt;
-    &lt;artifactId&gt;velocity-engine-core&lt;/artifactId&gt;
-    &lt;version&gt;2.3&lt;/version&gt;
-&lt;/dependency&gt;
-
+insert into t(id, k) values(1,1);
 </code></pre>
-<h3><a id="%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>代码生成</h3>
-<p><code>mybatis-plus-generator</code> 代码生成器可以生成 <code>controller</code>、<code>entity</code>、<code>mapper</code>、<code>service</code>、<code>mapper.xml</code>，只要定义好了表结构，使用代码生成器生成代码，即可使用 CRUD</p>
-<details>
-<MAXmary>代码生成工具demo</MAXmary>
-<pre class="line-numbers"><code class="language-plain_text">public class CreateCode {
-
-	public static void main(String[] args) {
-		String packageName = &quot;com.hitol.mybatisplusdemo&quot;;
-		String projectPath = System.getProperty(&quot;user.dir&quot;) + &quot;/src/main/java&quot;;
-
-		// 代码生成器
-		AutoGenerator mpg = new AutoGenerator();
-
-		// 全局配置
-		GlobalConfig gc = new GlobalConfig();
-		// 生成的代码放哪里
-		gc.setOutputDir(projectPath);
-		gc.setAuthor(&quot;hitol&quot;);
-		gc.setOpen(false);
-
-		gc.setBaseResultMap(true);// XML ResultMap
-		gc.setBaseColumnList(true);// XML columList
-		//gc.setMapperName(&quot;%sDao&quot;);
-		gc.setServiceName(&quot;%sService&quot;);
-		gc.setServiceImplName(&quot;%sServiceImpl&quot;);
-		mpg.setGlobalConfig(gc);
-
-		// 数据源配置
-		DataSourceConfig dsc = new DataSourceConfig();
-		dsc.setUrl(&quot;jdbc:mysql://localhost:3306/book?useUnicode=true&amp;useSSL=false&quot; +
-				&quot;&amp;characterEncoding=utf8&quot;);
-		dsc.setDriverName(&quot;com.mysql.jdbc.Driver&quot;);
-		dsc.setUsername(&quot;root&quot;);
-		dsc.setPassword(&quot;123456&quot;);
-		mpg.setDataSource(dsc);
-
-		// 包配置
-		PackageConfig pc = new PackageConfig();
-		pc.setModuleName(&quot;&quot;);
-		// 工程的包名
-		pc.setParent(packageName);
-		mpg.setPackageInfo(pc);
-
-		//要想输出xml文件，需要额外自定义添加进去
-		String templatePath = &quot;/templates/mapper.xml.vm&quot;;
-		InjectionConfig cfg = new InjectionConfig() {
-			@Override
-			public void initMap() {
-			}
-		};
-		// 自定义输出配置
-		List&lt;FileOutConfig&gt; focList = new ArrayList&lt;FileOutConfig&gt;();
-//		// 自定义配置会被优先输出,可以生成 xml 文件
-//		focList.add(new FileOutConfig(templatePath) {
-//			@Override
-//			public String outputFile(TableInfo tableInfo) {
-//				// 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
-//				return System.getProperty(&quot;user.dir&quot;)  + &quot;/src/main/resources/mapper/&quot; + pc.getModuleName()
-//						+ &quot;/&quot; + tableInfo.getEntityName() + &quot;Mapper.xml&quot;;
-//			}
-//		});
-
-		cfg.setFileOutConfigList(focList);
-		mpg.setCfg(cfg);
-
-		// 配置模板
-		TemplateConfig templateConfig = new TemplateConfig();
-		templateConfig.setXml(null);
-		mpg.setTemplate(templateConfig);
-
-		// 策略配置
-		StrategyConfig strategy = new StrategyConfig();
-		// 这个配置是强制所有字段都有 TableField 注解
-		strategy.entityTableFieldAnnotationEnable(true);
-		//strategy.setInclude(可选择要生成的表名，多个英文逗号分割);
-		strategy.setNaming(NamingStrategy.underline_to_camel);
-		strategy.setColumnNaming(NamingStrategy.underline_to_camel);
-		strategy.setControllerMappingHyphenStyle(true);
-
-		mpg.setStrategy(strategy);
-		mpg.setTemplateEngine(new VelocityTemplateEngine());
-		mpg.execute();
-		System.out.println(&quot;完成&quot;);
-	}
-
-}
-
-</code></pre>
-</details>
-<h3><a id="test" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Test</h3>
-<pre class="line-numbers"><code class="language-plain_text">List&lt;Book&gt; list = bookService.list();
-System.out.println(JSONObject.toJSONString(list));
-
-Book book = bookService.getById(1);
-System.out.println(JSONObject.toJSONString(book));
-
-LambdaQueryWrapper&lt;Book&gt; queryWrapper = new QueryWrapper&lt;Book&gt;().lambda();
-queryWrapper.eq(Book::getBookName,&quot;xxxx1&quot;);
-Book one = bookService.getOne(queryWrapper);
-System.out.println(JSONObject.toJSONString(one));
-</code></pre>
-<h2><a id="%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>多数据源配置</h2>
-<p>通过多个 config 来配置多个数据源，每个 config 中通过指定不同的 basePackages、sqlSessionTemplateRef 实现多数据源。</p>
-<p>主数据源中的 @Bean 需要加注解 Primary，在 Spring 加载过程中会优先加载 Primary 标注的 bean。</p>
-<details>
-<MAXmary>第一个数据源</MAXmary>
-<pre class="line-numbers"><code class="language-plain_text">@Configuration
-@MapperScan(basePackages = &quot;com.hitol.mybatisplusdemo.mapper&quot;,
-		sqlSessionTemplateRef=&quot;ds1SqlSessionTemplate&quot;)
-public class MyBatisPlusConfig {
-
-	/**
-	 * mybatis-plus分页插件&lt;br&gt;
-	 * 文档：https://mp.baomidou.com/guide/page.html &lt;br&gt;
-	 */
-	@Bean
-	public PaginationInterceptor paginationInterceptor() {
-		// paginationInterceptor.setLimit(你的最大单页限制数量，默认 500 条，小于 0 如 -1 不受限制);
-		return new PaginationInterceptor();
-	}
-
-
-	/**
-	 *	主数据源 ds1数据源
-	 */
-	@Primary
-	@Bean(&quot;ds1SqlSessionFactory&quot;)
-	public SqlSessionFactory ds1SqlSessionFactory(@Qualifier(&quot;ds1DataSource&quot;) DataSource dataSource) throws Exception {
-		MybatisSqlSessionFactoryBean sessionFactoryBean = new MybatisSqlSessionFactoryBean();
-		sessionFactoryBean.setDataSource(dataSource);
-		sessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(&quot;classpath*:mapper/general/*.xml&quot;));
-		return sessionFactoryBean.getObject();
-
-	}
-
-	@Primary
-	@Bean(name = &quot;ds1TransactionManager&quot;)
-	public DataSourceTransactionManager ds1TransactionManager(@Qualifier(&quot;ds1DataSource&quot;) DataSource dataSource) {
-		return new DataSourceTransactionManager(dataSource);
-	}
-
-	@Primary
-	@Bean(name = &quot;ds1SqlSessionTemplate&quot;)
-	public SqlSessionTemplate ds1SqlSessionTemplate(@Qualifier(&quot;ds1SqlSessionFactory&quot;) SqlSessionFactory sqlSessionFactory) {
-		return new SqlSessionTemplate(sqlSessionFactory);
-	}
-
-	//JdbcTemplate主数据源ds1数据源
-	@Primary
-	@Bean(name = &quot;ds1JdbcTemplate&quot;)
-	public JdbcTemplate ds1JdbcTemplate(@Qualifier(&quot;ds1DataSource&quot;) DataSource dataSource) {
-		return new JdbcTemplate(dataSource);
-	}
-	//主数据源配置 ds1数据源
-	@Primary
-	@Bean(name = &quot;ds1DataSourceProperties&quot;)
-	@ConfigurationProperties(prefix = &quot;spring.datasource.ds1&quot;)
-	public DataSourceProperties ds1DataSourceProperties() {
-		return new DataSourceProperties();
-	}
-
-	//主数据源 ds1数据源
-	@Primary
-	@Bean(name = &quot;ds1DataSource&quot;)
-	public DataSource ds1DataSource(@Qualifier(&quot;ds1DataSourceProperties&quot;) DataSourceProperties dataSourceProperties) {
-		return dataSourceProperties.initializeDataSourceBuilder().build();
-	}
-
-}
-
-</code></pre>
-</details>
-<details>
-<MAXmary>第二个数据源</MAXmary>
-<pre class="line-numbers"><code class="language-plain_text">@Configuration
-@MapperScan(basePackages = &quot;com.hitol.mybatisplusdemo.chinespoetry.mapper&quot;,
-		sqlSessionTemplateRef=&quot;ds2SqlSessionTemplate&quot;)
-public class MyBatisPlusConfig2 {
-
-	/**
-	 * mybatis-plus分页插件&lt;br&gt;
-	 * 文档：https://mp.baomidou.com/guide/page.html &lt;br&gt;
-	 */
-	@Bean(&quot;paginationInterceptor2&quot;)
-	public PaginationInterceptor paginationInterceptor() {
-		// paginationInterceptor.setLimit(你的最大单页限制数量，默认 500 条，小于 0 如 -1 不受限制);
-		return new PaginationInterceptor();
-	}
-
-
-
-	/**
-	 *	主数据源 ds2数据源
-	 */
-	@Bean(&quot;ds2SqlSessionFactory&quot;)
-	public SqlSessionFactory ds2SqlSessionFactory(@Qualifier(&quot;ds2DataSource&quot;) DataSource dataSource) throws Exception {
-		MybatisSqlSessionFactoryBean sessionFactoryBean = new MybatisSqlSessionFactoryBean();
-		sessionFactoryBean.setDataSource(dataSource);
-		sessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(&quot;classpath*:mapper/general/*.xml&quot;));
-		return sessionFactoryBean.getObject();
-
-	}
-
-
-	@Bean(name = &quot;ds2TransactionManager&quot;)
-	public DataSourceTransactionManager ds2TransactionManager(@Qualifier(&quot;ds2DataSource&quot;) DataSource dataSource) {
-		return new DataSourceTransactionManager(dataSource);
-	}
-
-
-	@Bean(name = &quot;ds2SqlSessionTemplate&quot;)
-	public SqlSessionTemplate ds2SqlSessionTemplate(@Qualifier(&quot;ds2SqlSessionFactory&quot;) SqlSessionFactory sqlSessionFactory) {
-		return new SqlSessionTemplate(sqlSessionFactory);
-	}
-
-	//JdbcTemplate ds2数据源
-	@Bean(name = &quot;ds2JdbcTemplate&quot;)
-	public JdbcTemplate ds2JdbcTemplate(@Qualifier(&quot;ds2DataSource&quot;) DataSource dataSource) {
-		return new JdbcTemplate(dataSource);
-	}
-	//数据源配置 ds2数据源
-	@Bean(name = &quot;ds2DataSourceProperties&quot;)
-	@ConfigurationProperties(prefix = &quot;spring.datasource.ds2&quot;)
-	public DataSourceProperties ds2DataSourceProperties() {
-		return new DataSourceProperties();
-	}
-
-	//数据源 ds2数据源
-	@Bean(name = &quot;ds2DataSource&quot;)
-	public DataSource ds2DataSource(@Qualifier(&quot;ds2DataSourceProperties&quot;) DataSourceProperties dataSourceProperties) {
-		return dataSourceProperties.initializeDataSourceBuilder().build();
-	}
-
-}
-
-</code></pre>
-</details>
-<h2><a id="%E8%B8%A9%E5%9D%91%E4%B9%90%E8%A7%82%E9%94%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>踩坑-乐观锁</h2>
-<p>官网上的示例:</p>
-<pre class="line-numbers"><code class="language-plain_text">@Bean
-public MybatisPlusInterceptor mybatisPlusInterceptor() {
-    MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-    interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
-    return interceptor;
-}
-
-</code></pre>
-<p>根据官方文档配置后，一般情况下可以正常使用的，但是如果自己生成了 sqlSessionFactory 需要将乐观锁拦截器添加下</p>
-<pre class="line-numbers"><code class="language-plain_text">public MyOptimisticLockerInterceptor optimisticLockerInterceptor(@Qualifier(&quot;ds1SqlSessionFactory&quot;) SqlSessionFactory sqlSessionFactory) {
-    MyOptimisticLockerInterceptor myOptimisticLockerInterceptor = new MyOptimisticLockerInterceptor();
-    sqlSessionFactory.getConfiguration().addInterceptor(myOptimisticLockerInterceptor);
-    return myOptimisticLockerInterceptor;
-}
-    
-</code></pre>
-<h2><a id="%E8%B8%A9%E5%9D%91%E8%87%AA%E5%8A%A8%E5%A1%AB%E5%85%85%E5%8A%9F%E8%83%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>踩坑-自动填充功能</h2>
-<p>官网示例：<a href="https://mp.baomidou.com/guide/auto-fill-metainfo.html">https://mp.baomidou.com/guide/auto-fill-metainfo.html</a></p>
-<p>如果自己生成了 sqlSessionFactory，需要将自定义的 handler 加到 GlobalConfig 中。</p>
-<pre class="line-numbers"><code class="language-plain_text">@Primary
-@Bean(&quot;ds1SqlSessionFactory&quot;)
-public SqlSessionFactory ds1SqlSessionFactory(@Qualifier(&quot;ds1DataSource&quot;) DataSource dataSource) throws Exception {
-    MybatisSqlSessionFactoryBean sessionFactoryBean = new MybatisSqlSessionFactoryBean();
-    sessionFactoryBean.setDataSource(dataSource);
-    sessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(&quot;classpath*:mapper/manager/*.xml&quot;));
-    GlobalConfig gc = new GlobalConfig();
-    gc.setMetaObjectHandler(metaObjectHandler());
-    sessionFactoryBean.setGlobalConfig(gc);
-    return sessionFactoryBean.getObject();
-
-}
-</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/2021-08-18-16291936408457.jpg" alt="事务A、B、C的执行流程" /></p>
+<p>问：MySQL InnoDB 默认隔离级别下，事务 A、B、C 里，K 的值分别是多少？</p>
+<h3><a id="%E5%B0%9D%E8%AF%95%E5%9B%9E%E7%AD%94%E4%B8%8B" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>尝试回答下</h3>
+<p>事务 C 没有指定手动提交事务，所以是自动提交的，并且 C 事务先执行的，所以 K 是 2。<br />
+事务 B 在执行，由于 B 执行了 update，会以当前读的方式获取最新数据，所以 C 提交后的事务，B 是可以看到的，所以，K 是 3。</p>
+<p>事务 A 最后执行，由于是 RR 级别，可重复读，并且是当前读，所以与事务开始的时候保持一致，所以 K 是 1 。</p>
+<h3><a id="%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>详细分析</h3>
+<p>这里，我们不妨做如下假设：</p>
+<ol>
+<li>事务A开始前，系统里面只有一个活跃事务 ID 是99；</li>
+<li>事务 A、B、C的版本号分别是100、101、102，且当前系统里只有这四个事务；</li>
+</ol>
+<p>这样，事务A的视图数组就是[99,100], 事务B的视图数组是[99,100,101], 事务C的视图数组是[99,100,101,102]。</p>
+<h3><a id="%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1a%E7%9A%84%E7%BB%93%E6%9E%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何得到事务 A 的结果</h3>
+<p>简化下，只画出跟事务A查询逻辑有关的操作：<br />
+<img src="http://hitol.blog.cdn.updev.cn/2021-08-18-16291942450909.jpg" alt="事务A查询数据逻辑图" /></p>
+<p>一个数据版本，对于一个事务视图来说，除了自己的更新总是可见以外，有三种情况：</p>
+<ol>
+<li>版本未提交，不可见；</li>
+<li>版本已提交，但是是在视图创建后提交的，不可见；</li>
+<li>版本已提交，而且是在视图创建前提交的，可见。</li>
+</ol>
+<p>现在，我们用这个规则来判断图中的查询结果，事务A的查询语句的视图数组是在事务A启动的时候生成的，这时候：</p>
+<ol>
+<li>(1,3)还没提交，属于情况1，不可见；</li>
+<li>(1,2)虽然提交了，但是是在视图数组创建之后提交的，属于情况2，不可见；</li>
+<li>(1,1)是在视图数组创建之前提交的，可见。</li>
+</ol>
+<h3><a id="%E5%A6%82%E4%BD%95%E5%BE%97%E5%88%B0%E4%BA%8B%E5%8A%A1b%E7%9A%84%E7%BB%93%E6%9E%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何得到事务 B 的结果</h3>
+<p>一条规则：更新数据都是先读后写的，而这个读，只能读当前的值，称为“当前读”<br />
+因此，在更新的时候，当前读拿到的数据是(1,2)，更新后生成了新版本的数据(1,3)，这个新版本的row trx_id是101。</p>
+<p>所以，在执行事务B查询语句的时候，一看自己的版本号是101，最新数据的版本号也是101，是自己的更新，可以直接使用，所以查询得到的k的值是3。</p>
+<h2><a id="%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E7%9A%84%E8%83%BD%E5%8A%9B%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>事务的可重复读的能力是怎么实现的</h2>
+<p>可重复读的核心就是一致性读（consistent read）；<br />
+而事务更新数据的时候，只能用当前读。<br />
+如果当前的记录的行锁被其他事务占用的话，就需要进入锁等待。</p>
+<p>而读提交的逻辑和可重复读的逻辑类似，它们最主要的区别是：</p>
+<ol>
+<li>在可重复读隔离级别下，只需要在事务开始的时候创建一致性视图，之后事务里的其他查询都共用这个一致性视图；</li>
+<li>在读提交隔离级别下，每一个语句执行前都会重新算出一个新的视图。</li>
+</ol>
+<p>这里需要说明一下，“start transaction with consistent snapshot; ”的意思是从这个语句开始，创建一个持续整个事务的一致性快照。所以，在读提交隔离级别下，这个用法就没意义了，等效于普通的start transaction。</p>
+<hr />
+<p>undo 链<br />
+read view 视图</p>
+<p>-- 《MySQL 实战 45 讲》，03、08讲。<br />
+<a href="https://juejin.cn/post/6871046354018238472#heading-3">https://juejin.cn/post/6871046354018238472#heading-3</a></p>
 
                         
                       </div>
@@ -438,7 +223,7 @@ public SqlSessionFactory ds1SqlSessionFactory(@Qualifier(&quot;ds1DataSource&quo
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/06/11 16:04 下午</span>
+                    <span class="date">2021/08/17 17:40 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
@@ -564,6 +349,18 @@ public SqlSessionFactory ds1SqlSessionFactory(@Qualifier(&quot;ds1DataSource&quo
 	      
 		      
 			      <li class="post">
+			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -577,18 +374,6 @@ public SqlSessionFactory ds1SqlSessionFactory(@Qualifier(&quot;ds1DataSource&quo
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  

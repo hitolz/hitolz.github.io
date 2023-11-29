@@ -129,129 +129,147 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16170304359773.html">
+                <a class="clearlink" href="16176922961413.html">
                 
-                  <h1>Redis 集群</h1>
+                  <h1>搭建 RocketMQ 集群</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>本篇文章学习下 Redis 搭建集群的三种方式。</p>
-<h2><a id="%E4%B8%89%E7%A7%8D%E9%9B%86%E7%BE%A4%E6%96%B9%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>三种集群方式</h2>
-<p>三种集群方式分别是 主从复制方式，哨兵模式，Redis-Cluster 集群</p>
-<h3><a id="%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>主从复制</h3>
-<p>一个主数据库实例 master，一个或多个从数据库实例 slave。</p>
-<p>客户端可对 master 读写操作，对 slave 只有读的操作，对 master 的操作会自动同步给 slave。</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/2021-08-10-16281747927595.jpg" alt="" /></p>
-<p>工作流程、原理</p>
-<ol>
-<li>slave 启动后，发送 SYNC 指令到 master，master 收到指令后执行 bgsave 保存快照，即 RDB 文件</li>
-<li>master 将生成的快照发送给 slave，生成快照期间及发送给 slave 收到的操作会记录到缓冲区</li>
-<li>slave 收到快照后，加载快照数据</li>
-<li>master 将缓冲区的数据也发给 slave，slave 收到后执行</li>
-<li>此后，master 的每一次操作都会同步给 slave，保持 master 与 slave 之间的数据一致性。</li>
-</ol>
-<p>优点：</p>
-<ol>
-<li>自动同步，可进行读写分离，</li>
-<li>非阻塞方式进行</li>
-</ol>
-<p>缺点：</p>
-<ol>
-<li>不具备自动容错与恢复能力，master 或者 slave 宕机后可能导致客户端请求失败</li>
-<li>master 宕机后，如果缓冲区的数据没同步完，恢复后可能会存在数据不一致</li>
-<li>难以扩容</li>
-</ol>
-<h3><a id="%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>哨兵模式</h3>
-<p>哨兵模式基于主从复制，多加了哨兵来监控、处理故障</p>
-<ol>
-<li>监控 master、slave 是否正常运行</li>
-<li>当 master 出现故障时，能自动将一个 slave 转换为 master，</li>
-<li>多个哨兵可以监控同一个 redis，哨兵之间也会自动监控</li>
-</ol>
-<p><img src="http://hitol.blog.cdn.updev.cn/2021-08-10-16281753582738.jpg" alt="" /></p>
-<p>通过 <code>sentinel monitor &lt;master-name&gt; &lt;ip&gt; &lt;redis-port&gt; &lt;quorum&gt;</code> 来定位master的IP、端口，一个哨兵可以监控多个master数据库，只需要提供多个该配置项即可。哨兵启动后，会与要监控的master建立两条连接：</p>
-<ol>
-<li>一条连接用来订阅master的_sentinel_:hello频道与获取其他监控该master的哨兵节点信息</li>
-<li>另一条连接定期向master发送INFO等命令获取master本身的信息</li>
-</ol>
-<p>与 master 建立连接后，哨兵会执行三个动作</p>
-<ol>
-<li>定期（一般10s一次，当master被标记为主观下线时，改为1s一次）向 master 和 slave 发送 INFO 命令</li>
-<li>定期向 master 和 slave 的<code>_sentinel_:hello</code>频道发送自己的信息</li>
-<li>定期（1s一次）向 master、slave 和其他哨兵发送 PING 命令</li>
-</ol>
-<p>INFO 信息可以获取当前数据库的相关信息从而实现新节点的自动发现。所以说 哨兵只需要配置 master 数据库信息就可以自动发现其 slave 信息，获取到 slave 后，哨兵也会向 slave 建立两条连接执行监控。通过 INFO 命令，哨兵可以获取主从数据库的信息，并进行相应的操作，如 角色变更 等。</p>
-<p>接下来哨兵向主从数据库的_sentinel_:hello频道发送信息与同样监控这些数据库的哨兵共享自己的信息，发送内容为哨兵的ip端口、运行id、配置版本、master名字、master的ip端口还有master的配置版本。这些信息有以下用处：</p>
-<ol>
-<li>其他哨兵可以通过该信息判断发送者是否是新发现的哨兵，如果是的话会创建一个到该哨兵的连接用于发送PING命令。</li>
-<li>其他哨兵通过该信息可以判断master的版本，如果该版本高于直接记录的版本，将会更新</li>
-<li>当实现了自动发现slave和其他哨兵节点后，哨兵就可以通过定期发送PING命令定时监控这些数据库和节点有没有停止服务。</li>
-</ol>
-<p>如果被 PING 的数据库或者节点超时（通过 sentinel down-after-milliseconds master-name milliseconds 配置）未回复，哨兵认为其主观下线（sdown，s就是 Subjectively —— 主观地）。如果下线的是 master，哨兵会向其它哨兵发送命令询问它们是否也认为该 master 主观下线，如果达到一定数目（即配置文件中的 quorum ）投票，哨兵会认为该 master 已经客观下线（odown，o就是 Objectively —— 客观地），并选举领头的哨兵节点对主从系统发起故障恢复。若没有足够的 sentinel 进程同意 master 下线，master 的客观下线状态会被移除，若 master 重新向 sentinel 进程发送的 PING 命令返回有效回复，master 的主观下线状态就会被移除</p>
-<p>哨兵认为 master 客观下线后，故障恢复的操作需要由选举的领头哨兵来执行，选举采用 Raft 算法：</p>
+                        	<p>使用两台虚拟机搭建出 双主-双从 集群<br />
+A 192.168.153.131<br />
+B 192.168.153.132</p>
+<p>官网地址<br />
+<a href="http://rocketmq.apache.org/docs/quick-start/">http://rocketmq.apache.org/docs/quick-start/</a></p>
+<p>先从上面下载下来最新的 RocketMQ 安装包，最新的是 rocketmq-all-4.8.0-bin-release</p>
+<p>解压后进入到 conf 文件夹下，官方已经创建好了简单的集群配置文件。</p>
 <ul>
-<li>发现 master 下线的哨兵节点（我们称他为 A ）向每个哨兵发送命令，要求对方选自己为领头哨兵</li>
-<li>如果目标哨兵节点没有选过其他人，则会同意选举 A 为领头哨兵</li>
-<li>如果有超过一半的哨兵同意选举 A 为领头，则 A 当选</li>
-<li>如果有多个哨兵节点同时参选领头，此时有可能存在一轮投票无竞选者胜出，此时每个参选的节点等待一个随机时间后再次发起参选请求，进行下一轮投票竞选，直至选举出领头哨兵</li>
+<li>2m-2s-async :2个master，2个slave，async异步复制</li>
+<li>2m-2s-sync :2个master，2个slave，sync同步双写</li>
+<li>2m-noslave :2个master,没有slave</li>
 </ul>
-<p>选出领头哨兵后，领头者开始对系统进行故障恢复，从出现故障的 master 的从数据库中挑选一个来当选新的 master,选择规则如下：</p>
-<ul>
-<li>所有在线的 slave 中选择优先级最高的，优先级可以通过 slave-priority 配置</li>
-<li>如果有多个最高优先级的 slave，则选取复制偏移量最大（即复制越完整）的当选</li>
-<li>如果以上条件都一样，选取 id 最小的 slave</li>
-</ul>
-<p>挑选出需要继任的 slave 后，领头哨兵向该数据库发送命令使其升格为 master，然后再向其他 slave 发送命令接受新的 master，最后更新数据。将已经停止的旧的 master 更新为新的 master 的从数据库，使其恢复服务后以 slave 的身份继续运行。</p>
-<p>优缺点：<br />
-优点：</p>
-<ol>
-<li>哨兵模式基于主从复制模式，所以主从复制模式的优点哨兵模式也有</li>
-<li>哨兵模式下，master 挂掉后可以自行切换，系统可用性更高</li>
-</ol>
-<p>缺点：</p>
-<ol>
-<li>难以在线扩容，Redis 容量受制于单机节点，只能对 master 写。</li>
-<li>需要额外的资源来启动 sentinel 进程，实现相对复杂，同时 slave 节点只作为备份，不提供服务</li>
-<li>切换主从节点的时候时间花费较长。</li>
-</ol>
-<h3><a id="redis-cluster%E9%9B%86%E7%BE%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Redis-Cluster集群</h3>
-<p>Cluster 模式实现了 Redis 的分布式存储，即每台节点存储不同的内容，来解决在线扩容的问题。</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/2021-08-10-16283948334460.jpg" alt="" /></p>
-<p>Cluster 采用无中心结构,它的特点如下：</p>
-<ol>
-<li>所有的redis节点彼此互联(PING-PONG机制),内部使用二进制协议优化传输速度和带宽</li>
-<li>节点的fail是通过集群中超过半数的节点检测失效时才生效</li>
-<li>客户端与redis节点直连,不需要中间代理层.客户端不需要连接集群所有节点,连接集群中任何一个可用节点即可</li>
-</ol>
-<p>Cluster 模式的具体工作机制：</p>
-<ol>
-<li>在 Redis 的每个节点上，都有一个插槽（slot），取值范围为 0-16383</li>
-<li>当我们存取 key 的时候，Redis 会根据 CRC16 的算法得出一个结果，然后把结果对 16384 求余数，这样每个 key 都会对应一个编号在 0-16383 之间的哈希槽，通过这个值，去找到对应的插槽所对应的节点，然后直接自动跳转到这个对应的节点上进行存取操作</li>
-<li>为了保证高可用，Cluster 模式也引入主从复制模式，一个主节点对应一个或者多个从节点，当主节点宕机的时候，就会启用从节点</li>
-<li>当其它主节点 ping 一个主节点 A 时，如果半数以上的主节点与 A 通信超时，那么认为主节点 A 宕机了。如果主节点 A 和它的从节点都宕机了，那么该集群就无法再提供服务了</li>
-</ol>
-<p>Cluster 模式集群节点最小配置6个节点(3主3从，因为需要半数以上)，其中主节点提供读写操作，从节点作为备用节点，不提供请求，只作为故障转移使用。</p>
-<p>优缺点：<br />
-优点：</p>
-<ol>
-<li>无中心架构，数据按照 slot 分布在多个节点。</li>
-<li>集群中的每个节点都是平等的关系，每个节点都保存各自的数据和整个集群的状态。每个节点都和其他所有节点连接，而且这些连接保持活跃，这样就保证了我们只需要连接集群中的任意一个节点，就可以获取到其他节点的数据。</li>
-<li>可线性扩展到 1000 多个节点，节点可动态添加或删除</li>
-<li>能够实现自动故障转移，节点之间通过 gossip 协议交换状态信息，用投票机制完成 slave 到 master 的角色转换</li>
-</ol>
-<p>缺点：</p>
-<ol>
-<li>客户端实现复杂，驱动要求实现 Smart Client，缓存 slots mapping 信息并及时更新，提高了开发难度。目前仅 JedisCluster 相对成熟，异常处理还不完善，比如常见的 “max redirect exception”</li>
-<li>节点会因为某些原因发生阻塞（阻塞时间大于 cluster-node-timeout）被判断下线，这种 failover 是没有必要的</li>
-<li>数据通过异步复制，不保证数据的强一致性</li>
-<li>slave 充当“冷备”，不能缓解读压力</li>
-<li>批量操作限制，目前只支持具有相同 slot 值的 key 执行批量操作，对 mset、mget、sunion 等操作支持不友好</li>
-<li>key 事务操作支持有线，只支持多 key 在同一节点的事务操作，多 key 分布不同节点时无法使用事务功能</li>
-<li>不支持多数据库空间，单机 redis 可以支持16个 db，集群模式下只能使用一个，即 db 0</li>
-</ol>
-<hr />
-<p><a href="https://segmentfault.com/a/1190000022028642">https://segmentfault.com/a/1190000022028642</a></p>
+<p>首先在每台机器上启动 nameServer</p>
+<pre class="line-numbers"><code class="language-plain_text">nohub sh bin/mqnamesrv &amp;
+</code></pre>
+<p>然后配置 Broker，每台机器上都要分别配置一个 Master 角色的 Broker 和一个 Slave 角色的 Broker，并互为主备。</p>
+<p>A 机器启动 broker-a master, broker-b slave<br />
+B 机器启动 broker-a slave, broker-b master</p>
+<p>启动</p>
+<pre class="line-numbers"><code class="language-plain_text">nohub sh bin/mqbroker -c conf/2m-2s-async/broker-xxx.properties
+</code></pre>
+<p>然后在安装 console ，最终效果如图：<br />
+<img src="http://hitol.blog.cdn.updev.cn/16177202877632.jpg" alt="" /></p>
+<p>配置文件：<br />
+broker-a-master</p>
+<pre class="line-numbers"><code class="language-plain_text">brokerClusterName=DefaultCluster
+brokerName=broker-a
+brokerId=0
+deleteWhen=04
+fileReservedTime=48
+brokerRole=ASYNC_MASTER
+flushDiskType=ASYNC_FLUSH
+
+namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
+listenPort=10911
+defaultTopicQueueNums=8
+#是否允许 Broker 自动创建Topic，生产建议关闭
+autoCreateTopicEnable=true
+#是否允许 Broker 自动创建订阅组，生产建议关闭
+autoCreateSubscriptionGroup=true
+#存储路径
+storePathRootDir=~/mq/data/store-a
+#commitLog 存储路径 
+storePathCommitLog=~/mq/data/store-a/commitlog
+#消费队列存储路径存储路径
+storePathConsumeQueue=~/mq/data/store-a/consumequeue
+#消息索引存储路径
+storePathIndex=~/mq/data/store-a/index
+#checkpoint 文件存储路径
+storeCheckpoint=~/mq/data/store-a/checkpoint
+</code></pre>
+<p>broker-b-slave</p>
+<pre class="line-numbers"><code class="language-plain_text">brokerClusterName=DefaultCluster
+brokerName=broker-b
+brokerId=1
+deleteWhen=04
+fileReservedTime=48
+brokerRole=SLAVE
+flushDiskType=ASYNC_FLUSH
+
+namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
+listenPort=11011
+defaultTopicQueueNums=8
+#是否允许 Broker 自动创建Topic，生产建议关闭
+autoCreateTopicEnable=true
+#是否允许 Broker 自动创建订阅组，生产建议关闭
+autoCreateSubscriptionGroup=true
+#存储路径
+storePathRootDir=~/mq/data/store-b
+#commitLog 存储路径 
+storePathCommitLog=~/mq/data/store-b/commitlog
+#消费队列存储路径存储路径
+storePathConsumeQueue=~/mq/data/store-b/consumequeue
+#消息索引存储路径
+storePathIndex=~/mq/data/store-b/index
+#checkpoint 文件存储路径
+storeCheckpoint=~/mq/data/store-b/checkpoint
+</code></pre>
+<p>broker-b-master</p>
+<pre class="line-numbers"><code class="language-plain_text">brokerClusterName=DefaultCluster
+brokerName=broker-b
+brokerId=0
+deleteWhen=04
+fileReservedTime=48
+brokerRole=ASYNC_MASTER
+flushDiskType=ASYNC_FLUSH
+
+namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
+listenPort=10911
+#每个topic对应队列的数量，默认为4，实际应参考consumer实例的数量，值过小不利于consumer负载均衡
+defaultTopicQueueNums=8
+#是否允许 Broker 自动创建Topic，生产建议关闭
+autoCreateTopicEnable=true
+#是否允许 Broker 自动创建订阅组，生产建议关闭
+autoCreateSubscriptionGroup=true
+#存储路径
+storePathRootDir=~/mq/data/store-b
+#commitLog 存储路径 
+storePathCommitLog=~/mq/data/store-b/commitlog
+#消费队列存储路径存储路径
+storePathConsumeQueue=~/mq/data/store-b/consumequeue
+#消息索引存储路径
+storePathIndex=~/mq/data/store-b/index
+#checkpoint 文件存储路径
+storeCheckpoint=~/mq/data/store-b/checkpoint
+
+</code></pre>
+<p>broker-a-slave</p>
+<pre class="line-numbers"><code class="language-plain_text">brokerClusterName=DefaultCluster
+brokerName=broker-a
+brokerId=1
+deleteWhen=04
+fileReservedTime=48
+brokerRole=SLAVE
+flushDiskType=ASYNC_FLUSH
+
+namesrvAddr=192.168.153.131:9876;192.168.153.132:9876
+listenPort=11011
+defaultTopicQueueNums=8
+#是否允许 Broker 自动创建Topic，生产建议关闭
+autoCreateTopicEnable=true
+#是否允许 Broker 自动创建订阅组，生产建议关闭
+autoCreateSubscriptionGroup=true
+#存储路径
+storePathRootDir=~/mq/data/store-a
+#commitLog 存储路径 
+storePathCommitLog=~/mq/data/store-a/commitlog
+#消费队列存储路径存储路径
+storePathConsumeQueue=~/mq/data/store-a/consumequeue
+#消息索引存储路径
+storePathIndex=~/mq/data/store-a/index
+#checkpoint 文件存储路径
+storeCheckpoint=~/mq/data/store-a/checkpoint
+</code></pre>
 
                         
                       </div>
@@ -260,10 +278,10 @@
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/03/29 23:07 下午</span>
+                    <span class="date">2021/04/06 14:58 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='redis.html'>redis</a></span>
+          					    <span class="posted-in"><a href='RocketMQ.html'>RocketMQ</a></span>
           				   
                     
 
@@ -386,6 +404,18 @@
 	      
 		      
 			      <li class="post">
+			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -399,18 +429,6 @@
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  

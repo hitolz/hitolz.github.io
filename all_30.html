@@ -129,163 +129,100 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16208120012139.html">
+                <a class="clearlink" href="16218450358247.html">
                 
-                  <h1>Sentinel</h1>
+                  <h1>Spring Cloud Stream 整合 RocketMQ</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<div class="mweb_toc"><ul>
-<li><a href="#demo">demo</a></li>
-<li><a href="#spring-boot%E4%B8%8E-sentinel">Spring boot 与 Sentinel</a>
-<ul>
-<li><a href="#quick-start">Quick Start</a>
-<ul>
-<li><a href="#%E8%BF%90%E8%A1%8C%E6%8E%A7%E5%88%B6%E5%8F%B0">运行控制台</a></li>
-<li><a href="#%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">项目添加依赖</a></li>
-</ul>
-</li>
-<li><a href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6">流量控制</a></li>
-</ul>
-</li>
-<li><a href="#dubbo%E4%B8%8E-sentinel">Dubbo 与 Sentinel</a>
-<ul>
-<li><a href="#%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%BF%AE%E6%94%B9">服务提供者修改</a>
-<ul>
-<li><a href="#%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96">增加依赖</a></li>
-<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
-</ul>
-</li>
-<li><a href="#%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E4%BF%AE%E6%94%B9">服务消费者修改</a>
-<ul>
-<li><a href="#%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96">增加依赖</a></li>
-<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a></li>
-</ul>
-</li>
-<li><a href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C">运行结果</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<h2><a id="demo" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>demo</h2>
-<h2><a id="spring-boot%E4%B8%8E-sentinel" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spring boot 与 Sentinel</h2>
-<h3><a id="quick-start" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick Start</h3>
-<h4><a id="%E8%BF%90%E8%A1%8C%E6%8E%A7%E5%88%B6%E5%8F%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行控制台</h4>
-<p>github 地址<br />
-<a href="https://github.com/alibaba/Sentinel">https://github.com/alibaba/Sentinel</a></p>
-<p>文档地址：<br />
-<a href="https://github.com/alibaba/Sentinel/wiki/">https://github.com/alibaba/Sentinel/wiki/</a></p>
-<p>下载 sentinel-dashboard-1.8.1.jar<br />
-运行 <code>java -jar sentinel-dashboard-1.8.1.jar</code><br />
-访问web地址：<a href="http://localhost:8080">http://localhost:8080</a>   默认用户名和密码都是sentinel/sentinel，然后进入首页</p>
-<h4><a id="%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>项目添加依赖</h4>
-<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
-    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>添加配置</p>
-<pre class="line-numbers"><code class="language-properties">server.port=8081
-# sentinel 配置
-spring.application.name=hitol-sentinel
-spring.cloud.sentinel.transport.dashboard=localhost:8080
-spring.cloud.sentinel.transport.heartbeat-interval-ms=500
-</code></pre>
-<p>编写一个 controller 用于测试</p>
-<pre class="line-numbers"><code class="language-java">@RestController
-public class SentinelController {
+                        	<h2><a id="spring-cloud-stream%E4%BB%8B%E7%BB%8D" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spring Cloud Stream 介绍</h2>
+<p>Spring Cloud Stream 是一个用于构建基于消息的微服务应用框架。它基于 SpringBoot 来创建具有生产级别的单机 Spring 应用，并且使用 Spring Integration 与 Broker 进行连接。</p>
+<p>Spring Cloud Stream 提供了消息中间件配置的统一抽象，推出了 publish-subscribe、consumer groups、partition 这些统一的概念。</p>
+<p>Spring Cloud Stream 内部有两个概念：Binder 和 Binding。</p>
+<p>Binder: 跟外部消息中间件集成的组件，用来创建 Binding，各消息中间件都有自己的 Binder 实现。</p>
+<p>比如 Kafka 的实现 KafkaMessageChannelBinder，RabbitMQ 的实现 RabbitMessageChannelBinder 以及 RocketMQ 的实现 RocketMQMessageChannelBinder。</p>
+<p>Binding: 包括 Input Binding 和 Output Binding。</p>
+<p>Binding 在消息中间件与应用程序提供的 Provider 和 Consumer 之间提供了一个桥梁，实现了开发者只需使用应用程序的 Provider 或 Consumer 生产或消费数据即可，屏蔽了开发者与底层消息中间件的接触。</p>
+<h2><a id="%E6%95%B4%E5%90%88rocketmq" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>整合 RocketMQ</h2>
+<h3><a id="spring-boot%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spring Boot 项目添加依赖</h3>
+<pre class="line-numbers"><code class="language-plain_text">&lt;spring.boot.version&gt;2.2.5.RELEASE&lt;/spring.boot.version&gt;
+&lt;spring.alibaba.cloud.version&gt;2.2.1.RELEASE&lt;/spring.alibaba.cloud.version&gt;
 
-	@RequestMapping(&quot;/&quot;)
-	public String sentinel() {
-		return &quot;sentinel ....&quot;;
-	}
+
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-stream-rocketmq&lt;/artifactId&gt;
+    &lt;version&gt;${spring.alibaba.cloud.version}&lt;/version&gt;
+&lt;/dependency&gt;
+
+</code></pre>
+<h3><a id="%E6%B7%BB%E5%8A%A0%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加配置</h3>
+<p>application.yml 中添加配置</p>
+<pre class="line-numbers"><code class="language-plain_text">spring:
+  cloud:
+    stream:
+      bindings:
+        # output 相当于生产者
+        output:
+          # 目的地。这里使用 RocketMQ Topic
+          destination: test111
+          content-type: application/json
+
+        # input 相当于消费者
+        input:
+          # 目的地。这里使用 RocketMQ Topic
+          destination: test111
+          content-type: application/json
+          # rocket mq 的消费者必须要有 group，不然启动失败
+          group: test
+
+      rocketmq:
+        binder:
+          # rocket mq 地址
+          name-server: 127.0.0.1:9876
+          # enable-msg-trace: true
+</code></pre>
+<h3><a id="%E5%8F%91%E9%80%81%E4%B8%8E%E6%8E%A5%E6%94%B6%E6%B6%88%E6%81%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>发送与接收消息</h3>
+<p>Source</p>
+<pre class="line-numbers"><code class="language-plain_text">public interface Source {
+
+	String OUTPUT = &quot;output&quot;;
+	String INPUT = &quot;input&quot;;
+
+	@Output(Source.OUTPUT)
+	MessageChannel output();
+
+	@Input(Source.INPUT)
+	SubscribableChannel input();
+
+}
+
+</code></pre>
+<p>发送消息</p>
+<pre class="line-numbers"><code class="language-plain_text">@Autowired
+private Source source;
+
+@Override
+public void send(String msg) {
+	Message&lt;String&gt; message = MessageBuilder.withPayload(msg)
+			.build();
+	source.output().send(message);
 }
 </code></pre>
-<p>浏览器访问 localhost:8081,多刷新几次，控制台实时监控<br />
-<img src="http://hitol.blog.cdn.updev.cn/16208040517121.jpg" alt="" /></p>
-<h3><a id="%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>流量控制</h3>
-<p><img src="http://hitol.blog.cdn.updev.cn/16208047724648.jpg" alt="" /></p>
-<p>添加规则后多刷新几次接口<br />
-<img src="http://hitol.blog.cdn.updev.cn/16208047941828.jpg" alt="" /></p>
-<h2><a id="dubbo%E4%B8%8E-sentinel" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dubbo 与 Sentinel</h2>
-<h3><a id="%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%BF%AE%E6%94%B9" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务提供者修改</h3>
-<h4><a id="%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>增加依赖</h4>
-<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
-    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
-&lt;/dependency&gt;
+<p>接收消息</p>
+<pre class="line-numbers"><code class="language-plain_text">@StreamListener(value = Source.INPUT)
+public void receiveInput(String receiveMsg) {
+	System.out.println(&quot;input receive: &quot; + receiveMsg);
+}
 
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;
-    &lt;artifactId&gt;sentinel-apache-dubbo-adapter&lt;/artifactId&gt;
-    &lt;version&gt;1.7.0&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;
-    &lt;artifactId&gt;sentinel-transport-simple-http&lt;/artifactId&gt;
-    &lt;version&gt;1.7.1&lt;/version&gt;
-&lt;/dependency&gt;
 </code></pre>
-<h4><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h4>
-<pre class="line-numbers"><code class="language-plain_text">server:
-  port: 8070
-spring:
-  application:
-    name: service-provider
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-        group: test
-        namespace: fed092ce-956c-4792-977c-affc5d8f1dc7
-
-    sentinel:
-      transport:
-        port: 8070
-        dashboard: localhost:8080        
-</code></pre>
-<h3><a id="%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E4%BF%AE%E6%94%B9" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务消费者修改</h3>
-<h4><a id="%E5%A2%9E%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>增加依赖</h4>
-<pre class="line-numbers"><code class="language-plain_text">&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-alibaba-sentinel&lt;/artifactId&gt;
-    &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba.csp&lt;/groupId&gt;
-    &lt;artifactId&gt;sentinel-apache-dubbo-adapter&lt;/artifactId&gt;
-    &lt;version&gt;1.7.0&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>因为消费者是通过 http 调用的，所以比服务提供者少了一个依赖</p>
-<h4><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置</h4>
-<pre class="line-numbers"><code class="language-plain_text">server:
-  port: 8071
-spring:
-  application:
-    name: service-consumer
-  cloud:
-    nacos:
-      discovery:
-        group: test
-        namespace: fed092ce-956c-4792-977c-affc5d8f1dc7
-        server-addr: 127.0.0.1:8848
-    sentinel:
-      transport:
-        port: 8071
-        dashboard: localhost:8080
-</code></pre>
-<p>sentinel.transport.port 跟程序运行的 port 一致才行。</p>
-<h3><a id="%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行结果</h3>
-<p>添加完依赖，修改完配置，启动即可。<br />
-调用 服务消费者提供的 api，多刷新几次<br />
-<img src="http://hitol.blog.cdn.updev.cn/16208082058974.jpg" alt="" /><br />
-<img src="http://hitol.blog.cdn.updev.cn/16208082166138.jpg" alt="" /></p>
+<h3><a id="%E5%90%AF%E5%8A%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动</h3>
+<p>启动类上添加注解 <code>@EnableBinding({Source.class})</code></p>
+<p><a href="https://gitee.com/hitol/spring-alibaba/tree/master/cloud-stream-rocketmq">gitee</a></p>
+<hr />
+<p><a href="https://github.com/alibaba/spring-cloud-alibaba/wiki/RocketMQ">https://github.com/alibaba/spring-cloud-alibaba/wiki/RocketMQ</a></p>
+<p><a href="https://xie.infoq.cn/article/13407cedcc683163cfce19afc">https://xie.infoq.cn/article/13407cedcc683163cfce19afc</a></p>
 
                         
                       </div>
@@ -294,7 +231,7 @@ spring:
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/05/12 17:33 下午</span>
+                    <span class="date">2021/05/24 16:30 下午</span>
                     
           				   
                     
@@ -418,6 +355,18 @@ spring:
 	      
 		      
 			      <li class="post">
+			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -431,18 +380,6 @@ spring:
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  

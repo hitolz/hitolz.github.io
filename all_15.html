@@ -129,83 +129,205 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16587443411197.html">
+                <a class="clearlink" href="16626878291486.html">
                 
-                  <h1>centos7 安装 NFS</h1>
+                  <h1>Java 太卷了转 GO（二）</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>所有机器都安装 nfs-utils。只安装 nfs-utils 即可，rpcbind 属于它的依赖，也会安装上。</p>
-<pre class="line-numbers"><code class="language-plain_text">sudo yum install nfs-utils
-</code></pre>
-<h2><a id="%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%85%8D%E7%BD%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>服务端配置</h2>
-<h3><a id="%E8%AE%BE%E7%BD%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设置服务开机自启</h3>
-<pre class="line-numbers"><code class="language-plain_text">sudo systemctl enable rpcbind
-sudo systemctl enable nfs
-</code></pre>
-<h3><a id="%E5%90%AF%E5%8A%A8nfs%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动 NFS 服务</h3>
-<pre class="line-numbers"><code class="language-plain_text">sudo systemctl start rpcbind
-sudo systemctl start nfs
-</code></pre>
-<h3><a id="%E9%85%8D%E7%BD%AE%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置共享目录</h3>
-<p>服务启动后，配置一个共享目录，这里使用的是 /data 目录作为共享目录</p>
-<pre class="line-numbers"><code class="language-plain_text">sudo mkdir /data
-sudo chmod 755 /data
-</code></pre>
-<p>在 /etc/exports 文件中添加配置。</p>
-<pre class="line-numbers"><code class="language-plain_text">/data/     192.168.0.0/24(rw,sync,no_root_squash,no_all_squash)
-</code></pre>
+                        	<p>上一篇文章简单的学习了 GO 的基础语法，本篇文章用 GO 的框架开发一个短链应用。</p>
+<p>短链应用功能：</p>
 <ol>
-<li>/data: 共享目录位置。</li>
-<li>192.168.0.0/24: 客户端 IP 范围，* 代表所有，即没有限制。</li>
-<li>rw: 权限设置，可读可写。</li>
-<li>sync: 同步共享目录。</li>
-<li>no_root_squash: 可以使用 root 授权。</li>
-<li>no_all_squash: 可以使用普通用户授权。</li>
+<li>创建短链</li>
+<li>根据短链 code 重定向到原始链接</li>
 </ol>
-<h3><a id="%E9%87%8D%E5%90%AFnfs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重启 NFS</h3>
-<pre class="line-numbers"><code class="language-plain_text">sudo systemctl restart nfs
-</code></pre>
-<p>检查本地目录</p>
-<pre class="line-numbers"><code class="language-plain_text">showmount -e localhost
+<p>主要用到的框架：</p>
+<ol>
+<li>ORM 框架 gorm<br />
+<a href="https://gorm.io/zh_CN/docs/index.html">https://gorm.io/zh_CN/docs/index.html</a></li>
+<li>Web 框架 gin<br />
+<a href="https://gin-gonic.com/zh-cn/docs/">https://gin-gonic.com/zh-cn/docs/</a></li>
+</ol>
+<h2><a id="gin" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>gin</h2>
+<p>最快的 http 路由器和框架。</p>
+<pre class="line-numbers"><code class="language-go">package main
 
--- 输出
-Export list for localhost:
-/data 192.168.0.130/24
-</code></pre>
-<h2><a id="linux%E5%AE%A2%E6%88%B7%E7%AB%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Linux 客户端</h2>
-<h3><a id="%E8%AE%BE%E7%BD%AErpcbind%E6%9C%8D%E5%8A%A1%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设置 rpcbind 服务开机自启</h3>
-<pre class="line-numbers"><code class="language-plain_text">sudo systemctl enable rpcbind
-</code></pre>
-<h3><a id="%E5%90%AF%E5%8A%A8nfs%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动 NFS 服务</h3>
-<pre class="line-numbers"><code class="language-plain_text">sudo systemctl start rpcbind
-</code></pre>
-<h3><a id="%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>查看服务端共享目录</h3>
-<pre class="line-numbers"><code class="language-plain_text">showmount -e 192.168.0.130
+import &quot;github.com/gin-gonic/gin&quot;
 
--- 输出
-Export list for 192.168.0.130:
-/data 192.168.0.130/24
+func main() {
+	r := gin.Default()
+	r.GET(&quot;/ping&quot;, func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			&quot;message&quot;: &quot;pong&quot;,
+		})
+	})
+	r.Run() // 监听并在 0.0.0.0:8080 上启动服务
+}
+</code></pre>
+<p>一个最简单的例子，启动后浏览器访问 <a href="http://localhost:8080/ping">http://localhost:8080/ping</a></p>
+<p>使用路由：</p>
+<pre class="line-numbers"><code class="language-go">func main() {
+	engine := gin.Default()
+	engine.Group(&quot;/&quot;)
+
+	engine.GET(&quot;/ping&quot;, func(context *gin.Context) {
+		context.JSON(200, gin.H{
+			&quot;message&quot;: &quot;pong&quot;,
+		})
+	})
+	engine.Run()
+}
+</code></pre>
+<p>将接口放在程序入口 main 方法中不太合适，通常会创建多个 handler，类似于 java 中的 controller。</p>
+<h2><a id="gorm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>gorm</h2>
+<p>连接数据库</p>
+<pre class="line-numbers"><code class="language-go">// 数据库连接：&quot;用户名:密码@tcp(IP:端口)/数据库?charset=utf8&quot;
+sqlcon := &quot;root:123456@tcp(127.0.0.1:3306)/amc?charset=utf8&amp;parseTime=True&amp;loc=Local&quot;
+
+
+DB, err := gorm.Open(mysql.Open(sqlcon), &amp;gorm.Config{
+	DisableForeignKeyConstraintWhenMigrating: true, //禁用物理外键
+})
+if err != nil {
+	log.Fatal(&quot;连接失败！&quot;)
+	return nil
+}
+// 连接池设置
+sqlDB, err := DB.DB()
+// 设置数据库最大连接数
+sqlDB.SetMaxOpenConns(500)
+// 设置数据库最大闲置数
+sqlDB.SetMaxIdleConns(20)
+// 全局禁用表名复数
+//sqlDB.SingularTable(true)
+// 调试模式，可以打印sql语句
+//sqlDB.LogMode(true)
+</code></pre>
+<h3><a id="crud" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CRUD</h3>
+<h4><a id="insert" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>insert</h4>
+<p>保存单条数据</p>
+<pre class="line-numbers"><code class="language-go">createConfig := dao.ShortLinkConfig{
+	Enable:      1,
+	OriginUrl:   &quot;http://localhost:8080&quot;,
+	ShortCode:   &quot;test&quot;,
+	CreatedTime: time.Now(),
+	UpdatedTime: time.Now(),
+}
+mysql.Db.Save(&amp;createConfig)
+</code></pre>
+<p>保存多条数据</p>
+<pre class="line-numbers"><code class="language-go">shortLinkConfigs := []dao.ShortLinkConfig{
+	{
+		Enable:      1,
+		OriginUrl:   &quot;http://localhost:8080&quot;,
+		ShortCode:   &quot;test1&quot;,
+		CreatedTime: time.Now(),
+		UpdatedTime: time.Now()},
+	{
+		Enable:      1,
+		OriginUrl:   &quot;http://localhost:8080&quot;,
+		ShortCode:   &quot;test2&quot;,
+		CreatedTime: time.Now(),
+		UpdatedTime: time.Now(),
+	},
+	{
+		Enable:      1,
+		OriginUrl:   &quot;http://localhost:8080&quot;,
+		ShortCode:   &quot;test3&quot;,
+		CreatedTime: time.Now(),
+		UpdatedTime: time.Now(),
+	},
+}
+// 批量数据一次性插入
+//mysql.Db.Create(&amp;shortLinkConfigs)
+// 分批次插入
+mysql.Db.CreateInBatches(&amp;shortLinkConfigs, 1000)
+</code></pre>
+<h4><a id="select" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>select</h4>
+<pre class="line-numbers"><code class="language-go">config := dao.ShortLinkConfig{
+	Enable: 1,
+}
+
+var shortLinkConfig = dao.ShortLinkConfig{}
+
+//获取第一条记录，主键升序 select * from table ORDER BY id asc LIMIT 1
+mysql.Db.Where(&amp;config).First(&amp;shortLinkConfig)
+log.Printf(&quot;first config = %v&quot;, shortLinkConfig)
+
+shortLinkConfig = dao.ShortLinkConfig{}
+//获取最后一条记录，主键降序 select * from table ORDER BY id desc LIMIT 1
+mysql.Db.Where(&amp;config).Last(&amp;shortLinkConfig)
+log.Printf(&quot;last config = %v&quot;, shortLinkConfig)
+
+shortLinkConfig = dao.ShortLinkConfig{}
+// 获取一条记录，没有指定字段排序
+mysql.Db.Where(&amp;config).Take(&amp;shortLinkConfig)
+log.Printf(&quot;config = %v&quot;, shortLinkConfig)
+
+shortLinkConfig = dao.ShortLinkConfig{}
+mysql.Db.First(&amp;shortLinkConfig, 9)
+log.Printf(&quot;id = 9,config = %v&quot;, shortLinkConfig)
+
+// 查询多条记录
+shortLinkConfigs := make([]dao.ShortLinkConfig, 3)
+mysql.Db.Find(&amp;shortLinkConfigs, []int{8, 9, 10})
+for i, linkConfig := range shortLinkConfigs {
+	log.Printf(&quot;i = %d,config = %v&quot;, i, linkConfig)
+}
+
+// 指定字段查询
+shortCode := &quot;acegf&quot;
+shortLinkConfig = dao.ShortLinkConfig{}
+mysql.Db.Where(&quot;short_code = ? and enable = 1&quot;, shortCode).First(&amp;shortLinkConfig)
+log.Printf(&quot;short_code = %s,config = %v&quot;, shortCode, shortLinkConfig)
+
+// 指定字段查询 struct,这种方式要求 struct 中的字段不能为零值，0、false 这种是不会创建查询条件的。
+shortLinkConfig = dao.ShortLinkConfig{}
+mysql.Db.Where(&amp;dao.ShortLinkConfig{ShortCode: shortCode, Enable: 0}).First(&amp;shortLinkConfig)
+log.Printf(&quot;short_code = %s,enable = 0,config = %v&quot;, shortCode, shortLinkConfig)
+
+// 指定字段查询 map
+shortLinkConfigs = make([]dao.ShortLinkConfig, 10)
+mysql.Db.Where(map[string]interface{}{&quot;enable&quot;: 1, &quot;short_code&quot;: shortCode}).Find(&amp;shortLinkConfigs)
+for i, linkConfig := range shortLinkConfigs {
+	log.Printf(&quot; --- i = %d,config = %v&quot;, i, linkConfig)
+}
 
 </code></pre>
-<h3><a id="%E6%8C%82%E8%BD%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>挂载</h3>
-<p>在客户端创建目录</p>
-<pre class="line-numbers"><code class="language-plain_text">sudo mkdir /data
+<h4><a id="update" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>update</h4>
+<p>Save</p>
+<pre class="line-numbers"><code class="language-go">shortCode := &quot;test3&quot;
+shortLinkConfig := dao.ShortLinkConfig{}
+mysql.Db.Where(&quot;short_code = ? and enable = 1&quot;, shortCode).First(&amp;shortLinkConfig)
+log.Printf(&quot;short_code = %s,config = %v&quot;, shortCode, shortLinkConfig)
+
+shortLinkConfig.ShortCode = &quot;test5&quot;
+mysql.Db.Save(&amp;shortLinkConfig)
 </code></pre>
-<p>挂载</p>
-<pre class="line-numbers"><code class="language-plain_text">sudo mount -t nfs 192.168.0.130:/data /data
+<p>Update 更新单个列</p>
+<pre class="line-numbers"><code class="language-go">// update short_link_config set short_code = &quot;123&quot; where short_code = &quot;test5&quot; and enable = 1
+mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&quot;short_code = ? and enable = 1&quot;, shortCode).Update(&quot;short_code&quot;, &quot;123&quot;)
 </code></pre>
-<h2><a id="%E6%B5%8B%E8%AF%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>测试</h2>
-<p>在随意一台机器上 /data 添加目录或者文件，在另一台机器上 /data 里查看</p>
-<h2><a id="%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>客户端自动挂载</h2>
-<p>编辑客户端文件 /etc/fstab<br />
-在最后一行添加</p>
-<pre class="line-numbers"><code class="language-plain_text">192.168.0.130:/data     /data                   nfs     defaults        0 0
+<p>更新多列,struct 方式,只会更新非零值</p>
+<pre class="line-numbers"><code class="language-go">mysql.Db.Where(&amp;dao.ShortLinkConfig{
+	Enable: 1,
+}).Updates(dao.ShortLinkConfig{
+	Enable:    0,
+	OriginUrl: &quot;http://www.123.com&quot;,
+})
 </code></pre>
-<p>由于修改了 /etc/fstab，需要重新加载 systemctl</p>
-<pre class="line-numbers"><code class="language-plain_text">sudo systemctl daemon-reload
+<p>更新多列，map 方式</p>
+<pre class="line-numbers"><code class="language-go">mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&amp;dao.ShortLinkConfig{Enable: 1}).Updates(map[string]interface{}{&quot;origin_url&quot;: &quot;http://www.baidu.com&quot;})
 </code></pre>
+<h4><a id="delete" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>delete</h4>
+<p>根据主键删除</p>
+<pre class="line-numbers"><code class="language-go">// delete from short_link_config where id = 10
+mysql.Db.Delete(&amp;dao.ShortLinkConfig{}, 10)
+</code></pre>
+<hr />
+<p>短链应用：<br />
+github: <a href="https://github.com/hitolz/shortLink">https://github.com/hitolz/shortLink</a></p>
 
                         
                       </div>
@@ -214,10 +336,10 @@ Export list for 192.168.0.130:
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2022/07/25 18:19 下午</span>
+                    <span class="date">2022/09/09 09:43 上午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='kubernetes.html'>kubernetes</a></span>
+          					    <span class="posted-in"><a href='GO.html'>GO</a></span>
           				   
                     
 
@@ -340,6 +462,18 @@ Export list for 192.168.0.130:
 	      
 		      
 			      <li class="post">
+			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -353,18 +487,6 @@ Export list for 192.168.0.130:
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  

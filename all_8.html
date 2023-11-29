@@ -129,325 +129,285 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16761949639234.html">
+                <a class="clearlink" href="16892187258215.html">
                 
-                  <h1>使用 ChatGPT 学习 Javassist</h1>
+                  <h1>wasm 初体验</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825540.jpg" alt="" /></p>
-<h2><a id="q-javassist%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 是什么？</h2>
-<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<p>Javassist是一个开源的Java字节码操作库，它允许开发人员在运行时编辑和创建Java类。使用Javassist，开发人员可以通过修改现有类的字节码来动态地改变它们的行为，也可以使用Javassist的API来创建全新的Java类。Javassist提供了一个易于使用的API，使开发人员能够在不需要了解复杂的字节码结构的情况下轻松地创建和编辑Java类。Javassist还提供了一些高级功能，如动态代理、AOP（面向切面编程）和Java字节码的转换。由于它的灵活性和易用性，Javassist被广泛用于Java应用程序的动态编程和增强。</p>
-<h2><a id="q-javassist%E5%85%A5%E9%97%A8%E7%A4%BA%E4%BE%8B%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 入门示例？</h2>
-<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<pre class="line-numbers"><code class="language-java">import javassist.*;
+                        	<div class="mweb_toc"><ul>
+<li><a href="#hello-world">Hello World</a>
+<ul>
+<li><a href="#1%E5%AE%89%E8%A3%85">1. 安装</a></li>
+<li><a href="#2%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%B9%E7%9B%AE">2. 初始化项目</a></li>
+<li><a href="#3%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE">3. 构建项目</a></li>
+<li><a href="#4%E7%94%9F%E6%88%90%E9%A1%B5%E9%9D%A2">4. 生成页面</a></li>
+<li><a href="#5%E9%A1%B5%E9%9D%A2%E4%BD%BF%E7%94%A8%E6%88%91%E4%BB%AC%E7%9A%84%E4%BB%A3%E7%A0%81">5. 页面使用我们的代码</a></li>
+<li><a href="#6%E5%90%AF%E5%8A%A8">6. 启动</a></li>
+</ul>
+</li>
+<li><a href="#rust-to-wasm">Rust to wasm</a>
+<ul>
+<li><a href="#1-install-rust">1. install Rust</a></li>
+<li><a href="#2-cargo-install-wasm-pack">2. <code>cargo install wasm-pack</code></a></li>
+<li><a href="#3-cargo-new-lib-hello-wasm">3. <code>cargo new --lib hello-wasm</code></a></li>
+<li><a href="#4-lib-rs%E4%B8%AD%E7%BC%96%E5%86%99-wasm%E4%BB%A3%E7%A0%81">4. lib.rs 中编写 wasm 代码</a></li>
+<li><a href="#5-build">5. build</a></li>
+<li><a href="#6-using-the-package-on-the-web">6. Using the package on the web</a>
+<ul>
+<li><a href="#%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AAhtml%E9%A1%B5%E9%9D%A2%EF%BC%8C%E4%BD%BF%E7%94%A8-hello-wasm-js">编写一个 html 页面，使用 hello_wasm.js</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E4%B8%80%E4%B8%AAserver%E6%9C%8D%E5%8A%A1">启动一个 server 服务</a></li>
+</ul>
+</li>
+<li><a href="#7-making-our-package-available-to-npm">7. Making our package available to npm</a>
+<ul>
+<li><a href="#%E9%87%8D%E6%96%B0%E7%BC%96%E8%AF%91">重新编译</a></li>
+<li><a href="#npm-link">npm link</a></li>
+<li><a href="#using-the-npm-package-on-the-web">Using the npm package on the web</a>
+<ul>
+<li><a href="#package-json">package.json</a></li>
+<li><a href="#webpack-config-js">webpack.config.js</a></li>
+<li><a href="#index-js">index.js</a></li>
+<li><a href="#index-html">index.html</a></li>
+<li><a href="#site%E7%9A%84%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84">site 的目录结构</a></li>
+<li><a href="#%E5%9C%A8site%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%AD%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4">在 site 文件夹中执行命令</a></li>
+<li><a href="#%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98">出现的问题</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E8%A1%A5%E5%85%85">补充</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>WASM 不是一种编程语言🙂。简而言之，它是一种将用一种编程语言编写的代码转换为浏览器可理解的机器代码（JavaScript）的技术。</p>
+<p>WASM (WebAssembly 的缩写)被设计为其他语言的编译目标，允许服务器端代码(如 C 或 C++代码)被编译成 WASM 并在浏览器中执行。</p>
+<p>也被称作  web 汇编。</p>
+<h2><a id="hello-world" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hello World</h2>
+<h3><a id="1%E5%AE%89%E8%A3%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. 安装</h3>
+<pre class="line-numbers"><code class="language-plain_text">cargo install cargo-generate
 
-public class JavassistExample {
-    public static void main(String[] args) throws Exception {
-        ClassPool pool = ClassPool.getDefault();
-        CtClass cc = pool.makeClass(&quot;MyClass&quot;);
+cargo install wasm-pack
 
-        // 添加属性
-        CtField field = new CtField(CtClass.intType, &quot;myField&quot;, cc);
-        cc.addField(field);
-
-        // 添加方法
-        CtMethod method = CtNewMethod.make(&quot;public void setMyField(int value) { this.myField = value; }&quot;, cc);
-        cc.addMethod(method);
-
-        // 输出类的字节码
-        cc.writeFile(&quot;output&quot;);
-    }
-}
+npm install npm@latest -g
 
 </code></pre>
-<p>这个示例创建了一个名为&quot;MyClass&quot;的新类，添加了一个名为&quot;myField&quot;的int类型属性和一个名为&quot;setMyField&quot;的公共void类型方法，该方法设置myField属性的值。最后，将该类的字节码写入名为&quot;output&quot;的文件夹中。</p>
-<p>通过运行该示例，将在output文件夹中生成一个MyClass.class文件，该文件包含上述定义的类的字节码。这个示例只是Javassist的入门示例，Javassist还提供了许多其他功能，如修改现有类、动态代理等。</p>
-<h2><a id="q%E9%9C%80%E8%A6%81%E6%B7%BB%E5%8A%A0%E4%BB%80%E4%B9%88-maven%E4%BE%9D%E8%B5%96%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:需要添加什么 maven 依赖？</h2>
-<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
-    &lt;groupId&gt;org.javassist&lt;/groupId&gt;
-    &lt;artifactId&gt;javassist&lt;/artifactId&gt;
-    &lt;version&gt;3.28.0-GA&lt;/version&gt;
-&lt;/dependency&gt;
+<h3><a id="2%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%B9%E7%9B%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. 初始化项目</h3>
+<pre class="line-numbers"><code class="language-plain_text">cargo generate --git https://github.com/rustwasm/wasm-pack-template
 </code></pre>
-<p>最新版本是 3.29.1-GA</p>
-<p>添加完 maven 依赖后运行，确实在 output 文件夹下生成了 MyClass.class<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825562.png" alt="CleanShot2023-02-1816.57.14@2x" /></p>
-<h2><a id="q%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:如何修改现有类？</h2>
-<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<p>使用Javassist修改现有类可以通过以下步骤完成：</p>
+<p>项目命名为 first-wasm</p>
+<h3><a id="3%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. 构建项目</h3>
+<p>项目根目录执行</p>
+<pre class="line-numbers"><code class="language-plain_text">wasm-pack build
+</code></pre>
+<p>构建完成后会生成 pkg 目录。</p>
+<h3><a id="4%E7%94%9F%E6%88%90%E9%A1%B5%E9%9D%A2" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. 生成页面</h3>
+<p>node 初始化一个前端项目，在根目录执行。</p>
+<pre class="line-numbers"><code class="language-plain_text">npm init wasm-app www
+</code></pre>
+<p>项目中会出现一个 www 目录，<br />
+进入到 www 中，安装 node 依赖</p>
+<pre class="line-numbers"><code class="language-plain_text">npm install
+</code></pre>
+<h3><a id="5%E9%A1%B5%E9%9D%A2%E4%BD%BF%E7%94%A8%E6%88%91%E4%BB%AC%E7%9A%84%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. 页面使用我们的代码</h3>
 <ol>
-<li>获取类池（ClassPool）对象。
-<pre class="line-numbers"><code class="language-java">ClassPool pool = ClassPool.getDefault();
-</code></pre>
-</li>
-<li>使用类池获取要修改的类的CtClass对象。
-<pre class="line-numbers"><code class="language-java">CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
-</code></pre>
-</li>
-<li>修改类的字节码，比如添加新的方法或属性，修改现有方法或属性等。下面是一个添加新方法的示例：
-<pre class="line-numbers"><code class="language-java">CtMethod newMethod = CtNewMethod.make(
-&quot;public void newMethod() { System.out.println(\&quot;This is a new method!\&quot;); }&quot;, cc);
-cc.addMethod(newMethod);
-</code></pre>
-</li>
-<li>将修改后的字节码写入class文件或者加载到当前JVM中。
-<pre class="line-numbers"><code class="language-java">cc.writeFile();
-</code></pre>
-或者
-<pre class="line-numbers"><code class="language-java">cc.toClass();
-</code></pre>
-<code>writeFile</code>方法会将修改后的字节码写入到磁盘上，<code>toClass</code>方法会将字节码加载到当前JVM中。</li>
+<li>在 pkg 目录下执行</li>
 </ol>
-<p>下面是一个完整的示例，它会将现有类&quot;com.example.MyClass&quot;中的方法&quot;oldMethod&quot;修改为输出一条新的信息：</p>
-<pre class="line-numbers"><code class="language-java">import javassist.*;
-
-public class JavassistExample {
-    public static void main(String[] args) throws Exception {
-        ClassPool pool = ClassPool.getDefault();
-        CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
-
-        CtMethod oldMethod = cc.getDeclaredMethod(&quot;oldMethod&quot;);
-        oldMethod.setBody(&quot;System.out.println(\&quot;This is a modified old method!\&quot;);&quot;);
-
-        cc.writeFile();
-    }
-}
+<pre class="line-numbers"><code class="language-plain_text">npm link
 </code></pre>
-<p>注意，为了执行这个示例，你需要将&quot;com.example.MyClass&quot;这个类的字节码文件放在类路径下。</p>
-<hr />
-<p>执行前，我的 TestClass类，里面 test 方法，输出1<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825576.png" alt="CleanShot2023-02-1817.07.50@2x" /></p>
-<p>执行后<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825589.png" alt="CleanShot2023-02-1817.08.29@2x" /></p>
-<p>执行后的这个是新生成的文件，并不是覆盖掉原来的文件。</p>
-<h2><a id="q-cc-toclass%E5%92%8C-cc-writefile%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:cc.toClass() 和 cc.writeFile() 的区别</h2>
-<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<p><code>toClass()</code> 方法会将 <code>Javassist</code> 修改后的类直接转换为 <code>java.lang.Class</code> 对象，并将该对象加载到 JVM 中，因此你可以在代码中直接使用修改后的类。如果你调用了 <code>toClass()</code> 方法，<code>Javassist</code> 会尝试在 JVM 中加载修改后的类，如果加载成功，则返回一个 <code>java.lang.Class</code> 对象，否则会抛出一个异常。</p>
-<p><code>writeFile()</code> 方法会将 <code>Javassist</code> 修改后的类写入到磁盘上的一个 .class 文件中。这个文件可以用来替换原来的类文件，或者在以后的运行中使用，以避免每次运行时重新生成修改后的类。注意，<code>writeFile()</code> 方法只是将类保存到磁盘上，并没有将其加载到 JVM 中，因此你不能直接在代码中使用修改后的类，除非你手动加载它。</p>
-<p>通常来说，<code>toClass()</code> 方法比 <code>writeFile()</code> 更方便，因为它可以直接在 JVM 中加载修改后的类，而不需要手动加载它。但是，如果你需要在多个应用程序之间共享修改后的类，或者想要在以后的运行中使用这个类，那么 <code>writeFile()</code> 方法可能更有用。</p>
-<p>需要注意的是，<code>toClass()</code> 和 <code>writeFile()</code> 方法可以结合使用，以便在将修改后的类加载到 JVM 中之前，先将它们保存到磁盘上。这样做可以避免每次运行时重新生成修改后的类。</p>
-<h2><a id="q%E4%BD%BF%E7%94%A8-javassist%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%8C%E5%9C%A8%E5%85%B6%E4%B8%AD%E6%AF%8F%E4%B8%AA%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E5%89%8D%E5%90%8E%E8%BE%93%E5%87%BA%E5%BD%93%E5%89%8D%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4%EF%BC%8C%E4%BB%A5%E6%AD%A4%E6%9D%A5%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E7%9A%84%E6%97%B6%E9%97%B4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:使用Javassist修改现有类，在其中每个方法执行前后输出当前系统时间，以此来计算方法执行的时间</h2>
-<h2><a id="a%EF%BC%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A：</h2>
-<p>回答的步骤跟上一个问题的步骤是一样的，不过示例代码不同，而且有错误，最终修改完成后的示例：</p>
-<pre class="line-numbers"><code class="language-java">import javassist.*;
-
-
-public class JavassistExample {
-    public static void main(String[] args) throws Exception {
-        modifyClass();
-    }
-
-    public static void modifyClass() throws Exception {
-        ClassPool cp = ClassPool.getDefault();
-        CtClass cc = cp.get(&quot;com.example.MyClass&quot;);
-        System.out.println(&quot;modifyClass &quot; + cc.getName());
-        CtMethod[] methods = cc.getDeclaredMethods();
-        for (CtMethod method : methods) {
-            String methodName = &quot;modifyClass &quot; + cc.getName() + &quot;#&quot; + method.getName();
-            System.out.println(methodName);
-            method.addLocalVariable(&quot;startNanos&quot;, CtClass.longType);
-            method.insertBefore(&quot;{ startNanos = System.nanoTime(); }&quot;);
-            method.insertAfter(&quot;System.out.println(System.nanoTime() - startNanos);&quot;);
-        }
-        // 重新生成字节码并返回
-        cc.writeFile();
-        cc.toClass();
-    }
-}
-</code></pre>
-<h2><a id="%E8%BF%90%E8%A1%8C%E7%94%9F%E6%88%90%E7%9A%84%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行生成的代码</h2>
-<pre class="line-numbers"><code class="language-java">public class MyApp {
-    public static void main(String[] args) throws Exception {
-        // 在 Javassist 中修改 MyClass
-        JavassistExample.modifyClass();
-
-        // 已经加载到 JVM 内存中，这里使用的是修改后的类
-        MyClass cc = new MyClass();
-        cc.method1();
-    }
-}
-</code></pre>
-<h2><a id="%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改后的字节码</h2>
-<pre class="line-numbers"><code class="language-java">
-public class MyClass {
-    public MyClass() {
-    }
-
-    public void method1() {
-        long startNanos = System.nanoTime();
-        System.out.println(&quot;This is method 1&quot;);
-
-        try {
-            Thread.sleep(1000L);
-        } catch (InterruptedException var6) {
-            var6.printStackTrace();
-        }
-
-        Object var5 = null;
-        System.out.println(System.nanoTime() - startNanos);
-    }
-
-    public void method2(String name, Integer age) {
-        long startNanos = System.nanoTime();
-        System.out.println(&quot;This is method 2&quot;);
-        System.out.println(name);
-        System.out.println(age);
-
-        try {
-            Thread.sleep(2000L);
-        } catch (InterruptedException var8) {
-            var8.printStackTrace();
-        }
-
-        Object var7 = null;
-        System.out.println(System.nanoTime() - startNanos);
-    }
-}
-</code></pre>
-<h2><a id="q%EF%BC%9Ajavaagent%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q：javaagent 的使用原理</h2>
-<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<p>Java Agent 是一种基于 JVM 的动态代理技术，它可以在应用程序启动时通过参数的方式将一个 Jar 包加载到 JVM 中，从而实现对 Java 应用程序的动态监控和控制。Java Agent 的原理是通过 Java Instrumentation API，它提供了对 Java 应用程序字节码的操作能力，可以在 Java 应用程序启动时通过 Agent 将 Java 类进行动态修改，从而实现对应用程序的监控和控制。</p>
-<p>在使用 Java Agent 时，需要编写一个代理程序，并将其打包成 Jar 文件。在代理程序中，需要实现 premain 方法，该方法会在应用程序启动时被自动调用。在 premain 方法中，可以通过 Instrumentation API 获取应用程序的类定义，并对其进行动态修改，从而实现对应用程序的增强和监控。</p>
-<p>具体而言，Java Agent 可以在 premain 方法中使用 Instrumentation API 的 addTransformer() 方法注册一个 ClassFileTransformer 对象。ClassFileTransformer 对象可以在应用程序加载类文件时对类字节码进行转换。在转换过程中，可以使用字节码操作库，比如 Javassist，ASM 或 ByteBuddy 等，来修改类字节码。通过这种方式，Java Agent 可以实现对应用程序类的增强和监控。</p>
-<p>在 Java Agent 中，还可以通过 Instrumentation API 提供的其他方法获取和修改类加载器、管理运行时代理、获取类定义信息等。这些功能可以用于实现更加复杂的增强和监控操作。</p>
-<p>总之，Java Agent 是一种非常强大的工具，可以用于实现各种应用程序的增强和监控，比如性能监控、安全审计、调试等。它通过动态修改应用程序的字节码，可以实现非侵入式的监控和增强，而且对应用程序的性能影响非常小。</p>
-<hr />
-<p>ClassFileTransformer 是 Java 中的一个接口，它是用于修改或增强字节码的核心接口之一。在 Java 应用程序启动时，通过 -javaagent 参数加载的 Java 代理会自动注册一个 ClassFileTransformer 实现，用于对 JVM 中加载的类进行字节码修改或增强操作。</p>
-<p>ClassFileTransformer 接口只有一个方法 transform，该方法接收三个参数：原始类名、类加载器、原始类字节码。该方法的返回值是一个字节数组，表示经过修改后的新的字节码。ClassFileTransformer 可以在类加载过程中的各个阶段进行字节码的修改，例如在类加载之前，类加载时，类被重新转换时等。</p>
-<hr />
-<h2><a id="javassist" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Javassist</h2>
-<p>Javassist是一个开源的分析、编辑和创建Java字节码的类库；</p>
-<p>相比ASM，Javassist提供了更加简单便捷的API，使用Javassist我们可以像写Java代码一样直接插入Java代码片段，让我们不再需要关注Java底层的字节码的和栈操作，仅需要学会如何使用Javassist的API即可实现字节码编辑。</p>
-<p>学习Javassist可以阅读官方的入门教程：<a href="http://www.javassist.org/tutorial/tutorial.html">Getting Started with Javassist</a>。</p>
-<h3><a id="api" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h3>
-<table>
-<thead>
-<tr>
-<th>类</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ClassPool</td>
-<td>ClassPool是一个存储CtClass的容器，如果调用get方法会搜索并创建一个表示该类的CtClass对象</td>
-</tr>
-<tr>
-<td>CtClass</td>
-<td>CtClass表示的是从ClassPool获取的类对象，可对该类就行读写编辑等操作</td>
-</tr>
-<tr>
-<td>CtMethod</td>
-<td>可读写的类方法对象</td>
-</tr>
-<tr>
-<td>CtConstructor</td>
-<td>可读写的类构造方法对象</td>
-</tr>
-<tr>
-<td>CtField</td>
-<td>可读写的类成员变量对象</td>
-</tr>
-</tbody>
-</table>
-<h3><a id="%E6%A0%87%E8%AF%86%E7%AC%A6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>标识符</h3>
-<table>
-<thead>
-<tr>
-<th>表达式</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>$0, $1, $2, ...</code></td>
-<td>this和方法参数</td>
-</tr>
-<tr>
-<td><code>$args</code></td>
-<td>Object[]类型的参数数组</td>
-</tr>
-<tr>
-<td><code>$$</code></td>
-<td>所有的参数，如<code>m($$)</code>等价于<code>m($1,$2,...)</code></td>
-</tr>
-<tr>
-<td><code>$cflow(...)</code></td>
-<td>cflow变量</td>
-</tr>
-<tr>
-<td><code>$r</code></td>
-<td>返回类型，用于类型转换</td>
-</tr>
-<tr>
-<td><code>$w</code></td>
-<td>包装类型，用于类型转换</td>
-</tr>
-<tr>
-<td><code>$_</code></td>
-<td>方法返回值</td>
-</tr>
-<tr>
-<td><code>$sig</code></td>
-<td>方法签名，返回java.lang.Class[]数组类型</td>
-</tr>
-<tr>
-<td><code>$type</code></td>
-<td>返回值类型，java.lang.Class类型</td>
-</tr>
-<tr>
-<td><code>$class</code></td>
-<td>当前类，java.lang.Class类型</td>
-</tr>
-</tbody>
-</table>
-<h2><a id="agent" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Agent</h2>
-<p>JDK1.5开始，Java新增了Instrumentation(Java Agent API)和JVMTI(JVM Tool Interface)功能，允许JVM在加载某个class文件之前对其字节码进行修改，同时也支持对已加载的class(类字节码)进行重新加载(Retransform)。</p>
-<p>利用Java Agent这一特性衍生出了APM(Application Performance Management，应用性能管理)、RASP(Runtime application self-protection，运行时应用自我保护)、IAST(Interactive Application Security Testing，交互式应用程序安全测试)等相关产品，它们都无一例外的使用了Instrumentation/JVMTI的API来实现动态修改Java类字节码并插入监控或检测代码。</p>
-<p>Java Agent有两种运行模式：</p>
-<ol>
-<li>启动Java程序时添加-javaagent(Instrumentation API实现方式)或-agentpath/-agentlib(JVMTI的实现方式)参数，如java -javaagent:/data/XXX.jar LingXeTest。</li>
-<li>JDK1.6新增了attach(附加方式)方式，可以对运行中的Java进程附加Agent。<br />
-这两种运行方式的最大区别在于第一种方式只能在程序启动时指定Agent文件，而attach方式可以在Java程序运行后根据进程ID动态注入Agent到JVM。</li>
+<p>pkg 文件夹中会出现 package.json 文件</p>
+<ol start="2">
+<li>在 www 中执行</li>
 </ol>
-<p>Java Agent和普通的Java类并没有任何区别，普通的Java程序中规定了main方法为程序入口，而Java Agent则将premain（Agent模式）和agentmain（Attach模式）作为了Agent程序的入口，两者所接受的参数是完全一致的，如下：</p>
-<pre class="line-numbers"><code class="language-java">public static void premain(String args, Instrumentation inst) {}
-public static void agentmain(String args, Instrumentation inst) {}
+<pre class="line-numbers"><code class="language-plain_text">npm link first-wasm
 </code></pre>
-<p>Java Agent还限制了我们必须以jar包的形式运行或加载，我们必须将编写好的Agent程序打包成一个jar文件。</p>
-<p>使用命令：</p>
-<pre class="line-numbers"><code class="language-plain_text">java -javaagent:/path/to/agent.jar -jar yourapp.jar
+<ol start="3">
+<li>修改 /www/index.js</li>
+</ol>
+<pre class="line-numbers"><code class="language-plain_text">import * as wasm from 'first-wasm';
+
 </code></pre>
-<p>除此之外，Java Agent还强制要求了所有的jar文件中必须包含/META-INF/MANIFEST.MF文件，且该文件中必须定义好Premain-Class（Agent模式）或Agent-Class:（Agent模式）配置，可以通过 maven 插件实现:</p>
-<pre class="line-numbers"><code class="language-xml">&lt;plugin&gt;
-    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-    &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;
-    &lt;version&gt;3.2.0&lt;/version&gt;
-    &lt;configuration&gt;
-        &lt;archive&gt;
-            &lt;addMavenDescriptor&gt;true&lt;/addMavenDescriptor&gt;
-            &lt;index&gt;true&lt;/index&gt;
-            &lt;manifest&gt;
-                &lt;addDefaultSpecificationEntries&gt;true&lt;/addDefaultSpecificationEntries&gt;
-                &lt;addDefaultImplementationEntries&gt;true&lt;/addDefaultImplementationEntries&gt;
-            &lt;/manifest&gt;
-            &lt;manifestEntries&gt;
-                &lt;Premain-Class&gt;com.example.PreMain&lt;/Premain-Class&gt;
-                &lt;Specification-Version&gt;${project.version}&lt;/Specification-Version&gt;
-                &lt;Implementation-Version&gt;${project.version}&lt;/Implementation-Version&gt;
-            &lt;/manifestEntries&gt;
-        &lt;/archive&gt;
-    &lt;/configuration&gt;
-&lt;/plugin&gt;
+<h3><a id="6%E5%90%AF%E5%8A%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>6. 启动</h3>
+<pre class="line-numbers"><code class="language-plain_text">npm run start
 </code></pre>
-<h2><a id="%E5%B0%86%E7%9B%91%E6%8E%A7%E4%BF%A1%E6%81%AF%E8%BE%93%E5%87%BA%E5%88%B0%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>将监控信息输出到日志文件</h2>
-<p>上面的例子中已经实现了，在方法运行前后记录时间戳来监控方法执行时间。<br />
-下一步计划，将执行时间记录下来。<br />
-在下一步，记录到时序数据库中，加载到 Prometheus</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16919824092381.jpg" alt="" /></p>
+<p>如果要修改 alert 显示的内容，修改 rust 代码 lib.rs 中的 greet 方法。</p>
+<h1><a id="rust-to-wasm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rust to wasm</h1>
+<p>上面的例子是使用的 cargo generate  直接生成的模板，<br />
+按照 <a href="https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm">https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm</a> 里的步骤<br />
+可以自己一步一步实现 rust 编译为 wasm。</p>
+<h2><a id="1-install-rust" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. install Rust</h2>
+<h2><a id="2-cargo-install-wasm-pack" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. <code>cargo install wasm-pack</code></h2>
+<h2><a id="3-cargo-new-lib-hello-wasm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. <code>cargo new --lib hello-wasm</code></h2>
+<h2><a id="4-lib-rs%E4%B8%AD%E7%BC%96%E5%86%99-wasm%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. lib.rs 中编写 wasm 代码</h2>
+<pre class="line-numbers"><code class="language-rust">use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+extern {
+    pub fn alert(s: &amp;str);
+}
+    
+#[wasm_bindgen]
+pub fn greet(name: &amp;str) {
+    alert(&amp;format!(&quot;Hello, {}!&quot;, name));
+}
+</code></pre>
+<p>添加依赖</p>
+<pre class="line-numbers"><code class="language-plain_text">[lib]
+crate-type = [&quot;cdylib&quot;, &quot;rlib&quot;]
+    
+[dependencies]
+wasm-bindgen=&quot;0.2&quot;
+</code></pre>
+<h2><a id="5-build" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. build</h2>
+<pre class="line-numbers"><code class="language-plain_text">wasm-pack build --target web
+</code></pre>
+<p>现在的目录结构</p>
+<pre class="line-numbers"><code class="language-plain_text">├── Cargo.lock
+├── Cargo.toml
+├── index.html
+├── pkg
+│   ├── hello_wasm.d.ts
+│   ├── hello_wasm.js
+│   ├── hello_wasm_bg.wasm
+│   ├── hello_wasm_bg.wasm.d.ts
+│   └── package.json
+├── src
+│   └── lib.rs
+└── target
+    ├── CACHEDIR.TAG
+    ├── release
+    └── wasm32-unknown-unknown
+</code></pre>
+<h2><a id="6-using-the-package-on-the-web" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>6. Using the package on the web</h2>
+<h3><a id="%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AAhtml%E9%A1%B5%E9%9D%A2%EF%BC%8C%E4%BD%BF%E7%94%A8-hello-wasm-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>编写一个 html 页面，使用 hello_wasm.js</h3>
+<pre class="line-numbers"><code class="language-html">&lt;!doctype html&gt;
+&lt;html lang=&quot;en-US&quot;&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot; /&gt;
+    &lt;title&gt;hello-wasm example&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;script type=&quot;module&quot;&gt;
+      import init, { greet } from &quot;./pkg/hello_wasm.js&quot;;
+      init().then(() =&gt; {
+        greet(&quot;WebAssembly&quot;);
+      });
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h3><a id="%E5%90%AF%E5%8A%A8%E4%B8%80%E4%B8%AAserver%E6%9C%8D%E5%8A%A1" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>启动一个 server 服务</h3>
+<pre class="line-numbers"><code class="language-plain_text">python3 -m http.server
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16919806550698.jpg" alt="" /></p>
+<p>至此，一个简单的 wasm 就运行起来了。</p>
+<h2><a id="7-making-our-package-available-to-npm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>7. Making our package available to npm</h2>
+<h3><a id="%E9%87%8D%E6%96%B0%E7%BC%96%E8%AF%91" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>重新编译</h3>
+<p>如果想要在 node 中使用 wasm，重新编译代码，使用 bundler 模式</p>
+<pre class="line-numbers"><code class="language-plain_text">wasm-pack build --target bundler
+</code></pre>
+<h3><a id="npm-link" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>npm link</h3>
+<blockquote>
+<p>Next, let's use npm link to make this package available to other JavaScript packages installed</p>
+</blockquote>
+<pre class="line-numbers"><code class="language-plain_text">cd pkg
+npm link
+</code></pre>
+<blockquote>
+<p>We now have an npm package, written in Rust, but compiled to WebAssembly. It's ready for use from JavaScript, and doesn't require the user to have Rust installed; the code included was the WebAssembly code, not the Rust source.</p>
+</blockquote>
+<h3><a id="using-the-npm-package-on-the-web" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the npm package on the web</h3>
+<p>根目录中创建新的文件夹，site</p>
+<pre class="line-numbers"><code class="language-plain_text">mkdir site
+cd site
+npm link hello-wasm
+</code></pre>
+<p>site 文件夹中创建 package.json、webpack.config.js、index.js、index.html</p>
+<h4><a id="package-json" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>package.json</h4>
+<pre class="line-numbers"><code class="language-json">{
+  &quot;scripts&quot;: {
+    &quot;serve&quot;: &quot;webpack-dev-server&quot;
+  },
+  &quot;dependencies&quot;: {
+    &quot;hello-wasm&quot;: &quot;^0.1.0&quot;
+  },
+  &quot;devDependencies&quot;: {
+    &quot;webpack&quot;: &quot;^4.25.1&quot;,
+    &quot;webpack-cli&quot;: &quot;^3.1.2&quot;,
+    &quot;webpack-dev-server&quot;: &quot;^3.1.10&quot;
+  }
+}
+</code></pre>
+<h4><a id="webpack-config-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>webpack.config.js</h4>
+<pre class="line-numbers"><code class="language-js">const path = require(&quot;path&quot;);
+module.exports = {
+  entry: &quot;./index.js&quot;,
+  output: {
+    path: path.resolve(__dirname, &quot;dist&quot;),
+    filename: &quot;index.js&quot;,
+  },
+  mode: &quot;development&quot;,
+};
+</code></pre>
+<h4><a id="index-js" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>index.js</h4>
+<pre class="line-numbers"><code class="language-js">import(&quot;./node_modules/hello-wasm/hello_wasm.js&quot;).then((js) =&gt; {
+  js.greet(&quot;WebAssembly with npm&quot;);
+});
+</code></pre>
+<h4><a id="index-html" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>index.html</h4>
+<pre class="line-numbers"><code class="language-html">&lt;!doctype html&gt;
+&lt;html lang=&quot;en-US&quot;&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot; /&gt;
+    &lt;title&gt;hello-wasm example&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;script src=&quot;./index.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h4><a id="site%E7%9A%84%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>site 的目录结构</h4>
+<pre class="line-numbers"><code class="language-plain_text">├── index.html
+├── index.js
+├── node_modules
+│   └── hello-wasm -&gt; ../../pkg
+├── package.json
+└── webpack.config.js
+</code></pre>
+<h4><a id="%E5%9C%A8site%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%AD%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>在 site 文件夹中执行命令</h4>
+<pre class="line-numbers"><code class="language-plain_text">npm install
+npm run serve
+</code></pre>
+<h4><a id="%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>出现的问题</h4>
+<pre class="line-numbers"><code class="language-plain_text">opensslErrorStack: [ 'error:03000086:digital envelope routines::initialization error' ],
+library: 'digital envelope routines',
+reason: 'unsupported',
+code: 'ERR_OSSL_EVP_UNSUPPORTED'
+</code></pre>
+<p>先执行这条命令，然后在运行</p>
+<pre class="line-numbers"><code class="language-plain_text">export NODE_OPTIONS=--openssl-legacy-provider
+</code></pre>
+<p>以上就是 Rust 编译为 wasm 的过程。</p>
+<hr />
+<h2><a id="%E8%A1%A5%E5%85%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>补充</h2>
+<pre class="line-numbers"><code class="language-plain_text">编译为 web
+wasm-pack build --target web
+
+编译为 bundler
+wasm-pack build --target bundler
+</code></pre>
+<p>编译为 web，可以在 html 中直接引用。<br />
+编译为 bundler、nodejs，可以在 nodejs 中使用。</p>
+<p><a href="https://rustwasm.github.io/docs/wasm-pack/commands/build.html">https://rustwasm.github.io/docs/wasm-pack/commands/build.html</a><br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16904715130997.jpg" alt="" /></p>
+<hr />
+<p><a href="https://xie.infoq.cn/article/0bb5ff2fa5d5d9db492c88a4c">https://xie.infoq.cn/article/0bb5ff2fa5d5d9db492c88a4c</a></p>
+<p><a href="https://llever.com/rustwasm-book/game-of-life/hello-world.zh.html">https://llever.com/rustwasm-book/game-of-life/hello-world.zh.html</a></p>
+<p><a href="https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm">https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm</a></p>
+<p><a href="https://rustwasm.github.io/docs/wasm-pack/introduction.html">https://rustwasm.github.io/docs/wasm-pack/introduction.html</a></p>
 
                         
                       </div>
@@ -456,10 +416,10 @@ public static void agentmain(String args, Instrumentation inst) {}
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2023/02/12 17:42 下午</span>
+                    <span class="date">2023/07/13 11:25 上午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='JVM.html'>JVM</a></span>
+          					    <span class="posted-in"><a href='rust.html'>rust</a></span>
           				   
                     
 
@@ -582,6 +542,18 @@ public static void agentmain(String args, Instrumentation inst) {}
 	      
 		      
 			      <li class="post">
+			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -595,18 +567,6 @@ public static void agentmain(String args, Instrumentation inst) {}
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  

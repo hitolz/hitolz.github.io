@@ -129,48 +129,168 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16032821146100.html">
+                <a class="clearlink" href="16032822063276.html">
                 
-                  <h1>MySQL聚集索引和二级索引</h1>
+                  <h1>线程池</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>数据库中B+树索引分为聚集索引(clustered index)和辅助索引(secondary index，也被称作二级索引、非聚集索引)，其内部都是B+树，即高度平衡的，叶子节点存放所有数据，不同的是叶子节点存放的是否是一整行的数据。</p>
-<hr />
-<p>聚集索引：InnoDB存储引擎中，按照每张表的主键构建的一棵B+树，叶子节点存放的即为行记录数据。<br />
-InnoDB存储引擎中是必须要有一个聚集索引的，如果没有显示指定哪一字段是主键，则选择表中第一个不允许为NULL的唯一索引当作是聚集索引，如果还是没有，就采用InnoDB为每行数据内置的6字节的rowid作为聚集索引。<br />
-一般聚集索引是自增主键。</p>
-<hr />
-<p>辅助索引：叶子节点并不包含行记录的全部数据，叶子节点除了包含键值以外，每个叶子节点中的索引行中还包含了一个书签(bookmark)，该书签用来告诉InnoDB存储引擎哪里可以找多与索引相对应的行数据。由于InnoDB存储引擎表是索引组织表，因此 辅助索引的书签就是相应行数据的聚集索引键。</p>
-<p>当通过辅助索引来寻找数据时，先查到主键，然后通过主键索引来找到一个完整的行记录。</p>
-<hr />
-<p>回表问题：<br />
-当通过二级索引去查询数据，先查询辅助索引树，得到主键值，再通过聚集索引树查询，得到最终结果。</p>
-<p>回到主键索引树搜索的过程，称为回表。</p>
-<p>如果在一棵高度为3的辅助索引树中查找数据，那需要对这棵辅助索引遍历3次找到指定主键，如果聚集索引树的高度同样为3，那么还需要对聚集索引树进行3次查找，最终得到一个完整的行数据所在的页，一共需要6次逻辑IO访问得到最终的数据页。</p>
-<pre class="line-numbers"><code class="language-plain_text">CREATE TABLE `user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) COLLATE utf8_bin NOT NULL,
-  `age` int(11) NOT NULL,
-  `sex` varchar(2) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_name` (`name`)
-) ENGINE=InnoDB  
+                        	<div class="mweb_toc"><ul>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%98%AF%E4%BB%80%E4%B9%88">线程池是什么</a></li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98">线程池解决的问题</a></li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6">线程池运行机制</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%96%B9%E5%BC%8F">创建线程池的四种方式</a>
+<ul>
+<li><a href="#newcachedthreadpool">newCachedThreadPool</a></li>
+<li><a href="#newfixedthreadpool">newFixedThreadPool</a></li>
+<li><a href="#newscheduledthreadpool">newScheduledThreadPool</a></li>
+<li><a href="#newsinglethreadexecutor">newSingleThreadExecutor</a></li>
+</ul>
+</li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%A4%A7%E5%B0%8F%E5%88%86%E9%85%8D">线程池大小分配</a></li>
+</ul>
+</div>
+<h2><a id="%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%98%AF%E4%BB%80%E4%B9%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>线程池是什么</h2>
+<p>线程池是一种基于池化思想来管理线程的工具。<br />
+使用线程池的好处：</p>
+<ul>
+<li>降低资源消耗：通过池化技术复用已经创建的线程，降低线程创建和销毁造成的损耗。</li>
+<li>提高响应速度：任务到达时，无需等待线程创建即可执行。</li>
+<li>提高线程的可管理性：使用线程池进行统一的分配、调优和监控。</li>
+<li>提供更多更强大的功能：比如延时定时线程池ScheduledThreadPoolExecutor，就允许任务延期执行或定期执行。</li>
+</ul>
+<h2><a id="%E7%BA%BF%E7%A8%8B%E6%B1%A0%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>线程池解决的问题</h2>
+<p>线程池解决的核心问题就是资源管理问题。<br />
+1、频繁申请、销毁资源和调度资源，将带来额外的消耗，可能非常巨大。<br />
+2、对资源无限申请，缺少抑制手段，易引发系统资源耗尽的风险。<br />
+3、系统无法合理管理内部的资源分布，会降低系统的稳定性。</p>
+<h2><a id="%E7%BA%BF%E7%A8%8B%E6%B1%A0%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>线程池运行机制</h2>
+<p><img src="http://hitol.blog.cdn.updev.cn/16023122966589.jpg" alt="16023122966589" /></p>
+<details>
+<summary>ThreadPoolExecutor构造方法</summary>
+```
+public ThreadPoolExecutor(int corePoolSize,
+                          int maximumPoolSize,
+                          long keepAliveTime,
+                          TimeUnit unit,
+                          BlockingQueue<Runnable> workQueue,
+                          ThreadFactory threadFactory,
+                          RejectedExecutionHandler handler) {
+    if (corePoolSize < 0 ||
+        maximumPoolSize <= 0 ||
+        maximumPoolSize < corePoolSize ||
+        keepAliveTime < 0)
+        throw new IllegalArgumentException();
+    if (workQueue == null || threadFactory == null || handler == null)
+        throw new NullPointerException();
+    this.acc = System.getSecurityManager() == null ?
+            null :
+            AccessController.getContext();
+    this.corePoolSize = corePoolSize;
+    this.maximumPoolSize = maximumPoolSize;
+    this.workQueue = workQueue;
+    this.keepAliveTime = unit.toNanos(keepAliveTime);
+    this.threadFactory = threadFactory;
+    this.handler = handler;
+}
+```
+</details>
+<p>这几个核心参数的作用：</p>
+<ul>
+<li>corePoolSize：核心线程数，为线程池的基本大小。<strong>核心线程不会被回收</strong>，即使没有任务执行，也会保持空闲状态。</li>
+<li>maximumPoolSize：为线程池最大线程大小。<strong>当线程运行数量达到corePoolSize，且workQueue队列塞满任务了之后</strong>，继续创建线程。</li>
+<li>keepAliveTime 和 unit ：是超过corePoolSize之后的“临时线程”的存活时间。</li>
+<li>workQueue：用于存放任务的阻塞队列。当前运行线程超过核心线程数时，新的任务会处于等待状态，存在workQueue中，BlockingQueue是一个阻塞式队列，相当于一个容器，生产者往里面放资源，消费者从里面拿资源。</li>
+<li>handler：当队列和最大线程池都满了之后的饱和策略。</li>
+</ul>
+<p>阻塞队列：<br />
+<img src="http://hitol.blog.cdn.updev.cn/16023150102703.jpg" alt="16023150102703" /></p>
+<p>首先检测线程池运行状态，如果不是RUNNING，则直接拒绝，线程池要保证在RUNNING的状态下执行任务。</p>
+<ul>
+<li>如果workerCount &lt; corePoolSize，则创建并启动一个线程来执行新提交的任务。</li>
+<li>如果workerCount &gt;= corePoolSize，且线程池内的阻塞队列未满，则将任务添加到该阻塞队列中。</li>
+<li>如果workerCount &gt;= corePoolSize &amp;&amp; workerCount &lt; maximumPoolSize，且线程池内的阻塞队列已满，则创建并启动一个线程来执行新提交的任务。</li>
+<li>如果workerCount &gt;= maximumPoolSize，并且线程池内的阻塞队列已满, 则根据拒绝策略来处理该任务, 默认的处理方式是直接抛异常。<br />
+其执行流程如下图所示：</li>
+</ul>
+<p><img src="http://hitol.blog.cdn.updev.cn/16023179404989.jpg" alt="16023179404989" /></p>
+<p>线程运行状态：<br />
+<img src="http://hitol.blog.cdn.updev.cn/16023123528952.jpg" alt="16023123528952" /></p>
+<p>拒绝策略<br />
+<img src="http://hitol.blog.cdn.updev.cn/16023245427842.jpg" alt="16023245427842" /></p>
+<h2><a id="%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%96%B9%E5%BC%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>创建线程池的四种方式</h2>
+<h3><a id="newcachedthreadpool" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>newCachedThreadPool</h3>
+<pre class="line-numbers"><code class="language-plain_text">public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
+    return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                                  60L, TimeUnit.SECONDS,
+                                  new SynchronousQueue&lt;Runnable&gt;(),
+                                  threadFactory);
+}
 </code></pre>
-<p>例如，这么一个表结构，两个查询语句</p>
-<pre class="line-numbers"><code class="language-plain_text">select id,name from user where name = 'zhangsan1';
-select id,name,age from user where name = 'zhangsan1';
+<p>通过源码可以返现，这种方式创建的线程池，其核心线程数为0，最大线程数为 Integer 的最大值，线程存活时间 60s，还有这个 SynchronousQueue，这个队列没有存储空间，有任务提交后就必须去执行。</p>
+<p>当有任务提交后，会去看有没有还存活的空闲线程，有的话让线程去执行任务，没有存活线程的话会立即创建线程执行该任务</p>
+<p>弊端：<br />
+并发量大了后线程创建的太多，导致 OOM</p>
+<h3><a id="newfixedthreadpool" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>newFixedThreadPool</h3>
+<pre class="line-numbers"><code class="language-plain_text">public static ExecutorService newFixedThreadPool(int nThreads, ThreadFactory threadFactory) {
+    return new ThreadPoolExecutor(nThreads, nThreads,
+                                  0L, TimeUnit.MILLISECONDS,
+                                  new LinkedBlockingQueue&lt;Runnable&gt;(),
+                                  threadFactory);
+}
 </code></pre>
-<p>用EXPLAIN看一下执行计划，</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/2020-09-17-16000042425726.jpg" alt="" style="width:1110px;" /><br />
-可以看到，第一个查询语句用到了索引，而第二个查询语句只是多了1个字段，</p>
-<p>Extra参数中Using index，表示相应的select操作中使用了覆盖索引（Covering Index），避免访问了表的数据行，效率不错。如果同时出现using where，表明索引被用来执行索引键值的查找；如果没有同时出现using where，表明索引用来读取数据而非执行查找动作。</p>
-<p>覆盖索引含义是所查询的列是和建立的索引字段和个数是一一对应的。那么回表问题的解决方案就是 将所用到的字段建立联合索引，覆盖索引。</p>
-<hr />
-<p>B+ 树 与 B树的区别？<br />
-区别在 B 树的节点，无论是不是叶子几点，都存有 key 和 data，而 B+ 树的中间节点只有 key，data 存在叶子节点上。这样 B+ 树的中间节点就能存更多的 key，使得树更矮，减少 IO 次数。</p>
-<p>B+ 树的叶子几点构成一个有序链表，方便区间查找和搜索。而 B 树需要一次次的递归遍历查找。</p>
+<p>核心线程数与最大线程数一样，空闲线程存活时间为0，有序队列。</p>
+<p>当有任务提交时，该线程池始终以核心线程去执行，核心线程满了后进入队列等待，FIFO</p>
+<p>弊端：<br />
+因为队列容量无限大，可能会出现请求太多，出现 OOM</p>
+<h3><a id="newscheduledthreadpool" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>newScheduledThreadPool</h3>
+<p>可以延迟处理，或者定时处理</p>
+<pre class="line-numbers"><code class="language-plain_text">public ScheduledThreadPoolExecutor(int corePoolSize,
+                                   ThreadFactory threadFactory) {
+    super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,
+          new DelayedWorkQueue(), threadFactory);
+}
+</code></pre>
+<p>核心线程数可以指定，最大线程数是 Integer 最大值，空闲线程存存活时间为0，</p>
+<h3><a id="newsinglethreadexecutor" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>newSingleThreadExecutor</h3>
+<pre class="line-numbers"><code class="language-plain_text">public static ExecutorService newSingleThreadExecutor() {
+    return new FinalizableDelegatedExecutorService
+        (new ThreadPoolExecutor(1, 1,
+                                0L, TimeUnit.MILLISECONDS,
+                                new LinkedBlockingQueue&lt;Runnable&gt;()));
+}
+</code></pre>
+<p>最大线程数与核心线程数都是1，队列有序无限大，</p>
+<p>可能导致OOM</p>
+<h2><a id="%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%A4%A7%E5%B0%8F%E5%88%86%E9%85%8D" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>线程池大小分配</h2>
+<ul>
+<li>
+<p>IO 密集型<br />
+指的是 CPU 运算能力较好<br />
+CPU 核心数 * 2</p>
+</li>
+<li>
+<p>CPU 密集型<br />
+指的是，CPU 运算能力较差<br />
+CPU 个数 +1</p>
+</li>
+<li>
+<p>混合型</p>
+</li>
+<li>
+<p>任务类型不同</p>
+</li>
+</ul>
+<p>--<br />
+现有一个线程池，参数corePoolSize = 5，maximumPoolSize = 10，BlockingQueue阻塞队列长度为5，此时有4个任务同时进来，问：线程池会创建几条线程？</p>
+<p>如果4个任务还没处理完，这时又同时进来2个任务，问：线程池又会创建几条线程还是不会创建？</p>
+<p>如果前面6个任务还是没有处理完，这时又同时进来5个任务，问：线程池又会创建几条线程还是不会创建？</p>
+<p>--<br />
+<a href="https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html">https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html</a><br />
+<a href="http://objcoding.com/2019/04/11/threadpool-initial-parameters/">http://objcoding.com/2019/04/11/threadpool-initial-parameters/</a><br />
+<a href="https://www.cnblogs.com/frankyou/p/10135212.html">https://www.cnblogs.com/frankyou/p/10135212.html</a><br />
+<a href="https://www.cnblogs.com/NiceCui/p/11929396.html">https://www.cnblogs.com/NiceCui/p/11929396.html</a></p>
 
                         
                       </div>
@@ -179,10 +299,10 @@ select id,name,age from user where name = 'zhangsan1';
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/10/21 20:08 下午</span>
+                    <span class="date">2020/10/21 20:10 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
           				   
                     
 
@@ -305,6 +425,18 @@ select id,name,age from user where name = 'zhangsan1';
 	      
 		      
 			      <li class="post">
+			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -318,18 +450,6 @@ select id,name,age from user where name = 'zhangsan1';
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  

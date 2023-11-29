@@ -129,34 +129,114 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16400068828317.html">
+                <a class="clearlink" href="16459468152713.html">
                 
-                  <h1>Spring.factories</h1>
+                  <h1>k8s 部署 redis 集群</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>Spring 在启动加载 bean 的时候会加载所有 jar 包中的 <code>/resources/META-INF/spring.factories</code> 文件中配置的 bean。<br />
-所以我们在提供给别人工具包的时候可以在 spring.factories 文件中定义一些 bean 自动加载到使用方的 Spring 容器中。<br />
-spring.factories 中一般都是一些配置 bean，也就是使用了 @Configuration 这个注解的 bean，在这个配置 bean 中初始化一些我们的工具包需要的 bean 就比较方便了。</p>
-<p>在<code>src/main/resources/META-INF</code>下新建 spring.factories 文件<br />
-类似这种的配置：</p>
-<pre class="line-numbers"><code class="language-properties">org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.wacai.gbl.config.LinkupSmsAutoConfiguration
+                        	<h2><a id="redis-master" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-master</h2>
+<p>redis-master.yml</p>
+<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-master
+  labels:
+    name: redis-master
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: redis-master
+  template:
+    metadata:
+      labels:
+        name: redis-master
+    spec:
+      containers:
+      - name: master
+        image: redis
+        ports:
+        - containerPort: 6379
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master
+  labels:
+    name: redis-master
+
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    name: redis-master
 </code></pre>
-<h2><a id="%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E6%B3%A8%E8%A7%A3" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>一些常用的注解</h2>
-<h3><a id="configuration" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Configuration</h3>
-<p>开启配置</p>
-<h3><a id="enableconfigurationproperties-xxxproperties-class-xxxproperties-class" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@EnableConfigurationProperties(xxxProperties.class,xxxProperties.class)</h3>
-<p>读取哪些配置文件<br />
-xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&quot;)</code> 读取配置文件中前缀相同的配置</p>
-<h3><a id="bean" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Bean</h3>
-<p>与下面的配置配合使用</p>
-<h3><a id="conditionalonexpression" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@ConditionalOnExpression(&quot;${} || ${}&quot;)</h3>
-<p>可以配置多个条件，满足条件的就会初始化 bean</p>
-<h3><a id="conditionalonproperty-value-xx-xx-xx-havingvalue-matchifmissing-false" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@ConditionalOnProperty(value = &quot;xx.xx.xx&quot;,havingValue = &quot;&quot;,matchIfMissing = false)</h3>
-<p>读取配置文件中的 xx.xx.xx，havingValue 的值与配置文件中的值相等则会初始化</p>
-<h3><a id="primary" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>@Primary</h3>
-<p>默认，首选的。 </p>
+<h2><a id="redis-slave" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-slave</h2>
+<p>Dockerfile</p>
+<pre class="line-numbers"><code class="language-plain_text">FROM redis
+
+COPY run.sh /
+RUN chmod +x /run.sh
+CMD /run.sh
+</code></pre>
+<p>run.sh</p>
+<pre class="line-numbers"><code class="language-shell">if [[ ${GET_HOSTS_FROM:-dns} == &quot;env&quot; ]]; then
+  redis-server --slaveof ${REDIS_MASTER_SERVICE_HOST} 6379
+else
+  redis-server --slaveof redis-master 6379
+fi
+</code></pre>
+<p>docker build 生成镜像</p>
+<p>redis-slave.yml</p>
+<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-slave
+  labels:
+    name: redis-slave
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: redis-slave
+  template:
+    metadata:
+      labels:
+        name: redis-slave
+    spec:
+      containers:
+      - name: worker
+        image: hitol/redis-slave
+        env:
+        - name: GET_HOSTS_FROM
+          value: env
+        ports:
+        - containerPort: 6379
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-slave
+  labels:
+    name: redis-slave
+
+spec:
+  ports:
+  - port: 6379
+  selector:
+    name: redis-slave
+</code></pre>
+<h2><a id="%E9%AA%8C%E8%AF%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>验证</h2>
+<p><code>kubectl exec -it redis-master-4m5ds redis-cli</code> 往 redis 里写几条数据，然后切换到 slave pod 里看有没有。</p>
 
                         
                       </div>
@@ -165,12 +245,12 @@ xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&qu
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2021/12/20 21:28 下午</span>
+                    <span class="date">2022/02/27 15:26 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Spring.html'>Spring</a></span>
+          					    <span class="posted-in"><a href='redis.html'>redis</a></span>
           				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          					    <span class="posted-in"><a href='kubernetes.html'>kubernetes</a></span>
           				   
                     
 
@@ -293,6 +373,18 @@ xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&qu
 	      
 		      
 			      <li class="post">
+			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="17011777269313.html">Rust Web Programming: A hands-on guide to developing, packaging, and deploying fully functional Rust web applications</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17010532478678.html">Rust web 开发-6.kafka</a>
 			      </li>
 		     
@@ -306,18 +398,6 @@ xxxProperties.class 使用  <code>@ConfigurationProperties(prefix = &quot;xxx&qu
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17002146115226.html">Rust web 开发-2. 数据库/orm</a>
 			      </li>
 		     
 		  
