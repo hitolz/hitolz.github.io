@@ -4,7 +4,7 @@
   <title><![CDATA[非著名Java程序员]]></title>
   <link href="http://blog.hitol.top/atom.xml" rel="self"/>
   <link href="http://blog.hitol.top/"/>
-  <updated>2023-11-29T15:44:29+08:00</updated>
+  <updated>2023-11-29T15:46:01+08:00</updated>
   <id>http://blog.hitol.top/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -25,7 +25,7 @@
 <li><a href="#%E6%89%A7%E8%A1%8Credis%E5%91%BD%E4%BB%A4">执行 redis 命令</a></li>
 </ul>
 </div>
-<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
 <li>web 框架</li>
 <li>数据库/orm</li>
@@ -34,8 +34,8 @@
 <li>线程池</li>
 <li>kafka</li>
 <li>redis</li>
-<li>打包成 docker 镜像</li>
-<li>gracefully shutdown</li>
+<li>打包成 docker 镜像<br />
+……</li>
 </ol>
 <hr />
 <p>本篇介绍一下 Rust 如何使用 redis。</p>
@@ -102,7 +102,7 @@ curl &quot;http://localhost:8099/get_redis&quot; \
     <updated>2023-11-27T10:47:27+08:00</updated>
     <id>http://blog.hitol.top/17010532478678.html</id>
     <content type="html"><![CDATA[
-<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
 <li>web 框架</li>
 <li>数据库/orm</li>
@@ -111,8 +111,8 @@ curl &quot;http://localhost:8099/get_redis&quot; \
 <li>线程池</li>
 <li>kafka</li>
 <li>redis</li>
-<li>打包成 docker 镜像</li>
-<li>gracefully shutdown</li>
+<li>打包成 docker 镜像<br />
+……</li>
 </ol>
 <hr />
 <p>本篇文章介绍一下 Rust 使用消息中间件 kafka。</p>
@@ -203,7 +203,7 @@ let result = producer.send(message_record, Timeout::After(Duration::from_secs(3)
 <li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
 </ul>
 </div>
-<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
 <li>web 框架</li>
 <li>数据库/orm</li>
@@ -212,8 +212,8 @@ let result = producer.send(message_record, Timeout::After(Duration::from_secs(3)
 <li>线程池</li>
 <li>kafka</li>
 <li>redis</li>
-<li>打包成 docker 镜像</li>
-<li>gracefully shutdown</li>
+<li>打包成 docker 镜像<br />
+……</li>
 </ol>
 <hr />
 <p>本篇介绍一下线程池。也可以说这一部分是介绍异步任务的。<br />
@@ -501,7 +501,7 @@ tokio 文档中并没有介绍线程池的部分。<br />
 <li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
 </ul>
 </div>
-<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
 <li>web 框架</li>
 <li>数据库/orm</li>
@@ -510,8 +510,8 @@ tokio 文档中并没有介绍线程池的部分。<br />
 <li>线程池</li>
 <li>kafka</li>
 <li>redis</li>
-<li>打包成 docker 镜像</li>
-<li>gracefully shutdown</li>
+<li>打包成 docker 镜像<br />
+……</li>
 </ol>
 <hr />
 <p>本篇介绍一下日志模块。</p>
@@ -794,7 +794,7 @@ pub fn init_log() {
 <li><a href="#lazy-static">lazy_static</a></li>
 </ul>
 </div>
-<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
 <li>web 框架</li>
 <li>数据库/orm</li>
@@ -803,8 +803,8 @@ pub fn init_log() {
 <li>线程池</li>
 <li>kafka</li>
 <li>redis</li>
-<li>打包成 docker 镜像</li>
-<li>gracefully shutdown</li>
+<li>打包成 docker 镜像<br />
+……</li>
 </ol>
 <hr />
 <p>本文介绍第三部分，Rust 如何读取配置文件。<br />
@@ -942,7 +942,7 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 </li>
 </ul>
 </div>
-<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
 <li>web 框架</li>
 <li>数据库/orm</li>
@@ -951,8 +951,8 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 <li>线程池</li>
 <li>kafka</li>
 <li>redis</li>
-<li>打包成 docker 镜像</li>
-<li>gracefully shutdown</li>
+<li>打包成 docker 镜像<br />
+……</li>
 </ol>
 <hr />
 <p>本文介绍第二部分，数据库及 orm。<br />
@@ -1220,7 +1220,7 @@ pub async fn get_rb() -&gt; RBatis {
 <li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
 </ul>
 </div>
-<p>本系列文章从以下 9 个方面学习如何使用 Rust 进行 web 开发。</p>
+<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
 <li>web 框架</li>
 <li>数据库/orm</li>
@@ -1229,8 +1229,8 @@ pub async fn get_rb() -&gt; RBatis {
 <li>线程池</li>
 <li>kafka</li>
 <li>redis</li>
-<li>打包成 docker 镜像</li>
-<li>gracefully shutdown</li>
+<li>打包成 docker 镜像<br />
+……</li>
 </ol>
 <hr />
 <p>本文介绍第一部分，web 框架。<br />
