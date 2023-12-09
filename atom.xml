@@ -4,13 +4,205 @@
   <title><![CDATA[非著名Java程序员]]></title>
   <link href="http://blog.hitol.top/atom.xml" rel="self"/>
   <link href="http://blog.hitol.top/"/>
-  <updated>2023-11-29T15:46:01+08:00</updated>
+  <updated>2023-12-09T15:49:59+08:00</updated>
   <id>http://blog.hitol.top/</id>
   <author>
     <name><![CDATA[]]></name>
     
   </author>
   <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[Rust web 开发-8.docker]]></title>
+    <link href="http://blog.hitol.top/17014842043505.html"/>
+    <updated>2023-12-02T10:30:04+08:00</updated>
+    <id>http://blog.hitol.top/17014842043505.html</id>
+    <content type="html"><![CDATA[
+<div class="mweb_toc"><ul>
+<li><a href="#%E5%9F%BA%E7%A1%80dockerfile">基础 Dockerfile</a>
+<ul>
+<li><a href="#docker-build">docker build</a></li>
+<li><a href="#docker-run">docker run</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">修改配置文件</a></li>
+<li><a href="#%E5%8A%A0%E5%BF%ABdocker-build%E9%80%9F%E5%BA%A6">加快 docker build 速度</a></li>
+<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
+</ul>
+</div>
+<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
+<ol>
+<li>web 框架</li>
+<li>数据库/orm</li>
+<li>config</li>
+<li>log</li>
+<li>线程池</li>
+<li>kafka</li>
+<li>redis</li>
+<li>打包成 docker 镜像<br />
+……</li>
+</ol>
+<hr />
+<p>本篇介绍一下 Rust 项目如何打包成 docker 镜像。</p>
+<h2><a id="%E5%9F%BA%E7%A1%80dockerfile" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>基础 Dockerfile</h2>
+<p>在项目的根目录创建 Dockerfile</p>
+<pre class="line-numbers"><code class="language-dockerfile"># 使用官方 Rust 镜像作为基础镜像
+FROM rust:1.71.0 as builder
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制整个项目到容器中
+COPY . .
+RUN rm Cargo.lock
+
+# 构建应用程序
+RUN cargo build --release
+
+# 使用另一个基础镜像作为最终镜像
+FROM debian:bullseye-slim
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制构建好的可执行文件到最终镜像中
+COPY --from=builder /app/target/release/rust-web .
+COPY configs /app/configs
+
+EXPOSE 8099
+
+# 设置容器启动命令
+CMD [&quot;./rust-web&quot;]
+</code></pre>
+<h3><a id="docker-build" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>docker build</h3>
+<pre class="line-numbers"><code class="language-plain_text">docker build -t rust-web .
+</code></pre>
+<h3><a id="docker-run" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>docker run</h3>
+<pre class="line-numbers"><code class="language-plain_text">docker run -d -p 8099:8099 -v path_to_configs/:/app/configs/ --name rust-web rust-web
+</code></pre>
+<p>注意启动时指定配置文件路径。</p>
+<h2><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置文件</h2>
+<p>config.toml 中修改各个中间件的地址信息，不再是 localhost。<br />
+需要注意一点，app 的 host 指定为 0.0.0.0，接收外部所有 ip 的访问请求。</p>
+<pre class="line-numbers"><code class="language-plain_text">[app]
+host=&quot;0.0.0.0&quot;
+port=8099
+
+[database]
+host=&quot;192.168.0.116&quot;
+port=3306
+user = &quot;root&quot;
+password = &quot;12345678&quot;
+name = &quot;rust_web&quot;
+
+
+[log]
+level = &quot;info&quot;
+path = &quot;app.log&quot;
+
+
+[kafka_config]
+brokers = &quot;192.168.0.116:9092&quot;
+group_id = &quot;test_group&quot;
+
+[redis_config]
+cluster = &quot;redis://192.168.0.116:6379/&quot;
+</code></pre>
+<h2><a id="%E5%8A%A0%E5%BF%ABdocker-build%E9%80%9F%E5%BA%A6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>加快 docker build 速度</h2>
+<p>使用 <code>cargo-chef</code> 加速 build。<br />
+<code>cargo-chef</code> 是一个 Rust 工具，用于加速构建过程。它可以预先计算构建过程中的依赖项，以减少重复工作。通过生成一个描述项目依赖项的 <code>recipe.json</code> 文件，<code>cargo-chef</code> 可以在后续的构建中利用这个文件来加速构建过程。</p>
+<pre class="line-numbers"><code class="language-plain_text"># 使用官方 Rust 镜像作为基础镜像，并添加 cargo-chef
+FROM rust:1.71.0 as chef
+ADD .cargo $CARGO_HOME/
+RUN cargo install cargo-chef
+
+FROM chef as planner
+
+WORKDIR /app
+# 复制整个项目到容器中
+COPY . .
+RUN rm Cargo.lock
+
+# 生成 recipe.json
+RUN cargo chef prepare --recipe-path recipe.json
+
+# 构建阶段
+FROM chef as builder
+WORKDIR /app
+
+# 复制项目和 recipe.json
+COPY --from=planner /app/recipe.json recipe.json
+COPY . .
+RUN rm Cargo.lock
+
+# 使用 cargo-chef 加速构建过程
+RUN cargo chef cook --release --recipe-path recipe.json
+
+# 构建应用程序
+RUN cargo build --release
+
+
+# 使用另一个基础镜像作为最终镜像
+FROM debian:bullseye-slim
+# 设置工作目录
+WORKDIR /app
+
+# 复制构建好的可执行文件到最终镜像中
+COPY --from=builder /app/target/release/rust-web .
+COPY configs /app/configs
+
+EXPOSE 8099
+
+# 设置容器启动命令
+CMD [&quot;./rust-web&quot;]
+</code></pre>
+<p>相比上一个版本，这个 Dockerfile 做了以下修改：</p>
+<ol>
+<li>
+<p>添加了一个中间镜像 <code>chef</code>：</p>
+<ul>
+<li>使用官方 Rust 镜像作为基础镜像，并将其命名为 <code>chef</code>。</li>
+<li>将 <code>.cargo</code> 目录添加到 <code>$CARGO_HOME</code>（通常为 <code>/usr/local/cargo</code>）中，以便在后续的构建阶段中使用。</li>
+<li>安装了 <code>cargo-chef</code> 工具。</li>
+</ul>
+</li>
+<li>
+<p><code>planner</code> 阶段：</p>
+<ul>
+<li>将 <code>chef</code> 阶段作为基础镜像，并将其命名为 <code>planner</code>。</li>
+<li>在工作目录 <code>/app</code> 下复制整个项目。</li>
+<li>运行 <code>cargo chef prepare</code> 命令生成一个 <code>recipe.json</code> 文件。</li>
+</ul>
+</li>
+<li>
+<p><code>builder</code> 阶段：</p>
+<ul>
+<li>将 <code>chef</code> 阶段作为基础镜像，并将其命名为 <code>builder</code>。</li>
+<li>在工作目录 <code>/app</code> 下复制整个项目和 <code>recipe.json</code> 文件。</li>
+<li>运行 <code>cargo chef cook</code> 命令根据 <code>recipe.json</code> 文件来加速构建过程。</li>
+<li>运行 <code>cargo build --release</code> 命令构建应用程序。</li>
+</ul>
+</li>
+</ol>
+<p>这些修改的好处是：</p>
+<ol>
+<li>
+<p>引入了中间镜像 <code>chef</code>，将 <code>cargo-chef</code> 安装过程提前到构建过程的早期阶段。这样可以避免在每次构建时都重新安装 <code>cargo-chef</code>，从而提高构建效率。</p>
+</li>
+<li>
+<p>将 <code>cargo-chef</code> 的安装和配置步骤从 <code>planner</code> 和 <code>builder</code> 阶段中移除，使得这两个阶段更加简洁和清晰。</p>
+</li>
+<li>
+<p>在 <code>planner</code> 阶段中，将 <code>.cargo</code> 目录添加到 <code>$CARGO_HOME</code> 中，以便在后续的构建阶段中使用。这样可以确保在 <code>builder</code> 阶段中可以访问到预先安装的 <code>cargo-chef</code> 工具，而无需重新安装。</p>
+</li>
+</ol>
+<p>总体而言，这些修改使得构建过程更加高效和简洁。通过引入中间镜像和提前安装 <code>cargo-chef</code>，可以减少重复工作并加快构建速度。同时，将 <code>cargo-chef</code> 的安装和配置步骤从每个阶段中移除，使得 Dockerfile 更加易读和易于维护。</p>
+<h2><a id="%E5%B0%8F%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>小结</h2>
+<p>以上就是将 Rust web 项目打包为 docker 镜像的过程，通过 <code>cargo-chef</code>可以加速 docker build 过程。<br />
+打包成 docker 镜像以后，部署到各种云平台都会方便很多。</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rust web 开发-7.redis]]></title>
@@ -5984,117 +6176,6 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl apply -f kube-flannel.yml
 </code></pre>
 </details>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[k8s 部署 redis 集群]]></title>
-    <link href="http://blog.hitol.top/16459468152713.html"/>
-    <updated>2022-02-27T15:26:55+08:00</updated>
-    <id>http://blog.hitol.top/16459468152713.html</id>
-    <content type="html"><![CDATA[
-<h2><a id="redis-master" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-master</h2>
-<p>redis-master.yml</p>
-<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: redis-master
-  labels:
-    name: redis-master
-
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: redis-master
-  template:
-    metadata:
-      labels:
-        name: redis-master
-    spec:
-      containers:
-      - name: master
-        image: redis
-        ports:
-        - containerPort: 6379
-
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-master
-  labels:
-    name: redis-master
-
-spec:
-  ports:
-  - port: 6379
-    targetPort: 6379
-  selector:
-    name: redis-master
-</code></pre>
-<h2><a id="redis-slave" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-slave</h2>
-<p>Dockerfile</p>
-<pre class="line-numbers"><code class="language-plain_text">FROM redis
-
-COPY run.sh /
-RUN chmod +x /run.sh
-CMD /run.sh
-</code></pre>
-<p>run.sh</p>
-<pre class="line-numbers"><code class="language-shell">if [[ ${GET_HOSTS_FROM:-dns} == &quot;env&quot; ]]; then
-  redis-server --slaveof ${REDIS_MASTER_SERVICE_HOST} 6379
-else
-  redis-server --slaveof redis-master 6379
-fi
-</code></pre>
-<p>docker build 生成镜像</p>
-<p>redis-slave.yml</p>
-<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: redis-slave
-  labels:
-    name: redis-slave
-
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      name: redis-slave
-  template:
-    metadata:
-      labels:
-        name: redis-slave
-    spec:
-      containers:
-      - name: worker
-        image: hitol/redis-slave
-        env:
-        - name: GET_HOSTS_FROM
-          value: env
-        ports:
-        - containerPort: 6379
-
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-slave
-  labels:
-    name: redis-slave
-
-spec:
-  ports:
-  - port: 6379
-  selector:
-    name: redis-slave
-</code></pre>
-<h2><a id="%E9%AA%8C%E8%AF%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>验证</h2>
-<p><code>kubectl exec -it redis-master-4m5ds redis-cli</code> 往 redis 里写几条数据，然后切换到 slave pod 里看有没有。</p>
 
 ]]></content>
   </entry>

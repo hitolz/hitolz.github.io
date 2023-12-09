@@ -129,205 +129,205 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16626878291486.html">
+                <a class="clearlink" href="16672061401168.html">
                 
-                  <h1>Java 太卷了转 GO（二）</h1>
+                  <h1>rust 所有权</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>上一篇文章简单的学习了 GO 的基础语法，本篇文章用 GO 的框架开发一个短链应用。</p>
-<p>短链应用功能：</p>
+                        	<blockquote>
+<p>所有权可以说是Rust中最为独特的一个功能了。正是所有权概念和相关工具的引入，Rust才能够在没有垃圾回收机制的前提下保障内存安全。因此，正确地了解所有权概念及其在Rust中的实现方式，对于所有Rust开发者来讲都是十分重要的。在本章中，我们会详细地讨论所有权及其相关功能：借用、切片，以及Rust在内存中布局数据的方式。</p>
+</blockquote>
+<p>所有权就是指一个东西归属谁。Rust 中一个变量对应一个值，变量就称为这个值的所有者。</p>
+<pre class="line-numbers"><code class="language-rust">lex x = 5;
+</code></pre>
+<p>这句话的意思就是，5这个数字所在的内存块的所有者是 x。</p>
+<h2><a id="%E6%89%80%E6%9C%89%E6%9D%83%E8%A7%84%E5%88%99" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>所有权规则</h2>
 <ol>
-<li>创建短链</li>
-<li>根据短链 code 重定向到原始链接</li>
+<li>Rust 中的每一个值都有一个对应的变量作为它的所有者</li>
+<li>在同一时间内，值有且仅有一个所有者</li>
+<li>当所有者离开自己的作用域时，它持有的值就会被释放掉</li>
 </ol>
-<p>主要用到的框架：</p>
+<h2><a id="%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BA%92%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%9A%E7%A7%BB%E5%8A%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>变量和数据交互的方式：移动</h2>
+<p>把一个变量赋值给另一个变量</p>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let x = 5;
+    let y = x;
+    println!(&quot;x = {}, y = {}&quot;, x, y);
+
+
+    let s1 = String::from(&quot;hello&quot;);
+    let s2 = s1;
+    println!(&quot;s1 = {}, s2 = {}&quot;, s1, s2);
+}
+</code></pre>
+<p>这段代码的作用就是 把一个变量赋值给另一个变量。</p>
+<p>整数是已知固定大小的简单值，x y 两个值 5 会同时被推入到当前的栈中。</p>
+<p>然而，将 s1 赋值给 s2 时，便复制了一次 String 的数据，这意味着我们复制了它存储在栈上的指针、长度及容量字段，没有复制指针指向的堆数据。此时的内存布局应该是这样：</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-10-31-16.48.47.png" alt="2022-10-31-16.48.47" /></p>
+<p>为了确保内存安全，避免复制分配的内存，Rust 在这种场景下回简单的将 s1 废弃，不再视其为一个有效的变量。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/2022-10-31-17.03.02.png" alt="2022-10-31-17.03.02" /></p>
+<p>也就解释了这段代码执行为什么报错</p>
+<pre class="line-numbers"><code class="language-plain_text">error[E0382]: borrow of moved value: `s1`
+  --&gt; src/main.rs:11:34
+   |
+8  |     let s1 = String::from(&quot;hello&quot;);
+   |         -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait
+9  |     let s2 = s1;
+   |              -- value moved here
+10 |
+11 |     println!(&quot;s1 = {}, s2 = {}&quot;, s1, s2);
+   |                                  ^^ value borrowed here after move
+   |
+   = note: this error originates in the macro `$crate::format_args_nl` which comes from the expansion of the macro `println` (in Nightly builds, run with -Z macro-backtrace for more info)
+</code></pre>
+<p>总的来说 移动(move) 这种变量和数据交互方式，仅仅是将栈上的数据移动了，堆数据还是同一个，并且将移动前的变量 s1 设置为失效，意味着 s1 和堆数据之间的绑定关系已经不存在了(相当于一个野指针?)。所以移动后在访问 s1 是不被允许的。</p>
+<h2><a id="%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BA%92%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%9A%E5%85%8B%E9%9A%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>变量和数据交互的方式：克隆</h2>
+<pre class="line-numbers"><code class="language-rust">let mut s1 = String::from(&quot;hello&quot;);
+// let s2 = s1;
+let s2 = s1.clone();
+
+s1.push_str(&quot;, world&quot;);
+println!(&quot;s1 = {}, s2 = {}&quot;, s1, s2);
+</code></pre>
+<p>克隆 = 深度 copy 堆上的数据。s1、s2 是两个独立的变量，指向的堆数据也不是同一个，所以在 clone 后对 s1 进行修改，s2 还是不变的。</p>
+<p>trait ：Copy 、Drop</p>
+<p>当一种类型拥有了 Copy 这种 trait，那么它的变量就可以在赋值给其他变量之后保持可用性。</p>
+<p>如果一种类型实现了 Drop，那么 Rust 就不允许它再实现 Copy。</p>
+<h2><a id="%E6%89%80%E6%9C%89%E6%9D%83%E4%B8%8E%E5%87%BD%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>所有权与函数</h2>
+<p>将值传递给函数在语义上类似于对变量进行赋值，会触发移动或者复制，就像赋值语句一样。</p>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let x = 5;
+    show(x);
+    println!(&quot;x = {}&quot;, x);
+
+    let s1 = String::from(&quot;hello&quot;);
+    show_str(s1);
+    println!(&quot;函数外部 s1 = {}&quot;, s1)
+}
+
+fn show(x: i32) {
+    println!(&quot;函数内部 x = {}&quot;, x)
+}
+
+fn show_str(s: String) {
+    println!(&quot;函数内部 s1 = {}&quot;, s)
+}
+
+</code></pre>
+<p>string 类型变量当做参数传递给函数后，变量的所有权会移动到函数的作用域内，main 函数中就不在持有当前变量的所有权了，所以当调用 show_str 之后在访问 s1就会报错。</p>
+<p>从另一个方面来理解，函数执行结束后会销毁变量对应的内存空间，然后在 main 函数中访问一个已经移除调的内存空间报错也是合情合理的。</p>
+<blockquote>
+<p>赋值并不是唯一涉及移动的操作。值在作为参数传递或从函数返回时也会被移动。</p>
+</blockquote>
+<pre class="line-numbers"><code class="language-plain_text">error[E0382]: borrow of moved value: `s1`
+ --&gt; src/main.rs:8:30
+  |
+6 |     let s1 = String::from(&quot;hello&quot;);
+  |         -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait
+7 |     show_str(s1);
+  |              -- value moved here
+8 |     println!(&quot;函数内部 s1 = {}&quot;, s1)
+  |                                  ^^ value borrowed here after move
+  |
+  = note: this error originates in the macro `$crate::format_args_nl` which comes from the expansion of the macro `println` (in Nightly builds, run with -Z macro-backtrace for more info)
+</code></pre>
+<h2><a id="%E5%BC%95%E7%94%A8%E4%B8%8E%E5%80%9F%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>引用与借用</h2>
+<p>如果我们想在函数结束后还想要使用变量，可以将变量的引用传递到参数中。</p>
+<p>引用允许在不获取所有权的情况下使用值。</p>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let x = 5;
+    show(x);
+    println!(&quot;x = {}&quot;, x);
+
+    let s1 = String::from(&quot;hello&quot;);
+    show_str(&amp;s1);
+    println!(&quot;函数外部 s1 = {}&quot;, s1)
+}
+
+fn show(x: i32) {
+    println!(&quot;函数内部 x = {}&quot;, x)
+}
+
+fn show_str(s: &amp;String) {
+    println!(&quot;函数内部 s1 = {}&quot;, s)
+}
+
+</code></pre>
+<p>修改点</p>
 <ol>
-<li>ORM 框架 gorm<br />
-<a href="https://gorm.io/zh_CN/docs/index.html">https://gorm.io/zh_CN/docs/index.html</a></li>
-<li>Web 框架 gin<br />
-<a href="https://gin-gonic.com/zh-cn/docs/">https://gin-gonic.com/zh-cn/docs/</a></li>
+<li>show_str(&amp;s1);传递参数，传的是 s1 的引用</li>
+<li>fn show_str(s: &amp;String) 修改为 String 的引用类型</li>
 </ol>
-<h2><a id="gin" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>gin</h2>
-<p>最快的 http 路由器和框架。</p>
-<pre class="line-numbers"><code class="language-go">package main
-
-import &quot;github.com/gin-gonic/gin&quot;
-
-func main() {
-	r := gin.Default()
-	r.GET(&quot;/ping&quot;, func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			&quot;message&quot;: &quot;pong&quot;,
-		})
-	})
-	r.Run() // 监听并在 0.0.0.0:8080 上启动服务
-}
-</code></pre>
-<p>一个最简单的例子，启动后浏览器访问 <a href="http://localhost:8080/ping">http://localhost:8080/ping</a></p>
-<p>使用路由：</p>
-<pre class="line-numbers"><code class="language-go">func main() {
-	engine := gin.Default()
-	engine.Group(&quot;/&quot;)
-
-	engine.GET(&quot;/ping&quot;, func(context *gin.Context) {
-		context.JSON(200, gin.H{
-			&quot;message&quot;: &quot;pong&quot;,
-		})
-	})
-	engine.Run()
-}
-</code></pre>
-<p>将接口放在程序入口 main 方法中不太合适，通常会创建多个 handler，类似于 java 中的 controller。</p>
-<h2><a id="gorm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>gorm</h2>
-<p>连接数据库</p>
-<pre class="line-numbers"><code class="language-go">// 数据库连接：&quot;用户名:密码@tcp(IP:端口)/数据库?charset=utf8&quot;
-sqlcon := &quot;root:123456@tcp(127.0.0.1:3306)/amc?charset=utf8&amp;parseTime=True&amp;loc=Local&quot;
-
-
-DB, err := gorm.Open(mysql.Open(sqlcon), &amp;gorm.Config{
-	DisableForeignKeyConstraintWhenMigrating: true, //禁用物理外键
-})
-if err != nil {
-	log.Fatal(&quot;连接失败！&quot;)
-	return nil
-}
-// 连接池设置
-sqlDB, err := DB.DB()
-// 设置数据库最大连接数
-sqlDB.SetMaxOpenConns(500)
-// 设置数据库最大闲置数
-sqlDB.SetMaxIdleConns(20)
-// 全局禁用表名复数
-//sqlDB.SingularTable(true)
-// 调试模式，可以打印sql语句
-//sqlDB.LogMode(true)
-</code></pre>
-<h3><a id="crud" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CRUD</h3>
-<h4><a id="insert" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>insert</h4>
-<p>保存单条数据</p>
-<pre class="line-numbers"><code class="language-go">createConfig := dao.ShortLinkConfig{
-	Enable:      1,
-	OriginUrl:   &quot;http://localhost:8080&quot;,
-	ShortCode:   &quot;test&quot;,
-	CreatedTime: time.Now(),
-	UpdatedTime: time.Now(),
-}
-mysql.Db.Save(&amp;createConfig)
-</code></pre>
-<p>保存多条数据</p>
-<pre class="line-numbers"><code class="language-go">shortLinkConfigs := []dao.ShortLinkConfig{
-	{
-		Enable:      1,
-		OriginUrl:   &quot;http://localhost:8080&quot;,
-		ShortCode:   &quot;test1&quot;,
-		CreatedTime: time.Now(),
-		UpdatedTime: time.Now()},
-	{
-		Enable:      1,
-		OriginUrl:   &quot;http://localhost:8080&quot;,
-		ShortCode:   &quot;test2&quot;,
-		CreatedTime: time.Now(),
-		UpdatedTime: time.Now(),
-	},
-	{
-		Enable:      1,
-		OriginUrl:   &quot;http://localhost:8080&quot;,
-		ShortCode:   &quot;test3&quot;,
-		CreatedTime: time.Now(),
-		UpdatedTime: time.Now(),
-	},
-}
-// 批量数据一次性插入
-//mysql.Db.Create(&amp;shortLinkConfigs)
-// 分批次插入
-mysql.Db.CreateInBatches(&amp;shortLinkConfigs, 1000)
-</code></pre>
-<h4><a id="select" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>select</h4>
-<pre class="line-numbers"><code class="language-go">config := dao.ShortLinkConfig{
-	Enable: 1,
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-10-31-17.38.00.png" alt="2022-10-31-17.38.00" /></p>
+<p>&amp;s1，指在不转移所有权的前提下，创建一个指向 s1 值的引用，引用不持有 s1 的所有权，所以在函数结束时，原 s1 仍然可用。<br />
+函数签名中的 &amp; 用来表名参数 s 的类型是一个引用。s 并不持有指向值的所有权，在函数结束时不会销毁指向值。</p>
+<p><strong>通过引用传递参数给函数的方法也被称为借用。</strong></p>
+<h2><a id="%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>可变引用</h2>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let mut s1 = String::from(&quot;hello&quot;);
+    show_str(&amp;mut s1);
+    println!(&quot;函数外部 s1 = {}&quot;, s1)
 }
 
-var shortLinkConfig = dao.ShortLinkConfig{}
-
-//获取第一条记录，主键升序 select * from table ORDER BY id asc LIMIT 1
-mysql.Db.Where(&amp;config).First(&amp;shortLinkConfig)
-log.Printf(&quot;first config = %v&quot;, shortLinkConfig)
-
-shortLinkConfig = dao.ShortLinkConfig{}
-//获取最后一条记录，主键降序 select * from table ORDER BY id desc LIMIT 1
-mysql.Db.Where(&amp;config).Last(&amp;shortLinkConfig)
-log.Printf(&quot;last config = %v&quot;, shortLinkConfig)
-
-shortLinkConfig = dao.ShortLinkConfig{}
-// 获取一条记录，没有指定字段排序
-mysql.Db.Where(&amp;config).Take(&amp;shortLinkConfig)
-log.Printf(&quot;config = %v&quot;, shortLinkConfig)
-
-shortLinkConfig = dao.ShortLinkConfig{}
-mysql.Db.First(&amp;shortLinkConfig, 9)
-log.Printf(&quot;id = 9,config = %v&quot;, shortLinkConfig)
-
-// 查询多条记录
-shortLinkConfigs := make([]dao.ShortLinkConfig, 3)
-mysql.Db.Find(&amp;shortLinkConfigs, []int{8, 9, 10})
-for i, linkConfig := range shortLinkConfigs {
-	log.Printf(&quot;i = %d,config = %v&quot;, i, linkConfig)
+fn show_str(s: &amp;mut String) {
+    println!(&quot;函数内部 s1 = {}&quot;, s);
+    s.push_str(&quot;, world&quot;);
+}
+</code></pre>
+<p>mut 表示可变的，变量使用 mut，引用使用 &amp;mut。<br />
+通过 mut 关键字将变量或者引用声明为可变的。<br />
+可以在函数内部修改其引用变量的值。<br />
+一个变量可以有多个不可变引用，但是只能有一个<strong>可变引用</strong>。<br />
+一个变量不能同时有不可变引用和可变引用。</p>
+<h2><a id="%E6%82%AC%E5%9E%82%E5%BC%95%E7%94%A8" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>悬垂引用</h2>
+<p>这类指针指向曾经存在某处内存地址，但该内存已经被释放掉甚至被重新分配另作他用了。</p>
+<p>这不就是野指针？</p>
+<p>rust 语言中 ，编译器会 确保引用永远不会进入这种悬垂状态。</p>
+<p>假如当前持有某一个数据的引用，编译器保证这个数据不会在引用被销毁前离开自己的作用域。</p>
+<p>创造一个悬垂引用的例子：</p>
+<pre class="line-numbers"><code class="language-rust">fn main() {
+    let x = dangle();
+    println!(&quot;x = {}&quot;, x)
 }
 
-// 指定字段查询
-shortCode := &quot;acegf&quot;
-shortLinkConfig = dao.ShortLinkConfig{}
-mysql.Db.Where(&quot;short_code = ? and enable = 1&quot;, shortCode).First(&amp;shortLinkConfig)
-log.Printf(&quot;short_code = %s,config = %v&quot;, shortCode, shortLinkConfig)
-
-// 指定字段查询 struct,这种方式要求 struct 中的字段不能为零值，0、false 这种是不会创建查询条件的。
-shortLinkConfig = dao.ShortLinkConfig{}
-mysql.Db.Where(&amp;dao.ShortLinkConfig{ShortCode: shortCode, Enable: 0}).First(&amp;shortLinkConfig)
-log.Printf(&quot;short_code = %s,enable = 0,config = %v&quot;, shortCode, shortLinkConfig)
-
-// 指定字段查询 map
-shortLinkConfigs = make([]dao.ShortLinkConfig, 10)
-mysql.Db.Where(map[string]interface{}{&quot;enable&quot;: 1, &quot;short_code&quot;: shortCode}).Find(&amp;shortLinkConfigs)
-for i, linkConfig := range shortLinkConfigs {
-	log.Printf(&quot; --- i = %d,config = %v&quot;, i, linkConfig)
+fn dangle() -&gt; &amp;String {
+    let s = String::from(&quot;hello&quot;);
+    return &amp;s;
 }
+</code></pre>
+<p>dangle 函数，返回 String 的引用，函数内部，声明了一个字符串 s，返回给调用者 s 的引用，看着貌似没什么问题。</p>
+<p>由于变量 s 创建在函数内，所以它会在函数执行完毕时随之释放，但是我们的代码依旧返回指向 s 的引用，这个引用指向的是一个无效的内存地址。</p>
+<pre class="line-numbers"><code class="language-plain_text">error[E0106]: missing lifetime specifier
+ --&gt; src/main.rs:6:16
+  |
+6 | fn dangle() -&gt; &amp;String {
+  |                ^ expected named lifetime parameter
+  |
+  = help: this function's return type contains a borrowed value, but there is no value for it to be borrowed from
+help: consider using the `'static` lifetime
+  |
+6 | fn dangle() -&gt; &amp;'static String {
+  |                 +++++++
 
 </code></pre>
-<h4><a id="update" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>update</h4>
-<p>Save</p>
-<pre class="line-numbers"><code class="language-go">shortCode := &quot;test3&quot;
-shortLinkConfig := dao.ShortLinkConfig{}
-mysql.Db.Where(&quot;short_code = ? and enable = 1&quot;, shortCode).First(&amp;shortLinkConfig)
-log.Printf(&quot;short_code = %s,config = %v&quot;, shortCode, shortLinkConfig)
-
-shortLinkConfig.ShortCode = &quot;test5&quot;
-mysql.Db.Save(&amp;shortLinkConfig)
-</code></pre>
-<p>Update 更新单个列</p>
-<pre class="line-numbers"><code class="language-go">// update short_link_config set short_code = &quot;123&quot; where short_code = &quot;test5&quot; and enable = 1
-mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&quot;short_code = ? and enable = 1&quot;, shortCode).Update(&quot;short_code&quot;, &quot;123&quot;)
-</code></pre>
-<p>更新多列,struct 方式,只会更新非零值</p>
-<pre class="line-numbers"><code class="language-go">mysql.Db.Where(&amp;dao.ShortLinkConfig{
-	Enable: 1,
-}).Updates(dao.ShortLinkConfig{
-	Enable:    0,
-	OriginUrl: &quot;http://www.123.com&quot;,
-})
-</code></pre>
-<p>更新多列，map 方式</p>
-<pre class="line-numbers"><code class="language-go">mysql.Db.Model(&amp;dao.ShortLinkConfig{}).Where(&amp;dao.ShortLinkConfig{Enable: 1}).Updates(map[string]interface{}{&quot;origin_url&quot;: &quot;http://www.baidu.com&quot;})
-</code></pre>
-<h4><a id="delete" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>delete</h4>
-<p>根据主键删除</p>
-<pre class="line-numbers"><code class="language-go">// delete from short_link_config where id = 10
-mysql.Db.Delete(&amp;dao.ShortLinkConfig{}, 10)
-</code></pre>
-<hr />
-<p>短链应用：<br />
-github: <a href="https://github.com/hitolz/shortLink">https://github.com/hitolz/shortLink</a></p>
+<h2><a id="%E5%88%87%E7%89%87" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>切片</h2>
+<p>切片也是不持有所有权的数据类型。<br />
+切片：集合中某一段连续的元素序列，而不是整个集合。</p>
+<p>字符串字面量就是切片。</p>
+<h2><a id="%E6%80%BB%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>总结</h2>
+<p>所有权是 Rust 区别于其他编程语言的一个重要部分。<br />
+变量称为其对应的内存块的所有者，变量拥有所有权。</p>
+<p>所有权发生移动的几个方式</p>
+<ol>
+<li>变量赋值给其他变量</li>
+<li>变量当做参数传递到函数</li>
+<li>函数返回值赋值给变量</li>
+</ol>
+<p>作用域可以简单理解为{}，大括号内部称为一个作用域。<br />
+当变量离开作用域时，变量会自动释放其所有权。</p>
+<p>所有权只会发生在堆上分配的数据，栈上分配的数据没有所有权的概念。</p>
 
                         
                       </div>
@@ -336,10 +336,10 @@ github: <a href="https://github.com/hitolz/shortLink">https://github.com/hitolz/
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2022/09/09 09:43 上午</span>
+                    <span class="date">2022/10/31 16:49 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='GO.html'>GO</a></span>
+          					    <span class="posted-in"><a href='rust.html'>rust</a></span>
           				   
                     
 
@@ -462,6 +462,12 @@ github: <a href="https://github.com/hitolz/shortLink">https://github.com/hitolz/
 	      
 		      
 			      <li class="post">
+			        <a href="17014842043505.html">Rust web 开发-8.docker</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
 			      </li>
 		     
@@ -481,12 +487,6 @@ github: <a href="https://github.com/hitolz/shortLink">https://github.com/hitolz/
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
 			      </li>
 		     
 		  

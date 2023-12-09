@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  非著名Java程序员
+  Rust web 开发-8.docker - 非著名Java程序员
   
   </title>
   
@@ -119,28 +119,55 @@
         
        
 
- <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+ <script>
+  let summary_gpt_article_content_selector = '.article-content';
+  let summary_gpt_key = '12356';
+  let summary_gpt_domain = 'https://ai-summary.hitol.top';
+</script>
+<link rel="stylesheet" href="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.css" />
+<script src="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.v0.0.6.js"></script>
+<script type="text/javascript">
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="17004933674024.html">
-                
-                  <h1>Rust web 开发-3.config</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<div class="mweb_toc"><ul>
-<li><a href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">配置文件</a></li>
-<li><a href="#%E5%AE%9A%E4%B9%89%E5%AE%9E%E4%BD%93">定义实体</a></li>
-<li><a href="#%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9">读取文件内容</a></li>
-<li><a href="#lazy-static">lazy_static</a></li>
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>Rust web 开发-8.docker</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2023/12/02 10:30 上午</span>
+
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='Rust%20web.html'>Rust web</a></span>
+          
+              <span class="posted-in"><a href='rust.html'>rust</a></span>
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <div class="mweb_toc"><ul>
+<li><a href="#%E5%9F%BA%E7%A1%80dockerfile">基础 Dockerfile</a>
+<ul>
+<li><a href="#docker-build">docker build</a></li>
+<li><a href="#docker-run">docker run</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">修改配置文件</a></li>
+<li><a href="#%E5%8A%A0%E5%BF%ABdocker-build%E9%80%9F%E5%BA%A6">加快 docker build 速度</a></li>
+<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
 </ul>
 </div>
 <p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
@@ -156,167 +183,198 @@
 ……</li>
 </ol>
 <hr />
-<p>本文介绍第三部分，Rust 如何读取配置文件。<br />
-Rust 支持两种类型的配置文件，<code>.toml</code> 和 <code>.env</code>。</p>
-<p>本文主要介绍 toml 类型的文件。</p>
-<h2><a id="%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置文件</h2>
-<p>项目中新建一个 toml 类型的文件，例如：config.toml，放在某一个文件夹下，本文示例代码是在与 src 同级的目录 configs 下。</p>
-<pre class="line-numbers"><code class="language-toml">[app]
-host=&quot;127.0.0.1&quot;
+<p>本篇介绍一下 Rust 项目如何打包成 docker 镜像。</p>
+<h2><a id="%E5%9F%BA%E7%A1%80dockerfile" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>基础 Dockerfile</h2>
+<p>在项目的根目录创建 Dockerfile</p>
+<pre class="line-numbers"><code class="language-dockerfile"># 使用官方 Rust 镜像作为基础镜像
+FROM rust:1.71.0 as builder
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制整个项目到容器中
+COPY . .
+RUN rm Cargo.lock
+
+# 构建应用程序
+RUN cargo build --release
+
+# 使用另一个基础镜像作为最终镜像
+FROM debian:bullseye-slim
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制构建好的可执行文件到最终镜像中
+COPY --from=builder /app/target/release/rust-web .
+COPY configs /app/configs
+
+EXPOSE 8099
+
+# 设置容器启动命令
+CMD [&quot;./rust-web&quot;]
+</code></pre>
+<h3><a id="docker-build" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>docker build</h3>
+<pre class="line-numbers"><code class="language-plain_text">docker build -t rust-web .
+</code></pre>
+<h3><a id="docker-run" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>docker run</h3>
+<pre class="line-numbers"><code class="language-plain_text">docker run -d -p 8099:8099 -v path_to_configs/:/app/configs/ --name rust-web rust-web
+</code></pre>
+<p>注意启动时指定配置文件路径。</p>
+<h2><a id="%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改配置文件</h2>
+<p>config.toml 中修改各个中间件的地址信息，不再是 localhost。<br />
+需要注意一点，app 的 host 指定为 0.0.0.0，接收外部所有 ip 的访问请求。</p>
+<pre class="line-numbers"><code class="language-plain_text">[app]
+host=&quot;0.0.0.0&quot;
 port=8099
 
 [database]
-host=&quot;localhost&quot;
+host=&quot;192.168.0.116&quot;
 port=3306
 user = &quot;root&quot;
 password = &quot;12345678&quot;
 name = &quot;rust_web&quot;
+
+
+[log]
+level = &quot;info&quot;
+path = &quot;app.log&quot;
+
+
+[kafka_config]
+brokers = &quot;192.168.0.116:9092&quot;
+group_id = &quot;test_group&quot;
+
+[redis_config]
+cluster = &quot;redis://192.168.0.116:6379/&quot;
 </code></pre>
-<h2><a id="%E5%AE%9A%E4%B9%89%E5%AE%9E%E4%BD%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>定义实体</h2>
-<pre class="line-numbers"><code class="language-rust">/// 主机,端口
-#[derive(Deserialize, Default, Debug, Clone)]
-pub struct App {
-    pub host: String,
-    pub port: u16,
-}
+<h2><a id="%E5%8A%A0%E5%BF%ABdocker-build%E9%80%9F%E5%BA%A6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>加快 docker build 速度</h2>
+<p>使用 <code>cargo-chef</code> 加速 build。<br />
+<code>cargo-chef</code> 是一个 Rust 工具，用于加速构建过程。它可以预先计算构建过程中的依赖项，以减少重复工作。通过生成一个描述项目依赖项的 <code>recipe.json</code> 文件，<code>cargo-chef</code> 可以在后续的构建中利用这个文件来加速构建过程。</p>
+<pre class="line-numbers"><code class="language-plain_text"># 使用官方 Rust 镜像作为基础镜像，并添加 cargo-chef
+FROM rust:1.71.0 as chef
+ADD .cargo $CARGO_HOME/
+RUN cargo install cargo-chef
 
-/// 数据库连接信息
-#[derive(Deserialize, Default, Debug, Clone)]
-pub struct Database {
-    pub host: String,
-    pub name: String,
-    pub user: String,
-    pub password: String,
-    pub port: usize,
-}
+FROM chef as planner
 
-#[derive(Deserialize, Default, Debug, Clone)]
-pub struct ServerConfig {
-    pub app: App,
-    pub database: Database,
-}
+WORKDIR /app
+# 复制整个项目到容器中
+COPY . .
+RUN rm Cargo.lock
 
-// 为 ServerConfig 实体提供一些方法，可以比较方便的获取配置文件具体信息。
-impl ServerConfig {
-    // 使用引用比较方便，可以避免一些所有权转移问题
-    pub fn database_url(&amp;self) -&gt; String {
-        let db = &amp;self.database;
-        // &quot;mysql://root:12345678@localhost:3306/rust_web&quot;
-        format!(
-            &quot;mysql://{}:{}@{}:{}/{}&quot;,
-            db.user, db.password, db.host, db.port, db.name
-        )
-    }
-    pub fn get_app_host_port(&amp;self) -&gt; (&amp;str, u16) {
-        (&amp;self.app.host, self.app.port)
-    }
-}
+# 生成 recipe.json
+RUN cargo chef prepare --recipe-path recipe.json
+
+# 构建阶段
+FROM chef as builder
+WORKDIR /app
+
+# 复制项目和 recipe.json
+COPY --from=planner /app/recipe.json recipe.json
+COPY . .
+RUN rm Cargo.lock
+
+# 使用 cargo-chef 加速构建过程
+RUN cargo chef cook --release --recipe-path recipe.json
+
+# 构建应用程序
+RUN cargo build --release
+
+
+# 使用另一个基础镜像作为最终镜像
+FROM debian:bullseye-slim
+# 设置工作目录
+WORKDIR /app
+
+# 复制构建好的可执行文件到最终镜像中
+COPY --from=builder /app/target/release/rust-web .
+COPY configs /app/configs
+
+EXPOSE 8099
+
+# 设置容器启动命令
+CMD [&quot;./rust-web&quot;]
 </code></pre>
-<p>如果有新增的配置内容，要同时修改配置文件和实体，如果对不上的话程序启动不起来……</p>
-<h2><a id="%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>读取文件内容</h2>
-<pre class="line-numbers"><code class="language-rust">pub fn load_config() -&gt; ServerConfig {
-    let current_path = env!(&quot;CARGO_MANIFEST_DIR&quot;);
-    println!(&quot;current path: {}&quot;, current_path);
-    // 读取配置文件
-    let toml_file = format!(&quot;{}/configs/config.toml&quot;, current_path);
-
-    let content = fs::read_to_string(toml_file).unwrap();
-    let config: ServerConfig = toml::from_str(&amp;content).unwrap();
-    println!(&quot;config :{:?}&quot;, config);
-    config
-}
-
-// 测试代码
-#[cfg(test)]
-mod tests {
-    use super::load_config;
-
-    #[test]
-    fn test() {
-        load_config();
-    }
-}
-</code></pre>
-<p>load_config() 函数负责读取配置文件并解析为 ServerConfig 结构体。它使用了 fs::read_to_string() 函数来读取文件内容，并使用 toml::from_str() 函数将 TOML 格式的内容解析为结构体对象。</p>
-<p><code>env!(&quot;CARGO_MANIFEST_DIR&quot;)</code> 是 Rust 中的一个宏，用于获取当前 crate（即当前包）的根目录路径。在 Rust 中，每个 crate 都有一个与之关联的根目录，其中包含了 crate 的源代码、配置文件和其他相关文件。</p>
-<p><code>CARGO_MANIFEST_DIR</code> 是一个环境变量，由 Cargo 构建系统在构建过程中设置。它指示了当前 crate 的根目录路径。当使用 <code>env!(&quot;CARGO_MANIFEST_DIR&quot;)</code> 宏时，它会在编译时被展开为当前 crate 的根目录路径的字符串。</p>
-<p>在上述代码中，<code>env!(&quot;CARGO_MANIFEST_DIR&quot;)</code> 用于获取当前 crate 的根目录路径，并结合其他路径信息构建配置文件的完整路径。这样可以确保代码在不同环境下都能正确地找到配置文件并加载配置信息。</p>
-<h2><a id="lazy-static" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>lazy_static</h2>
-<p>使用 lazy_static 宏，确保配置文件只会加载一次，避免了重复加载配置文件的开销。</p>
-<pre class="line-numbers"><code class="language-rust">lazy_static! {
-    pub static ref SERVER_CONFIG: ServerConfig = load_config();
-}
-</code></pre>
-<p>lazy_static 块中定义的变量 SERVER_CONFIG，其访问属性为 pub，允许外部文件访问。<br />
-相当于一个全局变量，在其他文件中使用非常方便，例如：<code>let database_url = config::SERVER_CONFIG.database_url();</code></p>
-<p>main.rs</p>
-<pre class="line-numbers"><code class="language-rust">#[actix_web::main]
-async fn main() -&gt; std::io::Result&lt;()&gt; {
-    let database_url = config::SERVER_CONFIG.database_url();
-    let (host,port) = config::SERVER_CONFIG.get_app_host_port();
-    db::init_db(database_url).await;
-
-    println!(&quot;app started http://{}:{}&quot;,host,port);
-
-    HttpServer::new(|| {
-        App::new()
-            .wrap(middleware::timed::Timed)
-            .wrap(middleware::auth::Auth)
-            .service(hello1)
-            .service(hello2)
-            .service(api::user::routes())
-    })
-    .bind((host,port))?
-    .run()
-    .await
-}
-</code></pre>
-<p>本文代码在 <a href="https://github.com/hitolz/rust-web/tree/config">github</a>。</p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2023/11/20 23:16 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='rust.html'>rust</a></span>
-          				  
-          					    <span class="posted-in"><a href='Rust%20web.html'>Rust web</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
+<p>相比上一个版本，这个 Dockerfile 做了以下修改：</p>
+<ol>
+<li>
+<p>添加了一个中间镜像 <code>chef</code>：</p>
+<ul>
+<li>使用官方 Rust 镜像作为基础镜像，并将其命名为 <code>chef</code>。</li>
+<li>将 <code>.cargo</code> 目录添加到 <code>$CARGO_HOME</code>（通常为 <code>/usr/local/cargo</code>）中，以便在后续的构建阶段中使用。</li>
+<li>安装了 <code>cargo-chef</code> 工具。</li>
+</ul>
+</li>
+<li>
+<p><code>planner</code> 阶段：</p>
+<ul>
+<li>将 <code>chef</code> 阶段作为基础镜像，并将其命名为 <code>planner</code>。</li>
+<li>在工作目录 <code>/app</code> 下复制整个项目。</li>
+<li>运行 <code>cargo chef prepare</code> 命令生成一个 <code>recipe.json</code> 文件。</li>
+</ul>
+</li>
+<li>
+<p><code>builder</code> 阶段：</p>
+<ul>
+<li>将 <code>chef</code> 阶段作为基础镜像，并将其命名为 <code>builder</code>。</li>
+<li>在工作目录 <code>/app</code> 下复制整个项目和 <code>recipe.json</code> 文件。</li>
+<li>运行 <code>cargo chef cook</code> 命令根据 <code>recipe.json</code> 文件来加速构建过程。</li>
+<li>运行 <code>cargo build --release</code> 命令构建应用程序。</li>
+</ul>
+</li>
+</ol>
+<p>这些修改的好处是：</p>
+<ol>
+<li>
+<p>引入了中间镜像 <code>chef</code>，将 <code>cargo-chef</code> 安装过程提前到构建过程的早期阶段。这样可以避免在每次构建时都重新安装 <code>cargo-chef</code>，从而提高构建效率。</p>
+</li>
+<li>
+<p>将 <code>cargo-chef</code> 的安装和配置步骤从 <code>planner</code> 和 <code>builder</code> 阶段中移除，使得这两个阶段更加简洁和清晰。</p>
+</li>
+<li>
+<p>在 <code>planner</code> 阶段中，将 <code>.cargo</code> 目录添加到 <code>$CARGO_HOME</code> 中，以便在后续的构建阶段中使用。这样可以确保在 <code>builder</code> 阶段中可以访问到预先安装的 <code>cargo-chef</code> 工具，而无需重新安装。</p>
+</li>
+</ol>
+<p>总体而言，这些修改使得构建过程更加高效和简洁。通过引入中间镜像和提前安装 <code>cargo-chef</code>，可以减少重复工作并加快构建速度。同时，将 <code>cargo-chef</code> 的安装和配置步骤从每个阶段中移除，使得 Dockerfile 更加易读和易于维护。</p>
+<h2><a id="%E5%B0%8F%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>小结</h2>
+<p>以上就是将 Rust web 项目打包为 docker 镜像的过程，通过 <code>cargo-chef</code>可以加速 docker build 过程。<br />
+打包成 docker 镜像以后，部署到各种云平台都会方便很多。</p>
 
 
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   <a href="all_4.html">&laquo; Prev Page</a>  
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			 <a href="all_6.html">&raquo; Next Page</a> 
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="17012416680122.html" 
+          title="Next Post: Rust web 开发-7.redis">Rust web 开发-7.redis &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">
@@ -502,6 +560,8 @@ Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
 
 
 
+
+<script src="asset/prism.js"></script>
 
 
 <style type="text/css">

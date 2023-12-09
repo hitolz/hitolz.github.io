@@ -129,14 +129,21 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="17010532478678.html">
+                <a class="clearlink" href="17012416680122.html">
                 
-                  <h1>Rust web 开发-6.kafka</h1>
+                  <h1>Rust web 开发-7.redis</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
+                        	<div class="mweb_toc"><ul>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
+<li><a href="#%E8%BF%9E%E6%8E%A5redis">连接 redis</a></li>
+<li><a href="#%E8%8E%B7%E5%8F%96redis%E9%93%BE%E6%8E%A5">获取 redis 链接</a></li>
+<li><a href="#%E6%89%A7%E8%A1%8Credis%E5%91%BD%E4%BB%A4">执行 redis 命令</a></li>
+</ul>
+</div>
+<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
 <ol>
 <li>web 框架</li>
 <li>数据库/orm</li>
@@ -149,64 +156,60 @@
 ……</li>
 </ol>
 <hr />
-<p>本篇文章介绍一下 Rust 使用消息中间件 kafka。</p>
-<p>Rust 接入 kafka 的库中，使用最多的是 rdkafka。本篇文章就来介绍一下 rdkafka，以及封装一个开箱即用的 simple-kafka 库。</p>
-<h2><a id="rdkafka" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>rdkafka</h2>
-<p>rdkafka 是 Rust 的 Kafka 客户端库，提供了与 Kafka 的低级别交互。它是对 librdkafka C 库的绑定，提供了高性能和可靠性。rdkafka 提供了广泛的功能，包括生产者和消费者 API、支持各种配置选项、消息压缩、事务等。</p>
-<p>rdkafka 提供了高阶的 API：StreamConsumer、FutureProducer。</p>
-<ul>
-<li>StreamConsumer:负责自动轮询消费者的消息流。</li>
-<li>FutureProducer:为生成的每条消息返回一个 Future，Future 中可以得到消息的发送结果。</li>
-</ul>
-<pre class="line-numbers"><code class="language-toml">rdkafka = &quot;0.36.0&quot;
+<p>本篇介绍一下 Rust 如何使用 redis。</p>
+<p>Redis 的官方库 <a href="https://crates.io/crates/redis">https://crates.io/crates/redis</a></p>
+<h2><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h2>
+<pre class="line-numbers"><code class="language-toml">redis = &quot;0.23.3&quot;
 </code></pre>
-<h3><a id="%E5%88%9B%E5%BB%BA%E7%94%9F%E4%BA%A7%E8%80%85" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>创建生产者</h3>
-<pre class="line-numbers"><code class="language-rust">fn create_producer(brokers: &amp;str) -&gt; FutureProducer {
-    info!(&quot;create kafka producer,brokers={}&quot;, brokers);
-    let producer: FutureProducer = ClientConfig::new()
-        .set(&quot;bootstrap.servers&quot;, brokers)
-        .set(&quot;message.timeout.ms&quot;, &quot;5000&quot;)
-        .set(&quot;acks&quot;, &quot;1&quot;)
-        .create()
-        .expect(&quot;Failed to create producer&quot;);
-    producer
+<h2><a id="%E8%BF%9E%E6%8E%A5redis" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>连接 redis</h2>
+<pre class="line-numbers"><code class="language-rust">let client = redis::Client::open(&quot;redis://127.0.0.1/&quot;)?;
+</code></pre>
+<h2><a id="%E8%8E%B7%E5%8F%96redis%E9%93%BE%E6%8E%A5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>获取 redis 链接</h2>
+<pre class="line-numbers"><code class="language-rust">let connection = client.get_connection().unwrap();
+</code></pre>
+<h2><a id="%E6%89%A7%E8%A1%8Credis%E5%91%BD%E4%BB%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>执行 redis 命令</h2>
+<pre class="line-numbers"><code class="language-rust">pub fn set_ex(key: String, value: String, seconds: i32) -&gt; bool {
+    get_redis_conn()
+        .set_ex::&lt;String, String, bool&gt;(key, value, seconds as usize)
+        .unwrap_or_else(|err| {
+            error!(&quot;Failed to set_ex value in Redis: {:?}&quot;, err);
+            false
+        })
+}
+
+pub fn get(key: String) -&gt; String {
+    get_redis_conn()
+        .get::&lt;String, String&gt;(key)
+        .unwrap_or_else(|err| {
+            error!(&quot;Failed to get value from Redis: {:?}&quot;, err);
+            &quot;&quot;.to_string()
+        })
 }
 </code></pre>
-<h3><a id="%E5%8F%91%E9%80%81%E6%B6%88%E6%81%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>发送消息</h3>
-<p>有两个方法可以使用：send、send_result</p>
-<ol>
-<li>
-<p><code>send</code> 方法：<code>send</code> 方法用于发送消息到 Kafka，并返回一个 <code>DeliveryFuture</code> 对象。它会尝试将消息发送到 Kafka，如果发送失败，将会在 <code>DeliveryFuture</code> 中返回一个错误。<code>send</code> 方法会在发送过程中进行重试，如果 Kafka 的生产者队列已满，可以使用 <code>queue_timeout</code> 参数来控制重试的时间。你可以将 <code>queue_timeout</code> 设置为 <code>Timeout::Never</code> 来永远重试，或者设置为 <code>Timeout::After(0)</code> 来立即返回错误。如果重试超时并且队列仍然满，<code>DeliveryFuture</code> 中将报告一个 <code>RDKafkaErrorCode::QueueFull</code> 错误。</p>
-</li>
-<li>
-<p><code>send_result</code> 方法：<code>send_result</code> 方法与 <code>send</code> 方法类似，同样用于发送消息到 Kafka，并返回一个 <code>DeliveryResult</code> 对象。但是，与 <code>send</code> 方法不同的是，如果消息无法入队，<code>send_result</code> 方法会立即返回一个错误，同时返回提供的 <code>FutureRecord</code> 对象。它不会进行重试操作。</p>
-</li>
-</ol>
-<p>发送消息的时候需要构建一个 <code>FutureRecord</code>对象</p>
-<pre class="line-numbers"><code class="language-rust">let message_record = FutureRecord::to(TOPIC).key(&quot;1&quot;).payload(message.as_bytes());
-let result = producer.send(message_record, Timeout::After(Duration::from_secs(3))).await;
+<p>写了两个命令的实现，一个是 set_ex，一个是 get，api 中调用。</p>
+<pre class="line-numbers"><code class="language-rust">
+#[get(&quot;/set_redis&quot;)]
+async fn set_redis() -&gt; HttpResponse{
+    let result = middleware::redis_client::set_ex(&quot;hello&quot;.to_string(), &quot;hello&quot;.to_string(), 100);
+    success(Some(result))
+}
+
+#[get(&quot;/get_redis&quot;)]
+async fn get_redis() -&gt; HttpResponse{
+    let result = middleware::redis_client::get(&quot;hello&quot;.to_string());
+    success(Some(result))
+}
 </code></pre>
-<pre class="line-numbers"><code class="language-log">2023-11-27 18:06:09.596  INFO ThreadId(25) rust_web::middleware::kafka: 54: create kafka producer,brokers=localhost:9092    
-2023-11-27 18:06:09.597  INFO ThreadId(25) rust_web::middleware::kafka: 48: send message: FutureRecord { topic: &quot;my_topic&quot;, partition: None, payload: Some([104, 101, 108, 108, 111]), key: Some(&quot;1&quot;), timestamp: None, headers: None }    
-2023-11-27 18:06:09.648  INFO ThreadId(25) rust_web::middleware::kafka: 50: send result: Ok((0, 7))    
-2023-11-27 18:06:09.648  INFO ThreadId(05) rust_web::middleware::kafka: 97: kafka consumer message. message = [Message { ptr: 0x10c6043b8, event_ptr: 0x10c604340 }]    
-2023-11-27 18:06:09.648  INFO ThreadId(05) rust_web::middleware::kafka: 111: partition = 0, offset = 7 message : &quot;hello&quot;    
-2023-11-27 18:06:09.648  INFO ThreadId(05) rust_web::middleware::kafka: 93: recv...    
+<p>测试一下</p>
+<pre class="line-numbers"><code class="language-bash">curl &quot;http://localhost:8099/set_redis&quot; \
+     -H 'token: 1'
+
+curl &quot;http://localhost:8099/get_redis&quot; \
+    -H 'token: 1'
 </code></pre>
-<p>简单的使用 Rust 发送和接收 kafka 消息。以上代码在 <a href="https://github.com/hitolz/rust-web/tree/kafka">github</a>。</p>
-<h2><a id="simple-kafka" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>simple-kafka</h2>
-<p>基于以上代码，做了一个简化使用 rdkafka 组件的小工具 <a href="https://crates.io/crates/simple-kafka">simple-kafka</a>。<br />
-使用这个小工具之后不用再写一堆的创建生产者、消费者代码，极大的减少了 kafka 的接入工作。</p>
-<p>在 main 中，通过 tokio::spawn 线程初始化 kafka 生产者及消费者就能够在 Rust 中使用 kafka 了。</p>
-<pre class="line-numbers"><code class="language-rust">let _init_task = tokio::spawn(async {
-    let simple_kafka_config:simple_kafka::KafkaConfig = kafka_config.to_owned().into();
-    simple_kafka::kafka_init::init_producers(&amp;simple_kafka_config).await;
-    simple_kafka::kafka_init::init_consumers(&amp;simple_kafka_config,&quot;my_topic&quot;, message_handler).await;
-});
-</code></pre>
-<p>simple-kafka 在 <a href="https://github.com/hitolz/rust-web/tree/simple-kafka">github</a>。</p>
-<h2><a id="%E5%B0%8F%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>小结</h2>
-<p>以上就是 Rust 使用 kafka 的简单示例，并写了一个小工具减少配置相关的代码。</p>
+<p>在 redis 中查询一下<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/17012416698132.jpg" alt="" /></p>
+<p>以上代码在 <a href="https://github.com/hitolz/rust-web/tree/redis">github</a>。</p>
 
                         
                       </div>
@@ -215,7 +218,7 @@ let result = producer.send(message_record, Timeout::After(Duration::from_secs(3)
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2023/11/27 10:47 上午</span>
+                    <span class="date">2023/11/29 15:07 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='Rust%20web.html'>Rust web</a></span>
@@ -343,6 +346,12 @@ let result = producer.send(message_record, Timeout::After(Duration::from_secs(3)
 	      
 		      
 			      <li class="post">
+			        <a href="17014842043505.html">Rust web 开发-8.docker</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
 			      </li>
 		     
@@ -362,12 +371,6 @@ let result = producer.send(message_record, Timeout::After(Duration::from_secs(3)
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
 			      </li>
 		     
 		  

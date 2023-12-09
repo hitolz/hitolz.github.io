@@ -129,325 +129,361 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="16761949639234.html">
+                <a class="clearlink" href="16849954851968.html">
                 
-                  <h1>使用 ChatGPT 学习 Javassist</h1>
+                  <h1>向量数据库 Vector Database</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825540.jpg" alt="" /></p>
-<h2><a id="q-javassist%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 是什么？</h2>
-<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<p>Javassist是一个开源的Java字节码操作库，它允许开发人员在运行时编辑和创建Java类。使用Javassist，开发人员可以通过修改现有类的字节码来动态地改变它们的行为，也可以使用Javassist的API来创建全新的Java类。Javassist提供了一个易于使用的API，使开发人员能够在不需要了解复杂的字节码结构的情况下轻松地创建和编辑Java类。Javassist还提供了一些高级功能，如动态代理、AOP（面向切面编程）和Java字节码的转换。由于它的灵活性和易用性，Javassist被广泛用于Java应用程序的动态编程和增强。</p>
-<h2><a id="q-javassist%E5%85%A5%E9%97%A8%E7%A4%BA%E4%BE%8B%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 入门示例？</h2>
-<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<pre class="line-numbers"><code class="language-java">import javassist.*;
-
-public class JavassistExample {
-    public static void main(String[] args) throws Exception {
-        ClassPool pool = ClassPool.getDefault();
-        CtClass cc = pool.makeClass(&quot;MyClass&quot;);
-
-        // 添加属性
-        CtField field = new CtField(CtClass.intType, &quot;myField&quot;, cc);
-        cc.addField(field);
-
-        // 添加方法
-        CtMethod method = CtNewMethod.make(&quot;public void setMyField(int value) { this.myField = value; }&quot;, cc);
-        cc.addMethod(method);
-
-        // 输出类的字节码
-        cc.writeFile(&quot;output&quot;);
-    }
-}
-
-</code></pre>
-<p>这个示例创建了一个名为&quot;MyClass&quot;的新类，添加了一个名为&quot;myField&quot;的int类型属性和一个名为&quot;setMyField&quot;的公共void类型方法，该方法设置myField属性的值。最后，将该类的字节码写入名为&quot;output&quot;的文件夹中。</p>
-<p>通过运行该示例，将在output文件夹中生成一个MyClass.class文件，该文件包含上述定义的类的字节码。这个示例只是Javassist的入门示例，Javassist还提供了许多其他功能，如修改现有类、动态代理等。</p>
-<h2><a id="q%E9%9C%80%E8%A6%81%E6%B7%BB%E5%8A%A0%E4%BB%80%E4%B9%88-maven%E4%BE%9D%E8%B5%96%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:需要添加什么 maven 依赖？</h2>
-<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
-    &lt;groupId&gt;org.javassist&lt;/groupId&gt;
-    &lt;artifactId&gt;javassist&lt;/artifactId&gt;
-    &lt;version&gt;3.28.0-GA&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>最新版本是 3.29.1-GA</p>
-<p>添加完 maven 依赖后运行，确实在 output 文件夹下生成了 MyClass.class<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825562.png" alt="CleanShot2023-02-1816.57.14@2x" /></p>
-<h2><a id="q%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:如何修改现有类？</h2>
-<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<p>使用Javassist修改现有类可以通过以下步骤完成：</p>
+                        	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<div class="mweb_toc"><ul>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93">什么是向量数据库</a></li>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F">什么是向量</a>
+<ul>
+<li><a href="#%E5%90%91%E9%87%8F%E7%9A%84%E5%AE%9E%E9%99%85%E5%90%AB%E4%B9%89">向量的实际含义</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE">什么是向量数据</a>
+<ul>
+<li><a href="#%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E5%9B%BE%E7%89%87%E7%9A%84%E7%89%B9%E5%BE%81">向量如何表示图片的特征</a></li>
+<li><a href="#%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E9%9F%B3%E9%A2%91">向量如何表示音频</a></li>
+<li><a href="#%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E6%96%87%E6%9C%AC">向量如何表示文本</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%8E%E4%BC%A0%E7%BB%9F%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8C%BA%E5%88%AB">与传统关系型数据库的区别</a></li>
+<li><a href="#%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E7%9A%84%E5%90%8D%E8%AF%8D">向量数据库中的名词</a></li>
+<li><a href="#%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF">向量数据库的应用场景</a>
+<ul>
+<li><a href="#ai%E7%9A%84%E9%95%BF%E6%9C%9F%E8%AE%B0%E5%BF%86">AI 的长期记忆</a></li>
+</ul>
+</li>
+<li><a href="#%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%A7%E5%93%81">向量数据库 产品</a></li>
+<li><a href="#%E5%B8%82%E5%9C%BA%E7%A9%BA%E9%97%B4%E5%B7%A8%E5%A4%A7%EF%BC%8C%E8%A1%8C%E4%B8%9A%E5%A4%84%E4%BA%8E%E4%BB%8E0-1%E9%98%B6%E6%AE%B5">市场空间巨大，行业处于从0-1阶段</a></li>
+<li><a href="#milvus%E9%83%A8%E7%BD%B2%EF%BC%9A">milvus 部署：</a></li>
+<li><a href="#qdrant">Qdrant</a></li>
+<li><a href="#%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6%E6%8F%90%E5%8F%96%E5%90%91%E9%87%8F%E7%89%B9%E5%BE%81">音频文件提取向量特征</a>
+<ul>
+<li><a href="#mfcc">MFCC</a></li>
+<li><a href="#sftf">SFTF</a></li>
+<li><a href="#cqt">CQT</a></li>
+<li><a href="#python%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0">python 代码实现</a>
+<ul>
+<li><a href="#mfcc">mfcc</a></li>
+<li><a href="#stft">stft</a></li>
+<li><a href="#panns-inference">panns-inference</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#chat-with-your-docs">Chat With Your Docs</a></li>
+</ul>
+</div>
+<p>近期，随着 AI 相关话题热度提升，向量数据库也出现在了更多人的视野中。</p>
+<p>本篇文章，让你对向量数据库有一个基本的了解。</p>
+<h2><a id="%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>什么是向量数据库</h2>
+<p>向量数据库是专门用来存储和查询向量的数据库，其存储的向量来自于对文本、语音、图像、视频等的向量化数据。</p>
+<p>其主要特点是能够高效地处理包含大量向量的数据集，并支持快速的相似度搜索。<br />
+与传统的关系型数据库不同，向量数据库更适合处理高维稠密向量数据，广泛应用于图像、音频、文本等领域的人工智能和机器学习任务中。<br />
+在向量数据库中，每个向量都可以看作是一个多维空间中的点，而相似度搜索则是通过测量向量之间的距离或角度来实现的。向量数据库的发展得益于硬件技术的不断提升和机器学习领域的迅速发展，具有良好的应用前景。</p>
+<h2><a id="%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>什么是向量</h2>
+<p>在数学中，向量（vector）是指具有大小（magnitude）和方向（direction）的量。一般来说，向量可以在一个指定的坐标系中被表示为一组有序数（有限个实数），这些实数称为向量的分量（component）。常用的表示方式是将向量写成一个列向量或行向量的形式，例如：</p>
+<p>列向量：\(\mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_n \end{bmatrix}\)</p>
+<p>行向量：\(\mathbf{v} = [v_1,v_2,\cdots,v_n]\)</p>
+<p>其中，\(v_1, v_2, \cdots, v_n\) 是向量的\(n\)个分量。除此之外，还有一些特殊的向量，如零向量、单位向量等。</p>
+<p>在计算机科学领域，向量常常被用来表示对象的特征，例如图像、文本、音频等。将对象转换成向量形式便于进行相似度搜索、聚类等操作。向量化的方式可以通过特征提取、文本建模、深度学习等方法来实现。</p>
+<p>处理向量数据成为了许多应用程序的核心问题。为了解决这些问题，人们设计了各种向量数据库和向量索引技术，以提供高效的相似度搜索和近邻查询功能。</p>
+<h3><a id="%E5%90%91%E9%87%8F%E7%9A%84%E5%AE%9E%E9%99%85%E5%90%AB%E4%B9%89" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量的实际含义</h3>
+<p>向量A [0.8,0.3]，表示有一个人，这个人喜欢 0.8 强度的喜剧片，喜欢 0.3 强度的动作</p>
+<p>向量B [0.4,0.6]，表示一部电影，这部电影是 0.4 强度的喜剧，0.6 强度的动作片</p>
+<p>这两个向量之间的余弦相似度计算过程：<br />
+向量的余弦相似度可以表示为：\(cos\theta = \frac{\mathbf{a} \cdot \mathbf{b}}{\|\mathbf{a}\|\|\mathbf{b}\|}\)</p>
+<p>其中，a 和 b 分别表示要计算余弦相似度的两个向量， \(\mathbf{a} \cdot \mathbf{b}\) 表示它们的点积，$|\mathbf{a}|$ 和 $|\mathbf{b}|$ 分别表示它们的模长。</p>
+<p>将 a = [0.8, 0.3], b = [0.4, 0.6] 代入公式计算，有：\(\mathbf{a} \cdot \mathbf{b} = 0.8 \times 0.4 + 0.3 \times 0.6 = 0.32 + 0.18 = 0.5\)</p>
+<p>\(\begin{aligned} \|\mathbf{a}\| &amp;= \sqrt{0.8^2 + 0.3^2} \approx 0.854 \\ \|\mathbf{b}\| &amp;= \sqrt{0.4^2 + 0.6^2} \approx 0.721 \end{aligned}\)</p>
+<p>将上述计算结果代入余弦相似度公式中，可得这两个向量的余弦相似度为：\(cos\theta \approx \frac{0.5}{0.854 \times 0.721} \approx 0.852\)</p>
+<p>算出来的这个值可以表示为 这个人喜欢这部电影的程度</p>
+<p>余弦相似度的取值范围为[-1, 1]，值越大，代表相似度越高。</p>
+<p>除了余弦相似度，还有一些可用于评估向量相似度的度量方法：</p>
 <ol>
-<li>获取类池（ClassPool）对象。
-<pre class="line-numbers"><code class="language-java">ClassPool pool = ClassPool.getDefault();
-</code></pre>
+<li>
+<p>欧氏距离（Euclidean distance）：它衡量两个点之间的直线距离，也被称为 L2 范数。它在计算上非常简单，但有时有可能不是最佳选择。</p>
 </li>
-<li>使用类池获取要修改的类的CtClass对象。
-<pre class="line-numbers"><code class="language-java">CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
-</code></pre>
+<li>
+<p>曼哈顿距离（Manhattan distance）：它衡量两个点之间的城市街区距离，也被称为 L1 范数。它类似于欧氏距离，但它更适合于某些特定的应用场景，比如在计算跨越城市街区的驾驶路线时。</p>
 </li>
-<li>修改类的字节码，比如添加新的方法或属性，修改现有方法或属性等。下面是一个添加新方法的示例：
-<pre class="line-numbers"><code class="language-java">CtMethod newMethod = CtNewMethod.make(
-&quot;public void newMethod() { System.out.println(\&quot;This is a new method!\&quot;); }&quot;, cc);
-cc.addMethod(newMethod);
-</code></pre>
+<li>
+<p>闵可夫斯基距离（Minkowski distance）：它是欧氏距离和曼哈顿距离的泛化形式。在这种情况下，一个参数被引入，该参数控制欧氏距离和曼哈顿距离之间取值的倾向性。</p>
 </li>
-<li>将修改后的字节码写入class文件或者加载到当前JVM中。
-<pre class="line-numbers"><code class="language-java">cc.writeFile();
-</code></pre>
-或者
-<pre class="line-numbers"><code class="language-java">cc.toClass();
-</code></pre>
-<code>writeFile</code>方法会将修改后的字节码写入到磁盘上，<code>toClass</code>方法会将字节码加载到当前JVM中。</li>
+<li>
+<p>矢量余弦相似度（Vector cosine similarity）：这种度量方式与余弦相似度非常相似，只是这里要比较的是两个向量的单位化版本。</p>
+</li>
 </ol>
-<p>下面是一个完整的示例，它会将现有类&quot;com.example.MyClass&quot;中的方法&quot;oldMethod&quot;修改为输出一条新的信息：</p>
-<pre class="line-numbers"><code class="language-java">import javassist.*;
-
-public class JavassistExample {
-    public static void main(String[] args) throws Exception {
-        ClassPool pool = ClassPool.getDefault();
-        CtClass cc = pool.get(&quot;com.example.MyClass&quot;);
-
-        CtMethod oldMethod = cc.getDeclaredMethod(&quot;oldMethod&quot;);
-        oldMethod.setBody(&quot;System.out.println(\&quot;This is a modified old method!\&quot;);&quot;);
-
-        cc.writeFile();
-    }
-}
-</code></pre>
-<p>注意，为了执行这个示例，你需要将&quot;com.example.MyClass&quot;这个类的字节码文件放在类路径下。</p>
-<hr />
-<p>执行前，我的 TestClass类，里面 test 方法，输出1<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825576.png" alt="CleanShot2023-02-1817.07.50@2x" /></p>
-<p>执行后<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825589.png" alt="CleanShot2023-02-1817.08.29@2x" /></p>
-<p>执行后的这个是新生成的文件，并不是覆盖掉原来的文件。</p>
-<h2><a id="q-cc-toclass%E5%92%8C-cc-writefile%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:cc.toClass() 和 cc.writeFile() 的区别</h2>
-<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<p><code>toClass()</code> 方法会将 <code>Javassist</code> 修改后的类直接转换为 <code>java.lang.Class</code> 对象，并将该对象加载到 JVM 中，因此你可以在代码中直接使用修改后的类。如果你调用了 <code>toClass()</code> 方法，<code>Javassist</code> 会尝试在 JVM 中加载修改后的类，如果加载成功，则返回一个 <code>java.lang.Class</code> 对象，否则会抛出一个异常。</p>
-<p><code>writeFile()</code> 方法会将 <code>Javassist</code> 修改后的类写入到磁盘上的一个 .class 文件中。这个文件可以用来替换原来的类文件，或者在以后的运行中使用，以避免每次运行时重新生成修改后的类。注意，<code>writeFile()</code> 方法只是将类保存到磁盘上，并没有将其加载到 JVM 中，因此你不能直接在代码中使用修改后的类，除非你手动加载它。</p>
-<p>通常来说，<code>toClass()</code> 方法比 <code>writeFile()</code> 更方便，因为它可以直接在 JVM 中加载修改后的类，而不需要手动加载它。但是，如果你需要在多个应用程序之间共享修改后的类，或者想要在以后的运行中使用这个类，那么 <code>writeFile()</code> 方法可能更有用。</p>
-<p>需要注意的是，<code>toClass()</code> 和 <code>writeFile()</code> 方法可以结合使用，以便在将修改后的类加载到 JVM 中之前，先将它们保存到磁盘上。这样做可以避免每次运行时重新生成修改后的类。</p>
-<h2><a id="q%E4%BD%BF%E7%94%A8-javassist%E4%BF%AE%E6%94%B9%E7%8E%B0%E6%9C%89%E7%B1%BB%EF%BC%8C%E5%9C%A8%E5%85%B6%E4%B8%AD%E6%AF%8F%E4%B8%AA%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E5%89%8D%E5%90%8E%E8%BE%93%E5%87%BA%E5%BD%93%E5%89%8D%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4%EF%BC%8C%E4%BB%A5%E6%AD%A4%E6%9D%A5%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E7%9A%84%E6%97%B6%E9%97%B4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:使用Javassist修改现有类，在其中每个方法执行前后输出当前系统时间，以此来计算方法执行的时间</h2>
-<h2><a id="a%EF%BC%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A：</h2>
-<p>回答的步骤跟上一个问题的步骤是一样的，不过示例代码不同，而且有错误，最终修改完成后的示例：</p>
-<pre class="line-numbers"><code class="language-java">import javassist.*;
-
-
-public class JavassistExample {
-    public static void main(String[] args) throws Exception {
-        modifyClass();
-    }
-
-    public static void modifyClass() throws Exception {
-        ClassPool cp = ClassPool.getDefault();
-        CtClass cc = cp.get(&quot;com.example.MyClass&quot;);
-        System.out.println(&quot;modifyClass &quot; + cc.getName());
-        CtMethod[] methods = cc.getDeclaredMethods();
-        for (CtMethod method : methods) {
-            String methodName = &quot;modifyClass &quot; + cc.getName() + &quot;#&quot; + method.getName();
-            System.out.println(methodName);
-            method.addLocalVariable(&quot;startNanos&quot;, CtClass.longType);
-            method.insertBefore(&quot;{ startNanos = System.nanoTime(); }&quot;);
-            method.insertAfter(&quot;System.out.println(System.nanoTime() - startNanos);&quot;);
-        }
-        // 重新生成字节码并返回
-        cc.writeFile();
-        cc.toClass();
-    }
-}
-</code></pre>
-<h2><a id="%E8%BF%90%E8%A1%8C%E7%94%9F%E6%88%90%E7%9A%84%E4%BB%A3%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行生成的代码</h2>
-<pre class="line-numbers"><code class="language-java">public class MyApp {
-    public static void main(String[] args) throws Exception {
-        // 在 Javassist 中修改 MyClass
-        JavassistExample.modifyClass();
-
-        // 已经加载到 JVM 内存中，这里使用的是修改后的类
-        MyClass cc = new MyClass();
-        cc.method1();
-    }
-}
-</code></pre>
-<h2><a id="%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改后的字节码</h2>
-<pre class="line-numbers"><code class="language-java">
-public class MyClass {
-    public MyClass() {
-    }
-
-    public void method1() {
-        long startNanos = System.nanoTime();
-        System.out.println(&quot;This is method 1&quot;);
-
-        try {
-            Thread.sleep(1000L);
-        } catch (InterruptedException var6) {
-            var6.printStackTrace();
-        }
-
-        Object var5 = null;
-        System.out.println(System.nanoTime() - startNanos);
-    }
-
-    public void method2(String name, Integer age) {
-        long startNanos = System.nanoTime();
-        System.out.println(&quot;This is method 2&quot;);
-        System.out.println(name);
-        System.out.println(age);
-
-        try {
-            Thread.sleep(2000L);
-        } catch (InterruptedException var8) {
-            var8.printStackTrace();
-        }
-
-        Object var7 = null;
-        System.out.println(System.nanoTime() - startNanos);
-    }
-}
-</code></pre>
-<h2><a id="q%EF%BC%9Ajavaagent%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8E%9F%E7%90%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q：javaagent 的使用原理</h2>
-<h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
-<p>Java Agent 是一种基于 JVM 的动态代理技术，它可以在应用程序启动时通过参数的方式将一个 Jar 包加载到 JVM 中，从而实现对 Java 应用程序的动态监控和控制。Java Agent 的原理是通过 Java Instrumentation API，它提供了对 Java 应用程序字节码的操作能力，可以在 Java 应用程序启动时通过 Agent 将 Java 类进行动态修改，从而实现对应用程序的监控和控制。</p>
-<p>在使用 Java Agent 时，需要编写一个代理程序，并将其打包成 Jar 文件。在代理程序中，需要实现 premain 方法，该方法会在应用程序启动时被自动调用。在 premain 方法中，可以通过 Instrumentation API 获取应用程序的类定义，并对其进行动态修改，从而实现对应用程序的增强和监控。</p>
-<p>具体而言，Java Agent 可以在 premain 方法中使用 Instrumentation API 的 addTransformer() 方法注册一个 ClassFileTransformer 对象。ClassFileTransformer 对象可以在应用程序加载类文件时对类字节码进行转换。在转换过程中，可以使用字节码操作库，比如 Javassist，ASM 或 ByteBuddy 等，来修改类字节码。通过这种方式，Java Agent 可以实现对应用程序类的增强和监控。</p>
-<p>在 Java Agent 中，还可以通过 Instrumentation API 提供的其他方法获取和修改类加载器、管理运行时代理、获取类定义信息等。这些功能可以用于实现更加复杂的增强和监控操作。</p>
-<p>总之，Java Agent 是一种非常强大的工具，可以用于实现各种应用程序的增强和监控，比如性能监控、安全审计、调试等。它通过动态修改应用程序的字节码，可以实现非侵入式的监控和增强，而且对应用程序的性能影响非常小。</p>
-<hr />
-<p>ClassFileTransformer 是 Java 中的一个接口，它是用于修改或增强字节码的核心接口之一。在 Java 应用程序启动时，通过 -javaagent 参数加载的 Java 代理会自动注册一个 ClassFileTransformer 实现，用于对 JVM 中加载的类进行字节码修改或增强操作。</p>
-<p>ClassFileTransformer 接口只有一个方法 transform，该方法接收三个参数：原始类名、类加载器、原始类字节码。该方法的返回值是一个字节数组，表示经过修改后的新的字节码。ClassFileTransformer 可以在类加载过程中的各个阶段进行字节码的修改，例如在类加载之前，类加载时，类被重新转换时等。</p>
-<hr />
-<h2><a id="javassist" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Javassist</h2>
-<p>Javassist是一个开源的分析、编辑和创建Java字节码的类库；</p>
-<p>相比ASM，Javassist提供了更加简单便捷的API，使用Javassist我们可以像写Java代码一样直接插入Java代码片段，让我们不再需要关注Java底层的字节码的和栈操作，仅需要学会如何使用Javassist的API即可实现字节码编辑。</p>
-<p>学习Javassist可以阅读官方的入门教程：<a href="http://www.javassist.org/tutorial/tutorial.html">Getting Started with Javassist</a>。</p>
-<h3><a id="api" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h3>
-<table>
-<thead>
-<tr>
-<th>类</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ClassPool</td>
-<td>ClassPool是一个存储CtClass的容器，如果调用get方法会搜索并创建一个表示该类的CtClass对象</td>
-</tr>
-<tr>
-<td>CtClass</td>
-<td>CtClass表示的是从ClassPool获取的类对象，可对该类就行读写编辑等操作</td>
-</tr>
-<tr>
-<td>CtMethod</td>
-<td>可读写的类方法对象</td>
-</tr>
-<tr>
-<td>CtConstructor</td>
-<td>可读写的类构造方法对象</td>
-</tr>
-<tr>
-<td>CtField</td>
-<td>可读写的类成员变量对象</td>
-</tr>
-</tbody>
-</table>
-<h3><a id="%E6%A0%87%E8%AF%86%E7%AC%A6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>标识符</h3>
-<table>
-<thead>
-<tr>
-<th>表达式</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>$0, $1, $2, ...</code></td>
-<td>this和方法参数</td>
-</tr>
-<tr>
-<td><code>$args</code></td>
-<td>Object[]类型的参数数组</td>
-</tr>
-<tr>
-<td><code>$$</code></td>
-<td>所有的参数，如<code>m($$)</code>等价于<code>m($1,$2,...)</code></td>
-</tr>
-<tr>
-<td><code>$cflow(...)</code></td>
-<td>cflow变量</td>
-</tr>
-<tr>
-<td><code>$r</code></td>
-<td>返回类型，用于类型转换</td>
-</tr>
-<tr>
-<td><code>$w</code></td>
-<td>包装类型，用于类型转换</td>
-</tr>
-<tr>
-<td><code>$_</code></td>
-<td>方法返回值</td>
-</tr>
-<tr>
-<td><code>$sig</code></td>
-<td>方法签名，返回java.lang.Class[]数组类型</td>
-</tr>
-<tr>
-<td><code>$type</code></td>
-<td>返回值类型，java.lang.Class类型</td>
-</tr>
-<tr>
-<td><code>$class</code></td>
-<td>当前类，java.lang.Class类型</td>
-</tr>
-</tbody>
-</table>
-<h2><a id="agent" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Agent</h2>
-<p>JDK1.5开始，Java新增了Instrumentation(Java Agent API)和JVMTI(JVM Tool Interface)功能，允许JVM在加载某个class文件之前对其字节码进行修改，同时也支持对已加载的class(类字节码)进行重新加载(Retransform)。</p>
-<p>利用Java Agent这一特性衍生出了APM(Application Performance Management，应用性能管理)、RASP(Runtime application self-protection，运行时应用自我保护)、IAST(Interactive Application Security Testing，交互式应用程序安全测试)等相关产品，它们都无一例外的使用了Instrumentation/JVMTI的API来实现动态修改Java类字节码并插入监控或检测代码。</p>
-<p>Java Agent有两种运行模式：</p>
+<p>在实践中，通常使用向量余弦相似度来衡量向量之间的相似度，以减少向量大小对相似度的影响。</p>
+<h2><a id="%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>什么是向量数据</h2>
+<p>向量数据是由多个数值组成的一维数组，常用于表示文本、图像、音频等非结构化数据。在向量中，每个数值代表了该向量在某个方向上的分量。例如，在二维平面上，一个点的位置可以用一个二维向量表示，其中第一个数值代表了该点在x轴上的位置，第二个数值代表了该点在y轴上的位置。</p>
+<p>在现代数据科学和机器学习中，向量数据被广泛应用于各种任务，如相似度匹配、聚类、分类和回归。这些任务通常需要计算向量之间的距离或相似度，并且需要对向量进行检索和排序。因此，高效处理向量数据是许多数据科学和机器学习应用程序的核心问题。为了解决这些问题，人们开发了许多向量数据库和向量索引技术，以提供高效的相似度搜索和近邻查询功能。</p>
+<h3><a id="%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E5%9B%BE%E7%89%87%E7%9A%84%E7%89%B9%E5%BE%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量如何表示图片的特征</h3>
+<p>在计算机视觉领域中，向量通常被用来表示图片的特征。这些特征向量可以通过多种方法获得，其中最常用的是卷积神经网络（Convolutional Neural Network，简称CNN）。CNN 是一类深度学习模型，它通过卷积、池化等操作对图片进行处理，最终输出一个固定大小的向量作为该图片的特征表示。</p>
+<p>具体而言，CNN 通过一系列的卷积层和池化层对输入图片进行特征提取，并逐渐减小特征图的尺寸和数量。在最后一层卷积层之后，通常会添加若干全连接层，将卷积层输出的高维特征转换为一个固定长度的向量。这个向量被认为是该图片的“特征表示”，它能够反映出图片的语义信息，例如物体类别、颜色、纹理等特征。这样，我们就可以使用向量距离的概念来度量不同图片之间的相似性，从而支持基于内容的图片检索、聚类等应用。</p>
+<h3><a id="%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E9%9F%B3%E9%A2%91" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量如何表示音频</h3>
+<p>在音频处理中，向量也可以用来表示音频的特征。其中最常见的是使用 梅尔频率倒谱系数（Mel-Frequency Cepstral Coefficients，简称MFCC）来提取音频的特征向量。</p>
+<p>MFCC 是一种基于人耳感知特性的声学特征，它模拟了人耳对不同频率声音的感受，具有很好的区分能力。MFCC 提取过程包括以下几步：</p>
 <ol>
-<li>启动Java程序时添加-javaagent(Instrumentation API实现方式)或-agentpath/-agentlib(JVMTI的实现方式)参数，如java -javaagent:/data/XXX.jar LingXeTest。</li>
-<li>JDK1.6新增了attach(附加方式)方式，可以对运行中的Java进程附加Agent。<br />
-这两种运行方式的最大区别在于第一种方式只能在程序启动时指定Agent文件，而attach方式可以在Java程序运行后根据进程ID动态注入Agent到JVM。</li>
+<li>
+<p>预加重：对原始音频信号进行高通滤波，增强高频部分的能量。</p>
+</li>
+<li>
+<p>分帧：将音频信号分割成若干个长度相等的帧。</p>
+</li>
+<li>
+<p>加窗：对每一帧应用汉明窗等窗函数，减少频谱泄漏。</p>
+</li>
+<li>
+<p>傅里叶变换：对每一帧的信号进行离散傅里叶变换（DFT），得到其频域表达。</p>
+</li>
+<li>
+<p>梅尔滤波器组：将频域信号通过一组梅尔滤波器，将其转换为梅尔频率域的信号。</p>
+</li>
+<li>
+<p>对数压缩：对每个滤波器组输出值取对数，以便更好地表示人耳对音量的感知。</p>
+</li>
+<li>
+<p>离散余弦变换：对每个滤波器组输出值进行离散余弦变换（DCT），得到其MFCC系数。</p>
+</li>
 </ol>
-<p>Java Agent和普通的Java类并没有任何区别，普通的Java程序中规定了main方法为程序入口，而Java Agent则将premain（Agent模式）和agentmain（Attach模式）作为了Agent程序的入口，两者所接受的参数是完全一致的，如下：</p>
-<pre class="line-numbers"><code class="language-java">public static void premain(String args, Instrumentation inst) {}
-public static void agentmain(String args, Instrumentation inst) {}
+<p>最终，MFCC 系数被组合成一个向量作为音频的特征表示。这个向量通常包含20-40个元素，每个元素代表一个MFCC系数，反映了音频中不同频率的能量分布情况。这样，我们就可以使用向量距离的概念来度量不同音频之间的相似性，从而支持基于内容的音频检索、分类等应用。</p>
+<h3><a id="%E5%90%91%E9%87%8F%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E6%96%87%E6%9C%AC" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量如何表示文本</h3>
+<p>在自然语言处理中，向量也常被用来表示文本的特征。一个常见的方法是使用词袋模型（Bag-of-Words Model）以及词向量（Word Embedding）。</p>
+<p>词袋模型是一种基于频次的文本表示方法，它将文本表示为一个由每个单词出现次数所组成的向量。具体而言，假设我们有一个包含 \(N\) 个文档的文本集合，其中每个文档由若干个单词组成。那么词袋模型将该文本集合表示为 \(N\) 个 \(M\) 维向量的矩阵，其中第 \(i\) 个向量表示第 \(i\) 个文档中每个单词出现的次数。这样，我们就可以使用向量距离的概念来度量不同文档之间的相似性，从而支持基于内容的文本分类、聚类等应用。</p>
+<p>词向量是一种更加高级的文本表示方法，它将每个单词映射到一个连续的向量空间中，并且使得语义上相似的单词在向量空间中彼此接近。其中最常用的词向量模型是 Word2Vec，它通过训练神经网络来学习单词的向量表示。与词袋模型不同，词向量不仅考虑了单词出现的频率，还学习了单词之间的语义关系，因此能够更好地捕捉文本的语义信息。这样，我们就可以使用向量相似度的概念来进行文本匹配、情感分析等<br />
+任务。</p>
+<h2><a id="%E4%B8%8E%E4%BC%A0%E7%BB%9F%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8C%BA%E5%88%AB" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>与传统关系型数据库的区别</h2>
+<p>与传统关系型数据库相比，向量数据库具有以下几个区别：</p>
+<ol>
+<li>
+<p>数据模型不同：传统关系型数据库采用表格方式存储数据，而向量数据库则采用向量方式存储数据。向量数据库中每个记录都是一个向量，而不是传统数据库中的行。</p>
+</li>
+<li>
+<p>查询方式不同：传统关系型数据库通常使用SQL语言进行查询，而向量数据库则支持基于向量相似度的查询。这种查询方式能够快速地找到相似的向量数据，适用于人工智能和机器学习领域的一些任务，如推荐系统、图像搜索和自然语言处理等。</p>
+</li>
+<li>
+<p>存储和索引技术不同：向量数据库采用向量化存储和索引技术，能够高效地处理包含大量向量的数据集，而传统关系型数据库则采用B树等索引结构。在向量数据库中，每个向量都可以看作是多维空间中的点，而索引则是通过测量向量之间的距离或角度来实现的。</p>
+</li>
+<li>
+<p>应用场景不同：传统关系型数据库适用于业务管理和数据分析等场景，而向量数据库则更适合处理高维稠密向量数据，并广泛应用于图像、音频、文本等领域的人工智能和机器学习任务中。</p>
+</li>
+</ol>
+<p>向量数据库也支持 CRUD。对向量更快的相似性搜索。</p>
+<h2><a id="%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E7%9A%84%E5%90%8D%E8%AF%8D" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量数据库中的名词</h2>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749228.jpg" alt="" /></p>
+<h2><a id="%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量数据库的应用场景</h2>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749244.jpg" alt="" /></p>
+<p>向量数据库在人工智能和机器学习领域中有着广泛的应用场景，以下是一些常见的应用场景：</p>
+<ol>
+<li>
+<p>人脸识别：向量数据库可以存储大量人脸特征向量，并能够快速地检索相似的人脸，从而实现高效准确的人脸识别。</p>
+</li>
+<li>
+<p>图像搜索：向量数据库可以将图像转化为高维特征向量，并根据相似度进行检索。这种技术被广泛应用于图像搜索引擎、商品推荐等领域。</p>
+</li>
+<li>
+<p>推荐系统：向量数据库可以通过存储用户历史行为数据，并利用相似度计算来产生个性化推荐结果。这种技术被广泛应用于电商、社交网络等领域。</p>
+</li>
+<li>
+<p>自然语言处理：向量数据库可以存储单词或文本片段的向量表示，并通过相似度计算来进行文本分类、情感分析等任务。</p>
+</li>
+<li>
+<p>视频监控：向量数据库可以存储视频特征向量，以实现更加高效准确的视频检索和目标跟踪。</p>
+</li>
+<li>
+<p>AI 长期记忆：ChatGPT等 AI 产品的底层数据库大概率就是向量数据库。</p>
+</li>
+</ol>
+<!--当我们在使用 ChatGPT 输入一个查询时，ChatGPT 会将该查询转换为一个向量表示，并使用预训练和微调好的模型对其进行处理并生成响应。-->
+<h3><a id="ai%E7%9A%84%E9%95%BF%E6%9C%9F%E8%AE%B0%E5%BF%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>AI 的长期记忆</h3>
+<p>众所周知，目前的大模型（无论是 NLP 领域的 GPT 系列还是 CV 领域的 ResNET 系列）都是预先训练 Pretrain 的大模型，有着非常明晰的训练截止日 Cut-off Date，这导致这些模型对于训练截止日之后发生的事情一无所知。</p>
+<p>而随着向量数据库的引入，其内部存储的最新的信息向量能够极大地拓展大模型的应用边界，向量数据库可以使得大模型保持准实时性，提高大模型的适用性，并使得大模型能够动态调整。也就是说，向量数据库使得大模型的长期记忆得到了可能。</p>
+<p>AutoGPT 等于 ChatGPT 加上向量数据库。通过向量数据库让 AutoGPT 具备了长期记忆能力，它知道之前搜的是什么，把历史全部记进去了，不然每次查询是没有上下文的。</p>
+<p>如果将向量数据库部署在公司内部，能够协助解决目前企业界最担忧的大模型泄露隐私的问题。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749264.jpg" alt="" /></p>
+<h2><a id="%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%A7%E5%93%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>向量数据库 产品</h2>
+<p>Milvus：世界上最快的向量数据库<br />
+Pinecone，这个提供 Google Cloud 或 AWS 的托管服务，Rust 重写<br />
+Qdrant，开源版及商业版都有<br />
+pgvector，PostgreSQL 的扩展</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749284.jpg" alt="" /><br />
+4月28日，向量数据库平台Pinecone宣布获得1亿美元（约7亿元）B轮融资，由Andreessen Horowitz领投，ICONIQ Growth等跟投。</p>
+<p>4月22日，向量数据库平台Weaviate宣布获得5000万美元（约3.5亿元）B轮融资，由Index Ventures领投，Battery Ventures等跟投。</p>
+<p>此外，4月6日Chroma获1800万美元种子轮融资，4月19日Qdrant获750万美元种子轮融资。</p>
+<p>Pinecone: <a href="https://www.pinecone.io">https://www.pinecone.io</a><br />
+Weaviate: <a href="https://weaviate.io">https://weaviate.io</a><br />
+Chroma: <a href="https://www.trychroma.com/">https://www.trychroma.com/</a><br />
+Zilliz: <a href="https://zilliz.com">https://zilliz.com</a><br />
+Vespa: <a href="https://vespa.ai">https://vespa.ai</a></p>
+<h2><a id="%E5%B8%82%E5%9C%BA%E7%A9%BA%E9%97%B4%E5%B7%A8%E5%A4%A7%EF%BC%8C%E8%A1%8C%E4%B8%9A%E5%A4%84%E4%BA%8E%E4%BB%8E0-1%E9%98%B6%E6%AE%B5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>市场空间巨大，行业处于从0-1阶段</h2>
+<p>向量数据库是 AI 时代的 Killer App。AI时代一切AI化，而AI化的本质则是向量化，向量化计算成本高昂，海量的高维向量势必需要专门的数据库进行存储和处理，向量数据库应运而生，向量数据库在拓展AI全新应用场景的同时，也将对传统数据库产品形成替代，进而成为AI时代的Killer App。</p>
+<h2><a id="milvus%E9%83%A8%E7%BD%B2%EF%BC%9A" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>milvus 部署：</h2>
+<p><a href="https://github.com/milvus-io/bootcamp/tree/master/solutions/audio/audio_similarity_search/quick_deploy">https://github.com/milvus-io/bootcamp/tree/master/solutions/audio/audio_similarity_search/quick_deploy</a></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749307.jpg" alt="" /></p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749332.jpg" alt="" /></p>
+<h2><a id="qdrant" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Qdrant</h2>
+<p><a href="https://qdrant.tech/documentation/overview/">https://qdrant.tech/documentation/overview/</a></p>
+<p>docker 启动</p>
+<pre class="line-numbers"><code class="language-plain_text">docker run -p 6333:6333 \
+    -v $(pwd)/qdrant_storage:/qdrant/storage \
+    qdrant/qdrant
 </code></pre>
-<p>Java Agent还限制了我们必须以jar包的形式运行或加载，我们必须将编写好的Agent程序打包成一个jar文件。</p>
-<p>使用命令：</p>
-<pre class="line-numbers"><code class="language-plain_text">java -javaagent:/path/to/agent.jar -jar yourapp.jar
+<p>使用下来，感觉 Qdrant 比 millvus 好用。</p>
+<hr />
+<h2><a id="%E9%9F%B3%E9%A2%91%E6%96%87%E4%BB%B6%E6%8F%90%E5%8F%96%E5%90%91%E9%87%8F%E7%89%B9%E5%BE%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>音频文件提取向量特征</h2>
+<p>提取音频文件的向量特征是语音处理中的一个重要任务。以下是一些常用的技术：</p>
+<ol>
+<li>
+<p>MFCC（Mel频率倒谱系数）：MFCC 是一种常见的音频特征提取方法，它模拟了人耳的感知方式。它首先将音频信号转换为频谱图，然后将频率轴上的频率划分为若干个 Mel 频率带，最后计算每个频率带的功率谱，并将其转换为倒谱系数。MFCC 能够捕捉音频信号的频率和时域信息，常用于语音识别和语音合成等任务。</p>
+</li>
+<li>
+<p>短时傅里叶变换（STFT）：STFT 是另一种常见的音频特征提取方法，它将音频信号分成若干个短时窗口，并对每个窗口进行傅里叶变换。这样可以得到每个窗口的频谱信息，从而捕捉音频信号的频率和时域信息。STFT 通常用于音频信号处理和音乐信息检索等任务。</p>
+</li>
+<li>
+<p>CQT（离散余弦变换）：CQT 是一种类似于 STFT 的方法，它使用一组不同的频率带宽来捕捉音频信号的频率信息。与 STFT 不同，CQT 可以在频率轴上对数刻度，这使得它能够更好地处理低频信号。CQT 通常用于音乐信息检索和音频分类等任务。</p>
+</li>
+</ol>
+<h3><a id="mfcc" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>MFCC</h3>
+<p>MFCC（Mel-frequency cepstral coefficients）是一种常用的音频信号处理技术，用于提取音频的特征向量。其主要步骤如下：</p>
+<ol>
+<li>
+<p>预加重：对音频信号进行高通滤波，以增强高频部分的能量，减少低频部分的能量损失。</p>
+</li>
+<li>
+<p>分帧：将音频信号分成若干帧，通常每帧的长度为20~40毫秒，相邻帧之间有重叠。</p>
+</li>
+<li>
+<p>加窗：对每帧信号进行加窗处理，以减少帧边缘的突变，常用的窗函数有汉宁窗、汉明窗等。</p>
+</li>
+<li>
+<p>傅里叶变换：对每帧信号进行快速傅里叶变换（FFT），得到每帧的频谱。</p>
+</li>
+<li>
+<p>梅尔滤波器组：将频谱映射到梅尔频率上，梅尔频率是一种人耳感知的频率，梅尔滤波器组通常由20~40个滤波器组成，每个滤波器的带宽和中心频率不同。</p>
+</li>
+<li>
+<p>取对数：对每个滤波器的输出取对数，得到每帧信号的梅尔频率倒谱系数（Mel-frequency cepstral coefficients，MFCC）。</p>
+</li>
+<li>
+<p>DCT变换：对每帧MFCC系数进行离散余弦变换（DCT），得到每帧的MFCC特征向量。</p>
+</li>
+</ol>
+<h3><a id="sftf" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>SFTF</h3>
+<p>STFT（Short-time Fourier transform）是一种常用的音频信号处理技术，用于将音频信号从时域（time domain）转换到频域（frequency domain）。其主要步骤如下：</p>
+<ol>
+<li>
+<p>将音频信号分成多个短时窗口，每个窗口长度为 N 个采样点，通常使用汉宁窗（Hanning window）等窗函数进行加窗处理，以减少频谱泄漏（spectral leakage）。</p>
+</li>
+<li>
+<p>对于每个窗口，进行傅里叶变换（Fourier transform）得到其频谱（spectrum），即将时域信号转换为频域信号。可以使用快速傅里叶变换（Fast Fourier Transform，FFT）算法加速计算。</p>
+</li>
+<li>
+<p>对于每个窗口的频谱，可以使用一些技术进行后处理，如使用对数幅度谱（logarithmic amplitude spectrum）代替线性幅度谱（linear amplitude spectrum），以更好地模拟人耳对声音的感知。</p>
+</li>
+<li>
+<p>将所有窗口的频谱拼接起来，得到整个音频信号的频谱表示。这个频谱通常是一个二维矩阵，其中每一行表示一个频率，每一列表示一个时间窗口。</p>
+</li>
+</ol>
+<h3><a id="cqt" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CQT</h3>
+<p>CQT（Constant-Q transform）是一种将音频信号从时域（time domain）转换到频域（frequency domain）的技术，其主要步骤如下：</p>
+<ol>
+<li>
+<p>将音频信号分成多个短时段，每个时段的长度通常为20~40毫秒。</p>
+</li>
+<li>
+<p>对每个时段的信号进行加窗处理，以避免频谱泄露（spectral leakage）的问题。</p>
+</li>
+<li>
+<p>对加窗后的信号进行傅里叶变换（Fourier transform）得到频域信号。</p>
+</li>
+<li>
+<p>对频域信号进行滤波，以提取感兴趣的频率范围。</p>
+</li>
+<li>
+<p>对滤波后的频域信号进行下采样（downsampling），以减少计算量。</p>
+</li>
+<li>
+<p>重复上述步骤，直到处理完整个音频信号，得到音频的频谱表示。</p>
+</li>
+</ol>
+<h3><a id="python%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>python 代码实现</h3>
+<h4><a id="mfcc" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>mfcc</h4>
+<pre class="line-numbers"><code class="language-python">import librosa
+import numpy as np
+
+# 加载音频文件
+audio_file = '/data/2.wav'
+y, sr = librosa.load(audio_file)
+
+# 计算 MFCC 特征
+mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+
+# 将 MFCC 特征转换为一维向量
+mfccs_vector = np.mean(mfccs.T, axis=0)
+
+print(mfccs_vector)
 </code></pre>
-<p>除此之外，Java Agent还强制要求了所有的jar文件中必须包含/META-INF/MANIFEST.MF文件，且该文件中必须定义好Premain-Class（Agent模式）或Agent-Class:（Agent模式）配置，可以通过 maven 插件实现:</p>
-<pre class="line-numbers"><code class="language-xml">&lt;plugin&gt;
-    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-    &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;
-    &lt;version&gt;3.2.0&lt;/version&gt;
-    &lt;configuration&gt;
-        &lt;archive&gt;
-            &lt;addMavenDescriptor&gt;true&lt;/addMavenDescriptor&gt;
-            &lt;index&gt;true&lt;/index&gt;
-            &lt;manifest&gt;
-                &lt;addDefaultSpecificationEntries&gt;true&lt;/addDefaultSpecificationEntries&gt;
-                &lt;addDefaultImplementationEntries&gt;true&lt;/addDefaultImplementationEntries&gt;
-            &lt;/manifest&gt;
-            &lt;manifestEntries&gt;
-                &lt;Premain-Class&gt;com.example.PreMain&lt;/Premain-Class&gt;
-                &lt;Specification-Version&gt;${project.version}&lt;/Specification-Version&gt;
-                &lt;Implementation-Version&gt;${project.version}&lt;/Implementation-Version&gt;
-            &lt;/manifestEntries&gt;
-        &lt;/archive&gt;
-    &lt;/configuration&gt;
-&lt;/plugin&gt;
+<p>输出结果</p>
+<pre class="line-numbers"><code class="language-plain_text">[-3.7972183e+02  1.0088512e+02 -3.5129642e+00 -1.9051785e+01
+ -2.3919962e+01 -2.5029432e+01 -1.4385112e+01 -1.0009483e+01
+ -1.8019070e+01  2.9479107e-01  3.8208574e-02 -5.6408200e+00
+ -2.3487382e+00]
 </code></pre>
-<h2><a id="%E5%B0%86%E7%9B%91%E6%8E%A7%E4%BF%A1%E6%81%AF%E8%BE%93%E5%87%BA%E5%88%B0%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>将监控信息输出到日志文件</h2>
-<p>上面的例子中已经实现了，在方法运行前后记录时间戳来监控方法执行时间。<br />
-下一步计划，将执行时间记录下来。<br />
-在下一步，记录到时序数据库中，加载到 Prometheus</p>
+<h4><a id="stft" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>stft</h4>
+<pre class="line-numbers"><code class="language-python">import librosa
+import numpy as np
+
+# 加载音频文件
+audio_file = '/data/2.wav'
+y, sr = librosa.load(audio_file)
+
+# 计算 STFT 特征
+stft = np.abs(librosa.stft(y))
+
+# 将 STFT 特征转换为一维向量
+stft_vector = np.mean(stft.T, axis=0)
+print(stft_vector)
+
+</code></pre>
+<pre class="line-numbers"><code class="language-plain_text">[6.4813397e-03 8.3055627e-03 1.2067630e-02 ... 3.4121547e-07 3.3004611e-07
+ 3.2894093e-07]
+</code></pre>
+<h4><a id="panns-inference" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>panns-inference</h4>
+<p>PANNs Inference 模型使用的是 STFT（短时傅里叶变换）来生成音频的特征向量。<!--STFT 可以将信号分解成一系列短时窗口的频谱，并将频谱转换为能量谱，从而提取出音频的频率和强度信息。-->与 MFCC 和 CQT 相比，STFT 在音频信号处理中更常用，因为它能够提供更详细的频率和时间信息。</p>
+<pre class="line-numbers"><code class="language-python">def get_audio_embedding(path):
+    # Use panns_inference model to generate feature vector of audio
+    try:
+        RESAMPLE_RATE=32000
+        audio, _ = librosa.core.load(path, sr=RESAMPLE_RATE, mono=True)
+        if audio.size &lt; RESAMPLE_RATE:
+            audio = np.pad(audio, (0, RESAMPLE_RATE-audio.size), 'constant', constant_values=(0, 0))
+        audio = audio[None, :]
+        at = AudioTagging(checkpoint_path=None, device='cuda')
+        _, embedding = at.inference(audio)
+        embedding = embedding/np.linalg.norm(embedding)
+        embedding = embedding.tolist()[0]
+        return embedding
+    except Exception as e:
+        print(f&quot;Error with embedding:{e}&quot;)
+        return None
+</code></pre>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749356.jpg" alt="" /></p>
+<p>Cnn14_mAP=0.431.pth 是 PANNs Inference 模型的预训练权重文件，用于加载训练好的神经网络模型参数。这个模型是在音频分类任务上进行训练的，可以识别出不同的音频类别，比如说乐器、声音效果、人声等等。它是基于卷积神经网络 (CNN) 的架构，使用了 STFT 特征提取方法，输入的音频信号经过一系列卷积、池化、归一化等操作后，最终输出一个包含各个音频类别概率的向量。在使用 PANNs Inference 模型进行音频分类时，我们可以使用这个预训练权重文件来加载模型参数，从而进行预测。</p>
+<h2><a id="chat-with-your-docs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Chat With Your Docs</h2>
+<p><a href="https://github.com/mayooear/gpt4-pdf-chatbot-langchain">https://github.com/mayooear/gpt4-pdf-chatbot-langchain</a><br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/16885411749387.png" alt="gpt-langchain-pdf" /></p>
+<hr />
+<p><a href="https://wallstreetcn.com/articles/3688270">https://wallstreetcn.com/articles/3688270</a><br />
+<a href="https://wallstreetcn.com/articles/3688423">https://wallstreetcn.com/articles/3688423</a></p>
+<p><a href="https://www.youtube.com/watch?v=dN0lsF2cvm4">https://www.youtube.com/watch?v=dN0lsF2cvm4</a><br />
+<a href="https://www.youtube.com/watch?v=u03AZlmZF_8">https://www.youtube.com/watch?v=u03AZlmZF_8</a></p>
+<p><a href="https://www.bilibili.com/video/BV1414y1c78514y1c785">https://www.bilibili.com/video/BV1414y1c78514y1c785</a></p>
 
                         
                       </div>
@@ -456,10 +492,10 @@ public static void agentmain(String args, Instrumentation inst) {}
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2023/02/12 17:42 下午</span>
+                    <span class="date">2023/05/25 14:18 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='JVM.html'>JVM</a></span>
+          					    <span class="posted-in"><a href='AI.html'>AI</a></span>
           				   
                     
 
@@ -582,6 +618,12 @@ public static void agentmain(String args, Instrumentation inst) {}
 	      
 		      
 			      <li class="post">
+			        <a href="17014842043505.html">Rust web 开发-8.docker</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="17012416680122.html">Rust web 开发-7.redis</a>
 			      </li>
 		     
@@ -601,12 +643,6 @@ public static void agentmain(String args, Instrumentation inst) {}
 		      
 			      <li class="post">
 			        <a href="17006367993220.html">Rust web 开发-4.log</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="17004933674024.html">Rust web 开发-3.config</a>
 			      </li>
 		     
 		  
