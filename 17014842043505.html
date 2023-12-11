@@ -337,6 +337,7 @@ CMD [&quot;./rust-web&quot;]
 </li>
 </ol>
 <p>总体而言，这些修改使得构建过程更加高效和简洁。通过引入中间镜像和提前安装 <code>cargo-chef</code>，可以减少重复工作并加快构建速度。同时，将 <code>cargo-chef</code> 的安装和配置步骤从每个阶段中移除，使得 Dockerfile 更加易读和易于维护。</p>
+<p>本文代码在 <a href="https://github.com/hitolz/rust-web/tree/docker">github</a>。</p>
 <h2><a id="%E5%B0%8F%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>小结</h2>
 <p>以上就是将 Rust web 项目打包为 docker 镜像的过程，通过 <code>cargo-chef</code>可以加速 docker build 过程。<br />
 打包成 docker 镜像以后，部署到各种云平台都会方便很多。</p>
