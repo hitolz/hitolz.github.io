@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[非著名Java程序员]]></title>
-  <link href="http://blog.hitol.top/atom.xml" rel="self"/>
-  <link href="http://blog.hitol.top/"/>
-  <updated>2023-12-11T17:20:44+08:00</updated>
-  <id>http://blog.hitol.top/</id>
-  <author>
-    <name><![CDATA[]]></name>
+    <title><![CDATA[非著名Java程序员]]></title>
+    <link href="http://blog.hitol.top/atom.xml" rel="self"/>
+    <link href="http://blog.hitol.top/"/>
+    <updated>2023-12-14T18:27:11+08:00</updated>
+    <id>http://blog.hitol.top/</id>
+    <author>
+        <name><![CDATA[]]></name>
+
+    </author>
+    <generator uri="http://www.mweb.im/">MWeb</generator>
     
-  </author>
-  <generator uri="http://www.mweb.im/">MWeb</generator>
-  
-  <entry>
-    <title type="html"><![CDATA[Rust web 开发-8.docker]]></title>
-    <link href="http://blog.hitol.top/17014842043505.html"/>
-    <updated>2023-12-02T10:30:04+08:00</updated>
-    <id>http://blog.hitol.top/17014842043505.html</id>
-    <content type="html"><![CDATA[
+    <entry>
+        <title type="html"><![CDATA[Rust web 开发-8.docker]]></title>
+        <link href="http://blog.hitol.top/17014842043505.html"/>
+        <updated>2023-12-02T10:30:04+08:00</updated>
+        <id>http://blog.hitol.top/17014842043505.html</id>
+        <content type="html"><![CDATA[
 <div class="mweb_toc"><ul>
 <li><a href="#%E5%9F%BA%E7%A1%80dockerfile">基础 Dockerfile</a>
 <ul>
@@ -30,19 +30,6 @@
 <li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
 </ul>
 </div>
-<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
-<ol>
-<li>web 框架</li>
-<li>数据库/orm</li>
-<li>config</li>
-<li>log</li>
-<li>线程池</li>
-<li>kafka</li>
-<li>redis</li>
-<li>打包成 docker 镜像<br />
-……</li>
-</ol>
-<hr />
 <p>本篇介绍一下 Rust 项目如何打包成 docker 镜像。</p>
 <h2><a id="%E5%9F%BA%E7%A1%80dockerfile" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>基础 Dockerfile</h2>
 <p>在项目的根目录创建 Dockerfile</p>
@@ -203,14 +190,14 @@ CMD [&quot;./rust-web&quot;]
 打包成 docker 镜像以后，部署到各种云平台都会方便很多。</p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rust web 开发-7.redis]]></title>
-    <link href="http://blog.hitol.top/17012416680122.html"/>
-    <updated>2023-11-29T15:07:48+08:00</updated>
-    <id>http://blog.hitol.top/17012416680122.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[Rust web 开发-7.redis]]></title>
+        <link href="http://blog.hitol.top/17012416680122.html"/>
+        <updated>2023-11-29T15:07:48+08:00</updated>
+        <id>http://blog.hitol.top/17012416680122.html</id>
+        <content type="html"><![CDATA[
 <div class="mweb_toc"><ul>
 <li><a href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">添加依赖</a></li>
 <li><a href="#%E8%BF%9E%E6%8E%A5redis">连接 redis</a></li>
@@ -218,19 +205,6 @@ CMD [&quot;./rust-web&quot;]
 <li><a href="#%E6%89%A7%E8%A1%8Credis%E5%91%BD%E4%BB%A4">执行 redis 命令</a></li>
 </ul>
 </div>
-<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
-<ol>
-<li>web 框架</li>
-<li>数据库/orm</li>
-<li>config</li>
-<li>log</li>
-<li>线程池</li>
-<li>kafka</li>
-<li>redis</li>
-<li>打包成 docker 镜像<br />
-……</li>
-</ol>
-<hr />
 <p>本篇介绍一下 Rust 如何使用 redis。</p>
 <p>Redis 的官方库 <a href="https://crates.io/crates/redis">https://crates.io/crates/redis</a></p>
 <h2><a id="%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>添加依赖</h2>
@@ -287,27 +261,25 @@ curl &quot;http://localhost:8099/get_redis&quot; \
 <p>以上代码在 <a href="https://github.com/hitolz/rust-web/tree/redis">github</a>。</p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rust web 开发-6.kafka]]></title>
-    <link href="http://blog.hitol.top/17010532478678.html"/>
-    <updated>2023-11-27T10:47:27+08:00</updated>
-    <id>http://blog.hitol.top/17010532478678.html</id>
-    <content type="html"><![CDATA[
-<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
-<ol>
-<li>web 框架</li>
-<li>数据库/orm</li>
-<li>config</li>
-<li>log</li>
-<li>线程池</li>
-<li>kafka</li>
-<li>redis</li>
-<li>打包成 docker 镜像<br />
-……</li>
-</ol>
-<hr />
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[Rust web 开发-6.kafka]]></title>
+        <link href="http://blog.hitol.top/17010532478678.html"/>
+        <updated>2023-11-27T10:47:27+08:00</updated>
+        <id>http://blog.hitol.top/17010532478678.html</id>
+        <content type="html"><![CDATA[
+<div class="mweb_toc"><ul>
+<li><a href="#rdkafka">rdkafka</a>
+<ul>
+<li><a href="#%E5%88%9B%E5%BB%BA%E7%94%9F%E4%BA%A7%E8%80%85">创建生产者</a></li>
+<li><a href="#%E5%8F%91%E9%80%81%E6%B6%88%E6%81%AF">发送消息</a></li>
+</ul>
+</li>
+<li><a href="#simple-kafka">simple-kafka</a></li>
+<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
+</ul>
+</div>
 <p>本篇文章介绍一下 Rust 使用消息中间件 kafka。</p>
 <p>Rust 接入 kafka 的库中，使用最多的是 rdkafka。本篇文章就来介绍一下 rdkafka，以及封装一个开箱即用的 simple-kafka 库。</p>
 <h2><a id="rdkafka" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>rdkafka</h2>
@@ -368,14 +340,14 @@ let result = producer.send(message_record, Timeout::After(Duration::from_secs(3)
 <p>以上就是 Rust 使用 kafka 的简单示例，并写了一个小工具减少配置相关的代码。</p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rust web 开发-5.线程池]]></title>
-    <link href="http://blog.hitol.top/17007106564695.html"/>
-    <updated>2023-11-23T11:37:36+08:00</updated>
-    <id>http://blog.hitol.top/17007106564695.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[Rust web 开发-5.线程池]]></title>
+        <link href="http://blog.hitol.top/17007106564695.html"/>
+        <updated>2023-11-23T11:37:36+08:00</updated>
+        <id>http://blog.hitol.top/17007106564695.html</id>
+        <content type="html"><![CDATA[
 <div class="mweb_toc"><ul>
 <li><a href="#1-1%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B">1:1 线程模型</a></li>
 <li><a href="#m-n%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B">M:N 线程模型</a></li>
@@ -396,19 +368,6 @@ let result = producer.send(message_record, Timeout::After(Duration::from_secs(3)
 <li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
 </ul>
 </div>
-<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
-<ol>
-<li>web 框架</li>
-<li>数据库/orm</li>
-<li>config</li>
-<li>log</li>
-<li>线程池</li>
-<li>kafka</li>
-<li>redis</li>
-<li>打包成 docker 镜像<br />
-……</li>
-</ol>
-<hr />
 <p>本篇介绍一下线程池。也可以说这一部分是介绍异步任务的。<br />
 主要介绍了 rayon 和 tokio 的一小部分。<br />
 tokio 非常强大，还在学习中。</p>
@@ -652,14 +611,14 @@ tokio 文档中并没有介绍线程池的部分。<br />
 若是在子线程中使用 tokio 需要先获取到 runtime。</p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rust web 开发-4.log]]></title>
-    <link href="http://blog.hitol.top/17006367993220.html"/>
-    <updated>2023-11-22T15:06:39+08:00</updated>
-    <id>http://blog.hitol.top/17006367993220.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[Rust web 开发-4.log]]></title>
+        <link href="http://blog.hitol.top/17006367993220.html"/>
+        <updated>2023-11-22T15:06:39+08:00</updated>
+        <id>http://blog.hitol.top/17006367993220.html</id>
+        <content type="html"><![CDATA[
 <div class="mweb_toc"><ul>
 <li><a href="#%E6%97%A5%E5%BF%97%E9%97%A8%E9%9D%A2log">日志门面 log</a>
 <ul>
@@ -694,19 +653,6 @@ tokio 文档中并没有介绍线程池的部分。<br />
 <li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
 </ul>
 </div>
-<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
-<ol>
-<li>web 框架</li>
-<li>数据库/orm</li>
-<li>config</li>
-<li>log</li>
-<li>线程池</li>
-<li>kafka</li>
-<li>redis</li>
-<li>打包成 docker 镜像<br />
-……</li>
-</ol>
-<hr />
 <p>本篇介绍一下日志模块。</p>
 <h2><a id="%E6%97%A5%E5%BF%97%E9%97%A8%E9%9D%A2log" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>日志门面 log</h2>
 <p>日志门面不是说排场很大的意思，而是指相应的日志 API 已成为事实上的标准，会被其他日志框架使用。通过这种统一的门面，开发者就可以不必拘泥于日志框架的选择，未来大不了再换就是。</p>
@@ -972,14 +918,14 @@ pub fn init_log() {
 <p>env_logger 是一个简单易用的日志记录库，它使用环境变量来配置日志级别和输出格式。env_logger 适合于快速启动和调试，它不需要复杂的配置文件，而是依赖于环境变量来控制日志记录的行为。env_logger 提供了一些默认的日志格式和目标，但相对于 tracing，它的可定制性较低。env_logger适合于开发和调试阶段，但在生产环境中可能需要更高级的日志记录功能。</p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rust web 开发-3.config]]></title>
-    <link href="http://blog.hitol.top/17004933674024.html"/>
-    <updated>2023-11-20T23:16:07+08:00</updated>
-    <id>http://blog.hitol.top/17004933674024.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[Rust web 开发-3.config]]></title>
+        <link href="http://blog.hitol.top/17004933674024.html"/>
+        <updated>2023-11-20T23:16:07+08:00</updated>
+        <id>http://blog.hitol.top/17004933674024.html</id>
+        <content type="html"><![CDATA[
 <div class="mweb_toc"><ul>
 <li><a href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">配置文件</a></li>
 <li><a href="#%E5%AE%9A%E4%B9%89%E5%AE%9E%E4%BD%93">定义实体</a></li>
@@ -987,19 +933,6 @@ pub fn init_log() {
 <li><a href="#lazy-static">lazy_static</a></li>
 </ul>
 </div>
-<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
-<ol>
-<li>web 框架</li>
-<li>数据库/orm</li>
-<li>config</li>
-<li>log</li>
-<li>线程池</li>
-<li>kafka</li>
-<li>redis</li>
-<li>打包成 docker 镜像<br />
-……</li>
-</ol>
-<hr />
 <p>本文介绍第三部分，Rust 如何读取配置文件。<br />
 Rust 支持两种类型的配置文件，<code>.toml</code> 和 <code>.env</code>。</p>
 <p>本文主要介绍 toml 类型的文件。</p>
@@ -1118,14 +1051,14 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 <p>本文代码在 <a href="https://github.com/hitolz/rust-web/tree/config">github</a>。</p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rust web 开发-2. 数据库/orm]]></title>
-    <link href="http://blog.hitol.top/17002146115226.html"/>
-    <updated>2023-11-17T17:50:11+08:00</updated>
-    <id>http://blog.hitol.top/17002146115226.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[Rust web 开发-2. 数据库/orm]]></title>
+        <link href="http://blog.hitol.top/17002146115226.html"/>
+        <updated>2023-11-17T17:50:11+08:00</updated>
+        <id>http://blog.hitol.top/17002146115226.html</id>
+        <content type="html"><![CDATA[
 <div class="mweb_toc"><ul>
 <li><a href="#sqlx">sqlx</a></li>
 <li><a href="#orm">orm</a>
@@ -1135,19 +1068,6 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 </li>
 </ul>
 </div>
-<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
-<ol>
-<li>web 框架</li>
-<li>数据库/orm</li>
-<li>config</li>
-<li>log</li>
-<li>线程池</li>
-<li>kafka</li>
-<li>redis</li>
-<li>打包成 docker 镜像<br />
-……</li>
-</ol>
-<hr />
 <p>本文介绍第二部分，数据库及 orm。<br />
 主要介绍 Rust 如何使用 sqlx 连接 MySQL，orm 选用了 rbatis。</p>
 <p>准备 MySQL 数据库，简单的一个表结构</p>
@@ -1385,14 +1305,14 @@ pub async fn get_rb() -&gt; RBatis {
 <p>我在项目中用的话一般是 sqlx + rbatis 一起使用，简单的 sql 用 rbatis 自动生成的，复杂一些的 sql 就使用 sqlx 自己手写……</p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rust web 开发-1.web 框架]]></title>
-    <link href="http://blog.hitol.top/17002145985395.html"/>
-    <updated>2023-11-17T17:49:58+08:00</updated>
-    <id>http://blog.hitol.top/17002145985395.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[Rust web 开发-1.web 框架]]></title>
+        <link href="http://blog.hitol.top/17002145985395.html"/>
+        <updated>2023-11-17T17:49:58+08:00</updated>
+        <id>http://blog.hitol.top/17002145985395.html</id>
+        <content type="html"><![CDATA[
 <div class="mweb_toc"><ul>
 <li><a href="#actix-web">actix-web</a>
 <ul>
@@ -1413,19 +1333,6 @@ pub async fn get_rb() -&gt; RBatis {
 <li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
 </ul>
 </div>
-<p>本系列文章从以下几个方面学习如何使用 Rust 进行 web 开发。</p>
-<ol>
-<li>web 框架</li>
-<li>数据库/orm</li>
-<li>config</li>
-<li>log</li>
-<li>线程池</li>
-<li>kafka</li>
-<li>redis</li>
-<li>打包成 docker 镜像<br />
-……</li>
-</ol>
-<hr />
 <p>本文介绍第一部分，web 框架。<br />
 目前比较出名的 web 框架有</p>
 <ol>
@@ -1772,14 +1679,14 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 <p>第一部分关于 web 框架就介绍到这里了，主要介绍了 actix-web 的使用：如何写一个接口、如何接收参数、如何返回 json 、如何通过中间件鉴权。</p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[wasm 初体验]]></title>
-    <link href="http://blog.hitol.top/16892187258215.html"/>
-    <updated>2023-07-13T11:25:25+08:00</updated>
-    <id>http://blog.hitol.top/16892187258215.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[wasm 初体验]]></title>
+        <link href="http://blog.hitol.top/16892187258215.html"/>
+        <updated>2023-07-13T11:25:25+08:00</updated>
+        <id>http://blog.hitol.top/16892187258215.html</id>
+        <content type="html"><![CDATA[
 <div class="mweb_toc"><ul>
 <li><a href="#hello-world">Hello World</a>
 <ul>
@@ -2054,14 +1961,14 @@ wasm-pack build --target bundler
 <p><a href="https://rustwasm.github.io/docs/wasm-pack/introduction.html">https://rustwasm.github.io/docs/wasm-pack/introduction.html</a></p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[向量数据库 Vector Database]]></title>
-    <link href="http://blog.hitol.top/16849954851968.html"/>
-    <updated>2023-05-25T14:18:05+08:00</updated>
-    <id>http://blog.hitol.top/16849954851968.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[向量数据库 Vector Database]]></title>
+        <link href="http://blog.hitol.top/16849954851968.html"/>
+        <updated>2023-05-25T14:18:05+08:00</updated>
+        <id>http://blog.hitol.top/16849954851968.html</id>
+        <content type="html"><![CDATA[
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <div class="mweb_toc"><ul>
 <li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93">什么是向量数据库</a></li>
@@ -2412,14 +2319,14 @@ print(stft_vector)
 <p><a href="https://www.bilibili.com/video/BV1414y1c78514y1c785">https://www.bilibili.com/video/BV1414y1c78514y1c785</a></p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[使用 ChatGPT 学习 Javassist]]></title>
-    <link href="http://blog.hitol.top/16761949639234.html"/>
-    <updated>2023-02-12T17:42:43+08:00</updated>
-    <id>http://blog.hitol.top/16761949639234.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[使用 ChatGPT 学习 Javassist]]></title>
+        <link href="http://blog.hitol.top/16761949639234.html"/>
+        <updated>2023-02-12T17:42:43+08:00</updated>
+        <id>http://blog.hitol.top/16761949639234.html</id>
+        <content type="html"><![CDATA[
 <p><img src="http://hitol.blog.cdn.updev.cn/mweb/16885411825540.jpg" alt="" /></p>
 <h2><a id="q-javassist%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Q:Javassist 是什么？</h2>
 <h2><a id="a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A:</h2>
@@ -2734,14 +2641,14 @@ public static void agentmain(String args, Instrumentation inst) {}
 在下一步，记录到时序数据库中，加载到 Prometheus</p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[rust 快速入门指南]]></title>
-    <link href="http://blog.hitol.top/16748079623338.html"/>
-    <updated>2023-01-27T16:26:02+08:00</updated>
-    <id>http://blog.hitol.top/16748079623338.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[rust 快速入门指南]]></title>
+        <link href="http://blog.hitol.top/16748079623338.html"/>
+        <updated>2023-01-27T16:26:02+08:00</updated>
+        <id>http://blog.hitol.top/16748079623338.html</id>
+        <content type="html"><![CDATA[
 <div class="mweb_toc"><ul>
 <li><a href="#%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F">定义变量</a></li>
 <li><a href="#%E5%B8%B8%E9%87%8F">常量</a></li>
@@ -4297,14 +4204,14 @@ fn main() {
 <p><img src="http://hitol.blog.cdn.updev.cn/mweb/16854298066353.jpg" alt="" /></p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[rust 包管理与工作空间]]></title>
-    <link href="http://blog.hitol.top/16727524082529.html"/>
-    <updated>2023-01-03T21:26:48+08:00</updated>
-    <id>http://blog.hitol.top/16727524082529.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[rust 包管理与工作空间]]></title>
+        <link href="http://blog.hitol.top/16727524082529.html"/>
+        <updated>2023-01-03T21:26:48+08:00</updated>
+        <id>http://blog.hitol.top/16727524082529.html</id>
+        <content type="html"><![CDATA[
 <p>在编写较为复杂的项目时，合理的对代码进行组织与管理很重要。</p>
 <p>只有按照不同的特性来组织或分隔相关功能的代码，我们才能够清晰地找到实现指定功能的代码片段，或者确定哪些地方需要修改。</p>
 <p>Rust 提供了一系列的功能来帮助我们管理代码，包括决定哪些细节是暴露的，哪些细节是私有的，以及不同的作用域内存在哪些名称。这些功能有时被称为模块系统，他们包括</p>
@@ -4493,14 +4400,14 @@ lib 包相当于工具包，一般用来实现核心功能，同时还可以给�
 二进制包相当于启动包，可以运行。</p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[rust actix-diesel-mysql demo]]></title>
-    <link href="http://blog.hitol.top/16669473309292.html"/>
-    <updated>2022-10-28T16:55:30+08:00</updated>
-    <id>http://blog.hitol.top/16669473309292.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[rust actix-diesel-mysql demo]]></title>
+        <link href="http://blog.hitol.top/16669473309292.html"/>
+        <updated>2022-10-28T16:55:30+08:00</updated>
+        <id>http://blog.hitol.top/16669473309292.html</id>
+        <content type="html"><![CDATA[
 <p>rust 使用 actix-web、diesel、mysql 的 demo。</p>
 <ol>
 <li>
@@ -4629,14 +4536,14 @@ posts::table.find(id).first(connection).unwrap()
 <a href="https://www.rectcircle.cn/posts/rust-diesel/">https://www.rectcircle.cn/posts/rust-diesel/</a></p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[rust 所有权]]></title>
-    <link href="http://blog.hitol.top/16672061401168.html"/>
-    <updated>2022-10-31T16:49:00+08:00</updated>
-    <id>http://blog.hitol.top/16672061401168.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[rust 所有权]]></title>
+        <link href="http://blog.hitol.top/16672061401168.html"/>
+        <updated>2022-10-31T16:49:00+08:00</updated>
+        <id>http://blog.hitol.top/16672061401168.html</id>
+        <content type="html"><![CDATA[
 <blockquote>
 <p>所有权可以说是Rust中最为独特的一个功能了。正是所有权概念和相关工具的引入，Rust才能够在没有垃圾回收机制的前提下保障内存安全。因此，正确地了解所有权概念及其在Rust中的实现方式，对于所有Rust开发者来讲都是十分重要的。在本章中，我们会详细地讨论所有权及其相关功能：借用、切片，以及Rust在内存中布局数据的方式。</p>
 </blockquote>
@@ -4831,14 +4738,14 @@ help: consider using the `'static` lifetime
 <p>所有权只会发生在堆上分配的数据，栈上分配的数据没有所有权的概念。</p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Java 太卷了转 GO（二）]]></title>
-    <link href="http://blog.hitol.top/16626878291486.html"/>
-    <updated>2022-09-09T09:43:49+08:00</updated>
-    <id>http://blog.hitol.top/16626878291486.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[Java 太卷了转 GO（二）]]></title>
+        <link href="http://blog.hitol.top/16626878291486.html"/>
+        <updated>2022-09-09T09:43:49+08:00</updated>
+        <id>http://blog.hitol.top/16626878291486.html</id>
+        <content type="html"><![CDATA[
 <p>上一篇文章简单的学习了 GO 的基础语法，本篇文章用 GO 的框架开发一个短链应用。</p>
 <p>短链应用功能：</p>
 <ol>
@@ -5033,14 +4940,14 @@ mysql.Db.Delete(&amp;dao.ShortLinkConfig{}, 10)
 github: <a href="https://github.com/hitolz/shortLink">https://github.com/hitolz/shortLink</a></p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Java 太卷了转 GO（一）]]></title>
-    <link href="http://blog.hitol.top/16625340324703.html"/>
-    <updated>2022-09-07T15:00:32+08:00</updated>
-    <id>http://blog.hitol.top/16625340324703.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[Java 太卷了转 GO（一）]]></title>
+        <link href="http://blog.hitol.top/16625340324703.html"/>
+        <updated>2022-09-07T15:00:32+08:00</updated>
+        <id>http://blog.hitol.top/16625340324703.html</id>
+        <content type="html"><![CDATA[
 <div class="mweb_toc"><ul>
 <li><a href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%A3%B0%E6%98%8E">变量的声明</a></li>
 <li><a href="#%E5%B8%B8%E9%87%8F">常量</a>
@@ -5425,14 +5332,14 @@ func main() {
 <a href="https://www.runoob.com/go/go-map.html">https://www.runoob.com/go/go-map.html</a></p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[centos7 安装 NFS]]></title>
-    <link href="http://blog.hitol.top/16587443411197.html"/>
-    <updated>2022-07-25T18:19:01+08:00</updated>
-    <id>http://blog.hitol.top/16587443411197.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[centos7 安装 NFS]]></title>
+        <link href="http://blog.hitol.top/16587443411197.html"/>
+        <updated>2022-07-25T18:19:01+08:00</updated>
+        <id>http://blog.hitol.top/16587443411197.html</id>
+        <content type="html"><![CDATA[
 <p>所有机器都安装 nfs-utils。只安装 nfs-utils 即可，rpcbind 属于它的依赖，也会安装上。</p>
 <pre class="line-numbers"><code class="language-plain_text">sudo yum install nfs-utils
 </code></pre>
@@ -5503,16 +5410,17 @@ Export list for 192.168.0.130:
 <p>由于修改了 /etc/fstab，需要重新加载 systemctl</p>
 <pre class="line-numbers"><code class="language-plain_text">sudo systemctl daemon-reload
 </code></pre>
+<p>k8s-volums:/data/k8s   /data/k8s  nfs  defaults  0  0</p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Redis 过期键删除策略]]></title>
-    <link href="http://blog.hitol.top/16505304277569.html"/>
-    <updated>2022-04-21T16:40:27+08:00</updated>
-    <id>http://blog.hitol.top/16505304277569.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[Redis 过期键删除策略]]></title>
+        <link href="http://blog.hitol.top/16505304277569.html"/>
+        <updated>2022-04-21T16:40:27+08:00</updated>
+        <id>http://blog.hitol.top/16505304277569.html</id>
+        <content type="html"><![CDATA[
 <p>redis 数据库键的过期时间都保存在过期字典中，过期字典的键是一个指针，指向键空间下的一个对象（也就是某个数据库键），过期字典的值是一个 long long 类型的整数，这个整数保存了数据库键的过期时间，一个毫秒精确度的 UNIX 时间戳。</p>
 <p>过期键的判定</p>
 <ol>
@@ -5553,14 +5461,14 @@ Export list for 192.168.0.130:
 当键在主服务器上被删除时，主服务器会显示的发一条 DEL 指令到从服务器，告知从服务器删除这个过期键</p>
 
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[使用 kubeadm 搭建 Kubernetes 集群]]></title>
-    <link href="http://blog.hitol.top/16466651837804.html"/>
-    <updated>2022-03-07T22:59:43+08:00</updated>
-    <id>http://blog.hitol.top/16466651837804.html</id>
-    <content type="html"><![CDATA[
+    </entry>
+    
+    <entry>
+        <title type="html"><![CDATA[使用 kubeadm 搭建 Kubernetes 集群]]></title>
+        <link href="http://blog.hitol.top/16466651837804.html"/>
+        <updated>2022-03-07T22:59:43+08:00</updated>
+        <id>http://blog.hitol.top/16466651837804.html</id>
+        <content type="html"><![CDATA[
 <p>minikube 也是使用 kubeadm</p>
 <ul>
 <li>安装软件 kubelete、kubeadm、kubectl
@@ -6179,6 +6087,6 @@ kubectl apply -f kube-flannel.yml
 </details>
 
 ]]></content>
-  </entry>
-  
+    </entry>
+    
 </feed>
