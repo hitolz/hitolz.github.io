@@ -21,6 +21,7 @@ $(function () {
           '<li>kafka</li>\n' +
           '<li>redis</li>\n' +
           '<li>打包成 docker 镜像<br />\n' +
+          '<li>rpc<br />\n' +
           '……</li>\n' +
           '</ol>\n' +
           '<hr />'
