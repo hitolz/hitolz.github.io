@@ -4,7 +4,7 @@
     <title><![CDATA[非著名Java程序员]]></title>
     <link href="http://blog.hitol.top/atom.xml" rel="self"/>
     <link href="http://blog.hitol.top/"/>
-    <updated>2023-12-22T15:59:27+08:00</updated>
+    <updated>2024-01-10T11:17:12+08:00</updated>
     <id>http://blog.hitol.top/</id>
     <author>
         <name><![CDATA[]]></name>
@@ -59,7 +59,7 @@
 <h2><a id="%E5%89%8D%E7%AB%AF%E8%BF%98%E6%98%AF%E9%9C%80%E8%A6%81%E7%9A%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>前端还是需要的</h2>
 <p>当我写好了后端，配置好菜单后，微信后台确实将请求回调到了我的后端，但是 code=code，你没有看错，我接收到的 code 参数的值就是 code。</p>
 <p>我的思绪如同被打乱的棋局，我试图找到那个决定性的步骤，但我无法理解。</p>
-<p>后来，在网上看到一篇文章，说在页面上 <code>alert(window.location.href)</code> 会发现，地址里是有 code 的。</p>
+<p>后来，在网上看到一篇文章，说在页面上 <code>alert(window.location.href)</code> 你会发现，地址里是有 code 的。</p>
 <p>我知道，决定性的那个步骤我找到了。就是前端页面。但我无法理解。</p>
 <p>于是，我写了一个 html 页面，就执行 alert 这行代码，我到底要看看到底能不能获取到 code。<br />
 果然，页面上的 code 他真有值。</p>
@@ -98,7 +98,7 @@
 &lt;/html&gt;
 </code></pre>
 <h2><a id="%E6%B2%A1%E6%9C%89%E4%B8%80%E4%B8%AA%E5%AD%97%E6%98%AF%E5%A4%9A%E4%BD%99%E7%9A%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>没有一个字是多余的</h2>
-<p>微信网页授权，没有一个字是多余的。</p>
+<p>微信网页授权，真就没有一个字是多余的。</p>
 
 ]]></content>
     </entry>
