@@ -131,377 +131,257 @@
         <div class="markdown-body home-categories">
             
             <div class="article">
-                <a class="clearlink" href="17002145985395.html">
+                <a class="clearlink" href="17002146115226.html">
                     
-                    <h1>Rust web 开发-1.web 框架</h1>
+                    <h1>Rust web 开发-2. 数据库/orm</h1>
                     <div class="a-content">
                         
                         <div class="a-content-text">
                             
                             <div class="mweb_toc"><ul>
-<li><a href="#actix-web">actix-web</a>
+<li><a href="#sqlx">sqlx</a></li>
+<li><a href="#orm">orm</a>
 <ul>
-<li><a href="#httpserver">HttpServer</a></li>
-<li><a href="#scope">scope</a></li>
-<li><a href="#shared-mutable-state">Shared Mutable State</a></li>
-<li><a href="#%E8%BF%94%E5%9B%9Ejson">返回 json</a></li>
-<li><a href="#%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0">接收请求参数</a>
-<ul>
-<li><a href="#path">Path</a></li>
-<li><a href="#get%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6%E5%8F%82%E6%95%B0">get 请求，接收参数</a></li>
-<li><a href="#post%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6-json">post 请求，接收 json</a></li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0%E5%88%9D%E5%A7%8B%E5%8C%96">数据库连接池初始化</a></li>
 </ul>
 </li>
-<li><a href="#middleware">middleware</a></li>
-</ul>
-</li>
-<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
 </ul>
 </div>
-<p>本文介绍第一部分，web 框架。<br />
-目前比较出名的 web 框架有</p>
-<ol>
-<li><a href="https://github.com/tokio-rs/axum">axum</a></li>
-<li><a href="https://github.com/SergioBenitez/Rocket">Rocket</a></li>
-<li><a href="https://github.com/actix/actix-web">actix-web</a></li>
-<li><a href="https://github.com/hyperium/hyper">Hyper</a></li>
-<li><a href="https://github.com/http-rs/tide">Tide</a></li>
-<li><a href="https://github.com/seanmonstar/warp">Warp</a></li>
-</ol>
-<p>接下来主要介绍一下 actix-web，其他框架待后面有时间再介绍。</p>
-<h2><a id="actix-web" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>actix-web</h2>
-<p>actix-web 服务端的逻辑都是建立在 App 实例上的，通过 App 实例为所有资源和中间件注册路由，存储同一范围内所有线程共享的状态。<br />
-接下来从零开始实现一个 actix-web 示例。</p>
-<ol>
-<li>创建rust 工程</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">cargo new hello-world
+<p>本文介绍第二部分，数据库及 orm。<br />
+主要介绍 Rust 如何使用 sqlx 连接 MySQL，orm 选用了 rbatis。</p>
+<p>准备 MySQL 数据库，简单的一个表结构</p>
+<pre class="line-numbers"><code class="language-sql">CREATE TABLE `user` (
+	`id` bigint NOT NULL AUTO_INCREMENT,
+	`user_name` varchar(32) DEFAULT NULL,
+	`password` varchar(64) DEFAULT NULL,
+	PRIMARY KEY (`id`)
+);
 </code></pre>
-<ol start="2">
-<li>Cargo.toml 添加依赖</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">[dependencies]
-actix-web=&quot;4&quot;
+<p>接下来分别使用 sqlx 和 rbatis 进行  CRUD 操作。</p>
+<h2><a id="sqlx" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>sqlx</h2>
+<p>添加依赖</p>
+<pre class="line-numbers"><code class="language-plain_text">sqlx = { version = &quot;0.7.2&quot;, features = [
+    &quot;runtime-async-std-native-tls&quot;,
+    &quot;mysql&quot;,
+    &quot;chrono&quot;,
+] }
 </code></pre>
-<ol start="3">
-<li>使用 actix-web<br />
-在 src/main.rs 中编写如下代码</li>
-</ol>
-<pre class="line-numbers"><code class="language-rust">use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+<p>sqlx 连接数据库的链接格式：<code>mysql://{user}:{password}@{IP}:{port}/{database name}</code><br />
+例如我本地的数据库地址：<code>mysql://root:12345678@localhost:3306/rust_web</code></p>
+<p>连接 MySQL</p>
+<pre class="line-numbers"><code class="language-rust">use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
 
-#[get(&quot;/&quot;)]
-async fn hello() -&gt; impl Responder {
-    HttpResponse::Ok().body(&quot;Hello world!&quot;)
-}
-
-#[post(&quot;/echo&quot;)]
-async fn echo(req_body: String) -&gt; impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -&gt; impl Responder {
-    HttpResponse::Ok().body(&quot;Hey there!&quot;)
-}
-
-
-#[actix_web::main]
-async fn main() -&gt; std::io::Result&lt;()&gt; {
-    HttpServer::new( || {
-        App::new()
-            .service(hello)
-            .service(echo)
-            .route(&quot;/hey&quot;, web::get().to(manual_hello))
-    })
-        .bind((&quot;127.0.0.1&quot;, 8099))?
-        .run()
-        .await
+pub async fn get_mysql_pool() -&gt; Pool&lt;MySql&gt; {
+    let database_url = &quot;mysql://root:12345678@localhost:3306/rust_web&quot;;
+    MySqlPoolOptions::new().connect(database_url).await.unwrap()
 }
 </code></pre>
-<p>HttpServer 绑定到 ip、端口，同时，提供了两个 get 方法(/,/hey)，一个 post 方法(/echo)，通过浏览器访问 localhost:8099 即可访问。<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-13.36.34.png" alt="2022-11-20-13.36.34" /></p>
-<h3><a id="httpserver" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>HttpServer</h3>
-<p>HttpServer 接受的参数类型是 application factory，实现了 Send + Sync。</p>
-<p>bind，为 server 绑定 ip 和端口。<br />
-bind 成功后，<code>HttpServer::run()</code> 返回一个 server 实例。<br />
-server 必须使用 await 或者在多线程中才能启动 http 服务器。<br />
-server 默认启动的线程数与 CPU 个数相等，可以通过 <code>HttpServer::workers()</code> 改变线程数。</p>
-<h3><a id="scope" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>scope</h3>
-<p>scope 相当于请求路径的前缀</p>
-<pre class="line-numbers"><code class="language-rust">#[actix_web::main]
-async fn main() -&gt; std::io::Result&lt;()&gt; {
-    HttpServer::new(|| {
-        App::new().service(
-            web::scope(&quot;/app&quot;)
-                .route(&quot;/hey&quot;, web::get().to(manual_hello)),
-        )
-    })
-        .bind((&quot;127.0.0.1&quot;, 8099))?
-        .run()
-        .await
+<p>api</p>
+<pre class="line-numbers"><code class="language-rust">use actix_web::{get, post, web, HttpResponse, Scope};
+use serde::{Deserialize, Serialize};
+
+use crate::{db::get_mysql_pool, success};
+
+// 定义路由，对外暴露的接口
+pub fn routes() -&gt; Scope {
+    web::scope(&quot;/users&quot;)
+        .service(add_user)
+        .service(query_user)
+        .service(update_user)
+        .service(delete_user)
+}
+
+// 定义实体
+#[derive(Debug, Deserialize, Clone, Serialize, Default,sqlx::FromRow)]
+#[serde(rename_all = &quot;camelCase&quot;)]
+pub struct User {
+    pub id: Option&lt;i64&gt;,
+    pub user_name: Option&lt;String&gt;,
+    pub password: Option&lt;String&gt;,
+}
+
+#[post(&quot;/add&quot;)]
+pub async fn add_user(user: web::Json&lt;User&gt;) -&gt; HttpResponse {
+    let user = user.to_owned();
+    let id = save_user(user).await.unwrap();
+    success(Some(id))
+}
+// insert
+async fn save_user(user: User) -&gt; Result&lt;u64, sqlx::Error&gt; {
+    // 获取数据库连接池
+    let pool = get_mysql_pool().await;
+    let sql = &quot;insert into user(user_name, password) values (?,?)&quot;;
+    let result = sqlx::query(sql)
+        .bind(user.user_name)
+        .bind(user.password)
+        .execute(&amp;pool)
+        .await?;
+    let id = result.last_insert_id();
+    Ok(id)
+}
+
+// update
+#[post(&quot;/update/{id}&quot;)]
+pub async fn update_user(id: web::Path&lt;i64&gt;, user: web::Json&lt;User&gt;) -&gt; HttpResponse {
+    let user = user.to_owned();
+
+    let sql = &quot;update user set user_name =?, password =? where id = ?&quot;;
+    sqlx::query(sql)
+        .bind(user.user_name)
+        .bind(user.password)
+        .bind(id.into_inner())
+        .execute(&amp;get_mysql_pool().await)
+        .await.unwrap();
+    success(Some(1))
+}
+
+// select
+#[get(&quot;/query/{id}&quot;)]
+pub async fn query_user(id:web::Path&lt;i64&gt;) -&gt; HttpResponse {
+    let sql = &quot;select * from user where id = ?&quot;;
+    let result = sqlx::query_as::&lt;_,User&gt;(sql).bind(id.into_inner()).fetch_optional(&amp;get_mysql_pool().await).await.unwrap();
+    success(result)
+}
+
+// delete
+#[post(&quot;/delete/{id}&quot;)]
+pub async fn delete_user(id:web::Path&lt;i64&gt;) -&gt; HttpResponse {
+    let sql = &quot;delete from user where id = ?&quot;;
+    sqlx::query(sql).bind(id.into_inner()).execute(&amp;get_mysql_pool().await).await.unwrap();
+    success(Some(1))
 }
 </code></pre>
-<p>这样的话在请求 localhost:8099/hey 就请求不到了，这样要请求的路径是 localhost:8099/app/hey</p>
-<h3><a id="shared-mutable-state" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Shared Mutable State</h3>
-<p>相当于全局变量、多个线程之间共享的。</p>
-<p><code>web::Data&lt;T&gt;</code>,T 是 Arc 类型。<br />
-Arc 和 Mutex 结合使用，实现在多线程间共享数据。</p>
-<pre class="line-numbers"><code class="language-rust">use std::sync::Mutex;
+<p>服务启动之后测试：<br />
+新增 user：</p>
+<pre class="line-numbers"><code class="language-bash">curl -X &quot;POST&quot; &quot;http://localhost:8099/users/add&quot; \
+     -H 'token: 1' \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -d $'{
+  &quot;password&quot;: &quot;3456789&quot;,
+  &quot;userName&quot;: &quot;张三&quot;
+}'
+</code></pre>
+<p>查询 user：</p>
+<pre class="line-numbers"><code class="language-bash">curl &quot;http://localhost:8099/users/query/1&quot; \
+     -H 'token: 1'
+</code></pre>
+<p>修改 user：</p>
+<pre class="line-numbers"><code class="language-bash">curl -X &quot;POST&quot; &quot;http://localhost:8099/users/update/1&quot; \
+     -H 'token: 1' \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -d $'{
+  &quot;password&quot;: &quot;987654&quot;,
+  &quot;userName&quot;: &quot;lisi&quot;
+}'
+</code></pre>
+<p>删除 user：</p>
+<pre class="line-numbers"><code class="language-bash">curl -X &quot;POST&quot; &quot;http://localhost:8099/users/delete/2&quot; \
+     -H 'token: 1'
+</code></pre>
+<h2><a id="orm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>orm</h2>
+<p>orm 目前我使用过的有两个，一个是 Diesel，一个是 rbatis。</p>
+<p>Diesel 可以看以前写过的一篇文章，<a href="https://blog.hitol.top/16669473309292.html">https://blog.hitol.top/16669473309292.html</a><br />
+本篇文章主要介绍一下 rbatis。</p>
+<p>添加依赖</p>
+<pre class="line-numbers"><code class="language-plain_text"># rbatis
+rbs = { version = &quot;4.3&quot; }
+rbatis = { version = &quot;4.3&quot; }
+rbdc-mysql = { version = &quot;4.3&quot; }
+</code></pre>
+<p>创建 rbatis</p>
+<pre class="line-numbers"><code class="language-rust">use rbatis::RBatis;
+use rbdc_mysql::MysqlDriver;
 
-use actix_web::{App, HttpServer, web};
-
-struct AppStateWithCounter {
-    counter: Mutex&lt;i32&gt;, // &lt;- Mutex is necessary to mutate safely across threads
-}
-
-async fn index(data: web::Data&lt;AppStateWithCounter&gt;) -&gt; String {
-    let mut counter = data.counter.lock().unwrap(); // &lt;- get counter's MutexGuard
-    *counter += 1; // &lt;- access counter inside MutexGuard
-
-    format!(&quot;Request number: {counter}&quot;) // &lt;- response with count
-}
-
-#[actix_web::main]
-async fn main() -&gt; std::io::Result&lt;()&gt; {
-    // Note: web::Data created _outside_ HttpServer::new closure
-    let counter = web::Data::new(AppStateWithCounter {
-        counter: Mutex::new(0),
-    });
-
-    HttpServer::new(move || {
-        // move counter into the closure
-        App::new()
-            .app_data(counter.clone()) // &lt;- register the created data
-            .route(&quot;/&quot;, web::get().to(index))
-    })
-        .bind((&quot;127.0.0.1&quot;, 8099))?
-        .run()
-        .await
+pub async fn get_rb() -&gt; RBatis {
+    let database_url = &quot;mysql://root:12345678@localhost:3306/rust_web&quot;;
+    let rb = RBatis::new();
+    rb.init(MysqlDriver {}, database_url).unwrap();
+    rb
 }
 </code></pre>
-<p>浏览器请求 localhost:8099,每次刷新 counter+1；</p>
-<h3><a id="%E8%BF%94%E5%9B%9Ejson" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>返回 json</h3>
-<p>一般 web 应用服务端接口返回的数据都是 json 格式，<br />
-actix-web 中如何实现返回 json格式的数据:</p>
-<p>cargo.toml添加依赖</p>
-<pre class="line-numbers"><code class="language-rust">serde = { version = &quot;1.0&quot;, features = [&quot;derive&quot;] }
-serde_json = { version = &quot;1.0.2&quot;, optional = true }
-</code></pre>
-<p>main.rs</p>
-<pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web};
-use actix_web::web::Json;
-use serde::{ser, Serialize};
-
-#[derive(Serialize)]
-pub struct JsonSuccess&lt;T: ser::Serialize&gt; {
-    pub code: u32,
-    pub data: Option&lt;T&gt;,
-    pub error: Option&lt;String&gt;,
-}
-
-#[derive(Serialize)]
-pub struct JsonError {
-    pub code: u32,
-    pub data: Option&lt;String&gt;,
-    pub error: Option&lt;String&gt;,
-}
-
-pub fn success&lt;T: ser::Serialize&gt;(r: Option&lt;T&gt;) -&gt; HttpResponse {
-    HttpResponse::Ok().json(JsonSuccess {
-        code: 0,
-        data: r,
-        error: None,
-    })
-}
-
-pub fn error(err: Option&lt;String&gt;) -&gt; HttpResponse {
-    HttpResponse::Ok().json(JsonError {
-        code: 1,
-        data: None,
-        error: err,
-    })
-}
-
-
-#[get(&quot;/&quot;)]
-async fn hello() -&gt; HttpResponse {
-    success(Option::from(&quot;Hello&quot;))
-}
-
-
-#[actix_web::main]
-async fn main() -&gt; std::io::Result&lt;()&gt; {
-    HttpServer::new(|| {
-        App::new()
-            .service(hello)
-    })
-        .bind((&quot;127.0.0.1&quot;, 8099))?
-        .run()
-        .await
-}
-
-</code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-14.58.01.png" alt="2022-11-20-14.58.01" /></p>
-<h3><a id="%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>接收请求参数</h3>
-<h4><a id="path" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Path</h4>
-<pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web,Result};
-use actix_web::web::Json;
-use serde::{ser, Serialize};
-
-/// extract path info from &quot;/users/{user_id}/{friend}&quot; url
-/// {user_id} - deserializes to a u32
-/// {friend} - deserializes to a String
-#[get(&quot;/users/{user_id}/{friend}&quot;)] // &lt;- define path parameters
-async fn index(path: web::Path&lt;(u32, String)&gt;) -&gt; HttpResponse {
-    let (user_id, friend) = path.into_inner();
-    success(Some(format!(&quot;Welcome {}, user_id {}!&quot;, friend, user_id)))
-}
-
-#[actix_web::main]
-async fn main() -&gt; std::io::Result&lt;()&gt; {
-    HttpServer::new(|| App::new().service(index))
-        .bind((&quot;127.0.0.1&quot;, 8099))?
-        .run()
-        .await
-}
-</code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002319375457.jpg" alt="" /></p>
-<p>web::Path&lt;(u32,String)&gt; 接收这个 get(&quot;/users/{user_id}/{friend}&quot;) 请求的两个参数</p>
-<p>将这两个参数定义为 struct 也是可以的</p>
-<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
-struct Info {
-    user_id: u32,
-    friend: String,
-}
-
-/// extract path info using serde
-#[get(&quot;/users/{user_id}/{friend}&quot;)] // &lt;- define path parameters
-async fn index(path: web::Path&lt;(u32, String)&gt;) -&gt; HttpResponse {
-    let (user_id, friend) = path.into_inner();
-    success(Some(format!(&quot;Welcome {}, user_id {}!&quot;, friend, user_id)))
-}
-</code></pre>
-<h4><a id="get%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>get 请求，接收参数</h4>
-<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
-struct Info {
-    username: String,
-    age:i32
-}
-
-#[get(&quot;/&quot;)]
-async fn index(info: web::Query&lt;Info&gt;) -&gt; HttpResponse {
-    success(Some(format!(&quot;Welcome {}!,age = {}&quot;, info.username,info.age)))
-}
-</code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002323120371.jpg" alt="" /></p>
-<h4><a id="post%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%8E%A5%E6%94%B6-json" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>post 请求，接收 json</h4>
-<pre class="line-numbers"><code class="language-rust">#[derive(Deserialize)]
-struct Info {
-    username: String,
-    age:i32
-}
-
-#[post(&quot;/&quot;)]
-async fn index(info: web::Json&lt;Info&gt;) -&gt; HttpResponse {
-    success(Some(format!(&quot;Welcome {}!,age = {}&quot;, info.username,info.age)))
-}
-</code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17002325332089.jpg" alt="" /></p>
-<h3><a id="middleware" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>middleware</h3>
-<p>middleware 系统可以让我们针对请求或者响应添加自定义操作。</p>
-<ol>
-<li>Pre-process the Request：可以在请求时做前置处理</li>
-<li>Post-process a Response：在响应时做后置处理</li>
-<li>Modify application state：修改 state</li>
-<li>Access external services (redis, logging, sessions)：访问外部服务</li>
-</ol>
+<p>在 User 实体定义的文件中调用 <code>crud!</code> 宏。</p>
 <blockquote>
-<p>如果有多个中间件，后添加的会先执行。</p>
+<p>crud!(User {});//crud = insert+select_by_column+update_by_column+delete_by_column</p>
 </blockquote>
-<p>类似 Java 中的 AOP，只不过这个中间件只是针对 Controller 的。</p>
-<p>自定义 middleware 要实现 Service和 Transform 两个 trait。<br />
-先用 wrap_fn 做一个简单的 middleware：</p>
-<p>cargo.toml添加依赖</p>
-<pre class="line-numbers"><code class="language-plain_text">futures-util = &quot;0.3&quot;
+<p>宏调用之后就可以直接使用 User::insert、User::update、User::select、User::delete。</p>
+<pre class="line-numbers"><code class="language-rust">#[derive(Debug, Deserialize, Clone, Serialize, Default, sqlx::FromRow)]
+#[serde(rename_all = &quot;camelCase&quot;)]
+pub struct User {
+    pub id: Option&lt;i64&gt;,
+    pub user_name: Option&lt;String&gt;,
+    pub password: Option&lt;String&gt;,
+}
+
+crud!(User {}); // crud
+
+#[post(&quot;/add&quot;)]
+pub async fn add_user(user: web::Json&lt;User&gt;) -&gt; HttpResponse {
+    let user = user.to_owned();
+    // let id = save_user(user).await.unwrap();
+    let id = save_user_rb(user).await;
+    success(Some(id))
+}
+
+async fn save_user_rb(user: User) -&gt; i64 {
+    let rbatis = get_rb().await;
+    let x = User::insert(&amp;rbatis, &amp;user).await;
+    let x = x.unwrap();
+    i64::from(x.last_insert_id)
+}
+
+//update: User::update_by_column(&amp;get_rb().await, &amp;user, &quot;id&quot;).await;
+//select: User::select_by_column(&amp;get_rb().await, &quot;id&quot;,id.into_inner()).await.unwrap();
+//delete: User::delete_by_column(&amp;get_rb().await, &quot;id&quot;, id.into_inner()).await;
 </code></pre>
-<p>main.rs</p>
-<pre class="line-numbers"><code class="language-rust">#[get(&quot;/{name}&quot;)]
-async fn hello(path:web::Path&lt;String&gt;) -&gt; HttpResponse {
-    let name = path.to_owned();
-    success(Option::from(format!(&quot;Hello {}&quot;,name)))
+<blockquote>
+<p>使用了 serde::rename_all 将实体中的字段格式从下划线转为了驼峰类型，然而使用 rbaits 会有问题，打印出的 sql 中字段也是驼峰的类型。需要注意的是本文中代码仅为演示使用，偷了个懒，数据库实体跟 VO 层用的是一个 struct 实体。在实际生产代码中应是两个实体，通过实现 From/into 转换为数据库实体即可。</p>
+</blockquote>
+<h3><a id="%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0%E5%88%9D%E5%A7%8B%E5%8C%96" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>数据库连接池初始化</h3>
+<p>需要注意点是数据库连接池现在是每次调用都会初始化，为了演示连接数据库。要改为只初始化一次，可以使用lazy_static宏来延迟初始化静态变量。lazy_static宏允许在首次访问变量时执行初始化代码。</p>
+<pre class="line-numbers"><code class="language-rust">use lazy_static::*;
+use rbatis::RBatis;
+use rbdc_mysql::MysqlDriver;
+use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
+use std::{sync::Mutex, time::Duration};
+
+lazy_static! {
+    static ref MYSQL_POOL: Mutex&lt;Vec&lt;Pool&lt;MySql&gt;&gt;&gt; = Mutex::new(vec![]);
 }
 
-#[actix_web::main]
-async fn main() -&gt; std::io::Result&lt;()&gt; {
-    HttpServer::new(|| {
-        App::new()
-            .wrap_fn(|req, srv| {
-                // Pre-process the Request
-                println!(&quot;Hi from start. You requested: {}&quot;, req.path());
-                srv.call(req).map(|res| {
-                    // Post-process a Response
-                    println!(&quot;Hi from response&quot;);
-                    res
-                })
-            })
-            .service(hello)
-    })
-    .bind((&quot;127.0.0.1&quot;, 8099))?
-    .run()
-    .await
-}
-</code></pre>
-<p>请求 <a href="http://localhost:8099/tom">http://localhost:8099/tom</a><br />
-控制台会打印出<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/17002343077452.jpg" alt="" /></p>
-<p>接下来，做一个比较常见的中间件--鉴权中间件。</p>
-<pre class="line-numbers"><code class="language-rust">impl&lt;S, B&gt; Service&lt;ServiceRequest&gt; for AuthMiddleWare&lt;S&gt;
-where
-    S: Service&lt;ServiceRequest, Response = ServiceResponse&lt;B&gt;, Error = Error&gt;,
-    S::Future: 'static,
-    B: 'static,
-{
-    type Response = ServiceResponse&lt;B&gt;;
-    type Error = Error;
-    type Future = LocalBoxFuture&lt;'static, Result&lt;Self::Response, Self::Error&gt;&gt;;
-
-    forward_ready!(service);
-
-    fn call(&amp;self, req: ServiceRequest) -&gt; Self::Future {
-        let value = HeaderValue::from_str(&quot;&quot;).unwrap();
-        let token: &amp;HeaderValue = req.headers().get(&quot;token&quot;).unwrap_or(&amp;value);
-        if token.len() &gt; 0 || req.path().to_string() == &quot;/login&quot; {
-            let fut: &lt;S as Service&lt;ServiceRequest&gt;&gt;::Future = self.service.call(req);
-            Box::pin(async move {
-                let res = fut.await;
-                res
-            })
-        } else {
-            Box::pin(async move { Err(ErrorUnauthorized(&quot;PLEASE LOGIN&quot;)) })
-        }
-    }
+lazy_static! {
+    static ref RB: Mutex&lt;RBatis&gt; = Mutex::new(RBatis::new());
 }
 
-
-#[actix_web::main]
-async fn main() -&gt; std::io::Result&lt;()&gt; {
-    HttpServer::new(|| {
-        App::new()
-            .wrap(middleware::timed::Timed)
-            .wrap(middleware::auth::Auth)
-            .service(hello1)
-            .service(hello2)
-    })
-        .bind((&quot;127.0.0.1&quot;, 8099))?
-        .run()
+pub async fn init_db(database_url: String) {
+    let pool = MySqlPoolOptions::new()
+        .max_connections(20)
+        .min_connections(5)
+        .idle_timeout(Some(Duration::from_secs(30)))
+        .connect(&amp;database_url)
         .await
+        .unwrap();
+
+    let mut pools = MYSQL_POOL.lock().unwrap();
+    (*pools).push(pool);
+
+    let rbatis = RBatis::new();
+    rbatis.init(MysqlDriver {}, &amp;database_url).unwrap();
+    let mut rb = RB.lock().unwrap();
+    *rb = rbatis;
+
+}
+
+pub async fn get_mysql_pool() -&gt; Pool&lt;MySql&gt; {
+    let pools = MYSQL_POOL.lock().unwrap();
+    unsafe { (*pools).get_unchecked(0).to_owned() }
+}
+
+pub async fn get_rb() -&gt; RBatis {
+    RB.lock().unwrap().clone()
 }
 </code></pre>
-<p>这里是写了两个 middleware，一个打印接口耗时，一个鉴权，代码篇幅较多，放在了 <a href="https://github.com/hitolz/rust-web/tree/actix_web">github</a>。</p>
-<p>浏览器访问 hello1，由于没有 token，所以鉴权不通过，而通过 postman 访问 hello2，header 上加上 token，就可以请求通过。<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/17003662230269.jpg" alt="" /></p>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/17003658655736.jpg" alt="" /></p>
-<h2><a id="%E5%B0%8F%E7%BB%93" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>小结</h2>
-<p>第一部分关于 web 框架就介绍到这里了，主要介绍了 actix-web 的使用：如何写一个接口、如何接收参数、如何返回 json 、如何通过中间件鉴权。</p>
+<p>本篇文章代码在 <a href="https://github.com/hitolz/rust-web/tree/db_orm">github</a></p>
+<p>我在项目中用的话一般是 sqlx + rbatis 一起使用，简单的 sql 用 rbatis 自动生成的，复杂一些的 sql 就使用 sqlx 自己手写……</p>
 
                             
                         </div>
@@ -510,7 +390,7 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
                 <div class="read-more clearfix">
                     <div class="more-left left">
                         
-                        <span class="date">2023/11/17 17:49 下午</span>
+                        <span class="date">2023/11/17 17:50 下午</span>
                         <span>posted in&nbsp;</span> 
                         
                         <span class="posted-in"><a href='rust.html'>rust</a></span>
@@ -638,6 +518,12 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
                         
                         
                         <li class="post">
+                            <a href="17048514855506.html">记一次公众号菜单配置</a>
+                        </li>
+                        
+                        
+                        
+                        <li class="post">
                             <a href="17014842043505.html">Rust web 开发-8.docker</a>
                         </li>
                         
@@ -657,12 +543,6 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
                         
                         <li class="post">
                             <a href="17007106564695.html">Rust web 开发-5.线程池</a>
-                        </li>
-                        
-                        
-                        
-                        <li class="post">
-                            <a href="17006367993220.html">Rust web 开发-4.log</a>
                         </li>
                         
                         

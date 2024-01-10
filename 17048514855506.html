@@ -6,7 +6,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>
         
-        rust - 非著名Java程序员
+        记一次公众号菜单配置 - 非著名Java程序员
         
     </title>
     
@@ -121,65 +121,157 @@
         <a class="exit-off-canvas" href="#"></a>
 
 
-        <section class="scroll-container" id="main-content" role="main"> <script type="text/javascript">
+        <section class="scroll-container" id="main-content" role="main"> <script>
+    let summary_gpt_article_content_selector = '.article-content';
+    let summary_gpt_key = '4OWIQfo577qj7E3TGTTOi';
+    let summary_gpt_domain = 'https://ai-summary.hitol.top';
+</script>
+<link href="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.css" rel="stylesheet"/>
+<script src="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.v0.0.6.js"></script>
+<script src="asset/js/include_words.js"></script>
+<script type="text/javascript">
     $(function () {
         $('#menu_item_index').addClass('is_active');
     });
 </script>
 <div class="row">
     <div class="large-8 medium-8 columns">
-        <div class="markdown-body home-categories">
-            
+        <div class="markdown-body article-wrap">
             <div class="article">
-                <a class="clearlink" href="16727524082529.html">
-                    
-                    <h1>rust 包管理与工作空间</h1>
-                    <div class="a-content">
-                        
-                        <div class="a-content-text">
-                            
-                            R
-                            
-                        </div>
-                    </div>
-                </a>
+                
+                <h1>记一次公众号菜单配置</h1>
+
                 <div class="read-more clearfix">
-                    <div class="more-left left">
-                        
-                        <span class="date">2023/01/03 21:26 下午</span>
-                        <span>posted in&nbsp;</span> 
-                        
-                        <span class="posted-in"><a href='rust.html'>rust</a></span>
-                        
+                    <span class="date">2024/01/10 09:51 上午</span>
 
+                    
+                    
 
-                    </div>
-                    <div class="more-right right">
-                  <span class="comments">
-                      
+                    <span class="comments">
+            
 
-                       
-                  </span>
-                    </div>
+            
+          </span>
+
                 </div>
             </div><!-- article -->
-            
 
+            <div class="article-content">
+                <p>要求是这样的，公众号配置菜单，用户点击菜单时要将该用户的 openid 和 unionid 追加到菜单地址后面。</p>
+<h2><a id="%E5%A4%AA%E7%AE%80%E5%8D%95%E4%BA%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>太简单了</h2>
+<p>对于我这个没有搞过公众号的后端开发来说，这还不简单吗，<br />
+菜单配置的是我的后端地址，点击菜单请求到后端，后端获取到该用户的信息，将 openid 和 unionid 拼接到请求菜单 url 上，然后重定向到真正的菜单地址，搞定，很简单。</p>
+<p>但是我知道没有这么简单。</p>
+<p>本着严谨的态度，我把微信公众号官方文档看了一遍，主要是配置菜单的部分，直到我看到自定义菜单有 CLICK 类型，用户点击时微信后台会推送事件到我的后端，</p>
+<blockquote>
+<p>click：点击推事件用户点击click类型按钮后，微信服务器会通过消息接口推送消息类型为event的结构给开发者（参考消息接口指南），并且带上按钮中开发者填写的key值，开发者可以通过自定义的key值与用户进行交互</p>
+</blockquote>
+<p>看到这，我觉得事情更简单了，我配置一个 CLICK 类型的菜单不就行了，微信后台发送事件到我的后端，然后我给他重定向，不是更简单了。</p>
+<p>够用，剩下的文档咱不看了。</p>
+<h2><a id="%E7%9C%9F%E5%B0%B1%E5%A4%AA%E7%AE%80%E5%8D%95%E4%BA%86" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>真就太简单了</h2>
+<p>要么说咱没搞过呢，无所畏惧，事情想的太简单了。</p>
+<p>我先尝试了 click 类型的菜单，发现微信后台推送过来的真就只是一个事件，我接收到了，然而只能对这个事件回复消息，并不能进行重定向，跳转到其他页面。</p>
+<p>随后我尝试了我最初的想法，菜单配置我的后端地址，后端进行重定向。</p>
+<p>菜单配置了，点击也能到我的后端，这时候问题来了，我拿什么获取到用户信息。</p>
+<p>没有。什么都没有。<br />
+我的脑海里突然一片空白，就像电视机突然失去信号，只剩下一片静谧的雪花点。<br />
+我愣住了，像一座石像，僵硬而无法移动，眼神空洞地凝视着前方屏幕。<br />
+中午了，先吃饭吧。</p>
+<h2><a id="%E6%88%91%E6%98%AF%E5%90%8E%E7%AB%AF%EF%BC%8C%E8%A6%81%E4%BB%80%E4%B9%88%E5%89%8D%E7%AB%AF" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>我是后端，要什么前端</h2>
+<p>一上午的时间过去了，事情没有得到一点进展。<br />
+在程序员微信群里我询问了一下，这个场景应该怎么解决，热心网友告诉我 需要网页授权信息。<br />
+接着看文档，这次主要是网页授权这部分。</p>
+<blockquote>
+<p>第一步：用户同意授权，获取code<br />
+第二步：通过code换取网页授权access_token<br />
+第三步：刷新access_token（如果需要）<br />
+第四步：拉取用户信息(需scope为 snsapi_userinfo)</p>
+</blockquote>
+<p>网页授权就是这4个步骤，看起来只需要后端就行了，前端不需要。</p>
+<p>文档后面有这么一句</p>
+<blockquote>
+<p>用户同意授权后<br />
+如果用户同意授权，页面将跳转至 redirect_uri/?code=CODE&amp;state=STATE。</p>
+</blockquote>
+<p>根据这篇文档，调整自己的技术方案，<br />
+微信公众号的菜单配置的是用户授权，redirect_uri 配置的是我的后端地址，页面跳转到我后端的时候我就能拿到 code，就能获取到用户信息然后重定向。</p>
+<h2><a id="%E5%89%8D%E7%AB%AF%E8%BF%98%E6%98%AF%E9%9C%80%E8%A6%81%E7%9A%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>前端还是需要的</h2>
+<p>当我写好了后端，配置好菜单后，微信后台确实将请求回调到了我的后端，但是 code=code，你没有看错，我接收到的 code 参数的值就是 code。</p>
+<p>我的思绪如同被打乱的棋局，我试图找到那个决定性的步骤，但我无法理解。</p>
+<p>后来，在网上看到一篇文章，说在页面上 <code>alert(window.location.href)</code> 会发现，地址里是有 code 的。</p>
+<p>我知道，决定性的那个步骤我找到了。就是前端页面。但我无法理解。</p>
+<p>于是，我写了一个 html 页面，就执行 alert 这行代码，我到底要看看到底能不能获取到 code。<br />
+果然，页面上的 code 他真有值。</p>
+<p>这时，最终的技术方案形成了。<br />
+微信公众号的菜单配置的是用户授权地址，redirect_uri 这个参数是我的页面地址，在我的页面中获取到 code，然后带着 code 请求我的后端，后端拿到 code 获取到用户信息，然后拼接到一个链接上进行重定向操作。</p>
+<p>最终我也是在这个方案的基础上实现的。</p>
+<p>这个页面需要注意的</p>
+<ol>
+<li>不要有 title，不然微信菜单点击之后会有一个页面 title 出现</li>
+<li>直接用 window.location.href 去请求后端地址，让后端去重定向。这样前端没有访问历史记录。</li>
+</ol>
+<pre class="line-numbers"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;&lt;/title&gt;
+    &lt;script&gt;
+        console.log(window.location.href);
+        window.onload = function () {
+            let params = new URLSearchParams(window.location.search);
+            let code = params.get('code');
+            let state = params.get('state');
+            let redirectCode = params.get('redirectCode');
+            console.log(&quot;code = &quot;, code);
+            console.log(&quot;redirectCode = &quot;, redirectCode);
+
+            let baseDomain = &quot;http://localhost:8080&quot;;
+            let fetchUrl = baseDomain + &quot;/wx/redirect?code=&quot; + code + &quot;&amp;state=&quot; + state + &quot;&amp;redirectCode=&quot; + redirectCode;
+            console.log(fetchUrl)
+            window.location.href=fetchUrl
+        }
+    &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h2><a id="%E6%B2%A1%E6%9C%89%E4%B8%80%E4%B8%AA%E5%AD%97%E6%98%AF%E5%A4%9A%E4%BD%99%E7%9A%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>没有一个字是多余的</h2>
+<p>微信网页授权，没有一个字是多余的。</p>
+
+
+
+            </div>
 
             <div class="row">
                 <div class="large-6 columns">
-                    <p class="text-left" style="padding-top:25px;">
-                         <a href="rust_9.html">&laquo; Prev Page</a> 
+                    <p class="text-left" style="padding:15px 0px;">
+                        
                     </p>
                 </div>
                 <div class="large-6 columns">
-                    <p class="text-right" style="padding-top:25px;">
-                         <a href="rust_11.html">&raquo; Next Page</a> 
+                    <p class="text-right" style="padding:15px 0px;">
+                        
+                        <a href="17014842043505.html"
+                           title="Next Post: Rust web 开发-8.docker">Rust web 开发-8.docker &raquo;</a>
+                        
                     </p>
                 </div>
             </div>
-        </div>
+            <div class="comments-wrap">
+                <div class="share-comments">
+                    
+
+                    
+
+                    
+                </div>
+            </div>
+        </div><!-- article-wrap -->
     </div><!-- large 8 -->
+
+
+
 
  <div class="large-4 medium-4 columns">
     <div class="hide-for-small">
@@ -365,6 +457,8 @@
 
 
 
+
+<script src="asset/prism.js"></script>
 
 
 <style type="text/css">

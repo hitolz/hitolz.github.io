@@ -131,114 +131,629 @@
         <div class="markdown-body home-categories">
             
             <div class="article">
-                <a class="clearlink" href="16459468152713.html">
+                <a class="clearlink" href="16466651837804.html">
                     
-                    <h1>k8s 部署 redis 集群</h1>
+                    <h1>使用 kubeadm 搭建 Kubernetes 集群</h1>
                     <div class="a-content">
                         
                         <div class="a-content-text">
                             
-                            <h2><a id="redis-master" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-master</h2>
-<p>redis-master.yml</p>
-<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
-kind: Deployment
+                            <p>minikube 也是使用 kubeadm</p>
+<ul>
+<li>安装软件 kubelete、kubeadm、kubectl
+<ul>
+<li>都将是以容器的方式运行在 Docker 中</li>
+</ul>
+</li>
+<li>初始化集群</li>
+<li>添加 node 到集群中</li>
+<li>证书自动生成</li>
+<li>集群管理系统是以容器方式存在，容器运行在 Master</li>
+<li>容器镜像是谷歌提供，科学上网
+<ul>
+<li>阿里云下载容器镜像，需要重新打标记</li>
+</ul>
+</li>
+</ul>
+<h2><a id="%E4%B8%BB%E6%9C%BA%E8%A6%81%E6%B1%82" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>主机要求</h2>
+<p>三台机器，一台 master，2台 worker<br />
+Centos7、2 cpu、 2G 内存</p>
+<h2><a id="%E4%B8%BB%E6%9C%BA%E5%87%86%E5%A4%87" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>主机准备</h2>
+<p>操作系统安装，centos 最小化安装，硬盘分区(/boot、/)</p>
+<h2><a id="%E8%AE%BE%E7%BD%AEhostname" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>设置 hostname</h2>
+<p><code>hostnamectl set-hostname master</code><br />
+<code>hostnamectl set-hostname worker1</code><br />
+<code>hostnamectl set-hostname worker2</code></p>
+<h2><a id="%E9%85%8D%E7%BD%AEip-etchosts" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 IP /etc/hosts</h2>
+<pre class="line-numbers"><code class="language-plain_text">192.168.0.130 master
+192.168.0.122 worker1
+192.168.0.123 worker2
+</code></pre>
+<h2><a id="%E5%85%B3%E9%97%ADfirewalld" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>关闭 firewalld</h2>
+<pre class="line-numbers"><code class="language-plain_text">systemctl stop firewalld
+systemctl disable firewalld
+
+&lt;!--确认是否运行--&gt;
+firewall-cmd --state
+</code></pre>
+<h2><a id="selinux" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>SELINUX</h2>
+<pre class="line-numbers"><code class="language-plain_text"> cat /etc/selinux/config
+
+
+sed -ri 's/SELINUX=enforcing/SELINUX=disable/' /etc/selinux/config
+</code></pre>
+<h2><a id="%E6%97%B6%E9%97%B4%E5%90%8C%E6%AD%A5" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>时间同步</h2>
+<pre class="line-numbers"><code class="language-plain_text">yum install ntpdate
+ntpdate time1.aliyun.com
+
+crontab -e 
+0 */1 * * * ntpdate time1.aliyun.com
+</code></pre>
+<h2><a id="%E5%85%B3%E9%97%ADswap%E5%88%86%E5%8C%BA" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>关闭 swap 分区</h2>
+<pre class="line-numbers"><code class="language-plain_text">vim /etc/fstab
+
+Swap 前加 # 注释掉
+
+free -m 查看有 swap 分区
+reboot
+重启之后没有
+</code></pre>
+<h2><a id="%E9%85%8D%E7%BD%AE%E7%BD%91%E6%A1%A5%E8%BF%87%E6%BB%A4%E5%8A%9F%E8%83%BD" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置网桥过滤功能</h2>
+<pre class="line-numbers"><code class="language-plain_text">touch /etc/sysctl.d/k8s.conf
+添加以下内容
+
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+vm.swappiness = 0
+</code></pre>
+<p>加载过滤模块 br_netfilter</p>
+<pre class="line-numbers"><code class="language-plain_text">modprobe br_netfilter
+
+查看是否
+lsmod | grep br_netfilter
+</code></pre>
+<p>加载网桥过滤配置文件</p>
+<pre class="line-numbers"><code class="language-plain_text">sysctl -p /etc/sysctl.d/k8s.conf
+</code></pre>
+<h2><a id="%E5%BC%80%E5%90%AFipvs" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>开启 ipvs</h2>
+<p>service 需要使用到 iptable 或者 ipvs<br />
+ipvs 比 iptables 转化效率高。</p>
+<p>安装 ipset、ipvsadm</p>
+<pre class="line-numbers"><code class="language-bash">yum -y install ipset ipvsadm
+</code></pre>
+<p>在所有节点执行</p>
+<pre class="line-numbers"><code class="language-bash">cat &gt; /etc/sysconfig/modules/ipvs.modules &lt;&lt;EOF
+#!/bin/bash
+modprobe -- ip_vs
+modprobe -- ip_vs_rr
+modprobe -- ip_vs_wrr
+modprobe -- ip_vs_sh
+modprobe -- nf_conntrack_ipv4
+EOF
+</code></pre>
+<pre class="line-numbers"><code class="language-bash">chmod 755 /etc/sysconfig/modules/ipvs.modules &amp;&amp; bash /etc/sysconfig/modules/ipvs.modules &amp;&amp; lsmod | grep -e ip_vs -e nf_conntrack_ipv4
+</code></pre>
+<p>检查是否加载</p>
+<pre class="line-numbers"><code class="language-bash">lsmod | grep -e ipvs -e nf_conntrack_ipv4
+</code></pre>
+<h2><a id="%E5%AE%89%E8%A3%85docker" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>安装 docker</h2>
+<p>centos 安装 docker 脚本</p>
+<pre class="line-numbers"><code class="language-plain_text">curl -sSL https://get.daocloud.io/docker | sh
+</code></pre>
+<h3><a id="%E5%BC%80%E5%90%AF%E5%90%AF%E5%8A%A8docker" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>开启启动 docker</h3>
+<pre class="line-numbers"><code class="language-plain_text">systemctl enable docker
+</code></pre>
+<!--### 修改 docker 镜像源地址
+sudo vim /etc/docker/daemon.json
+
+```
+{
+  "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]
+}
+```-->
+<h3><a id="%E4%BF%AE%E6%94%B9docker%E7%9A%84-cgroup-driver" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>修改 docker 的 cgroup driver</h3>
+<p>sudo vim /etc/docker/daemon.json</p>
+<pre class="line-numbers"><code class="language-plain_text">{
+&quot;exec-opts&quot;: [&quot;native.cgroupdriver=systemd&quot;]
+}
+</code></pre>
+<h2><a id="%E5%AE%89%E8%A3%85kubeadm%E3%80%81kubectl%E3%80%81kubelet" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>安装 kubeadm、kubectl、kubelet</h2>
+<p>需要在每台机器上安装以下的软件包：</p>
+<p>kubeadm：用来初始化集群的指令。</p>
+<p>kubelet：在集群中的每个节点上用来启动 Pod 和容器等。</p>
+<p>kubectl：用来与集群通信的命令行工具。</p>
+<p>新建 /etc/yum.repos.d/kubernetes.repo，内容为：</p>
+<pre class="line-numbers"><code class="language-plain_text">[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+enabled=1
+gpgcheck=0
+
+</code></pre>
+<p>安装最新版本</p>
+<pre class="line-numbers"><code class="language-plain_text">yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+</code></pre>
+<p>安装指定版本</p>
+<pre class="line-numbers"><code class="language-plain_text">yum install -y kubelet-1.23.5 kubeadm-1.23.5 kubectl-1.23.5
+</code></pre>
+<h2><a id="%E9%85%8D%E7%BD%AEkubelet" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置 kubelet</h2>
+<p>为了实现 docker 使用的 cgroupdriver 与 kubelet 使用的 cgroup 一致，修改如下文件内容</p>
+<pre class="line-numbers"><code class="language-plain_text">vim /etc/sysconfig/kubelet
+添加以下内容
+KUBELET_EXTRA_ARGS=&quot;--cgroup-driver=systemd&quot;
+</code></pre>
+<h2><a id="%E4%B8%8B%E8%BD%BD%E6%89%80%E9%9C%80%E9%95%9C%E5%83%8F" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>下载所需镜像</h2>
+<pre class="line-numbers"><code class="language-plain_text">k8s.gcr.io/kube-apiserver:v1.23.5
+k8s.gcr.io/kube-controller-manager:v1.23.5
+k8s.gcr.io/kube-scheduler:v1.23.5
+k8s.gcr.io/kube-proxy:v1.23.5
+k8s.gcr.io/pause:3.6
+k8s.gcr.io/etcd:3.5.1-0
+k8s.gcr.io/coredns/coredns:v1.8.6
+</code></pre>
+<ol>
+<li>
+<p>docker pull 下载<br />
+docker pull 下载所有镜像，需要科学上网。<br />
+在有科学上网的电脑上下载镜像，通过 docker save -o 、 docker load -i 将镜像复制到所有虚拟机中。</p>
+</li>
+<li>
+<p>通过脚本下载</p>
+</li>
+</ol>
+<pre class="line-numbers"><code class="language-bash">#!/bin/bash
+url=registry.cn-hangzhou.aliyuncs.com/google_containers
+version=v1.23.5
+images=(`kubeadm config images list --kubernetes-version=$version|awk -F '/' '{print $2}'`)
+for imagename in ${images[@]} ; do
+  docker pull $url/$imagename
+  docker tag $url/$imagename k8s.gcr.io/$imagename
+  docker rmi -f $url/$imagename
+done
+</code></pre>
+<h2><a id="kubeadm%E5%88%9D%E5%A7%8B%E5%8C%96%E9%9B%86%E7%BE%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>kubeadm 初始化集群</h2>
+<pre class="line-numbers"><code class="language-plain_text">kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.0.130 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+</code></pre>
+<p>然后成功后有以下输出内容：</p>
+<pre class="line-numbers"><code class="language-plain_text">Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run &quot;kubectl apply -f [podnetwork].yaml&quot; with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.0.118:6443 --token tprabz.gefub6pvv1x2qalv \
+        --discovery-token-ca-cert-hash sha256:b617b1efda2e97a3f98c624a20090c0dc711bfe2e432a31631cbe87f215c103d 
+
+</code></pre>
+<p>依次执行</p>
+<pre class="line-numbers"><code class="language-plain_text">mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+</code></pre>
+<p>这时候 kubectl get nodes 只有 master，并且还没启动，原因是缺了网络插件，可以使用 flannel 网络插件，比较简单。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot%202022-07-02%20at%2023.59.29@2x.png" alt="CleanShot 2022-07-02 at 23.59.29@2x" /></p>
+<p>Flannel is an overlay network provider that can be used with Kubernetes.</p>
+<pre class="line-numbers"><code class="language-plain_text">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+</code></pre>
+<p>或者使用 yml 文件</p>
+<details>
+<summary>kube-flannel.yml</summary>
+<pre class="line-numbers"><code class="language-yml">---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
 metadata:
-  name: redis-master
-  labels:
-    name: redis-master
-
+  name: psp.flannel.unprivileged
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+    apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      name: redis-master
-  template:
-    metadata:
-      labels:
-        name: redis-master
-    spec:
-      containers:
-      - name: master
-        image: redis
-        ports:
-        - containerPort: 6379
-
-
+  privileged: false
+  volumes:
+  - configMap
+  - secret
+  - emptyDir
+  - hostPath
+  allowedHostPaths:
+  - pathPrefix: &quot;/etc/cni/net.d&quot;
+  - pathPrefix: &quot;/etc/kube-flannel&quot;
+  - pathPrefix: &quot;/run/flannel&quot;
+  readOnlyRootFilesystem: false
+  # Users and groups
+  runAsUser:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  # Privilege Escalation
+  allowPrivilegeEscalation: false
+  defaultAllowPrivilegeEscalation: false
+  # Capabilities
+  allowedCapabilities: ['NET_ADMIN', 'NET_RAW']
+  defaultAddCapabilities: []
+  requiredDropCapabilities: []
+  # Host namespaces
+  hostPID: false
+  hostIPC: false
+  hostNetwork: true
+  hostPorts:
+  - min: 0
+    max: 65535
+  # SELinux
+  seLinux:
+    # SELinux is unused in CaaSP
+    rule: 'RunAsAny'
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: flannel
+rules:
+- apiGroups: ['extensions']
+  resources: ['podsecuritypolicies']
+  verbs: ['use']
+  resourceNames: ['psp.flannel.unprivileged']
+- apiGroups:
+  - &quot;&quot;
+  resources:
+  - pods
+  verbs:
+  - get
+- apiGroups:
+  - &quot;&quot;
+  resources:
+  - nodes
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - &quot;&quot;
+  resources:
+  - nodes/status
+  verbs:
+  - patch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: flannel
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: flannel
+subjects:
+- kind: ServiceAccount
+  name: flannel
+  namespace: kube-system
 ---
 apiVersion: v1
-kind: Service
+kind: ServiceAccount
 metadata:
-  name: redis-master
-  labels:
-    name: redis-master
-
-spec:
-  ports:
-  - port: 6379
-    targetPort: 6379
-  selector:
-    name: redis-master
-</code></pre>
-<h2><a id="redis-slave" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>redis-slave</h2>
-<p>Dockerfile</p>
-<pre class="line-numbers"><code class="language-plain_text">FROM redis
-
-COPY run.sh /
-RUN chmod +x /run.sh
-CMD /run.sh
-</code></pre>
-<p>run.sh</p>
-<pre class="line-numbers"><code class="language-shell">if [[ ${GET_HOSTS_FROM:-dns} == &quot;env&quot; ]]; then
-  redis-server --slaveof ${REDIS_MASTER_SERVICE_HOST} 6379
-else
-  redis-server --slaveof redis-master 6379
-fi
-</code></pre>
-<p>docker build 生成镜像</p>
-<p>redis-slave.yml</p>
-<pre class="line-numbers"><code class="language-yml">apiVersion: apps/v1
-kind: Deployment
+  name: flannel
+  namespace: kube-system
+---
+kind: ConfigMap
+apiVersion: v1
 metadata:
-  name: redis-slave
+  name: kube-flannel-cfg
+  namespace: kube-system
   labels:
-    name: redis-slave
-
+    tier: node
+    app: flannel
+data:
+  cni-conf.json: |
+    {
+      &quot;name&quot;: &quot;cbr0&quot;,
+      &quot;cniVersion&quot;: &quot;0.3.1&quot;,
+      &quot;plugins&quot;: [
+        {
+          &quot;type&quot;: &quot;flannel&quot;,
+          &quot;delegate&quot;: {
+            &quot;hairpinMode&quot;: true,
+            &quot;isDefaultGateway&quot;: true
+          }
+        },
+        {
+          &quot;type&quot;: &quot;portmap&quot;,
+          &quot;capabilities&quot;: {
+            &quot;portMappings&quot;: true
+          }
+        }
+      ]
+    }
+  net-conf.json: |
+    {
+      &quot;Network&quot;: &quot;10.244.0.0/16&quot;,
+      &quot;Backend&quot;: {
+        &quot;Type&quot;: &quot;vxlan&quot;
+      }
+    }
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kube-flannel-ds
+  namespace: kube-system
+  labels:
+    tier: node
+    app: flannel
 spec:
-  replicas: 2
   selector:
     matchLabels:
-      name: redis-slave
+      app: flannel
   template:
     metadata:
       labels:
-        name: redis-slave
+        tier: node
+        app: flannel
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
+      hostNetwork: true
+      priorityClassName: system-node-critical
+      tolerations:
+      - operator: Exists
+        effect: NoSchedule
+      serviceAccountName: flannel
+      initContainers:
+      - name: install-cni-plugin
+       #image: flannelcni/flannel-cni-plugin:v1.0.1 for ppc64le and mips64le (dockerhub limitations may apply)
+        image: rancher/mirrored-flannelcni-flannel-cni-plugin:v1.0.1
+        command:
+        - cp
+        args:
+        - -f
+        - /flannel
+        - /opt/cni/bin/flannel
+        volumeMounts:
+        - name: cni-plugin
+          mountPath: /opt/cni/bin
+      - name: install-cni
+       #image: flannelcni/flannel:v0.17.0 for ppc64le and mips64le (dockerhub limitations may apply)
+        image: rancher/mirrored-flannelcni-flannel:v0.17.0
+        command:
+        - cp
+        args:
+        - -f
+        - /etc/kube-flannel/cni-conf.json
+        - /etc/cni/net.d/10-flannel.conflist
+        volumeMounts:
+        - name: cni
+          mountPath: /etc/cni/net.d
+        - name: flannel-cfg
+          mountPath: /etc/kube-flannel/
       containers:
-      - name: worker
-        image: hitol/redis-slave
+      - name: kube-flannel
+       #image: flannelcni/flannel:v0.17.0 for ppc64le and mips64le (dockerhub limitations may apply)
+        image: rancher/mirrored-flannelcni-flannel:v0.17.0
+        command:
+        - /opt/bin/flanneld
+        args:
+        - --ip-masq
+        - --kube-subnet-mgr
+        resources:
+          requests:
+            cpu: &quot;100m&quot;
+            memory: &quot;50Mi&quot;
+          limits:
+            cpu: &quot;100m&quot;
+            memory: &quot;50Mi&quot;
+        securityContext:
+          privileged: false
+          capabilities:
+            add: [&quot;NET_ADMIN&quot;, &quot;NET_RAW&quot;]
         env:
-        - name: GET_HOSTS_FROM
-          value: env
-        ports:
-        - containerPort: 6379
-
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-slave
-  labels:
-    name: redis-slave
-
-spec:
-  ports:
-  - port: 6379
-  selector:
-    name: redis-slave
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        volumeMounts:
+        - name: run
+          mountPath: /run/flannel
+        - name: flannel-cfg
+          mountPath: /etc/kube-flannel/
+        - name: xtables-lock
+          mountPath: /run/xtables.lock
+      volumes:
+      - name: run
+        hostPath:
+          path: /run/flannel
+      - name: cni-plugin
+        hostPath:
+          path: /opt/cni/bin
+      - name: cni
+        hostPath:
+          path: /etc/cni/net.d
+      - name: flannel-cfg
+        configMap:
+          name: kube-flannel-cfg
+      - name: xtables-lock
+        hostPath:
+          path: /run/xtables.lock
+          type: FileOrCreate
 </code></pre>
-<h2><a id="%E9%AA%8C%E8%AF%81" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>验证</h2>
-<p><code>kubectl exec -it redis-master-4m5ds redis-cli</code> 往 redis 里写几条数据，然后切换到 slave pod 里看有没有。</p>
+</details>
+<p>kubectl apply -f kube-flannel.yml</p>
+<p>worker 节点中执行下面命令添加到集群中。</p>
+<pre class="line-numbers"><code class="language-plain_text">kubeadm join 192.168.0.118:6443 --token tprabz.gefub6pvv1x2qalv \
+        --discovery-token-ca-cert-hash sha256:b617b1efda2e97a3f98c624a20090c0dc711bfe2e432a31631cbe87f215c103d 
+</code></pre>
+<p>如果忘记了 join 需要的 token，重新再 master 机器上生成一个</p>
+<pre class="line-numbers"><code class="language-plain_text">kubeadm token create --print-join-command
+</code></pre>
+<p>然后将输出内容，在 worker 节点上运行就行。</p>
+<p>不出意外，集群搭建完成。<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/CleanShot%202022-07-03%20at%2000.08.44@2x.png" alt="CleanShot 2022-07-03 at 00.08.44@2x" /></p>
+<p>将上面的操作整理成脚本</p>
+<details>
+<summary>k8s_install.sh</summary>
+<pre class="line-numbers"><code class="language-shell">#!/bin/bash
+# 第一个参数是 ip
+# 第二个参数是 master or worker
+
+# yum -y update
+
+if [ $# -lt 2 ]; then 
+	echo &quot;执行命令参数缺失 eg: ./$0 ip master&quot;
+	exit;
+fi
+
+
+echo &quot;$1 $2&quot; &gt;&gt; /etc/hosts
+
+hostnamectl set-hostname $2
+
+# 关闭firewalld
+echo &quot;关闭firewalld&quot;
+systemctl stop firewalld
+systemctl disable firewalld
+
+sleep 3
+firewall-cmd --state
+
+echo &quot;SELINUX&quot;
+sed -ri 's/SELINUX=enforcing/SELINUX=disable/' /etc/selinux/config
+
+echo &quot;时间同步&quot;
+yum -y install ntpdate
+ntpdate time1.aliyun.com
+echo &quot;0 */1 * * * ntpdate time1.aliyun.com&quot; &gt; /var/spool/cron/root
+
+
+modprobe br_netfilter
+
+
+echo &quot;关闭 swap 分区，Swap 前加 # 注释掉&quot;
+read -p &quot;按任意键继续...&quot;
+
+vim /etc/fstab
+
+echo &quot;配置网桥过滤功能&quot;
+cat &gt;  /etc/sysctl.d/k8s.conf &lt;&lt;EOF 
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+vm.swappiness = 0
+EOF
+
+sysctl -p /etc/sysctl.d/k8s.conf
+
+
+echo &quot;安装 ipset、ipvsadm&quot;
+yum -y install ipset ipvsadm
+
+cat &gt; /etc/sysconfig/modules/ipvs.modules &lt;&lt;EOF
+#!/bin/bash
+modprobe -- ip_vs
+modprobe -- ip_vs_rr
+modprobe -- ip_vs_wrr
+modprobe -- ip_vs_sh
+modprobe -- nf_conntrack_ipv4
+EOF
+chmod 755 /etc/sysconfig/modules/ipvs.modules &amp;&amp; bash /etc/sysconfig/modules/ipvs.modules &amp;&amp; lsmod | grep -e ip_vs -e nf_conntrack_ipv4
+
+
+echo &quot;安装 docker&quot;
+curl -sSL https://get.daocloud.io/docker | sh
+
+cat &gt;  /etc/docker/daemon.json &lt;&lt;EOF
+{
+&quot;exec-opts&quot;: [&quot;native.cgroupdriver=systemd&quot;]
+}
+EOF
+
+systemctl daemon-reload
+systemctl restart docker
+systemctl enable docker
+
+echo &quot;安装 Kubernetes v1.23.5&quot;
+
+cat &gt; /etc/yum.repos.d/kubernetes.repo &lt;&lt;EOF
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+enabled=1
+gpgcheck=0
+EOF
+
+yum install -y kubelet-1.23.5 kubeadm-1.23.5 kubectl-1.23.5
+
+rm -rf /etc/sysconfig/kubelet
+touch /etc/sysconfig/kubelet
+
+
+cat &gt; /etc/sysconfig/kubelet &lt;&lt;EOF
+KUBELET_EXTRA_ARGS=&quot;--cgroup-driver=systemd&quot;
+EOF
+
+
+systemctl enable kubelet.service
+
+reboot
+
+# echo &quot;下载镜像&quot;
+# sh image.sh
+
+# echo &quot;初始化 Kubernetes&quot;
+# if [ $2 == 'master' ] ; then
+# 	echo &quot;初始化开始&quot;
+# 	kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=$1 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+# fi
+
+# sh after_install.sh
+</code></pre>
+</details>
+<details>
+<summary>image.sh</summary>
+<pre class="line-numbers"><code class="language-shell">#!/bin/bash
+url=registry.cn-hangzhou.aliyuncs.com/google_containers
+version=v1.23.5
+images=(`kubeadm config images list --kubernetes-version=$version|awk -F '/' '{print $2}'`)
+for imagename in ${images[@]} ; do
+  docker pull $url/$imagename
+  docker tag $url/$imagename k8s.gcr.io/$imagename
+  docker rmi -f $url/$imagename
+done
+</code></pre>
+</details>
+<p>安装</p>
+<pre class="line-numbers"><code class="language-plain_text">kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.0.130 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+</code></pre>
+<details>
+<summary>after_install.sh</summary>
+<pre class="line-numbers"><code class="language-shell">mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl apply -f kube-flannel.yml
+</code></pre>
+</details>
 
                             
                         </div>
@@ -247,10 +762,8 @@ spec:
                 <div class="read-more clearfix">
                     <div class="more-left left">
                         
-                        <span class="date">2022/02/27 15:26 下午</span>
+                        <span class="date">2022/03/07 22:59 下午</span>
                         <span>posted in&nbsp;</span> 
-                        
-                        <span class="posted-in"><a href='redis.html'>redis</a></span>
                         
                         <span class="posted-in"><a href='kubernetes.html'>kubernetes</a></span>
                         
@@ -375,6 +888,12 @@ spec:
                         
                         
                         <li class="post">
+                            <a href="17048514855506.html">记一次公众号菜单配置</a>
+                        </li>
+                        
+                        
+                        
+                        <li class="post">
                             <a href="17014842043505.html">Rust web 开发-8.docker</a>
                         </li>
                         
@@ -394,12 +913,6 @@ spec:
                         
                         <li class="post">
                             <a href="17007106564695.html">Rust web 开发-5.线程池</a>
-                        </li>
-                        
-                        
-                        
-                        <li class="post">
-                            <a href="17006367993220.html">Rust web 开发-4.log</a>
                         </li>
                         
                         

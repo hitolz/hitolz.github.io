@@ -131,83 +131,70 @@
         <div class="markdown-body home-categories">
             
             <div class="article">
-                <a class="clearlink" href="16032824286367.html">
+                <a class="clearlink" href="16032824371007.html">
                     
-                    <h1>Mysql 根据时间戳、时间按年月日分组统计</h1>
+                    <h1>JVM运行时数据区域、Java内存模型、Java对象结构</h1>
                     <div class="a-content">
                         
                         <div class="a-content-text">
                             
-                            <pre class="line-numbers"><code class="language-plain_text">SELECT DATE_FORMAT(create_time,'%Y%u') weeks,COUNT(id) COUNT FROM table GROUP BY weeks; 
-SELECT DATE_FORMAT(create_time,'%Y%m%d') days,COUNT(id) COUNT FROM table GROUP BY days; 
-SELECT DATE_FORMAT(create_time,'%Y%m') months,COUNT(id) COUNT FROM table GROUP BY months;
-SELECT DATE_FORMAT(create_time,'%Y') years,COUNT(id) COUNT FROM table GROUP BY years;
-</code></pre>
-<p>函数：<code>DATE_FORMAT</code><br />
-作用：根据format字符串格式化date值。<br />
-语法：<code>DATE_FORMAT(date,format)</code></p>
-<p>下列修饰符可以被用在format字符串中：<br />
-%M 月名字(January……December)<br />
-%W 星期名字(Sunday……Saturday)<br />
-%D 有英语前缀的月份的日期(1st, 2nd, 3rd, 等等。）<br />
-%Y 年, 数字, 4 位<br />
-%y 年, 数字, 2 位<br />
-%a 缩写的星期名字(Sun……Sat)<br />
-%d 月份中的天数, 数字(00……31)<br />
-%e 月份中的天数, 数字(0……31)<br />
-%m 月, 数字(01……12)<br />
-%c 月, 数字(1……12)<br />
-%b 缩写的月份名字(Jan……Dec)<br />
-%j 一年中的天数(001……366)<br />
-%H 小时(00……23)<br />
-%k 小时(0……23)<br />
-%h 小时(01……12)<br />
-%I 小时(01……12)<br />
-%l 小时(1……12)<br />
-%i 分钟, 数字(00……59)<br />
-%r 时间,12 小时(hh:mm:ss [AP]M)<br />
-%T 时间,24 小时(hh:mm:ss)<br />
-%S 秒(00……59)<br />
-%s 秒(00……59)<br />
-%p AM或PM<br />
-%w 一个星期中的天数(0=Sunday ……6=Saturday ）<br />
-%U 星期(0……52), 这里星期天是星期的第一天<br />
-%u 星期(0……52), 这里星期一是星期的第一天<br />
-%% 一个文字“%”。</p>
-<p> </p>
-<p>函数：<code>FROM_UNIXTIME</code><br />
-作用：将MYSQL中以INT(11)存储的时间以&quot;YYYY-MM-DD&quot;格式来显示。<br />
-语法：<code>FROM_UNIXTIME(unix_timestamp,format)</code></p>
-<p>返回表示 <code>Unix</code> 时间标记的一个字符串，根据format字符串格式化。format可以包含与<code>DATE_FORMAT()</code>函数列出的条目同样的修饰符。</p>
-<p>根据format字符串格式化date值。<br />
-下列修饰符可以被用在format字符串中：</p>
-<p>%M 月名字(January……December)<br />
-%W 星期名字(Sunday……Saturday)<br />
-%D 有英语前缀的月份的日期(1st, 2nd, 3rd, 等等。）<br />
-%Y 年, 数字, 4 位<br />
-%y 年, 数字, 2 位<br />
-%a 缩写的星期名字(Sun……Sat)<br />
-%d 月份中的天数, 数字(00……31)<br />
-%e 月份中的天数, 数字(0……31)<br />
-%m 月, 数字(01……12)<br />
-%c 月, 数字(1……12)<br />
-%b 缩写的月份名字(Jan……Dec)<br />
-%j 一年中的天数(001……366)<br />
-%H 小时(00……23)<br />
-%k 小时(0……23)<br />
-%h 小时(01……12)<br />
-%I 小时(01……12)<br />
-%l 小时(1……12)<br />
-%i 分钟, 数字(00……59)<br />
-%r 时间,12 小时(hh:mm:ss [AP]M)<br />
-%T 时间,24 小时(hh:mm:ss)<br />
-%S 秒(00……59)<br />
-%s 秒(00……59)<br />
-%p AM或PM<br />
-%w 一个星期中的天数(0=Sunday ……6=Saturday ）<br />
-%U 星期(0……52), 这里星期天是星期的第一天<br />
-%u 星期(0……52), 这里星期一是星期的第一天<br />
-%% 一个文字“%”。</p>
+                            <p>JVM内存模型<br />
+也是JVM运行时数据区域。<br />
+<img src="http://hitol.blog.cdn.updev.cn/2020-07-05-JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.png" alt="JVM内存模型" /></p>
+<hr />
+<p>Java线程内存模型。<br />
+是一种内存规范。</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/2020-07-05-Java%E7%BA%BF%E7%A8%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8BJMM2.png" alt="Java线程内存模型JM" /></p>
+<h4><a id="%E4%B8%BB%E5%86%85%E5%AD%98%E4%B8%8E%E7%BA%BF%E7%A8%8B%E7%A7%81%E6%9C%89%E5%86%85%E5%AD%98" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>主内存与线程私有内存</h4>
+<h4><a id="cpu%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>CPU三级缓存</h4>
+<h4><a id="mesi%E5%8D%8F%E8%AE%AE" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>MESI协议</h4>
+<h4><a id="java%E6%93%8D%E4%BD%9C%E5%86%85%E5%AD%98%E7%9A%848%E4%B8%AA%E6%96%B9%E6%B3%95" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Java操作内存的8个方法</h4>
+<h4><a id="synchronized%E4%B8%8E-volitale" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>synchronized 与 volitale</h4>
+<hr />
+<p>Java对象结构</p>
+<p><img src="media/16032824371007/15969632678246.jpg" alt="15969632678246" /></p>
+<p>对象在内存中存储的布局可以分为3块区域：</p>
+<ul>
+<li>对象头 Header</li>
+<li>实例数据Instance Data</li>
+<li>对齐填充。</li>
+</ul>
+<p>####对象头<br />
+对象头包括两部分信息，<br />
+第一部分 <code>Mark Word</code>，用于存储对象自身的运行时数据，主要有</p>
+<ul>
+<li>哈希码 HashCode</li>
+<li>GC分代年龄</li>
+<li>锁状态标志</li>
+<li>线程持有的锁</li>
+<li>偏向线程ID</li>
+<li>偏向时间戳</li>
+</ul>
+<p>这部分数据的长度在32位和64位的虚拟机中分别为32bit、64bit，也就是说<code>Mark Word</code>这部分占用内存8个字节。</p>
+<p>第二部分是类型指针，即这个对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例。<br />
+类型指针占用内存4个字节。</p>
+<hr />
+<p>####实例数据<br />
+是对象真真存储的有效信息，也是程序代码中所定义的各种类型的字段内容。<br />
+包含从父类继承下来的和子类中定义的。<br />
+存储顺序会受到虚拟机分配策略参数和字段在Java源码中定义顺序的影响。</p>
+<p>HotSpot虚拟机默认的分配策略为<br />
+longs/doubles<br />
+ints<br />
+shorts/charts<br />
+bytes/booleans<br />
+oops（Ordinary Object Pointers）<br />
+相同宽度的字段总是被分配到一起。</p>
+<p>####对齐填充<br />
+HotSpot VM的自动内存管理系统要求对象起始地址必须是8字节的整数倍，对象的大小必须是8字节的整数倍。<br />
+因此，当该对象的占用内存不是8的整数倍的时候需要对齐填充来补全。</p>
+<hr />
+<p>Object o = new Object()使用了多少内存?</p>
+<p>Mark Word 8<br />
+Class Pointer 4<br />
+Instance Data 0<br />
+对齐 4<br />
+总共16个字节。</p>
 
                             
                         </div>
@@ -219,7 +206,7 @@ SELECT DATE_FORMAT(create_time,'%Y') years,COUNT(id) COUNT FROM table GROUP BY y
                         <span class="date">2020/10/21 20:13 下午</span>
                         <span>posted in&nbsp;</span> 
                         
-                        <span class="posted-in"><a href='MySQL.html'>MySQL</a></span>
+                        <span class="posted-in"><a href='JVM.html'>JVM</a></span>
                         
 
 
@@ -342,6 +329,12 @@ SELECT DATE_FORMAT(create_time,'%Y') years,COUNT(id) COUNT FROM table GROUP BY y
                         
                         
                         <li class="post">
+                            <a href="17048514855506.html">记一次公众号菜单配置</a>
+                        </li>
+                        
+                        
+                        
+                        <li class="post">
                             <a href="17014842043505.html">Rust web 开发-8.docker</a>
                         </li>
                         
@@ -361,12 +354,6 @@ SELECT DATE_FORMAT(create_time,'%Y') years,COUNT(id) COUNT FROM table GROUP BY y
                         
                         <li class="post">
                             <a href="17007106564695.html">Rust web 开发-5.线程池</a>
-                        </li>
-                        
-                        
-                        
-                        <li class="post">
-                            <a href="17006367993220.html">Rust web 开发-4.log</a>
                         </li>
                         
                         

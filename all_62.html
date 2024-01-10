@@ -6,7 +6,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>
         
-        rust - 非著名Java程序员
+        非著名Java程序员
         
     </title>
     
@@ -131,14 +131,25 @@
         <div class="markdown-body home-categories">
             
             <div class="article">
-                <a class="clearlink" href="16727524082529.html">
+                <a class="clearlink" href="16652372971274.html">
                     
-                    <h1>rust 包管理与工作空间</h1>
+                    <h1>git 操作</h1>
                     <div class="a-content">
                         
                         <div class="a-content-text">
                             
-                            R
+                            <h2><a id="git-commit%E5%90%8E%E6%92%A4%E9%94%80" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>git commit 后撤销</h2>
+<pre class="line-numbers"><code class="language-plain_text">git reset --soft HEAD^ 
+</code></pre>
+<p>仅仅是撤回commit操作，您写的代码仍然保留。</p>
+<h2><a id="gitignore%E6%9B%B4%E6%96%B0%E5%90%8E%E5%A6%82%E4%BD%95%E7%94%9F%E6%95%88" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>.gitignore 更新后如何生效</h2>
+<p>git 修改了 .gitignore 后执行</p>
+<pre class="line-numbers"><code class="language-plain_text">git rm -r --cached .
+git add .
+git commit -m &quot;.gitignore&quot;
+</code></pre>
+<p>就先把所有文件从版本控制中移除，然后再重新加回来。 提交上传后，就发现新的.gitignore就此生效了，不该有的文件不再被传来传去了。</p>
+
                             
                         </div>
                     </div>
@@ -146,10 +157,8 @@
                 <div class="read-more clearfix">
                     <div class="more-left left">
                         
-                        <span class="date">2023/01/03 21:26 下午</span>
-                        <span>posted in&nbsp;</span> 
+                        <span class="date">2020/10/08 21:54 下午</span>
                         
-                        <span class="posted-in"><a href='rust.html'>rust</a></span>
                         
 
 
@@ -169,12 +178,12 @@
             <div class="row">
                 <div class="large-6 columns">
                     <p class="text-left" style="padding-top:25px;">
-                         <a href="rust_9.html">&laquo; Prev Page</a> 
+                         <a href="all_61.html">&laquo; Prev Page</a> 
                     </p>
                 </div>
                 <div class="large-6 columns">
                     <p class="text-right" style="padding-top:25px;">
-                         <a href="rust_11.html">&raquo; Next Page</a> 
+                        
                     </p>
                 </div>
             </div>
