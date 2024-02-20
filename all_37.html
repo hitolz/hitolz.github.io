@@ -144,7 +144,7 @@
 <h3><a id="%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>主从复制</h3>
 <p>一个主数据库实例 master，一个或多个从数据库实例 slave。</p>
 <p>客户端可对 master 读写操作，对 slave 只有读的操作，对 master 的操作会自动同步给 slave。</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/2021-08-10-16281747927595.jpg" alt="" /></p>
+<p><img src="media/16170304359773/17083980850502.jpg" alt="" /></p>
 <p>工作流程、原理</p>
 <ol>
 <li>slave 启动后，发送 SYNC 指令到 master，master 收到指令后执行 bgsave 保存快照，即 RDB 文件</li>
@@ -171,7 +171,7 @@
 <li>当 master 出现故障时，能自动将一个 slave 转换为 master，</li>
 <li>多个哨兵可以监控同一个 redis，哨兵之间也会自动监控</li>
 </ol>
-<p><img src="http://hitol.blog.cdn.updev.cn/2021-08-10-16281753582738.jpg" alt="" /></p>
+<p><img src="media/16170304359773/17083980850534.jpg" alt="" /></p>
 <p>通过 <code>sentinel monitor &lt;master-name&gt; &lt;ip&gt; &lt;redis-port&gt; &lt;quorum&gt;</code> 来定位master的IP、端口，一个哨兵可以监控多个master数据库，只需要提供多个该配置项即可。哨兵启动后，会与要监控的master建立两条连接：</p>
 <ol>
 <li>一条连接用来订阅master的_sentinel_:hello频道与获取其他监控该master的哨兵节点信息</li>
@@ -219,7 +219,7 @@
 </ol>
 <h3><a id="redis-cluster%E9%9B%86%E7%BE%A4" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Redis-Cluster集群</h3>
 <p>Cluster 模式实现了 Redis 的分布式存储，即每台节点存储不同的内容，来解决在线扩容的问题。</p>
-<p><img src="http://hitol.blog.cdn.updev.cn/2021-08-10-16283948334460.jpg" alt="" /></p>
+<p><img src="media/16170304359773/17083980850550.jpg" alt="" /></p>
 <p>Cluster 采用无中心结构,它的特点如下：</p>
 <ol>
 <li>所有的redis节点彼此互联(PING-PONG机制),内部使用二进制协议优化传输速度和带宽</li>

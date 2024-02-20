@@ -126,8 +126,8 @@
     let summary_gpt_key = '4OWIQfo577qj7E3TGTTOi';
     let summary_gpt_domain = 'https://ai-summary.hitol.top';
 </script>
-<link href="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.css" rel="stylesheet"/>
-<script src="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.v0.0.6.js"></script>
+<link href="http://hitol.blog.cdn.updev.cn/cdn/summary_gpt.css" rel="stylesheet"/>
+<script src="http://hitol.blog.cdn.updev.cn/cdn/summary_gpt.v0.0.6.js"></script>
 <script src="asset/js/include_words.js"></script>
 <script type="text/javascript">
     $(function () {
@@ -172,13 +172,13 @@ B 192.168.153.132</p>
 <li>2m-noslave :2个master,没有slave</li>
 </ul>
 <p>首先在每台机器上启动 nameServer</p>
-<pre class="line-numbers"><code class="language-plain_text">nohub sh bin/mqnamesrv &amp;
+<pre class="line-numbers"><code class="language-plain_text">nohup sh bin/mqnamesrv &amp;
 </code></pre>
 <p>然后配置 Broker，每台机器上都要分别配置一个 Master 角色的 Broker 和一个 Slave 角色的 Broker，并互为主备。</p>
 <p>A 机器启动 broker-a master, broker-b slave<br />
 B 机器启动 broker-a slave, broker-b master</p>
 <p>启动</p>
-<pre class="line-numbers"><code class="language-plain_text">nohub sh bin/mqbroker -c conf/2m-2s-async/broker-xxx.properties
+<pre class="line-numbers"><code class="language-plain_text">nohup sh bin/mqbroker -c conf/2m-2s-async/broker-xxx.properties
 </code></pre>
 <p>然后在安装 console ，最终效果如图：<br />
 <img src="http://hitol.blog.cdn.updev.cn/16177202877632.jpg" alt="" /></p>

@@ -126,8 +126,8 @@
     let summary_gpt_key = '4OWIQfo577qj7E3TGTTOi';
     let summary_gpt_domain = 'https://ai-summary.hitol.top';
 </script>
-<link href="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.css" rel="stylesheet"/>
-<script src="https://hitol.blog.cdn.updev.cn/cdn/summary_gpt.v0.0.6.js"></script>
+<link href="http://hitol.blog.cdn.updev.cn/cdn/summary_gpt.css" rel="stylesheet"/>
+<script src="http://hitol.blog.cdn.updev.cn/cdn/summary_gpt.v0.0.6.js"></script>
 <script src="asset/js/include_words.js"></script>
 <script type="text/javascript">
     $(function () {
@@ -182,16 +182,16 @@
 在程序员微信群里我询问了一下，这个场景应该怎么解决，热心网友告诉我 需要网页授权信息。<br />
 接着看文档，这次主要是网页授权这部分。</p>
 <blockquote>
-<p>第一步：用户同意授权，获取code<br />
-第二步：通过code换取网页授权access_token<br />
-第三步：刷新access_token（如果需要）<br />
-第四步：拉取用户信息(需scope为 snsapi_userinfo)</p>
+<p>第一步：用户同意授权，获取code</p>
+<p>第二步：通过code换取网页授权access_token</p>
+<p>第三步：刷新access_token（如果需要）</p>
+<p>第四步：拉取用户信息(需scope为 snsapi_userinfo)</p>
 </blockquote>
 <p>网页授权就是这4个步骤，看起来只需要后端就行了，前端不需要。</p>
 <p>文档后面有这么一句</p>
 <blockquote>
-<p>用户同意授权后<br />
-如果用户同意授权，页面将跳转至 redirect_uri/?code=CODE&amp;state=STATE。</p>
+<p>用户同意授权后</p>
+<p>如果用户同意授权，页面将跳转至 redirect_uri/?code=CODE&amp;state=STATE。</p>
 </blockquote>
 <p>根据这篇文档，调整自己的技术方案，<br />
 微信公众号的菜单配置的是用户授权，redirect_uri 配置的是我的后端地址，页面跳转到我后端的时候我就能拿到 code，就能获取到用户信息然后重定向。</p>
@@ -238,6 +238,9 @@
 </code></pre>
 <h2><a id="%E6%B2%A1%E6%9C%89%E4%B8%80%E4%B8%AA%E5%AD%97%E6%98%AF%E5%A4%9A%E4%BD%99%E7%9A%84" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>没有一个字是多余的</h2>
 <p>微信网页授权，真就没有一个字是多余的。</p>
+<hr />
+<p>欢迎关注微信公众号</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c50423e6e62942d79c05540a8257f23c~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=258&amp;h=258&amp;s=28178&amp;e=jpg&amp;b=fefefe" alt="" /></p>
 
 
 

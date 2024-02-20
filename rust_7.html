@@ -218,7 +218,7 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 }
 </code></pre>
 <p>HttpServer 绑定到 ip、端口，同时，提供了两个 get 方法(/,/hey)，一个 post 方法(/echo)，通过浏览器访问 localhost:8099 即可访问。<br />
-<img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-13.36.34.png" alt="2022-11-20-13.36.34" /></p>
+<img src="media/17002145985395/17083980669290.png" alt="2022-11-20-13.36.34" /></p>
 <h3><a id="httpserver" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>HttpServer</h3>
 <p>HttpServer 接受的参数类型是 application factory，实现了 Send + Sync。</p>
 <p>bind，为 server 绑定 ip 和端口。<br />
@@ -340,7 +340,7 @@ async fn main() -&gt; std::io::Result&lt;()&gt; {
 }
 
 </code></pre>
-<p><img src="http://hitol.blog.cdn.updev.cn/mweb/2022-11-20-14.58.01.png" alt="2022-11-20-14.58.01" /></p>
+<p><img src="media/17002145985395/17083980669339.png" alt="2022-11-20-14.58.01" /></p>
 <h3><a id="%E6%8E%A5%E6%94%B6%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>接收请求参数</h3>
 <h4><a id="path" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Path</h4>
 <pre class="line-numbers"><code class="language-rust">use actix_web::{App, get, HttpResponse, HttpServer, post, Responder, web,Result};
