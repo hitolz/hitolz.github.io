@@ -294,6 +294,8 @@ private final Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories = new
 <img src="http://hitol.blog.cdn.updev.cn/2021-08-01-Spring-IOC16032812571910.png" alt="Spring-IOC16032812571910" /></p>
 <p>竖向表示当前方法的执行顺序，横向表示进入到该方法。</p>
 <p>这个流程图分为了 三列，第一列创建 bean A 的流程，在创建 A 的时候发现要依赖 B，第二列就是创建 bena B 的流程，在创建 B 的时候又发现依赖 A，第三列就是 创建 B 的时候 创建 A 的流程。</p>
+<p>简化一下流程<br />
+<img src="http://hitol.blog.cdn.updev.cn/mweb/17089918218356.jpg" alt="" /></p>
 <p>图中用颜色标注的是表示用到三级缓存的地方。</p>
 <ol>
 <li>第一个是在获取缓存的方法 getSingleton 中，先从第一级缓存去查找，如果没有则去第二级缓存中查找，没有再去第三级缓存中查找，如果第三级缓存中查到了，将其从第三级缓存中删掉，放到第二级缓存中。</li>
@@ -307,6 +309,7 @@ private final Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories = new
 <p>每个步骤对应的三个缓存中的内容：</p>
 <p><img src="http://hitol.blog.cdn.updev.cn/2021-08-02-16278669180573.jpg" alt="" /></p>
 <p>以上；</p>
+<p><img src="http://hitol.blog.cdn.updev.cn/mweb/ClassPathXmlApplicationContext_new.svg" alt="ClassPathXmlApplicationContext_new" /></p>
 
 
 
